@@ -56,7 +56,7 @@ IF NOT "%1"=="" goto parseloop
 echo Assembling...
 
 "driver/AMPS Includer.exe" AS driver driver/.Data
-"win32/as/asw" -xx -c %debug_syms% %print_err% -A -U -L %revision_override% s2.asm
+"win32/as/asw" -xx -c %debug_syms% %print_err% -A -L %revision_override% s2.asm
 
 REM // if there were errors, there won't be any s2.p output
 IF NOT EXIST s2.p goto LABLERROR5
@@ -79,7 +79,7 @@ IF NOT EXIST s2built.md pause & exit /b
 "ErrorDebugger/ConvSym.exe" s2.lst s2built.md -input as_lst -a
 del s2.p
 del s2.h
-del driver/.Data
+del driver\.Data
 exit /b
 
 :LABLERROR1

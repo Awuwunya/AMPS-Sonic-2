@@ -222,3 +222,18 @@ planeLocH40 function col,line,(($80 * line) + (2 * col))
 
 ; function to calculate the location of a tile in plane mappings with a width of 128 cells
 planeLocH80 function col,line,(($100 * line) + (2 * col))
+
+; Macro for playing a command
+command		macro id
+	move.b #id,mQueue.w
+    endm
+
+; Macro for playing music
+music		macro id
+	move.b #id,mQueue+1.w
+    endm
+
+; Macro for playing sound effect
+sfx		macro id
+	move.b #id,mQueue+2.w
+    endm

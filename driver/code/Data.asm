@@ -77,6 +77,7 @@ SoundIndex:
 	ptrSFX	0, QuickDoor, Electricity, Unk2B, Unk38, Unk51, Unk52
 
 SFXcount =	__sfx-SFXoff		; number of intalled sound effects
+SFXlast =	__sfx
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Define samples
@@ -105,6 +106,8 @@ SampleList:
 	sample $00D0, Bongo, Stop, MidBongo	; 8F - Mid Bongo
 	sample $00A0, Bongo, Stop, LowBongo	; 90 - Low Bongo
 	sample $0080, Bongo, Stop, FloorBongo	; 91 - Floor Bongo
+
+	sample $0100, SEGA, Stop		; 92 - SEGA
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Define volume envelopes and their data
@@ -230,7 +233,7 @@ SWF_Stop:	asdata $8000-(2*Z80E_Read*(MaxPitch/$100)), $80
 SWFR_Stop:	asdata Z80E_Read*(MaxPitch/$100), $00
 
 	incSWF	Kick, Snare, Clap, Tom, Timpani, Bongo
-	incSWF	Scratch
+	incSWF	Scratch, SEGA
 	even
 ;	list				; continue source listing
 ; ===========================================================================

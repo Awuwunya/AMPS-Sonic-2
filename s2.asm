@@ -23,10 +23,10 @@ gameRevision = 1
 ;	| If 0, a REV00 ROM is built
 ;	| If 1, a REV01 ROM is built, which contains some fixes
 ;	| If 2, a (probable) REV02 ROM is built, which contains even more fixes
-padToPowerOfTwo = 1
+padToPowerOfTwo = 0
 ;	| If 1, pads the end of the ROM to the next power of two bytes (for real hardware)
 ;
-allOptimizations = 0
+allOptimizations = 1
 ;	| If 1, enables all optimizations
 ;
 skipChecksumCheck = 0|allOptimizations
@@ -80,35 +80,35 @@ StartOfRom:
 Vectors:
 	dc.l System_Stack	; Initial stack pointer value
 	dc.l EntryPoint		; Start of program
-	dc.l ErrorTrap		; Bus error
-	dc.l ErrorTrap		; Address error (4)
-	dc.l ErrorTrap		; Illegal instruction
-	dc.l ErrorTrap		; Division by zero
-	dc.l ErrorTrap		; CHK exception
-	dc.l ErrorTrap		; TRAPV exception (8)
-	dc.l ErrorTrap		; Privilege violation
-	dc.l ErrorTrap		; TRACE exception
-	dc.l ErrorTrap		; Line-A emulator
-	dc.l ErrorTrap		; Line-F emulator (12)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved) (16)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved) (20)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved) (24)
-	dc.l ErrorTrap		; Spurious exception
+	dc.l BusError		; Bus error
+	dc.l AddressError	; Address error (4)
+	dc.l IllegalInstr	; Illegal instruction
+	dc.l ZeroDivide		; Division by zero
+	dc.l ChkInstr		; CHK exception
+	dc.l TrapvInstr		; TRAPV exception (8)
+	dc.l PrivilegeViol	; Privilege violation
+	dc.l Trace		; TRACE exception
+	dc.l Line1010Emu	; Line-A emulator
+	dc.l Line1111Emu	; Line-F emulator (12)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved) (16)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved) (20)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved) (24)
+	dc.l ErrorExcept	; Spurious exception
 	dc.l ErrorTrap		; IRQ level 1
 	dc.l ErrorTrap		; IRQ level 2
 	dc.l ErrorTrap		; IRQ level 3 (28)
-	dc.l H_Int			; IRQ level 4 (horizontal retrace interrupt)
+	dc.l H_Int		; IRQ level 4 (horizontal retrace interrupt)
 	dc.l ErrorTrap		; IRQ level 5
-	dc.l V_Int			; IRQ level 6 (vertical retrace interrupt)
+	dc.l V_Int		; IRQ level 6 (vertical retrace interrupt)
 	dc.l ErrorTrap		; IRQ level 7 (32)
 	dc.l ErrorTrap		; TRAP #00 exception
 	dc.l ErrorTrap		; TRAP #01 exception
@@ -126,28 +126,28 @@ Vectors:
 	dc.l ErrorTrap		; TRAP #13 exception
 	dc.l ErrorTrap		; TRAP #14 exception
 	dc.l ErrorTrap		; TRAP #15 exception (48)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved) (52)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved) (56)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved) (60)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved)
-	dc.l ErrorTrap		; Unused (reserved) (64)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved) (52)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved) (56)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved) (60)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved)
+	dc.l ErrorExcept	; Unused (reserved) (64)
 ; byte_100:
 Header:
 	dc.b "SEGA GENESIS    " ; Console name
 	dc.b "(C)SEGA 1992.SEP" ; Copyright holder and release date (generally year)
-	dc.b "SONIC THE             HEDGEHOG 2                " ; Domestic name
-	dc.b "SONIC THE             HEDGEHOG 2                " ; International name
+	dc.b "SONIC THE HEDGEHOG 2 WITH AMPS                  " ; Domestic name
+	dc.b "SONIC THE HEDGEHOG 2 WITH AMPS                  " ; International name
     if gameRevision=0
 	dc.b "GM 00001051-00"   ; Version (REV00)
     elseif gameRevision=1
@@ -172,14 +172,6 @@ ROMEndLoc:
 	dc.b "                                        "	; Notes (unused, anything can be put in this space, but it has to be 52 bytes.)
 	dc.b "JUE             " ; Country code (region)
 EndOfHeader:
-
-; ===========================================================================
-; Crash/Freeze the 68000. Note that the Z80 continues to run, so the music keeps playing.
-; loc_200:
-ErrorTrap:
-	nop	; delay
-	nop	; delay
-	bra.s	ErrorTrap	; Loop indefinitely.
 
 ; ===========================================================================
 ; loc_206:
@@ -306,38 +298,15 @@ Z80StartupCodeBegin: ; loc_2CA:
     save
     CPU Z80 ; start assembling Z80 code
     phase 0 ; pretend we're at address 0
-	xor	a	; clear a to 0
-	ld	bc,((Z80_RAM_End-Z80_RAM)-zStartupCodeEndLoc)-1 ; prepare to loop this many times
-	ld	de,zStartupCodeEndLoc+1	; initial destination address
-	ld	hl,zStartupCodeEndLoc	; initial source address
-	ld	sp,hl	; set the address the stack starts at
-	ld	(hl),a	; set first byte of the stack to 0
-	ldir		; loop to fill the stack (entire remaining available Z80 RAM) with 0
-	pop	ix	; clear ix
-	pop	iy	; clear iy
-	ld	i,a	; clear i
-	ld	r,a	; clear r
-	pop	de	; clear de
-	pop	hl	; clear hl
-	pop	af	; clear af
-	ex	af,af'	; swap af with af'
-	exx		; swap bc/de/hl with their shadow registers too
-	pop	bc	; clear bc
-	pop	de	; clear de
-	pop	hl	; clear hl
-	pop	af	; clear af
-	ld	sp,hl	; clear sp
-	di		; clear iff1 (for interrupt handler)
-	im	1	; interrupt handling mode = 1
-	ld	(hl),0E9h ; replace the first instruction with a jump to itself
-	jp	(hl)	  ; jump to the first instruction (to stay there forever)
+		di				; disable interrupts
+.pc		jp	.pc			; loop in place
 zStartupCodeEndLoc:
     dephase ; stop pretending
 	restore
     padding off ; unfortunately our flags got reset so we have to set them again...
     else ; due to an address range limitation I could work around but don't think is worth doing so:
 	message "Warning: using pre-assembled Z80 startup code."
-	dc.w $AF01,$D91F,$1127,$0021,$2600,$F977,$EDB0,$DDE1,$FDE1,$ED47,$ED4F,$D1E1,$F108,$D9C1,$D1E1,$F1F9,$F3ED,$5636,$E9E9
+	dc.w $F3C3,$0100
     endif
 Z80StartupCodeEnd:
 
@@ -403,18 +372,20 @@ GameInit:
 ; loc_37C:
 GameClrRAM:
 	move.l	d7,(a6)+
-	dbf	d6,GameClrRAM	; clear RAM ($0000-$FDFF)
+	dbf	d6,GameClrRAM			; clear RAM ($0000-$FDFF)
 
 	bsr.w	VDPSetupGame
-	bsr.w	JmpTo_SoundDriverLoad
+	jsr	LoadDualPCM			; load Dual PCM
 	bsr.w	JoypadInit
-	move.b	#GameModeID_SegaScreen,(Game_Mode).w ; set Game Mode to Sega Screen
+	move.b	#GameModeID_SegaScreen,(Game_Mode).w; set Game Mode to Sega Screen
+	move.w	#MusOff,Sound_test_sound.w	; init sound test ID
+
 ; loc_394:
 MainGameLoop:
-	move.b	(Game_Mode).w,d0 ; load Game Mode
-	andi.w	#$3C,d0	; limit Game Mode value to $3C max (change to a maximum of 7C to add more game modes)
-	jsr	GameModesArray(pc,d0.w)	; jump to apt location in ROM
-	bra.s	MainGameLoop	; loop indefinitely
+	move.b	(Game_Mode).w,d0		; load Game Mode
+	andi.w	#$3C,d0				; limit Game Mode value to $3C max (change to a maximum of 7C to add more game modes)
+	jsr	GameModesArray(pc,d0.w)		; jump to apt location in ROM
+	bra.s	MainGameLoop			; loop indefinitely
 ; ===========================================================================
 ; loc_3A2:
 GameModesArray: ;;
@@ -492,6 +463,7 @@ V_Int:
 	jsr	Vint_SwitchTbl(pc,d0.w)
 
 VintRet:
+	jsr	UpdateAMPS			; run AMPS
 	addq.l	#1,(Vint_runcount).w
 	movem.l	(sp)+,d0-a6
 	rte
@@ -522,11 +494,6 @@ Vint_Lag:
 	beq.s	loc_4C4
 	cmpi.b	#GameModeID_Level,(Game_Mode).w	; Zone play mode?
 	beq.s	loc_4C4
-
-	stopZ80			; stop the Z80
-	bsr.w	sndDriverInput	; give input to the sound driver
-	startZ80		; start the Z80
-
 	bra.s	VintRet
 ; ---------------------------------------------------------------------------
 
@@ -541,14 +508,9 @@ loc_4C4:
 -	dbf	d0,- ; do nothing for a while...
 +
 	move.w	#1,(Hint_flag).w
-
-	stopZ80
-
 	tst.b	(Water_fullscreen_flag).w
 	bne.s	loc_526
-
 	dma68kToVDP Normal_palette,$0000,palette_line_size*4,CRAM
-
 	bra.s	loc_54A
 ; ---------------------------------------------------------------------------
 
@@ -558,10 +520,6 @@ loc_526:
 loc_54A:
 	move.w	(Hint_counter_reserve).w,(a5)
 	move.w	#$8200|(VRAM_Plane_A_Name_Table/$400),(VDP_control_port).l	; Set scroll A PNT base to $C000
-	bsr.w	sndDriverInput
-
-	startZ80
-
 	bra.w	VintRet
 ; ---------------------------------------------------------------------------
 
@@ -580,11 +538,7 @@ Vint0_noWater:
 	move.w	#$8200|(VRAM_Plane_A_Name_Table/$400),(VDP_control_port).l	; Set scroll A PNT base to $C000
 	move.l	(Vscroll_Factor_P2).w,(Vscroll_Factor_P2_HInt).w
 
-	stopZ80
 	dma68kToVDP Sprite_Table,VRAM_Sprite_Attribute_Table,VRAM_Sprite_Attribute_Table_Size,VRAM
-	bsr.w	sndDriverInput
-	startZ80
-
 	bra.w	VintRet
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -607,10 +561,8 @@ Vint_PCM:
 	move.b	(Vint_runcount+3).w,d0
 	andi.w	#$F,d0
 	bne.s	+
-
-	stopZ80
 	bsr.w	ReadJoypads
-	startZ80
+
 +
 	tst.w	(Demo_Time_left).w	; is there time left on the demo?
 	beq.w	+	; if not, return
@@ -630,8 +582,7 @@ Vint_Title:
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;VintSub6
 Vint_Unused6:
-	bsr.w	Do_ControllerPal
-	rts
+	bra.w	Do_ControllerPal
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;VintSub10
 Vint_Pause:
@@ -639,8 +590,6 @@ Vint_Pause:
 	beq.w	Vint_Pause_specialStage
 ;VintSub8
 Vint_Level:
-	stopZ80
-
 	bsr.w	ReadJoypads
 	tst.b	(Teleport_timer).w
 	beq.s	loc_6F8
@@ -687,11 +636,7 @@ loc_748:
 
 	dma68kToVDP Horiz_Scroll_Buf,VRAM_Horiz_Scroll_Table,VRAM_Horiz_Scroll_Table_Size,VRAM
 	dma68kToVDP Sprite_Table,VRAM_Sprite_Attribute_Table,VRAM_Sprite_Attribute_Table_Size,VRAM
-
 	bsr.w	ProcessDMAQueue
-	bsr.w	sndDriverInput
-
-	startZ80
 
 	movem.l	(Camera_RAM).w,d0-d7
 	movem.l	d0-d7,(Camera_RAM_copy).w
@@ -726,10 +671,7 @@ Do_Updates:
 ; ---------------------------------------------------------------------------
 ;Vint10_specialStage
 Vint_Pause_specialStage:
-	stopZ80
-
 	bsr.w	ReadJoypads
-	jsr	(sndDriverInput).l
 	tst.b	(SS_Last_Alternate_HorizScroll_Buf).w
 	beq.s	loc_84A
 
@@ -740,13 +682,10 @@ loc_84A:
 	dma68kToVDP SS_Horiz_Scroll_Buf_1,VRAM_SS_Horiz_Scroll_Table,VRAM_SS_Horiz_Scroll_Table_Size,VRAM
 
 loc_86E:
-	startZ80
 	rts
 ; ========================================================================>>>
 ;VintSubA
 Vint_S2SS:
-	stopZ80
-
 	bsr.w	ReadJoypads
 	bsr.w	SSSet_VScroll
 
@@ -807,10 +746,6 @@ SS_PNTA_Transfer_Table:	offsetTable
 	eori.b	#1,(SS_Alternate_PNT).w			; Toggle flag
 +
 	bsr.w	ProcessDMAQueue
-	jsr	(sndDriverInput).l
-
-	startZ80
-
 	bsr.w	ProcessDPLC2
 	tst.w	(Demo_Time_left).w
 	beq.w	+	; rts
@@ -905,15 +840,10 @@ SSAnim_Base_Duration:
 ; ===========================================================================
 ;VintSub1A
 Vint_CtrlDMA:
-	stopZ80
-	jsr	(ProcessDMAQueue).l
-	startZ80
-	rts
+	jmp	(ProcessDMAQueue).l
 ; ===========================================================================
 ;VintSubC
 Vint_TitleCard:
-	stopZ80
-
 	bsr.w	ReadJoypads
 	tst.b	(Water_fullscreen_flag).w
 	bne.s	loc_BB2
@@ -933,9 +863,6 @@ loc_BD6:
 
 	bsr.w	ProcessDMAQueue
 	jsr	(DrawLevelTitleCard).l
-	jsr	(sndDriverInput).l
-
-	startZ80
 
 	movem.l	(Camera_RAM).w,d0-d7
 	movem.l	d0-d7,(Camera_RAM_copy).w
@@ -960,29 +887,23 @@ Vint_Fade:
 ; ===========================================================================
 ;VintSub18
 Vint_Ending:
-	stopZ80
-
 	bsr.w	ReadJoypads
-
 	dma68kToVDP Normal_palette,$0000,palette_line_size*4,CRAM
 	dma68kToVDP Sprite_Table,VRAM_Sprite_Attribute_Table,VRAM_Sprite_Attribute_Table_Size,VRAM
 	dma68kToVDP Horiz_Scroll_Buf,VRAM_Horiz_Scroll_Table,VRAM_Horiz_Scroll_Table_Size,VRAM
 
 	bsr.w	ProcessDMAQueue
-	bsr.w	sndDriverInput
 	movem.l	(Camera_RAM).w,d0-d7
 	movem.l	d0-d7,(Camera_RAM_copy).w
 	movem.l	(Scroll_flags).w,d0-d3
 	movem.l	d0-d3,(Scroll_flags_copy).w
 	jsrto	(LoadTilesAsYouMove).l, JmpTo_LoadTilesAsYouMove
 
-	startZ80
-
 	move.w	(Ending_VInt_Subrout).w,d0
 	beq.s	+	; rts
 	clr.w	(Ending_VInt_Subrout).w
 	move.w	off_D3C-2(pc,d0.w),d0
-	jsr	off_D3C(pc,d0.w)
+	jmp	off_D3C(pc,d0.w)
 +
 	rts
 ; ===========================================================================
@@ -1011,8 +932,6 @@ off_D3C:	offsetTable
 ; ===========================================================================
 ;VintSub16
 Vint_Menu:
-	stopZ80
-
 	bsr.w	ReadJoypads
 
 	dma68kToVDP Normal_palette,$0000,palette_line_size*4,CRAM
@@ -1020,10 +939,6 @@ Vint_Menu:
 	dma68kToVDP Horiz_Scroll_Buf,VRAM_Horiz_Scroll_Table,VRAM_Horiz_Scroll_Table_Size,VRAM
 
 	bsr.w	ProcessDMAQueue
-	bsr.w	sndDriverInput
-
-	startZ80
-
 	bsr.w	ProcessDPLC
 	tst.w	(Demo_Time_left).w
 	beq.w	+	; rts
@@ -1035,8 +950,6 @@ Vint_Menu:
 
 ;sub_E98
 Do_ControllerPal:
-	stopZ80
-
 	bsr.w	ReadJoypads
 	tst.b	(Water_fullscreen_flag).w
 	bne.s	loc_EDA
@@ -1051,11 +964,6 @@ loc_EDA:
 loc_EFE:
 	dma68kToVDP Sprite_Table,VRAM_Sprite_Attribute_Table,VRAM_Sprite_Attribute_Table_Size,VRAM
 	dma68kToVDP Horiz_Scroll_Buf,VRAM_Horiz_Scroll_Table,VRAM_Horiz_Scroll_Table_Size,VRAM
-
-	bsr.w	sndDriverInput
-
-	startZ80
-
 	rts
 ; End of function sub_E98
 ; ||||||||||||||| E N D   O F   V - I N T |||||||||||||||||||||||||||||||||||
@@ -1081,10 +989,7 @@ H_Int:
 	move.w	#$8200|(VRAM_Plane_A_Name_Table_2P/$400),(VDP_control_port).l	; PNT A base: $A000
 	move.l	#vdpComm($0000,VSRAM,WRITE),(VDP_control_port).l
 	move.l	(Vscroll_Factor_P2_HInt).w,(VDP_data_port).l
-
-	stopZ80
 	dma68kToVDP Sprite_Table_2,VRAM_Sprite_Attribute_Table,VRAM_Sprite_Attribute_Table_Size,VRAM
-	startZ80
 
 -	move.w	(VDP_control_port).l,d0
 	andi.w	#4,d0
@@ -1128,51 +1033,6 @@ loc_1072:
 	movem.l	(sp)+,d0-a6
 	rte
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-; Input our music/sound selection to the sound driver.
-
-sndDriverInput:
-	lea	(Music_to_play&$00FFFFFF).l,a0
-	lea	(Z80_RAM+zAbsVar).l,a1 ; $A01B80
-	cmpi.b	#$80,zAbsVar.QueueToPlay-zAbsVar(a1)	; If this (zReadyFlag) isn't $80, the driver is processing a previous sound request.
-	bne.s	loc_10C4	; So we'll wait until at least the next frame before putting anything in there.
-	_move.b	0(a0),d0
-	beq.s	loc_10A4
-	_clr.b	0(a0)
-	bra.s	loc_10AE
-; ---------------------------------------------------------------------------
-
-loc_10A4:
-	move.b	4(a0),d0	; If there was something in Music_to_play_2, check what that was. Else, just go to the loop.
-	beq.s	loc_10C4
-	clr.b	4(a0)
-
-loc_10AE:		; Check that the sound is not FE or FF
-	move.b	d0,d1	; If it is, we need to put it in $A01B83 as $7F or $80 respectively
-	subi.b	#MusID_Pause,d1
-	bcs.s	loc_10C0
-	addi.b	#$7F,d1
-	move.b	d1,zAbsVar.StopMusic-zAbsVar(a1)
-	bra.s	loc_10C4
-; ---------------------------------------------------------------------------
-
-loc_10C0:
-	move.b	d0,zAbsVar.QueueToPlay-zAbsVar(a1)
-
-loc_10C4:
-	moveq	#4-1,d1
-				; FFE4 (Music_to_play_2) goes to 1B8C (zMusicToPlay),
--	move.b	1(a0,d1.w),d0	; FFE3 (unk_FFE3) goes to 1B8B, (unknown)
-	beq.s	+		; FFE2 (SFX_to_play_2) goes to 1B8A (zSFXToPlay2),
-	tst.b	zAbsVar.SFXToPlay-zAbsVar(a1,d1.w)	; FFE1 (SFX_to_play) goes to 1B89 (zSFXToPlay).
-	bne.s	+
-	clr.b	1(a0,d1.w)
-	move.b	d0,zAbsVar.SFXToPlay-zAbsVar(a1,d1.w)
-+
-	dbf	d1,-
-	rts
-; End of function sndDriverInput
-
     if ~~removeJmpTos
 ; sub_10E0:
 JmpTo_LoadTilesAsYouMove
@@ -1182,9 +1042,6 @@ JmpTo_SegaScr_VInt
 
 	align 4
     endif
-
-
-
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to initialize joypads
@@ -1326,81 +1183,6 @@ ClearScreen:
 
 	startZ80
 	rts
-; End of function ClearScreen
-
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; JumpTo load the sound driver
-; sub_130A:
-JmpTo_SoundDriverLoad
-	nop
-	jmp	(SoundDriverLoad).l
-; End of function JmpTo_SoundDriverLoad
-
-; ===========================================================================
-; unused mostly-leftover subroutine to load the sound driver
-; SoundDriverLoadS1:
-	move.w	#$100,(Z80_Bus_Request).l ; stop the Z80
-	move.w	#$100,(Z80_Reset).l ; reset the Z80
-	lea	(Z80_RAM).l,a1
-	move.b	#$F3,(a1)+	; di
-	move.b	#$F3,(a1)+	; di
-	move.b	#$C3,(a1)+	; jp
-	move.b	#0,(a1)+	; jp address low byte
-	move.b	#0,(a1)+	; jp address high byte
-	move.w	#0,(Z80_Reset).l
-	nop
-	nop
-	nop
-	nop
-	move.w	#$100,(Z80_Reset).l ; reset the Z80
-	move.w	#0,(Z80_Bus_Request).l ; start the Z80
-	rts
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-; If Music_to_play is clear, move d0 into Music_to_play,
-; else move d0 into Music_to_play_2.
-; sub_135E:
-PlayMusic:
-	tst.b	(Music_to_play).w
-	bne.s	+
-	move.b	d0,(Music_to_play).w
-	rts
-+
-	move.b	d0,(Music_to_play_2).w
-	rts
-; End of function PlayMusic
-
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; sub_1370
-PlaySound:
-	move.b	d0,(SFX_to_play).w
-	rts
-; End of function PlaySound
-
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-; play a sound in alternating speakers (as in the ring collection sound)
-; sub_1376:
-PlaySoundStereo:
-	move.b	d0,(SFX_to_play_2).w
-	rts
-; End of function PlaySoundStereo
-
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-; play a sound if the source is onscreen
-; sub_137C:
-PlaySoundLocal:
-	tst.b	render_flags(a0)
-	bpl.s	+	; rts
-	move.b	d0,(SFX_to_play).w
-+
-	rts
-; End of function PlaySoundLocal
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to pause the game
@@ -1410,28 +1192,27 @@ PlaySoundLocal:
 
 ; sub_1388:
 PauseGame:
-	nop
-	tst.b	(Life_count).w	; do you have any lives left?
-	beq.w	Unpause		; if not, branch
-	tst.w	(Game_paused).w	; is game already paused?
-	bne.s	+		; if yes, branch
-	move.b	(Ctrl_1_Press).w,d0 ; is Start button pressed?
-	or.b	(Ctrl_2_Press).w,d0 ; (either player)
+	tst.b	(Life_count).w		; do you have any lives left?
+	beq.w	Unpause			; if not, branch
+	tst.w	(Game_paused).w		; is game already paused?
+	bne.s	+			; if yes, branch
+	move.b	(Ctrl_1_Press).w,d0	; is Start button pressed?
+	or.b	(Ctrl_2_Press).w,d0	; (either player)
 	andi.b	#button_start_mask,d0
-	beq.s	Pause_DoNothing	; if not, branch
+	beq.s	Pause_DoNothing		; if not, branch
 +
 	move.w	#1,(Game_paused).w	; freeze time
-	move.b	#MusID_Pause,(Music_to_play).w	; pause music
+	command	Mus_Pause		; pause music
+
 ; loc_13B2:
 Pause_Loop:
 	move.b	#VintID_Pause,(Vint_routine).w
 	bsr.w	WaitForVint
 	tst.b	(Slow_motion_flag).w	; is slow-motion cheat on?
 	beq.s	Pause_ChkStart		; if not, branch
-	btst	#button_A,(Ctrl_1_Press).w	; is button A pressed?
+	btst	#button_A,(Ctrl_1_Press).w; is button A pressed?
 	beq.s	Pause_ChkBC		; if not, branch
 	move.b	#GameModeID_TitleScreen,(Game_Mode).w ; set game mode to 4 (title screen)
-	nop
 	bra.s	Pause_Resume
 ; ===========================================================================
 ; loc_13D4:
@@ -1445,10 +1226,10 @@ Pause_ChkStart:
 	move.b	(Ctrl_1_Press).w,d0	; is Start button pressed?
 	or.b	(Ctrl_2_Press).w,d0	; (either player)
 	andi.b	#button_start_mask,d0
-	beq.s	Pause_Loop	; if not, branch
+	beq.s	Pause_Loop		; if not, branch
 ; loc_13F2:
 Pause_Resume:
-	move.b	#MusID_Unpause,(Music_to_play).w	; unpause the music
+	command	Mus_Unpause		; unpause the music
 ; loc_13F8:
 Unpause:
 	move.w	#0,(Game_paused).w	; unpause the game
@@ -1459,7 +1240,7 @@ Pause_DoNothing:
 ; loc_1400:
 Pause_SlowMo:
 	move.w	#1,(Game_paused).w
-	move.b	#MusID_Unpause,(Music_to_play).w
+	command	Mus_Unpause
 	rts
 ; End of function PauseGame
 
@@ -3750,8 +3531,8 @@ Angle_Data:	BINCLUDE	"misc/angles.bin"
 
 ; loc_37B8:
 SegaScreen:
-	move.b	#MusID_Stop,d0
-	bsr.w	PlayMusic ; stop music
+	command	Mus_Stop 			; stop music
+	sfx	Mus_Reset
 	bsr.w	ClearPLC
 	bsr.w	Pal_FadeToBlack
 
@@ -3824,8 +3605,7 @@ Sega_WaitPalette:
 	jsr	(BuildSprites).l
 	tst.b	(SegaScr_PalDone_Flag).w
 	beq.s	Sega_WaitPalette
-	move.b	#SndID_SegaSound,d0
-	bsr.w	PlaySound	; play "SEGA" sound
+	music	Mus_SEGA			; play "SEGA" sound
 	move.b	#VintID_SEGA,(Vint_routine).w
 	bsr.w	WaitForVint
 	move.w	#3*60,(Demo_Time_left).w	; 3 seconds
@@ -3886,8 +3666,8 @@ JmpTo_RunObjects
 ; ===========================================================================
 ; loc_3998:
 TitleScreen:
-	move.b	#MusID_Stop,d0
-	bsr.w	PlayMusic
+	command	Mus_Stop
+	sfx	Mus_Reset
 	bsr.w	ClearPLC
 	bsr.w	Pal_FadeToBlack
 	move	#$2700,sr
@@ -3996,12 +3776,6 @@ TitleScreen:
 	bsr.w	LoadPLC2
 	move.w	#0,(Correct_cheat_entries).w
 	move.w	#0,(Correct_cheat_entries_2).w
-	nop
-	nop
-	nop
-	nop
-	nop
-	nop
 	move.w	#4,(Sonic_Pos_Record_Index).w
 	move.w	#0,(Sonic_Pos_Record_Buf).w
 
@@ -4061,8 +3835,7 @@ TitleScreen_Loop:
 	move.b	d0,(Continue_count).w
 	move.l	#5000,(Next_Extra_life_score).w
 	move.l	#5000,(Next_Extra_life_score_2P).w
-	move.b	#MusID_FadeOut,d0 ; prepare to stop music (fade out)
-	bsr.w	PlaySound
+	command	Mus_FadeOut
 	moveq	#0,d0
 	move.b	(Title_screen_option).w,d0
 	bne.s	TitleScreen_CheckIfChose2P	; branch if not a 1-player game
@@ -4113,8 +3886,7 @@ TitleScreen_ChoseOptions:
 ; ===========================================================================
 ; loc_3D2E:
 TitleScreen_Demo:
-	move.b	#MusID_FadeOut,d0
-	bsr.w	PlaySound
+	command	Mus_FadeOut
 	move.w	(Demo_number).w,d0
 	andi.w	#7,d0
 	add.w	d0,d0
@@ -4165,11 +3937,11 @@ TailsNameCheat:
 	cmp.b	(a0),d0
 	bne.s	+
 	addq.w	#1,(Correct_cheat_entries).w
-	tst.b	1(a0)		; read the next entry
-	bne.s	++		; if it's not zero, return
-	bchg	#7,(Graphics_Flags).w ; turn on the cheat that changes MILES to "TAILS"
-	move.b	#SndID_Ring,d0 ; play the ring sound for a successfully entered cheat
-	bsr.w	PlaySound
+	tst.b	1(a0)			; read the next entry
+	bne.s	++			; if it's not zero, return
+	bchg	#7,(Graphics_Flags).w	; turn on the cheat that changes MILES to "TAILS"
+	sfx	sfx_RingRight		; play the ring sound for a successfully entered cheat
+
 +	move.w	#0,(Correct_cheat_entries).w
 +	rts
 ; End of function TailsNameCheat
@@ -4233,23 +4005,23 @@ JmpTo_SwScrl_Title
 ;----------------------------------------------------------------------------
 ; byte_3EA0:
 MusicList: zoneOrderedTable 1,1
-	zoneTableEntry.b MusID_EHZ	; 0 ; EHZ
-	zoneTableEntry.b MusID_EHZ	; 1
-	zoneTableEntry.b MusID_MTZ	; 2
-	zoneTableEntry.b MusID_OOZ	; 3
-	zoneTableEntry.b MusID_MTZ	; 4 ; MTZ1,2
-	zoneTableEntry.b MusID_MTZ	; 5 ; MTZ3
-	zoneTableEntry.b MusID_WFZ	; 6 ; WFZ
-	zoneTableEntry.b MusID_HTZ	; 7 ; HTZ
-	zoneTableEntry.b MusID_HPZ	; 8
-	zoneTableEntry.b MusID_SCZ	; 9
-	zoneTableEntry.b MusID_OOZ	; 10 ; OOZ
-	zoneTableEntry.b MusID_MCZ	; 11 ; MCZ
-	zoneTableEntry.b MusID_CNZ	; 12 ; CNZ
-	zoneTableEntry.b MusID_CPZ	; 13 ; CPZ
-	zoneTableEntry.b MusID_DEZ	; 14 ; DEZ
-	zoneTableEntry.b MusID_ARZ	; 15 ; ARZ
-	zoneTableEntry.b MusID_SCZ	; 16 ; SCZ
+	zoneTableEntry.b mus_EHZ	; 0 ; EHZ
+	zoneTableEntry.b mus_EHZ	; 1
+	zoneTableEntry.b mus_MTZ	; 2
+	zoneTableEntry.b mus_OOZ	; 3
+	zoneTableEntry.b mus_MTZ	; 4 ; MTZ1,2
+	zoneTableEntry.b mus_MTZ	; 5 ; MTZ3
+	zoneTableEntry.b mus_WFZ	; 6 ; WFZ
+	zoneTableEntry.b mus_HTZ	; 7 ; HTZ
+	zoneTableEntry.b mus_HPZ	; 8
+	zoneTableEntry.b mus_SCZ	; 9
+	zoneTableEntry.b mus_OOZ	; 10 ; OOZ
+	zoneTableEntry.b mus_MCZ	; 11 ; MCZ
+	zoneTableEntry.b mus_CNZ	; 12 ; CNZ
+	zoneTableEntry.b mus_CPZ	; 13 ; CPZ
+	zoneTableEntry.b mus_DEZ	; 14 ; DEZ
+	zoneTableEntry.b mus_ARZ	; 15 ; ARZ
+	zoneTableEntry.b mus_SCZ	; 16 ; SCZ
     zoneTableEnd
 	even
 ;----------------------------------------------------------------------------
@@ -4257,23 +4029,23 @@ MusicList: zoneOrderedTable 1,1
 ;----------------------------------------------------------------------------
 ; byte_3EB2:
 MusicList2: zoneOrderedTable 1,1
-	zoneTableEntry.b MusID_EHZ_2P	; 0  ; EHZ 2P
-	zoneTableEntry.b MusID_EHZ	; 1
-	zoneTableEntry.b MusID_MTZ	; 2
-	zoneTableEntry.b MusID_OOZ	; 3
-	zoneTableEntry.b MusID_MTZ	; 4
-	zoneTableEntry.b MusID_MTZ	; 5
-	zoneTableEntry.b MusID_WFZ	; 6
-	zoneTableEntry.b MusID_HTZ	; 7
-	zoneTableEntry.b MusID_HPZ	; 8
-	zoneTableEntry.b MusID_SCZ	; 9
-	zoneTableEntry.b MusID_OOZ	; 10
-	zoneTableEntry.b MusID_MCZ_2P	; 11 ; MCZ 2P
-	zoneTableEntry.b MusID_CNZ_2P	; 12 ; CNZ 2P
-	zoneTableEntry.b MusID_CPZ	; 13
-	zoneTableEntry.b MusID_DEZ	; 14
-	zoneTableEntry.b MusID_ARZ	; 15
-	zoneTableEntry.b MusID_SCZ	; 16
+	zoneTableEntry.b mus_EHZ2P	; 0  ; EHZ 2P
+	zoneTableEntry.b mus_EHZ	; 1
+	zoneTableEntry.b mus_MTZ	; 2
+	zoneTableEntry.b mus_OOZ	; 3
+	zoneTableEntry.b mus_MTZ	; 4
+	zoneTableEntry.b mus_MTZ	; 5
+	zoneTableEntry.b mus_WFZ	; 6
+	zoneTableEntry.b mus_HTZ	; 7
+	zoneTableEntry.b mus_HPZ	; 8
+	zoneTableEntry.b mus_SCZ	; 9
+	zoneTableEntry.b mus_OOZ	; 10
+	zoneTableEntry.b mus_MCZ2P	; 11 ; MCZ 2P
+	zoneTableEntry.b mus_CNZ2P	; 12 ; CNZ 2P
+	zoneTableEntry.b mus_CPZ	; 13
+	zoneTableEntry.b mus_DEZ	; 14
+	zoneTableEntry.b mus_ARZ	; 15
+	zoneTableEntry.b mus_SCZ	; 16
     zoneTableEnd
 	even
 ; ===========================================================================
@@ -4287,8 +4059,7 @@ Level:
 	bset	#GameModeFlag_TitleCard,(Game_Mode).w ; add $80 to screen mode (for pre level sequence)
 	tst.w	(Demo_mode_flag).w	; test the old flag for the credits demos (now unused)
 	bmi.s	+
-	move.b	#MusID_FadeOut,d0
-	bsr.w	PlaySound	; fade out music
+	command	Mus_FadeOut	; fade out music
 +
 	bsr.w	ClearPLC
 	bsr.w	Pal_FadeToBlack
@@ -4433,7 +4204,8 @@ Level_GetBgm:
 Level_PlayBgm:
 	move.b	(a1,d0.w),d0		; load from music playlist
 	move.w	d0,(Level_Music).w	; store level music
-	bsr.w	PlayMusic		; play level music
+	move.b	d0,mQueue+1.w
+	command	Mus_Reset
 	move.b	#ObjID_TitleCard,(TitleCard+id).w ; load Obj34 (level title card) at $FFFFB080
 ; loc_40DA:
 Level_TtlCard:
@@ -5079,8 +4851,7 @@ loc_4712:
 	move.b	(Vint_runcount+3).w,d0
 	andi.b	#$1F,d0
 	bne.s	+	; rts
-	move.w	#SndID_OilSlide,d0
-	jsr	(PlaySound).l
+	sfx	sfx_OilSlide
 +
 	rts
 ; ===========================================================================
@@ -6009,10 +5780,8 @@ SpecialStage:
 	blo.s	+
 	move.b	#0,(Current_Special_Stage).w
 +
-	move.w	#SndID_SpecStageEntry,d0 ; play that funky special stage entry sound
-	bsr.w	PlaySound
-	move.b	#MusID_FadeOut,d0 ; fade out the music
-	bsr.w	PlayMusic
+	sfx	sfx_EnterSS
+	command	mus_FadeOut
 	bsr.w	Pal_FadeToWhite
 	tst.w	(Two_player_mode).w
 	beq.s	+
@@ -6119,8 +5888,7 @@ SpecialStage:
 	bsr.w	RunPLC_RAM
 	move.b	#VintID_CtrlDMA,(Vint_routine).w
 	bsr.w	WaitForVint
-	move.w	#MusID_SpecStage,d0
-	bsr.w	PlayMusic
+	music	Mus_SS
 	move.w	(VDP_Reg1_val).w,d0
 	ori.b	#$40,d0
 	move.w	d0,(VDP_control_port).l
@@ -6243,8 +6011,7 @@ SpecialStage:
 +
 	move.b	#1,(Update_HUD_score).w
 	move.b	#1,(Update_Bonus_score).w
-	move.w	#MusID_EndLevel,d0
-	jsr	(PlaySound).l
+	sfx	mus_GotThroughAct
 
 	clearRAM SS_Sprite_Table_Input,SS_Sprite_Table_Input_End
 	clearRAM SS_Object_RAM,SS_Object_RAM_End
@@ -6260,8 +6027,7 @@ SpecialStage:
 	beq.s	-
 	tst.l	(Plc_Buffer).w
 	bne.s	-
-	move.w	#SndID_SpecStageEntry,d0
-	bsr.w	PlaySound
+	sfx	sfx_EnterSS
 	bsr.w	Pal_FadeToWhite
 	tst.w	(Two_player_mode_copy).w
 	bne.s	loc_540C
@@ -6277,12 +6043,9 @@ loc_540C:
 
 ; loc_541A:
 SpecialStage_Unpause:
-	move.b	#MusID_Unpause,(Music_to_play).w
+	command	mus_Unpause
 	move.b	#VintID_Level,(Vint_routine).w
 	bra.w	WaitForVint
-
-
-
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -9761,8 +9524,7 @@ ContinueScreen:
 	moveq	#PalID_SS1,d0
 	bsr.w	PalLoad_ForFade
 	move.w	#0,(Target_palette).w
-	move.b	#MusID_Continue,d0
-	bsr.w	PlayMusic
+	music	Mus_Continue
 	move.w	#(11*60)-1,(Demo_Time_left).w	; 11 seconds minus 1 frame
 	clr.b	(Level_started_flag).w
 	clr.l	(Camera_X_pos_copy).w
@@ -10019,8 +9781,7 @@ ObjDB_Sonic_StartRunning:
 	addq.b	#2,routine(a0) ; => ObjDB_Sonic_Run
 	move.b	#$21,anim(a0)
 	clr.w	inertia(a0)
-	move.b	#SndID_SpindashRev,d0 ; super peel-out sound
-	bsr.w	PlaySound
+	sfx	sfx_Spindash
 
 ; loc_7BFA:
 ObjDB_Sonic_Run:
@@ -10061,8 +9822,7 @@ ObjDB_Tails_StartRunning:
 	move.w	#make_art_tile(ArtTile_ArtUnc_Tails,0,0),art_tile(a0)
 	move.b	#0,anim(a0)
 	clr.w	inertia(a0)
-	move.b	#SndID_SpindashRev,d0 ; super peel-out sound
-	bsr.w	PlaySound
+	sfx	sfx_Spindash
 
 ; loc_7C88:
 ObjDB_Tails_Run:
@@ -10164,12 +9924,14 @@ TwoPlayerResults:
 	bsr.w	LoadPLC2
 	moveq	#PalID_Menu,d0
 	bsr.w	PalLoad_ForFade
+
 	moveq	#0,d0
-	move.b	#MusID_2PResult,d0
+	moveq	#mus_Results2P,d0
 	cmp.w	(Level_Music).w,d0
 	beq.s	+
 	move.w	d0,(Level_Music).w
-	bsr.w	PlayMusic
+	move.b	d0,mQueue+1.w
+
 +
 	move.w	#(30*60)-1,(Demo_Time_left).w	; 30 seconds
 	clr.w	(Two_player_mode).w
@@ -11222,14 +10984,14 @@ MenuScreen:
 	clr.l	(a1)+
 	dbf	d1,-
 
-	move.b	#MusID_Options,d0
-	jsrto	(PlayMusic).l, JmpTo_PlayMusic
 	move.w	#(30*60)-1,(Demo_Time_left).w	; 30 seconds
 	clr.w	(Two_player_mode).w
 	clr.l	(Camera_X_pos).w
 	clr.l	(Camera_Y_pos).w
 	move.b	#VintID_Menu,(Vint_routine).w
 	bsr.w	WaitForVint
+	music	mus_Options
+
 	move.w	(VDP_Reg1_val).w,d0
 	ori.b	#$40,d0
 	move.w	d0,(VDP_control_port).l
@@ -11256,8 +11018,7 @@ LevelSelect2P_Main:
 LevelSelect2P_PressStart:
 	bsr.w	Chk2PZoneCompletion
 	bmi.s	loc_8DF4
-	move.w	#SndID_Error,d0
-	jsrto	(PlaySound).l, JmpTo_PlaySound
+	sfx	sfx_Error
 	bra.w	LevelSelect2P_Main
 ; ===========================================================================
 
@@ -11487,8 +11248,6 @@ MenuScreen_Options:
 	jsrto	(Dynamic_Normal).l, JmpTo2_Dynamic_Normal
 	moveq	#PalID_Menu,d0
 	bsr.w	PalLoad_ForFade
-	move.b	#MusID_Options,d0
-	jsrto	(PlayMusic).l, JmpTo_PlayMusic
 	clr.w	(Two_player_mode).w
 	clr.l	(Camera_X_pos).w
 	clr.l	(Camera_Y_pos).w
@@ -11496,6 +11255,8 @@ MenuScreen_Options:
 	clr.w	(Correct_cheat_entries_2).w
 	move.b	#VintID_Menu,(Vint_routine).w
 	bsr.w	WaitForVint
+	music	mus_Options
+
 	move.w	(VDP_Reg1_val).w,d0
 	ori.b	#$40,d0
 	move.w	d0,(VDP_control_port).l
@@ -11605,8 +11366,7 @@ OptionScreen_Controls:
 	andi.w	#button_B_mask|button_C_mask,d0
 	beq.s	+	; rts
 	move.w	(Sound_test_sound).w,d0
-	addi.w	#$80,d0
-	jsrto	(PlayMusic).l, JmpTo_PlayMusic
+	move.b	d0,mQueue+1.w
 	lea	(level_select_cheat).l,a0
 	lea	(continues_cheat).l,a2
 	lea	(Level_select_flag).w,a1	; Also Slow_motion_flag
@@ -11622,7 +11382,7 @@ OptionScreen_Controls:
 OptionScreen_Choices:
 	dc.l (3-1)<<24|(Player_option&$FFFFFF)
 	dc.l (2-1)<<24|(Two_player_items&$FFFFFF)
-	dc.l ($80-1)<<24|(Sound_test_sound&$FFFFFF)
+	dc.l (SFXlast-1)<<24|(Sound_test_sound&$FFFFFF)
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
@@ -11816,9 +11576,6 @@ MenuScreen_LevelSelect:
 	clr.l	(a1)+
 	dbf	d1,-
 
-	move.b	#MusID_Options,d0
-	jsrto	(PlayMusic).l, JmpTo_PlayMusic
-
 	move.w	#(30*60)-1,(Demo_Time_left).w	; 30 seconds
 	clr.w	(Two_player_mode).w
 	clr.l	(Camera_X_pos).w
@@ -11828,6 +11585,7 @@ MenuScreen_LevelSelect:
 
 	move.b	#VintID_Menu,(Vint_routine).w
 	bsr.w	WaitForVint
+	music	mus_Options
 
 	move.w	(VDP_Reg1_val).w,d0
 	ori.b	#$40,d0
@@ -11944,8 +11702,7 @@ LevelSelect_StartZone:
 	move.b	d0,(Continue_count).w
 	move.l	#5000,(Next_Extra_life_score).w
 	move.l	#5000,(Next_Extra_life_score_2P).w
-	move.b	#MusID_FadeOut,d0
-	jsrto	(PlaySound).l, JmpTo_PlaySound
+	command	Mus_FadeOut
 	moveq	#0,d0
 	move.w	d0,(Two_player_mode_copy).w
 	move.w	d0,(Two_player_mode).w
@@ -12018,8 +11775,7 @@ LevSelControls_CheckLR:
 	andi.w	#button_B_mask|button_C_mask,d1
 	beq.s	+	; rts
 	move.w	(Sound_test_sound).w,d0
-	addi.w	#$80,d0
-	jsrto	(PlayMusic).l, JmpTo_PlayMusic
+	move.b	d0,mQueue+1.w
 	lea	(debug_cheat).l,a0
 	lea	(super_sonic_cheat).l,a2
 	lea	(Debug_options_flag).w,a1	; Also S1_hidden_credits_flag
@@ -12227,6 +11983,7 @@ LevSel_MarkTable:	; 4 bytes per level select entry
 ; ===========================================================================
 ; loc_9746:
 CheckCheats:	; This is called from 2 places: the options screen and the level select screen
+	sfx	sfx_RingRight
 	move.w	(Correct_cheat_entries).w,d0	; Get the number of correct sound IDs entered so far
 	adda.w	d0,a0				; Skip to the next entry
 	move.w	(Sound_test_sound).w,d0		; Get the current sound test sound
@@ -12236,8 +11993,8 @@ CheckCheats:	; This is called from 2 places: the options screen and the level se
 	tst.b	1(a0)				; Is the next entry 0?
 	bne.s	++				; If not, branch
 	move.w	#$101,(a1)			; Enable the cheat
-	move.b	#SndID_Ring,d0			; Play the ring sound
-	jsrto	(PlaySound).l, JmpTo_PlaySound
+	sfx	sfx_RingRight
+
 +
 	move.w	#0,(Correct_cheat_entries).w	; Clear the number of correct entries
 +
@@ -12248,20 +12005,17 @@ CheckCheats:	; This is called from 2 places: the options screen and the level se
 	bne.s	++
 	addq.w	#1,(Correct_cheat_entries_2).w
 	tst.b	1(a2)
-	bne.s	+++	; rts
+	bne.s	+++				; rts
 	tst.w	d2				; Test this to determine which cheat to enable
 	bne.s	+				; If not 0, branch
 	move.b	#$F,(Continue_count).w		; Give 15 continues
-	; The next line causes the bug where the OOZ music plays until reset.
-	; Remove "&$7F" to fix the bug.
-	move.b	#SndID_ContinueJingle&$7F,d0	; Play the continue jingle
-	jsrto	(PlayMusic).l, JmpTo_PlayMusic
+
+	sfx	sfx_Continue
 	bra.s	++
 ; ===========================================================================
 +
 	move.w	#7,(Got_Emerald).w		; Give 7 emeralds to the player
-	move.b	#MusID_Emerald,d0		; Play the emerald jingle
-	jsrto	(PlayMusic).l, JmpTo_PlayMusic
+	music	mus_Emerald			; Play the emerald jingle
 +
 	move.w	#0,(Correct_cheat_entries_2).w	; Clear the number of correct entries
 +
@@ -12328,10 +12082,6 @@ MapEng_LevSelIcon:	BINCLUDE "mappings/misc/Level Select Icons.bin"
 	even
 
     if ~~removeJmpTos
-JmpTo_PlaySound
-	jmp	(PlaySound).l
-JmpTo_PlayMusic
-	jmp	(PlayMusic).l
 ; loc_9C70: JmpTo_PlaneMapToVRAM
 JmpTo_PlaneMapToVRAM_H40
 	jmp	(PlaneMapToVRAM_H40).l
@@ -12356,11 +12106,9 @@ EndingSequence:
 	andi.b	#$BF,d0
 	move.w	d0,(VDP_control_port).l
 
-	stopZ80
 	dmaFillVRAM 0,VRAM_Plane_A_Name_Table,VRAM_Plane_Table_Size ; clear Plane A pattern name table
 	clr.l	(Vscroll_Factor).w
 	clr.l	(unk_F61A).w
-	startZ80
 
 	lea	(VDP_control_port).l,a6
 	move.w	#$8B03,(a6)		; EXT-INT disabled, V scroll by screen, H scroll by line
@@ -12415,8 +12163,7 @@ EndingSequence:
 	jsrto	(NemDec).l, JmpTo_NemDec
 	move.w	#death_egg_zone_act_1,(Current_ZoneAndAct).w
 	move	#$2300,sr
-	moveq	#MusID_Ending,d0
-	jsrto	(PlayMusic).l, JmpTo2_PlayMusic
+	music	mus_Ending
 	move.l	#$EEE0EEE,d1
 	lea	(Normal_palette).w,a1
 
@@ -12527,8 +12274,7 @@ EndgameCredits:
 	; Bug: The '+4' shouldn't be here; clearRAM accidentally clears an additional 4 bytes
 	clearRAM Horiz_Scroll_Buf,Horiz_Scroll_Buf_End+4
 
-	moveq	#MusID_Credits,d0
-	jsrto	(PlaySound).l, JmpTo2_PlaySound
+	music	mus_Credits
 	clr.w	(Target_palette).w
 	move.w	#$EEE,(Target_palette+$C).w
 	move.w	#$EE,(Target_palette_line2+$C).w
@@ -13994,8 +13740,6 @@ JmpTo5_DisplaySprite
 	jmp	(DisplaySprite).l
 JmpTo3_DeleteObject
 	jmp	(DeleteObject).l
-JmpTo2_PlaySound
-	jmp	(PlaySound).l
 JmpTo_ObjB2_Animate_Pilot
 	jmp	(ObjB2_Animate_Pilot).l
 JmpTo_AnimateSprite
@@ -14006,8 +13750,6 @@ JmpTo_EniDec
 	jmp	(EniDec).l
 JmpTo_ClearScreen
 	jmp	(ClearScreen).l
-JmpTo2_PlayMusic
-	jmp	(PlayMusic).l
 JmpTo_LoadChildObject
 	jmp	(LoadChildObject).l
 ; JmpTo2_PlaneMapToVRAM_H40
@@ -18530,8 +18272,7 @@ LevEvents_EHZ2_Routine2:
 	move.w	#$28F0,(Tails_Min_X_pos).w
 	move.w	#$2940,(Tails_Max_X_pos).w
 	addq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_EHZ2_Routine3
-	move.w	#MusID_FadeOut,d0
-	jsrto	(PlayMusic).l, JmpTo3_PlayMusic
+	command	Mus_FadeOut
 	clr.b	(ScreenShift).w
 	move.b	#2,(Current_Boss_ID).w
 	moveq	#PLCID_EhzBoss,d0
@@ -18558,8 +18299,7 @@ LevEvents_EHZ2_Routine3:
 	move.w	#$426,y_pos(a1)
 +
 	addq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_EHZ2_Routine4
-	move.w	#MusID_Boss,d0
-	jsrto	(PlayMusic).l, JmpTo3_PlayMusic
+	music	mus_Boss
 +
 	rts
 ; ===========================================================================
@@ -18638,8 +18378,7 @@ LevEvents_MTZ3_Routine3:
 	move.w	#$2AB0,(Tails_Min_X_pos).w
 	move.w	#$2AB0,(Tails_Max_X_pos).w
 	addq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_MTZ3_Routine4
-	move.w	#MusID_FadeOut,d0
-	jsrto	(PlayMusic).l, JmpTo3_PlayMusic
+	command	Mus_FadeOut
 	clr.b	(ScreenShift).w
 	move.b	#7,(Current_Boss_ID).w
 	moveq	#PLCID_MtzBoss,d0
@@ -18662,8 +18401,7 @@ LevEvents_MTZ3_Routine4:
 	move.b	#ObjID_MTZBoss,id(a1) ; load obj54 (MTZ boss)
 +
 	addq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_MTZ3_Routine5
-	move.w	#MusID_Boss,d0
-	jsrto	(PlayMusic).l, JmpTo3_PlayMusic
+	music	mus_Boss
 +
 	rts
 ; ===========================================================================
@@ -18873,8 +18611,7 @@ LevEvents_HTZ_Routine2:
 	addq.w	#1,(Camera_BG_Y_offset).w
 	andi.w	#$3F,d1
 	bne.s	LevEvents_HTZ_Routine2_Continue
-	move.w	#SndID_Rumbling2,d0 ; rumbling sound
-	jsr	(PlaySound).l
+	sfx	sfx_Rumble2
 	bra.s	LevEvents_HTZ_Routine2_Continue
 ; ---------------------------------------------------------------------------
 .sinking:
@@ -18887,8 +18624,7 @@ LevEvents_HTZ_Routine2:
 	subq.w	#1,(Camera_BG_Y_offset).w
 	andi.w	#$3F,d1
 	bne.s	LevEvents_HTZ_Routine2_Continue
-	move.w	#SndID_Rumbling2,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Rumble2
 	bra.s	LevEvents_HTZ_Routine2_Continue
 ; ---------------------------------------------------------------------------
 .flip_delay:
@@ -18918,8 +18654,7 @@ LevEvents_HTZ_Routine2_Continue:
 	move.l	d0,(Camera_BG_X_offset).w
 	move.b	d0,(HTZ_Terrain_Direction).w
 	subq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_HTZ_Routine1
-	move.w	#MusID_StopSFX,d0
-	jsr	(PlaySound).l
+;	command	Mus_StopSFX
 	rts
 ; ---------------------------------------------------------------------------
 .exit_right:
@@ -18929,8 +18664,7 @@ LevEvents_HTZ_Routine2_Continue:
 	move.l	d0,(Camera_BG_X_offset).w
 	move.b	d0,(HTZ_Terrain_Direction).w
 	addq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_HTZ_Routine3
-	move.w	#MusID_StopSFX,d0
-	jsr	(PlaySound).l
+;	command	Mus_StopSFX
 	rts
 
 ; ===========================================================================
@@ -19117,8 +18851,7 @@ LevEvents_HTZ2_Routine2:
 	addq.w	#1,(Camera_BG_Y_offset).w
 	andi.w	#$3F,d1
 	bne.s	LevEvents_HTZ2_Routine2_Continue
-	move.w	#SndID_Rumbling2,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Rumble2
 	bra.s	LevEvents_HTZ2_Routine2_Continue
 ; ---------------------------------------------------------------------------
 .sinking:
@@ -19131,8 +18864,7 @@ LevEvents_HTZ2_Routine2:
 	subq.w	#1,(Camera_BG_Y_offset).w
 	andi.w	#$3F,d1
 	bne.s	LevEvents_HTZ2_Routine2_Continue
-	move.w	#SndID_Rumbling2,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Rumble2
 	bra.s	LevEvents_HTZ2_Routine2_Continue
 ; ---------------------------------------------------------------------------
 .flip_delay:
@@ -19162,8 +18894,7 @@ LevEvents_HTZ2_Routine2_Continue:
 	move.l	d0,(Camera_BG_X_offset).w
 	move.b	d0,(HTZ_Terrain_Direction).w
 	subq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_HTZ2_Routine1
-	move.w	#MusID_StopSFX,d0
-	jsr	(PlaySound).l
+;	command	Mus_StopSFX
 	rts
 ; ---------------------------------------------------------------------------
 .exit_right:
@@ -19173,8 +18904,7 @@ LevEvents_HTZ2_Routine2_Continue:
 	move.l	d0,(Camera_BG_X_offset).w
 	move.b	d0,(HTZ_Terrain_Direction).w
 	addq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_HTZ2_Routine3
-	move.w	#MusID_StopSFX,d0
-	jsr	(PlaySound).l
+;	command	Mus_StopSFX
 	rts
 ; ===========================================================================
 ; loc_ED96:
@@ -19226,8 +18956,7 @@ LevEvents_HTZ2_Routine4:
 	addq.w	#1,(Camera_BG_Y_offset).w
 	andi.w	#$3F,d1
 	bne.s	LevEvents_HTZ2_Routine4_Continue
-	move.w	#SndID_Rumbling2,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Rumble2
 	bra.s	LevEvents_HTZ2_Routine4_Continue
 ; ===========================================================================
 .sinking:
@@ -19240,8 +18969,7 @@ LevEvents_HTZ2_Routine4:
 	subq.w	#1,(Camera_BG_Y_offset).w
 	andi.w	#$3F,d1
 	bne.s	LevEvents_HTZ2_Routine4_Continue
-	move.w	#SndID_Rumbling2,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Rumble2
 	bra.s	LevEvents_HTZ2_Routine4_Continue
 ; ===========================================================================
 .flip_delay:
@@ -19270,8 +18998,7 @@ LevEvents_HTZ2_Routine4_Continue:
 	move.l	d0,(Camera_BG_X_offset).w
 	move.b	d0,(HTZ_Terrain_Direction).w
 	subq.b	#6,(Dynamic_Resize_Routine).w ; => LevEvents_HTZ2_Routine1
-	move.w	#MusID_StopSFX,d0
-	jsr	(PlaySound).l
+;	command	Mus_StopSFX
 	rts
 ; ===========================================================================
 .exit_right:
@@ -19281,8 +19008,7 @@ LevEvents_HTZ2_Routine4_Continue:
 	move.l	d0,(Camera_BG_X_offset).w
 	move.b	d0,(HTZ_Terrain_Direction).w
 	addq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_HTZ2_Routine5
-	move.w	#MusID_StopSFX,d0
-	jsr	(PlaySound).l
+;	command	Mus_StopSFX
 	rts
 ; ===========================================================================
 ; loc_EEF8:
@@ -19356,8 +19082,7 @@ LevEvents_HTZ2_Routine7:
 	move.w	#$2EE0,(Tails_Min_X_pos).w
 	move.w	#$2F5E,(Tails_Max_X_pos).w
 	addq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_HTZ2_Routine8
-	move.w	#MusID_FadeOut,d0
-	jsrto	(PlayMusic).l, JmpTo3_PlayMusic
+	command	Mus_FadeOut
 	clr.b	(ScreenShift).w
 	move.b	#3,(Current_Boss_ID).w
 	moveq	#PLCID_HtzBoss,d0
@@ -19381,8 +19106,7 @@ LevEvents_HTZ2_Routine8:
 	move.b	#ObjID_HTZBoss,id(a1) ; load obj52 (HTZ boss)
 +
 	addq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_HTZ2_Routine9
-	move.w	#MusID_Boss,d0
-	jsrto	(PlayMusic).l, JmpTo3_PlayMusic
+	music	mus_Boss
 +
 	rts
 ; ===========================================================================
@@ -19458,8 +19182,7 @@ LevEvents_OOZ2_Routine2:
 	move.w	#$2880,(Tails_Min_X_pos).w
 	move.w	#$28C0,(Tails_Max_X_pos).w
 	addq.b	#2,(Dynamic_Resize_Routine).w
-	move.w	#MusID_FadeOut,d0
-	jsrto	(PlayMusic).l, JmpTo3_PlayMusic
+	command	Mus_FadeOut
 	clr.b	(ScreenShift).w
 	move.b	#8,(Current_Boss_ID).w
 	moveq	#PLCID_OozBoss,d0
@@ -19484,8 +19207,7 @@ LevEvents_OOZ2_Routine3:
 	move.b	#ObjID_OOZBoss,id(a1) ; load obj55 (OOZ boss)
 +
 	addq.b	#2,(Dynamic_Resize_Routine).w
-	move.w	#MusID_Boss,d0
-	jsrto	(PlayMusic).l, JmpTo3_PlayMusic
+	music	mus_Boss
 +
 	rts
 ; ===========================================================================
@@ -19547,8 +19269,7 @@ LevEvents_MCZ2_Routine2:
 	move.w	#$20F0,(Tails_Max_X_pos).w
 	move.w	#$20F0,(Tails_Min_X_pos).w
 	addq.b	#2,(Dynamic_Resize_Routine).w
-	move.w	#MusID_FadeOut,d0
-	jsrto	(PlayMusic).l, JmpTo3_PlayMusic
+	command	Mus_FadeOut
 	clr.b	(ScreenShift).w
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtUnc_FallingRocks),VRAM,WRITE),(VDP_control_port).l
 	lea	(VDP_data_port).l,a6
@@ -19583,8 +19304,7 @@ LevEvents_MCZ2_Routine3:
 	move.b	#ObjID_MCZBoss,id(a1) ; load obj57 (MCZ boss)
 +
 	addq.b	#2,(Dynamic_Resize_Routine).w
-	move.w	#MusID_Boss,d0
-	jsrto	(PlayMusic).l, JmpTo3_PlayMusic
+	music	mus_Boss
 +
 	rts
 ; ===========================================================================
@@ -19595,8 +19315,7 @@ LevEvents_MCZ2_Routine4:
 	move.w	(Timer_frames).w,d0
 	andi.w	#$1F,d0
 	bne.s	+
-	move.w	#SndID_Rumbling2,d0
-	jsrto	(PlaySound).l, JmpTo3_PlaySound
+	sfx	sfx_Rumble2
 +
 	move.w	(Camera_X_pos).w,(Camera_Min_X_pos).w
 	move.w	(Camera_Max_X_pos).w,(Tails_Max_X_pos).w
@@ -19655,8 +19374,7 @@ LevEvents_CNZ2_Routine2:
 	move.w	#$2860,(Tails_Min_X_pos).w
 	move.w	#$28E0,(Tails_Max_X_pos).w
 	addq.b	#2,(Dynamic_Resize_Routine).w
-	move.w	#MusID_FadeOut,d0
-	jsrto	(PlayMusic).l, JmpTo3_PlayMusic
+	command	Mus_FadeOut
 	clr.b	(ScreenShift).w
 	move.b	#6,(Current_Boss_ID).w
 	moveq	#PLCID_CnzBoss,d0
@@ -19681,8 +19399,7 @@ LevEvents_CNZ2_Routine3:
 	move.b	#ObjID_CNZBoss,id(a1) ; load obj51
 +
 	addq.b	#2,(Dynamic_Resize_Routine).w
-	move.w	#MusID_Boss,d0
-	jsrto	(PlayMusic).l, JmpTo3_PlayMusic
+	music	mus_Boss
 +
 	rts
 ; ===========================================================================
@@ -19739,8 +19456,7 @@ LevEvents_CPZ2_Routine2:
 	move.w	#$2A20,(Tails_Min_X_pos).w
 	move.w	#$2A20,(Tails_Max_X_pos).w
 	addq.b	#2,(Dynamic_Resize_Routine).w
-	move.w	#MusID_FadeOut,d0
-	jsrto	(PlayMusic).l, JmpTo3_PlayMusic
+	command	Mus_FadeOut
 	clr.b	(ScreenShift).w
 	move.b	#1,(Current_Boss_ID).w
 	moveq	#PLCID_CpzBoss,d0
@@ -19764,8 +19480,7 @@ LevEvents_CPZ2_Routine3:
 	move.b	#ObjID_CPZBoss,id(a1) ; load obj5D
 +
 	addq.b	#2,(Dynamic_Resize_Routine).w
-	move.w	#MusID_Boss,d0
-	jsrto	(PlayMusic).l, JmpTo3_PlayMusic
+	music	mus_Boss
 +
 	rts
 ; ===========================================================================
@@ -19886,8 +19601,7 @@ LevEvents_ARZ2_Routine2:
 	move.w	#$2A40,(Tails_Max_X_pos).w
 	move.w	#$2A40,(Tails_Min_X_pos).w
 	addq.b	#2,(Dynamic_Resize_Routine).w
-	move.w	#MusID_FadeOut,d0
-	jsrto	(PlayMusic).l, JmpTo3_PlayMusic
+	command	Mus_FadeOut
 	clr.b	(ScreenShift).w
 	jsrto	(SingleObjLoad).l, JmpTo_SingleObjLoad
 	bne.s	+	; rts
@@ -19906,8 +19620,7 @@ LevEvents_ARZ2_Routine3:
 	cmpi.b	#$5A,(ScreenShift).w
 	blo.s	+	; rts
 	addq.b	#2,(Dynamic_Resize_Routine).w
-	move.w	#MusID_Boss,d0
-	jsrto	(PlayMusic).l, JmpTo3_PlayMusic
+	music	mus_Boss
 +
 	rts
 ; ===========================================================================
@@ -19983,7 +19696,8 @@ LevEvents_SCZ2:
 ; loc_F626:
 PlayLevelMusic:
 	move.w	(Level_Music).w,d0
-	jmpto	(PlayMusic).l, JmpTo3_PlayMusic
+	move.b	d0,mQueue+1.w
+	rts
 ; ===========================================================================
 
 ; loc_F62E:
@@ -20005,16 +19719,11 @@ LoadPLC_AnimalExplosion:
     if ~~removeJmpTos
 JmpTo_SingleObjLoad
 	jmp	(SingleObjLoad).l
-JmpTo3_PlaySound
-	jmp	(PlaySound).l
 ; JmpTo2_PalLoad2
 JmpTo2_PalLoad_Now
 	jmp	(PalLoad_Now).l
 JmpTo2_LoadPLC
 	jmp	(LoadPLC).l
-JmpTo3_PlayMusic
-	jmp	(PlayMusic).l
-
 	align 4
     endif
 
@@ -20697,9 +20406,11 @@ sub_FE70:
 	bra.s	loc_FEC2
 ; ===========================================================================
 /
-	move.w	#SndID_PlatformKnock,d0
-	jsr	(PlaySoundLocal).l
-	moveq	#$40,d0
+	tst.b	render_flags(a0)
+	bpl.s	.no
+	sfx	sfx_PlatformKnock
+
+.no	moveq	#$40,d0
 	bra.s	loc_FEC2
 ; ===========================================================================
 +
@@ -21911,8 +21622,8 @@ Obj1A_CreateFragments:
 +	dbf	d1,-
 +
 	bsr.w	DisplaySprite
-	move.w	#SndID_Smash,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Smash
+	rts
 ; ===========================================================================
 ; Delay data for obj1A in all but HPZ:
 ;byte_10BF2:
@@ -23035,9 +22746,9 @@ CollectRing_1P:
 	addq.w	#1,(Ring_count).w	; add 1 to the ring count
 +
 	ori.b	#1,(Update_HUD_rings).w	; set flag to update the ring counter in the HUD
-	move.w	#SndID_Ring,d0		; prepare to play the ring sound
+	moveq	#sfx_RingRight,d0	; prepare to play the ring sound
     else
-	move.w	#SndID_Ring,d0		; prepare to play the ring sound
+	moveq	#sfx_RingRight,d0	; prepare to play the ring sound
 	cmpi.w	#999,(Ring_count).w	; does the player 1 have 999 or more rings?
 	bhs.s	JmpTo_PlaySoundStereo	; if yes, play the ring sound
 	addq.w	#1,(Ring_count).w	; add 1 to the ring count
@@ -23055,11 +22766,10 @@ CollectRing_1P:
 +
 	addq.b	#1,(Life_count).w	; add 1 to the life count
 	addq.b	#1,(Update_HUD_lives).w	; add 1 to the displayed life count
-	move.w	#MusID_ExtraLife,d0	; prepare to play the extra life jingle
+	moveq	#mus_ExtraLife,d0	; prepare to play the extra life jingle
 
 JmpTo_PlaySoundStereo
-	jmp	(PlaySoundStereo).l
-; ===========================================================================
+	move.b	d0,mQueue+1.w
 	rts
 ; ===========================================================================
 
@@ -23077,7 +22787,7 @@ CollectRing_Tails:
 
 ; CollectRing_2P:
 	ori.b	#1,(Update_HUD_rings_2P).w	; set flag to update the ring counter in the second player's HUD
-	move.w	#SndID_Ring,d0			; prepare to play the ring sound
+	moveq	#sfx_RingRight,d0		; prepare to play the ring sound
 	cmpi.w	#100,(Ring_count_2P).w		; does the player 2 have less than 100 rings?
 	blo.s	JmpTo2_PlaySoundStereo		; if yes, play the ring sound
 	bset	#1,(Extra_life_flags_2P).w	; test and set the flag for the first extra life
@@ -23089,10 +22799,11 @@ CollectRing_Tails:
 +
 	addq.b	#1,(Life_count_2P).w		; add 1 to the life count
 	addq.b	#1,(Update_HUD_lives_2P).w	; add 1 to the displayed life count
-	move.w	#MusID_ExtraLife,d0		; prepare to play the extra life jingle
+	moveq	#mus_ExtraLife,d0		; prepare to play the extra life jingle
 
 JmpTo2_PlaySoundStereo
-	jmp	(PlaySoundStereo).l
+	move.b	d0,mQueue+1.w
+	rts
 ; End of function CollectRing
 
 ; ===========================================================================
@@ -23172,9 +22883,12 @@ Obj37_Init:
 	neg.w	d4
 	dbf	d5,-
 +
-	move.w	#SndID_RingSpill,d0
-	jsr	(PlaySoundStereo).l
-	tst.b	parent+1(a0)
+
+	tst.b	render_flags(a0)
+	bpl.s	.no
+	sfx	sfx_RingLoss
+
+.no	tst.b	parent+1(a0)
 	bne.s	+
 	move.w	#0,(Ring_count).w
 	move.b	#$80,(Update_HUD_rings).w
@@ -23302,8 +23016,9 @@ BigRing_Enter:
 	blo.s	+
 	bset	#0,render_flags(a1)
 +
-	move.w	#SndID_EnterGiantRing,d0
-	jsr	(PlaySoundStereo).l
+	tst.b	render_flags(a0)
+	bpl.s	BigRing_Main
+	sfx	sfx_BigRing
 	bra.s	BigRing_Main
 ; ===========================================================================
 ; BranchTo6_DeleteObject
@@ -23782,8 +23497,8 @@ sonic_1up:
 	addq.w	#1,(Monitors_Broken).w
 	addq.b	#1,(Life_count).w
 	addq.b	#1,(Update_HUD_lives).w
-	move.w	#MusID_ExtraLife,d0
-	jmp	(PlayMusic).l	; Play extra life music
+	music	mus_ExtraLife
+	rts	; Play extra life music
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Tails 1up Monitor
@@ -23793,8 +23508,8 @@ tails_1up:
 	addq.w	#1,(Monitors_Broken_2P).w
 	addq.b	#1,(Life_count_2P).w
 	addq.b	#1,(Update_HUD_lives_2P).w
-	move.w	#MusID_ExtraLife,d0
-	jmp	(PlayMusic).l	; Play extra life music
+	music	mus_ExtraLife
+	rts	; Play extra life music
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Super Ring Monitor
@@ -23849,8 +23564,8 @@ super_ring:
 	bset	#2,(a4)		; set flag for second 1up
 	beq.s	ChkPlayer_1up	; branch, if not yet set
 +
-	move.w	#SndID_Ring,d0
-	jmp	(PlayMusic).l
+	sfx	sfx_RingRight
+	rts
 ; ---------------------------------------------------------------------------
 ;loc_129D4:
 ChkPlayer_1up:
@@ -23882,8 +23597,8 @@ super_shoes_Tails:
 	move.w	#$18,(Tails_acceleration).w
 	move.w	#$80,(Tails_deceleration).w
 +
-	move.w	#MusID_SpeedUp,d0
-	jmp	(PlayMusic).l	; Speed up tempo
+	command	mus_ShoesOn
+	rts	; Speed up tempo
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Shield Monitor
@@ -23892,8 +23607,7 @@ super_shoes_Tails:
 shield_monitor:
 	addq.w	#1,(a2)
 	bset	#status_sec_hasShield,status_secondary(a1)	; give shield status
-	move.w	#SndID_Shield,d0
-	jsr	(PlayMusic).l
+	sfx	sfx_Shield
 	tst.b	parent+1(a0)
 	bne.s	+
 	move.b	#ObjID_Shield,(Sonic_Shield+id).w ; load Obj38 (shield) at $FFFFD180
@@ -23919,8 +23633,7 @@ invincible_monitor:
 	bne.s	+
 	cmpi.b	#$C,air_left(a1)	; or when drowning
 	bls.s	+
-	move.w	#MusID_Invincible,d0
-	jsr	(PlayMusic).l
+	music	mus_Invincibility
 +
 	tst.b	parent+1(a0)
 	bne.s	+
@@ -24088,8 +23801,8 @@ swap_loop_objects:
 +
 	move.b	#$40,(Teleport_timer).w
 	move.b	#1,(Teleport_flag).w
-	move.w	#SndID_Teleport,d0
-	jmp	(PlayMusic).l
+	sfx	sfx_Swap
+	rts
 ; ===========================================================================
 ; Table listing all the addresses for players 1 and 2 that need to be swapped
 ; when a teleport monitor is destroyed
@@ -24264,8 +23977,8 @@ Obj0E_Sonic_Init:
 	lea	(IntroEmblemTop).w,a1
 	move.b	#ObjID_IntroStars,id(a1) ; load obj0E (flashing intro stars) at $FFFFD140
 	move.b	#6,subtype(a1)				; logo top
-	moveq	#SndID_Sparkle,d0
-	jmpto	(PlaySound).l, JmpTo4_PlaySound
+	sfx	sfx_Sparkle
+	rts
 ; ===========================================================================
 
 loc_12EC2:
@@ -24276,11 +23989,11 @@ loc_12EC2:
 +
 	addq.b	#2,routine_secondary(a0)
 	lea	(TitleScreenPaletteChanger3).w,a1
-	move.b	#ObjID_TtlScrPalChanger,id(a1) ; load objC9 (palette change)
+	move.b	#ObjID_TtlScrPalChanger,id(a1)	; load objC9 (palette change)
 	move.b	#0,subtype(a1)
 	st.b	objoff_30(a0)
-	moveq	#MusID_Title,d0 ; title music
-	jmpto	(PlayMusic).l, JmpTo4_PlayMusic
+	music	mus_Title			 ; title music
+	rts
 ; ===========================================================================
 
 loc_12EE8:
@@ -24581,8 +24294,8 @@ loc_1319E:
 	move.w	d0,y_pixel(a0)
 	swap	d0
 	move.w	d0,x_pixel(a0)
-	moveq	#SndID_Sparkle,d0 ; play intro sparkle sound
-	jmpto	(PlaySound).l, JmpTo4_PlaySound
+	sfx	sfx_Sparkle
+	rts
 ; ===========================================================================
 ; unknown
 word_131DC:
@@ -24935,9 +24648,8 @@ TitleScreen_SetFinalState:
 	dbf	d6,-
 
 	tst.b	objoff_30(a0)
-	bne.s	+	; rts
-	moveq	#MusID_Title,d0 ; title music
-	jsrto	(PlayMusic).l, JmpTo4_PlayMusic
+	bne.s	+			; rts
+	music	mus_Title		; title music
 +
 	rts
 ; End of function sub_134BC
@@ -25006,8 +24718,7 @@ Obj0F_Main:
 	move.b	d2,(Title_screen_option).w
 	andi.b	#button_up_mask|button_down_mask,d0
 	beq.s	+	; rts
-	moveq	#SndID_Blip,d0 ; selection blip sound
-	jsrto	(PlaySound).l, JmpTo4_PlaySound
+	sfx	sfx_Switch
 +
 	rts
 ; ===========================================================================
@@ -25058,18 +24769,7 @@ Obj0E_MapUnc_136A8:	BINCLUDE "mappings/sprite/obj0E.bin"
 ; sprite mappings
 ; -----------------------------------------------------------------------------
 Obj0F_MapUnc_13B70:	BINCLUDE "mappings/sprite/obj0F.bin"
-
-    if ~~removeJmpTos
-JmpTo4_PlaySound
-	jmp	(PlaySound).l
-JmpTo4_PlayMusic
-	jmp	(PlayMusic).l
-
-	align 4
-    endif
-
-
-
+	even
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -25703,8 +25403,7 @@ loc_141E6:
 	add.w	d0,(Total_Bonus_Countdown).w
 	tst.w	d0
 	bne.s	loc_14256
-	move.w	#SndID_TallyEnd,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Register
 	addq.b	#2,routine(a0)
 	move.w	#$B4,anim_frame_duration(a0)
 	cmpi.w	#1000,(Total_Bonus_Countdown).w
@@ -25731,7 +25430,6 @@ loc_14220:
 	addq.b	#1,(Continue_count).w
 
 return_14254:
-
 	rts
 ; ===========================================================================
 
@@ -25740,8 +25438,8 @@ loc_14256:
 	move.b	(Vint_runcount+3).w,d0
 	andi.b	#3,d0
 	bne.s	return_14254
-	move.w	#SndID_Blip,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Switch
+	rts
 ; ===========================================================================
 
 loc_14270:
@@ -25780,8 +25478,7 @@ loc_142B0:
 
 loc_142BC:
 	addi_.b	#2,routine(a0)
-	move.w	#SndID_ContinueJingle,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Continue
 
 loc_142CC:
 	subq.w	#1,anim_frame_duration(a0)
@@ -26051,8 +25748,7 @@ Obj6F_P1Rings:
 	move.b	#$2A,routine(a0)	; => Obj6F_PerfectBonus
 	move.w	#$120,y_pixel(a0)
 	st.b	(Update_Bonus_score).w	; set to -1 (update)
-	move.w	#SndID_Signpost,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Signpost
 	move.w	#$5A,(SpecialStageResults+anim_frame_duration).w
 	bra.w	Obj6F_PerfectBonus
 ; ===========================================================================
@@ -26121,8 +25817,7 @@ Obj6F_TallyScore:
 +
 	tst.w	d0
 	bne.s	+++
-	move.w	#SndID_TallyEnd,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Register
 	addq.b	#2,routine(a0)		; => Obj6F_TimedDisplay
 	move.w	#$78,anim_frame_duration(a0)
 	tst.w	(Perfect_rings_flag).w
@@ -26147,8 +25842,8 @@ Obj6F_TallyScore:
 	move.b	(Vint_runcount+3).w,d0
 	andi.b	#3,d0
 	bne.s	-		; rts
-	move.w	#SndID_Blip,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Switch
+	rts
 ; ===========================================================================
 ;loc_1461C
 Obj6F_DisplayOnly:
@@ -26171,12 +25866,11 @@ Obj6F_TallyPerfect:
 	move.b	(Vint_runcount+3).w,d0
 	andi.b	#3,d0
 	bne.s	++		; rts
-	move.w	#SndID_Blip,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Switch
+	rts
 ; ===========================================================================
 +
-	move.w	#SndID_TallyEnd,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Register
 	addq.b	#4,routine(a0)
 	move.w	#$78,anim_frame_duration(a0)
 	cmpi.w	#2,(Player_mode).w
@@ -27168,8 +26862,7 @@ MoveSpikes_Delay:
 	bne.s	+	; rts			; branch, if timer didn't reach 0
 	tst.b	render_flags(a0)		; are spikes on screen?
 	bpl.s	+	; rts			; if not, branch
-	move.w	#SndID_SpikesMove,d0		; play spike movement sount
-	jsr	(PlaySound).l
+	sfx	sfx_SpikeMove
 	bra.s	+	; rts
 ; ===========================================================================
 ; loc_15B24:
@@ -27357,8 +27050,8 @@ BreakObjectToPieces_InitObject:
 	dbf	d1,BreakObjectToPieces_Loop
 
 loc_15E82:
-	move.w	#SndID_SlowSmash,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Collapse
+	rts
 ; End of function BreakObjectToPieces
 
 ; ===========================================================================
@@ -30186,24 +29879,12 @@ loc_177FA:
 	bclr	#4,status(a0)
 	bclr	#5,status(a0)
 	clr.b	jumping(a0)
-	move.w	#SndID_LargeBumper,d0
-	jmp	(PlaySound).l
+	sfx	sfx_LargeBumper
+	rts
 ; ===========================================================================
-	; [Bug] Sonic Team forgot to start this file with a boundary
-	; marker, meaning the game could potentially read past the start
-	; of the file and load random bumpers.
-	;dc.w	$0000, $0000, $0000
+			dc.w	$0000, $0000, $0000
 SpecialCNZBumpers_Act1:	BINCLUDE	"level/objects/CNZ 1 bumpers.bin"	; byte_1781A
 SpecialCNZBumpers_Act2:	BINCLUDE	"level/objects/CNZ 2 bumpers.bin"	; byte_1795E
-; ===========================================================================
-
-    if gameRevision<2
-	nop
-    endif
-
-
-
-
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Objects Manager
@@ -31151,8 +30832,8 @@ loc_18A54:
 	move.b	#$F,lrb_solid_bit(a1)
 
 loc_18A66:
-	move.w	#SndID_Spring,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Spring
+	rts
 ; ===========================================================================
 ; loc_18A70:
 Obj41_Horizontal:
@@ -31259,8 +30940,8 @@ loc_18BAA:
 	bclr	#p1_pushing_bit,status(a0)
 	bclr	#p2_pushing_bit,status(a0)
 	bclr	#5,status(a1)
-	move.w	#SndID_Spring,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Spring
+	rts
 ; ===========================================================================
 
 loc_18BC6:
@@ -31403,8 +31084,8 @@ loc_18D4E:
 	bset	#1,status(a1)
 	bclr	#3,status(a1)
 	move.b	#2,routine(a1)
-	move.w	#SndID_Spring,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Spring
+	rts
 ; ===========================================================================
 ; loc_18D6A:
 Obj41_DiagonallyUp:
@@ -31502,8 +31183,8 @@ loc_18E82:
 	move.b	#$F,lrb_solid_bit(a1)
 
 loc_18E94:
-	move.w	#SndID_Spring,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Spring
+	rts
 ; ===========================================================================
 ; loc_18E9E:
 Obj41_DiagonallyDown:
@@ -31585,8 +31266,8 @@ loc_18F8E:
 	move.b	#$F,lrb_solid_bit(a1)
 
 loc_18FA0:
-	move.w	#SndID_Spring,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Spring
+	rts
 ; ===========================================================================
 ;byte_18FAA:
 Obj41_SlopeData_DiagUp:
@@ -31845,8 +31526,7 @@ Obj0D_Main:
 	bcs.s	loc_192D6
 	cmpi.w	#$20,d0
 	bhs.s	loc_192D6
-	move.w	#SndID_Signpost,d0
-	jsr	(PlayMusic).l	; play spinning sound
+	sfx	sfx_Signpost	; play spinning sound
 	clr.b	(Update_HUD_timer).w
 	move.w	#1,anim(a0)
 	move.w	#0,obj0D_spinframe(a0)
@@ -31855,7 +31535,7 @@ Obj0D_Main:
 	cmpi.b	#$C,(Loser_Time_Left).w
 	bhi.s	loc_192A0
 	move.w	(Level_Music).w,d0
-	jsr	(PlayMusic).l	; play zone music
+	move.b	d0,mQueue+1.w
 
 loc_192A0:
 	tst.b	obj0D_finalanim(a0)
@@ -31869,8 +31549,7 @@ loc_192BC:
 	tst.w	(Two_player_mode).w
 	beq.w	loc_19350
 	move.w	#$3C3C,(Loser_Time_Left).w
-	move.w	#SndID_Signpost2P,d0	; play different spinning sound
-	jsr	(PlaySound).l
+	sfx	sfx_SignPost2P
 	bra.s	loc_19350
 ; ---------------------------------------------------------------------------
 
@@ -31885,8 +31564,7 @@ loc_192D6:
 	bcs.s	loc_19350
 	cmpi.w	#$20,d0
 	bhs.s	loc_19350
-	move.w	#SndID_Signpost,d0
-	jsr	(PlayMusic).l
+	sfx	sfx_Signpost
 	clr.b	(Update_HUD_timer_2P).w
 	move.w	#1,anim(a0)
 	move.w	#0,obj0D_spinframe(a0)
@@ -31895,7 +31573,7 @@ loc_192D6:
 	cmpi.b	#$C,(Loser_Time_Left).w
 	bhi.s	loc_1932E
 	move.w	(Level_Music).w,d0
-	jsr	(PlayMusic).l
+	move.b	d0,mQueue+1.w
 
 loc_1932E:
 	tst.b	obj0D_finalanim(a0)
@@ -31904,8 +31582,7 @@ loc_1932E:
 	tst.w	(Two_player_mode).w
 	beq.s	loc_19350
 	move.w	#$3C3C,(Loser_Time_Left).w
-	move.w	#SndID_Signpost2P,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Signpost2P
 
 loc_19350:
 	moveq	#0,d0
@@ -32038,8 +31715,7 @@ Load_EndOfAct:
 	bne.s	+
 	move.w	#5000,(Bonus_Countdown_3).w
 +
-	move.w	#MusID_EndLevel,d0
-	jsr	(PlayMusic).l
+	music	mus_GotThroughAct
 
 return_194D0:
 	rts
@@ -33290,7 +32966,7 @@ Obj01_ChkInvin:		; Checks if invincibility has expired and disables it if it has
 	cmpi.b	#$C,air_left(a0)	; Don't change music if drowning
 	blo.s	Obj01_RmvInvin
 	move.w	(Level_Music).w,d0
-	jsr	(PlayMusic).l
+	move.b	d0,mQueue+1.w
 ;loc_1A106:
 Obj01_RmvInvin:
 	bclr	#status_sec_isInvincible,status_secondary(a0)
@@ -33313,8 +32989,7 @@ Obj01_ChkShoes:		; Checks if Speed Shoes have expired and disables them if they 
 ; loc_1A14A:
 Obj01_RmvSpeed:
 	bclr	#status_sec_hasSpeedShoes,status_secondary(a0)
-	move.w	#MusID_SlowDown,d0	; Slow down tempo
-	jmp	(PlayMusic).l
+	command	mus_ShoesOff		; Slow down tempo
 ; ---------------------------------------------------------------------------
 ; return_1A15A:
 Obj01_ExitChk:
@@ -33370,6 +33045,7 @@ Obj01_InWater:
 
 	movea.l	a0,a1
 	bsr.w	ResumeMusic
+	command	Mus_ToWater
 	move.b	#ObjID_SmallBubbles,(Sonic_BreathingBubbles+id).w ; load Obj0A (sonic's breathing bubbles) at $FFFFD080
 	move.b	#$81,(Sonic_BreathingBubbles+subtype).w
 	move.l	a0,(Sonic_BreathingBubbles+$3C).w
@@ -33387,8 +33063,8 @@ Obj01_InWater:
 	asr.w	y_vel(a0)
 	beq.s	return_1A18C
 	move.w	#$100,(Sonic_Dust+anim).w	; splash animation
-	move.w	#SndID_Splash,d0	; splash sound
-	jmp	(PlaySound).l
+	sfx	sfx_Splash
+	rts
 ; ---------------------------------------------------------------------------
 ; loc_1A1FE:
 Obj01_OutWater:
@@ -33397,6 +33073,7 @@ Obj01_OutWater:
 
 	movea.l	a0,a1
 	bsr.w	ResumeMusic
+	command	Mus_OutWater
 	move.w	#$600,(Sonic_top_speed).w
 	move.w	#$C,(Sonic_acceleration).w
 	move.w	#$80,(Sonic_deceleration).w
@@ -33419,8 +33096,8 @@ Obj01_OutWater:
 	bgt.s	+
 	move.w	#-$1000,y_vel(a0)	; limit upward y velocity exiting the water
 +
-	move.w	#SndID_Splash,d0	; splash sound
-	jmp	(PlaySound).l
+	sfx	sfx_Splash
+	rts
 ; End of subroutine Sonic_Water
 
 ; ===========================================================================
@@ -33887,8 +33564,7 @@ Sonic_TurnLeft:
 	blt.s	return_1A744
 	move.b	#AniIDSonAni_Stop,anim(a0)	; use "stopping" animation
 	bclr	#0,status(a0)
-	move.w	#SndID_Skidding,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Skid
 	cmpi.b	#$C,air_left(a0)
 	blo.s	return_1A744	; if he's drowning, branch to not make dust
 	move.b	#6,(Sonic_Dust+routine).w
@@ -33937,8 +33613,7 @@ Sonic_TurnRight:
 	bgt.s	return_1A7C4
 	move.b	#AniIDSonAni_Stop,anim(a0)	; use "stopping" animation
 	bset	#0,status(a0)
-	move.w	#SndID_Skidding,d0	; use "stopping" sound
-	jsr	(PlaySound).l
+	sfx	sfx_Skid
 	cmpi.b	#$C,air_left(a0)
 	blo.s	return_1A7C4	; if he's drowning, branch to not make dust
 	move.b	#6,(Sonic_Dust+routine).w
@@ -34267,8 +33942,7 @@ Obj01_DoRoll:
 	move.b	#7,x_radius(a0)
 	move.b	#AniIDSonAni_Roll,anim(a0)	; use "rolling" animation
 	addq.w	#5,y_pos(a0)
-	move.w	#SndID_Roll,d0
-	jsr	(PlaySound).l	; play rolling sound
+	sfx	sfx_Roll	; play rolling sound
 	tst.w	inertia(a0)
 	bne.s	return_1AA36
 	move.w	#$200,inertia(a0)
@@ -34319,8 +33993,7 @@ Sonic_Jump:
 	addq.l	#4,sp
 	move.b	#1,jumping(a0)
 	clr.b	stick_to_convex(a0)
-	move.w	#SndID_Jump,d0
-	jsr	(PlaySound).l	; play jumping sound
+	sfx	sfx_Jump	; play jumping sound
 	move.b	#$13,y_radius(a0)
 	move.b	#9,x_radius(a0)
 	btst	#2,status(a0)
@@ -34414,10 +34087,8 @@ Sonic_CheckGoSuper:
 	move.w	#$100,(Sonic_deceleration).w
 	move.w	#0,invincibility_time(a0)
 	bset	#status_sec_isInvincible,status_secondary(a0)	; make Sonic invincible
-	move.w	#SndID_SuperTransform,d0
-	jsr	(PlaySound).l	; Play transformation sound effect.
-	move.w	#MusID_SuperSonic,d0
-	jmp	(PlayMusic).l	; load the Super Sonic song and return
+	sfx	sfx_Transform				; Play transformation sound effect.
+	music	mus_SuperSonic				; load the Super Sonic song and return
 
 ; ---------------------------------------------------------------------------
 return_1ABA4:
@@ -34490,8 +34161,7 @@ Sonic_CheckSpindash:
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	beq.w	return_1AC8C
 	move.b	#AniIDSonAni_Spindash,anim(a0)
-	move.w	#SndID_SpindashRev,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Spindash
 	addq.l	#4,sp
 	move.b	#1,spindash_flag(a0)
 	move.w	#0,spindash_counter(a0)
@@ -34546,8 +34216,7 @@ Sonic_UpdateSpindash:
 +
 	bset	#2,status(a0)
 	move.b	#0,(Sonic_Dust+anim).w
-	move.w	#SndID_SpindashRelease,d0	; spindash zoom sound
-	jsr	(PlaySound).l
+	sfx	sfx_Dash
 	bra.s	Obj01_Spindash_ResetScr
 ; ===========================================================================
 ; word_1AD0C:
@@ -34587,8 +34256,7 @@ Sonic_ChargingSpindash:			; If still charging the dash...
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	beq.w	Obj01_Spindash_ResetScr
 	move.w	#(AniIDSonAni_Spindash<<8),anim(a0)
-	move.w	#SndID_SpindashRev,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Spindash
 	addi.w	#$200,spindash_counter(a0)
 	cmpi.w	#$800,spindash_counter(a0)
 	blo.s	Obj01_Spindash_ResetScr
@@ -35154,8 +34822,7 @@ Obj01_Finished:
 	clr.b	(Update_HUD_timer).w
 	clr.b	(Update_HUD_timer_2P).w
 	move.b	#8,routine(a0)	; => Obj01_Gone
-	move.w	#MusID_GameOver,d0
-	jsr	(PlayMusic).l
+	music	mus_GameOver
 	moveq	#PLCID_GameOver,d0
 	jmp	(LoadPLC).l
 ; End of function CheckGameOver
@@ -35905,7 +35572,7 @@ Obj02_ChkInvinc:	; Checks if invincibility has expired and disables it if it has
 	cmpi.b	#$C,air_left(a0)	; Don't change music if drowning
 	blo.s	Obj02_RmvInvin
 	move.w	(Level_Music).w,d0
-	jsr	(PlayMusic).l
+	move.b	d0,mQueue+1.w
 ; loc_1BA96:
 Obj02_RmvInvin:
 	bclr	#status_sec_isInvincible,status_secondary(a0)
@@ -35922,8 +35589,7 @@ Obj02_ChkShoes:		; Checks if Speed Shoes have expired and disables them if they 
 	move.w	#$80,(Tails_deceleration).w
 ; Obj02_RmvSpeed:
 	bclr	#status_sec_hasSpeedShoes,status_secondary(a0)
-	move.w	#MusID_SlowDown,d0	; Slow down tempo
-	jmp	(PlayMusic).l
+	command	Mus_ShoesOff	; Slow down tempo
 ; ===========================================================================
 ; return_1BAD2:
 Obj02_ExitChk:
@@ -36430,8 +36096,8 @@ Obj02_InWater:
 	asr	y_vel(a0)
 	beq.s	return_1BF58
 	move.w	#$100,(Tails_Dust+anim).w	; splash animation
-	move.w	#SndID_Splash,d0	; splash sound
-	jmp	(PlaySound).l
+	sfx	sfx_Splash
+	rts
 ; ---------------------------------------------------------------------------
 ; loc_1BFB2:
 Obj02_OutWater:
@@ -36457,8 +36123,7 @@ Obj02_OutWater:
 	bgt.s	+
 	move.w	#-$1000,y_vel(a0)	; limit upward y velocity exiting the water
 +
-	move.w	#SndID_Splash,d0	; splash sound
-	jmp	(PlaySound).l
+	sfx	sfx_Splash
 ; End of subroutine Tails_Water
 
 ; ===========================================================================
@@ -36799,8 +36464,7 @@ Tails_TurnLeft:
 	blt.s	return_1C328
 	move.b	#AniIDTailsAni_Stop,anim(a0)	; use "stopping" animation
 	bclr	#0,status(a0)
-	move.w	#SndID_Skidding,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Skid
 	cmpi.b	#$C,air_left(a0)
 	blo.s	return_1C328	; if he's drowning, branch to not make dust
 	move.b	#6,(Tails_Dust+routine).w
@@ -36849,8 +36513,7 @@ Tails_TurnRight:
 	bgt.s	return_1C3A8
 	move.b	#AniIDTailsAni_Stop,anim(a0)	; use "stopping" animation
 	bset	#0,status(a0)
-	move.w	#SndID_Skidding,d0	; use "stopping" sound
-	jsr	(PlaySound).l
+	sfx	sfx_Skid
 	cmpi.b	#$C,air_left(a0)
 	blo.s	return_1C3A8	; if he's drowning, branch to not make dust
 	move.b	#6,(Tails_Dust+routine).w
@@ -37179,8 +36842,7 @@ Obj02_DoRoll:
 	move.b	#7,x_radius(a0)
 	move.b	#AniIDTailsAni_Roll,anim(a0)	; use "rolling" animation
 	addq.w	#1,y_pos(a0)
-	move.w	#SndID_Roll,d0
-	jsr	(PlaySound).l	; play rolling sound
+	sfx	sfx_Roll	; play rolling sound
 	tst.w	inertia(a0)
 	bne.s	return_1C61C
 	move.w	#$200,inertia(a0)
@@ -37227,8 +36889,7 @@ Tails_Jump:
 	addq.l	#4,sp
 	move.b	#1,jumping(a0)
 	clr.b	stick_to_convex(a0)
-	move.w	#SndID_Jump,d0
-	jsr	(PlaySound).l	; play jumping sound
+	sfx	sfx_Jump	; play jumping sound
 	move.b	#$F,y_radius(a0)
 	move.b	#9,x_radius(a0)
 	btst	#2,status(a0)
@@ -37299,8 +36960,7 @@ Tails_CheckSpindash:
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	beq.w	return_1C75C
 	move.b	#AniIDTailsAni_Spindash,anim(a0)
-	move.w	#SndID_SpindashRev,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Spindash
 	addq.l	#4,sp
 	move.b	#1,spindash_flag(a0)
 	move.w	#0,spindash_counter(a0)
@@ -37352,8 +37012,7 @@ Tails_UpdateSpindash:
 +
 	bset	#2,status(a0)
 	move.b	#0,(Tails_Dust+anim).w
-	move.w	#SndID_SpindashRelease,d0	; spindash zoom sound
-	jsr	(PlaySound).l
+	sfx	sfx_Dash
 	bra.s	loc_1C828
 ; ===========================================================================
 ; word_1C7CE:
@@ -37383,8 +37042,7 @@ loc_1C7F8:
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	beq.w	loc_1C828
 	move.w	#(AniIDTailsAni_Spindash<<8),anim(a0)
-	move.w	#SndID_SpindashRev,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Spindash
 	addi.w	#$200,spindash_counter(a0)
 	cmpi.w	#$800,spindash_counter(a0)
 	blo.s	loc_1C828
@@ -37921,8 +37579,7 @@ Obj02_Finished:
 	clr.b	(Update_HUD_timer).w
 	clr.b	(Update_HUD_timer_2P).w
 	move.b	#8,routine(a0)
-	move.w	#MusID_GameOver,d0
-	jsr	(PlayMusic).l
+	music	mus_GameOver
 	moveq	#PLCID_GameOver,d0
 	jmp	(LoadPLC).l
 ; End of function Obj02_CheckGameOver
@@ -38824,8 +38481,7 @@ Obj0A_Countdown:
 	bne.s	+
 	tst.b	parent+1(a0)
 	bne.s	+
-	move.w	#MusID_Countdown,d0
-	jsr	(PlayMusic).l	; play countdown music
+	music	mus_Drowning	; play countdown music
 +
 	subq.b	#1,objoff_32(a0)
 	bpl.s	Obj0A_ReduceAir
@@ -38837,16 +38493,14 @@ Obj0A_Countdown:
 Obj0A_WarnSound:
 	tst.b	parent+1(a0)
 	bne.s	Obj0A_ReduceAir
-	move.w	#SndID_WaterWarning,d0
-	jsr	(PlaySound).l	; play "ding-ding" warning sound
+	sfx	sfx_AirDing	; play "ding-ding" warning sound
 
 ; loc_1D69C:
 Obj0A_ReduceAir:
 	subq.b	#1,air_left(a2)		; subtract 1 from air remaining
 	bcc.w	BranchTo_Obj0A_MakeItem	; if air is above 0, branch
 	move.b	#$81,obj_control(a2)	; lock controls
-	move.w	#SndID_Drown,d0
-	jsr	(PlaySound).l		; play drowning sound
+	sfx	sfx_Drown		; play drowning sound
 	move.b	#$A,objoff_34(a0)
 	move.w	#1,objoff_36(a0)
 	move.w	#$78,objoff_2C(a0)
@@ -38973,25 +38627,27 @@ return_1D81C:
 ResumeMusic:
 	cmpi.b	#$C,air_left(a1)
 	bhi.s	ResumeMusic_Done	; branch if countdown hasn't started yet
-
 	cmpa.w	#MainCharacter,a1
 	bne.s	ResumeMusic_Done	; branch if it isn't player 1
-
 	move.w	(Level_Music).w,d0	; prepare to play current level's music
 
 	btst	#status_sec_isInvincible,status_secondary(a1)
-	beq.s	+		; branch if Sonic is not invincible
-	move.w	#MusID_Invincible,d0	; prepare to play invincibility music
+	beq.s	+			; branch if Sonic is not invincible
+	moveq	#mus_Invincibility,d0	; prepare to play invincibility music
+
 +
 	tst.b	(Super_Sonic_flag).w
-	beq.w	+		; branch if it isn't Super Sonic
-	move.w	#MusID_SuperSonic,d0	; prepare to play super sonic music
+	beq.w	+			; branch if it isn't Super Sonic
+	moveq	#mus_SuperSonic,d0	; prepare to play super sonic music
+
 +
 	tst.b	(Current_Boss_ID).w
-	beq.s	+		; branch if not in a boss fight
-	move.w	#MusID_Boss,d0	; prepare to play boss music
+	beq.s	+			; branch if not in a boss fight
+	moveq	#mus_Boss,d0		; prepare to play boss music
+
 +
-	jsr	(PlayMusic).l
+	move.b	d0,mQueue+1.w		; play it!
+
 ; return_1D858:
 ResumeMusic_Done:
 	move.b	#$1E,air_left(a1)	; reset air to full
@@ -41238,8 +40894,8 @@ Obj79_CheckActivation:
 	addi.w	#$40,d0
 	cmpi.w	#$68,d0
 	bhs.w	return_1F220
-	move.w	#SndID_Checkpoint,d0 ; checkpoint ding-dong sound
-	jsr	(PlaySound).l
+	sfx	sfx_StarPost
+
 	jsr	(SingleObjLoad).l
 	bne.s	loc_1F206
 	_move.b	#ObjID_Starpost,id(a1) ; load obj79
@@ -41613,8 +41269,7 @@ Obj7D_Init:
 	move.b	#$10,width_pixels(a0)
 	move.b	subtype(a0),mapping_frame(a0)
 	move.w	#$77,objoff_30(a0)
-	move.w	#SndID_Bonus,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Bonus
 	moveq	#0,d0
 	move.b	subtype(a0),d0
 	add.w	d0,d0
@@ -41740,8 +41395,7 @@ Obj44_BumpCharacter:
 	bclr	#5,status(a1)
 	clr.b	jumping(a1)
 	move.b	#1,anim(a0)
-	move.w	#SndID_Bumper,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Bumper
 	lea	(Object_Respawn_Table).w,a2
 	moveq	#0,d0
 	move.b	respawn_index(a0),d0
@@ -42056,8 +41710,7 @@ loc_1FB0C:
 	cmp.w	d0,d1
 	blo.w	return_1FBCA
 	bsr.w	ResumeMusic
-	move.w	#SndID_InhalingBubble,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Bubble
 	clr.w	x_vel(a1)
 	clr.w	y_vel(a1)
 	clr.w	inertia(a1)
@@ -43340,8 +42993,7 @@ Obj27_Init:
 	move.b	#$C,width_pixels(a0)
 	move.b	#3,anim_frame_duration(a0)
 	move.b	#0,mapping_frame(a0)
-	move.w	#SndID_Explosion,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Break
 
 ; loc_21102:
 Obj27_Main:
@@ -43507,8 +43159,7 @@ loc_212C4:
 	move.b	#7,x_radius(a1)
 	move.b	#AniIDSonAni_Roll,anim(a1)
 	addq.w	#5,y_pos(a1)
-	move.w	#SndID_Roll,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Roll
 	rts
 
 ; ===========================================================================
@@ -44363,8 +44014,8 @@ Obj14_LaunchCharacter:
 	clr.b	jumping(a2)         ; clear character jumping flag
 	move.b	#AniIDSonAni_Spring,anim(a2) ; set character to spring animation
 	move.b	#2,routine(a2)      ; set character to airborne state
-	move.w	#SndID_Spring,d0    ; play spring sound
-	jmp	(PlaySound).l
+	sfx	sfx_Spring
+	rts
 ; ===========================================================================
 ; heights of the contact point of the ball on the seesaw
 ; word_21C5C:
@@ -44506,8 +44157,7 @@ Obj16_Slide:
 	move.w	(Timer_frames).w,d0
 	andi.w	#$F,d0	; play the sound only every 16 frames
 	bne.s	+
-	move.w	#SndID_HTZLiftClick,d0
-	jsr	(PlaySound).l
+	sfx	sfx_TrackLift
 +
 	jsrto	(ObjectMove).l, JmpTo4_ObjectMove
 	subq.w	#1,objoff_34(a0)
@@ -44956,8 +44606,8 @@ Obj1B_GiveBoost:
 	bclr	#5,status(a1)
 ; loc_223D8:
 Obj1B_GiveBoost_Done:
-	move.w	#SndID_Spring,d0 ; spring boing sound
-	jmp	(PlaySound).l
+	sfx	sfx_Spring
+	rts
 ; ===========================================================================
 ; -------------------------------------------------------------------------------
 ; sprite mappings
@@ -45060,8 +44710,9 @@ Obj1D_Wait:
 	bpl.s	BranchTo_JmpTo7_MarkObjGone
 	addq.b	#2,routine(a0) ; => Obj1D_MoveArc or Obj1D_MoveStraight
 	move.w	#$3B,objoff_32(a0)
-	move.w	#SndID_Gloop,d0
-	jsr	(PlaySoundLocal).l
+	tst.b	render_flags(a0)
+	bpl.s	BranchTo_JmpTo7_MarkObjGone
+	sfx	sfx_Gloop
 
 BranchTo_JmpTo7_MarkObjGone
 	jmpto	(MarkObjGone).l, JmpTo7_MarkObjGone
@@ -45096,16 +44747,18 @@ Obj1D_MoveStraight:
 +
 	cmpi.w	#$180,y_vel(a0)
 	bne.s	+
-	move.w	#SndID_Gloop,d0
-	jsr	(PlaySoundLocal).l
+	tst.b	render_flags(a0)
+	bpl.s	+
+	sfx	sfx_Gloop
 +
 	move.w	objoff_30(a0),d0
 	cmp.w	y_pos(a0),d0
 	bhi.s	BranchTo3_JmpTo7_MarkObjGone
 	move.w	objoff_34(a0),y_vel(a0)
 	move.w	objoff_38(a0),x_pos(a0)
-	move.w	#SndID_Gloop,d0
-	jsr	(PlaySoundLocal).l
+	tst.b	render_flags(a0)
+	bpl.s	BranchTo3_JmpTo7_MarkObjGone
+	sfx	sfx_Gloop
 
 BranchTo3_JmpTo7_MarkObjGone
 	jmpto	(MarkObjGone).l, JmpTo7_MarkObjGone
@@ -45291,8 +44944,7 @@ loc_22688:
 	bclr	#high_priority_bit,art_tile(a1)
 	move.w	#$800,d2
 	bsr.w	loc_22902
-	move.w	#SndID_Roll,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Roll
 
 return_22718:
 	rts
@@ -45354,8 +45006,8 @@ loc_227A6:
 	andi.w	#$7FF,y_pos(a1)
 	move.b	#6,(a4)
 	clr.b	obj_control(a1)
-	move.w	#SndID_SpindashRelease,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Dash
+	rts
 ; ===========================================================================
 byte_227BE:
 	dc.b   2,  1,  0,  0
@@ -45418,8 +45070,8 @@ Obj1E_MoveCharacter_2:
 loc_22858:
 	andi.w	#$7FF,y_pos(a1)
 	clr.b	(a4)
-	move.w	#SndID_SpindashRelease,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Dash
+	rts
 ; ===========================================================================
 
 loc_2286A:
@@ -45476,8 +45128,7 @@ loc_228E4:
 	move.w	(a2)+,d5
 	move.w	#$800,d2
 	bsr.w	loc_22902
-	move.w	#SndID_Roll,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Roll
 	addq.b	#2,(a4)
 	rts
 ; ===========================================================================
@@ -45633,8 +45284,7 @@ loc_23084:
 	bset	#0,render_flags(a1)
 
 loc_230A6:
-	move.w	#SndID_ArrowFiring,d0
-	jsr	(PlaySound).l
+	sfx	sfx_LavaBall
 	addq.b	#2,routine(a0)
 
 loc_230B4:
@@ -46499,8 +46149,9 @@ loc_23BC6:
 	move.w	#$78,objoff_36(a0)
 	move.l	#-$96800,objoff_32(a0)
 	addq.b	#2,routine_secondary(a0)
-	move.w	#SndID_OOZLidPop,d0
-	jsr	(PlaySoundLocal).l
+	tst.b	render_flags(a0)
+	bpl.s	+
+	sfx	sfx_LidPop
 +
 	rts
 ; ===========================================================================
@@ -46558,8 +46209,9 @@ loc_23C26:
 	bclr	#high_priority_bit,art_tile(a1)
 	move.l	#-$96800,objoff_32(a0)
 	addq.b	#2,routine_secondary(a0)
-	move.w	#SndID_OOZLidPop,d0
-	jsr	(PlaySoundLocal).l
+	tst.b	render_flags(a0)
+	bpl.s	+
+	sfx	sfx_LidPop
 +
 	rts
 ; ===========================================================================
@@ -46592,8 +46244,9 @@ loc_23CA0:
 	bclr	#high_priority_bit,art_tile(a2)
 	move.l	#-$96800,objoff_32(a0)
 	addq.b	#2,routine_secondary(a0)
-	move.w	#SndID_OOZLidPop,d0
-	jsr	(PlaySoundLocal).l
+	tst.b	render_flags(a0)
+	bpl.s	+
+	sfx	sfx_LidPop
 +
 	rts
 ; ===========================================================================
@@ -46626,8 +46279,9 @@ loc_23D60:
 	move.w	#-$1000,y_vel(a1)
 	bclr	#3,status(a1)
 	move.b	#0,obj_control(a1)
-	move.w	#SndID_Spring,d0
-	jsr	(PlaySoundLocal).l
+	tst.b	render_flags(a0)
+	bpl.s	+
+	sfx	sfx_Spring
 +
 	rts
 ; ===========================================================================
@@ -46818,8 +46472,9 @@ loc_23F66:
 	cmp.w	objoff_32(a0),d1
 	bne.s	loc_23F88
 	move.b	#1,objoff_36(a0)
-	move.w	#SndID_SlidingSpike,d0
-	jsr	(PlaySoundLocal).l
+	tst.b	render_flags(a0)
+	bpl.s	loc_23F88
+	sfx	sfx_SpikeRing
 
 loc_23F88:
 	move.w	d1,x_pos(a0)
@@ -46832,8 +46487,9 @@ loc_23F8E:
 	cmp.w	objoff_34(a0),d1
 	bne.s	loc_23FAA
 	move.b	#0,objoff_36(a0)
-	move.w	#SndID_SlidingSpike,d0
-	jsr	(PlaySoundLocal).l
+	tst.b	render_flags(a0)
+	bpl.s	loc_23FAA
+	sfx	sfx_SpikeRing
 
 loc_23FAA:
 	move.w	d1,x_pos(a0)
@@ -46850,8 +46506,9 @@ loc_23FB0:
 	bne.s	return_23FDE
 	eori.b	#1,objoff_36(a0)
 	eori.b	#1,objoff_36(a1)
-	move.w	#SndID_SlidingSpike,d0
-	jsr	(PlaySoundLocal).l
+	tst.b	render_flags(a0)
+	bpl.s	return_23FDE
+	sfx	sfx_SpikeRing
 
 return_23FDE:
 	rts
@@ -46870,9 +46527,6 @@ JmpTo19_Adjust2PArtPointer
 
 	align 4
     endif
-
-
-
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -47129,8 +46783,8 @@ loc_2425C:
 	move.b	#$F,lrb_solid_bit(a1)
 
 loc_2426E:
-	move.w	#SndID_Spring,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Spring
+	rts
 ; ===========================================================================
 
 return_24278:
@@ -47349,9 +47003,7 @@ loc_244A8:
 loc_244BA:
 	bclr	#5,status(a1)
 	move.b	#AniIDSonAni_Run,next_anim(a1)
-	move.w	#SndID_Spring,d0 ; play spring bounce sound
-	jmp	(PlaySound).l
-; ===========================================================================
+	sfx	sfx_Spring
 
 return_244D0:
 	rts
@@ -47670,8 +47322,7 @@ Obj47_Main:
 +
 	tst.b	(a3)
 	bne.s	+
-	move.w	#SndID_Blip,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Switch
 +
 	bset	d3,(a3)
 	move.b	#1,mapping_frame(a0)
@@ -47699,9 +47350,6 @@ JmpTo6_SolidObject
 
 	align 4
     endif
-
-
-
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -47918,8 +47566,7 @@ loc_25002:
     endif
 	andi.w	#$7F,d0
 	move.b	d0,interact(a1)
-	move.w	#SndID_Roll,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Roll
 
 return_25034:
 	rts
@@ -48153,8 +47800,7 @@ loc_252F0:
 	bset	#1,status(a1)
 	bset	#3,status(a1)
 	move.b	objoff_3F(a0),mapping_frame(a0)
-	move.w	#SndID_Roll,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Roll
 
 return_253C4:
 	rts
@@ -48378,8 +48024,7 @@ Obj22_ShootArrow:
 	move.w	y_pos(a0),y_pos(a1)
 	move.b	render_flags(a0),render_flags(a1)
 	move.b	status(a0),status(a1)
-	move.w	#SndID_PreArrowFiring,d0
-	jsr	(PlaySound).l
+	sfx	sfx_ArrowFire
 +
 	subq.b	#2,routine(a0)
 	lea	(Ani_obj22).l,a1
@@ -48400,8 +48045,7 @@ Obj22_Arrow_Init:
 	beq.s	+
 	neg.w	x_vel(a0)
 +
-	move.w	#SndID_ArrowFiring,d0
-	jsr	(PlaySound).l
+	sfx	sfx_LavaBall
 ; loc_257BE:
 Obj22_Arrow:
 	jsrto	(ObjectMove).l, JmpTo11_ObjectMove
@@ -48806,8 +48450,8 @@ loc_25C24:
 	dbf	d1,loc_25C1C
 
 loc_25C64:
-	move.w	#SndID_SlowSmash,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Collapse
+	rts
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; sprite mappings
@@ -48978,8 +48622,8 @@ loc_261EC:
 
 loc_26278:
 	dbf	d6,loc_261EC
-	move.w	#SndID_Leaves,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Leaves
+	rts
 ; ===========================================================================
 ; byte_26286: word_26286:
 Obj2C_Speeds:
@@ -49237,8 +48881,8 @@ loc_26534:
 	move.b	#$F,lrb_solid_bit(a1)
 
 loc_26546:
-	move.w	#SndID_Spring,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Spring
+	rts
 ; ===========================================================================
 byte_26550:
 	dc.b   0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0
@@ -49455,8 +49099,8 @@ loc_26808:
 	move.b	#$E,top_solid_bit(a1)
 	move.b	#$F,lrb_solid_bit(a1)
 +
-	move.w	#SndID_Spring,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Spring
+	rts
 ; ===========================================================================
 
 loc_2683A:
@@ -50240,8 +49884,8 @@ loc_270DC:
 	bclr	#p1_pushing_bit,status(a0)
 	bclr	#p2_pushing_bit,status(a0)
 	bclr	#5,status(a1)
-	move.w	#SndID_Spring,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Spring
+	rts
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; sprite mappings
@@ -50350,8 +49994,7 @@ loc_271D0:
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	clr.b	1(a4)
-	move.w	#SndID_Roll,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Roll
 	move.w	#$100,anim(a0)
 
 return_2725E:
@@ -50370,8 +50013,7 @@ loc_27260:
 	bne.s	+
 	bsr.w	loc_27310
 	addq.b	#2,(a4)
-	move.w	#SndID_SpindashRelease,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Dash
 +
 	rts
 ; ===========================================================================
@@ -50692,8 +50334,7 @@ Obj68_Spike_Action:
 	clr.w	spikearoundblock_waiting(a0)
 	tst.b	render_flags(a0)	; is the spike on the screen?
 	bpl.s	+			; if not, branch
-	move.w	#SndID_SpikesMove,d0
-	jsr	(PlaySound).l
+	sfx	sfx_SpikeMove
 +
 	tst.w	spikearoundblock_position(a0)
 	beq.s	Obj68_Spike_Expanding
@@ -52866,8 +52507,7 @@ Obj77_Main:
 	bchg	#0,anim(a0)
 	tst.b	render_flags(a0)
 	bpl.s	+
-	move.w	#SndID_DoorSlam,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Door
 +
 	lea	(Ani_obj77).l,a1
 	jsr	(AnimateSprite).l
@@ -53526,8 +53166,8 @@ loc_29736:
 	move.b	#$E,top_solid_bit(a1)
 	move.b	#$F,lrb_solid_bit(a1)
 +
-	move.w	#SndID_Spring,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Spring
+	rts
 ; ===========================================================================
 ; animation script
 ; off_29768:
@@ -53669,8 +53309,7 @@ loc_29890:
 	andi.w	#$F,d0
 	lea	(ButtonVine_Trigger).w,a3
 	bset	#0,(a3,d0.w)
-	move.w	#SndID_Blip,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Switch
 	move.b	#0,mapping_frame(a0)
 	tst.w	objoff_30(a0)
 	beq.s	return_29936
@@ -53907,8 +53546,7 @@ loc_29B5E:
 	andi.w	#$F,d0
 	lea	(ButtonVine_Trigger).w,a3
 	bset	#0,(a3,d0.w)
-	move.w	#SndID_Blip,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Switch
 
 return_29BF8:
 	rts
@@ -54070,9 +53708,11 @@ Obj81_BridgeUp:
 	tst.b	objoff_36(a0)
 	bne.s	+
 	move.b	#1,objoff_36(a0)
-	move.w	#SndID_DrawbridgeMove,d0
-	jsr	(PlaySoundStereo).l
-	cmpi.b	#$81,status(a0)
+	tst.b	render_flags(a0)
+	bpl.s	.no
+	sfx	sfx_DrawbridgeMove
+
+.no	cmpi.b	#$81,status(a0)
 	bne.s	+
 	move.w	objoff_30(a0),x_pos(a0)
 	subi.w	#$48,x_pos(a0)
@@ -54092,8 +53732,7 @@ loc_2A154:
 	add.w	d1,x_pos(a0)
 	move.b	#$40,width_pixels(a0)
 	move.b	#0,objoff_36(a0)
-	move.w	#SndID_DrawbridgeDown,d0
-	jsr	(PlaySound).l
+	sfx	sfx_DrawbridgeDown
 	addq.b	#2,routine(a0)
 	bra.s	loc_2A188
 ; ===========================================================================
@@ -55228,8 +54867,8 @@ loc_2AE0C:
 	bclr	#3,status(a1)
 	move.b	#2,routine(a1)
 	move.b	#0,obj_control(a1)
-	move.w	#SndID_CNZLaunch,d0
-	jmp	(PlaySound).l
+	sfx	sfx_LaunchSpring
+	rts
 ; ===========================================================================
 ; loc_2AE56:
 Obj85_Diagonal:
@@ -55407,8 +55046,8 @@ loc_2B018:
 loc_2B068:
 	move.b	#2,routine(a1)
 	move.b	#0,obj_control(a1)
-	move.w	#SndID_CNZLaunch,d0
-	jmp	(PlaySound).l
+	sfx	sfx_LaunchSpring
+	rts
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; sprite mappings
@@ -55603,8 +55242,8 @@ loc_2B2E2:
 	move.b	#0,obj_control(a1)
 	move.b	#1,anim(a0)
 	move.b	#0,(a3)
-	move.w	#SndID_Flipper,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Flipper
+	rts
 ; ===========================================================================
 ; loc_2B312:
 Obj86_HorizontalType:
@@ -55658,8 +55297,8 @@ loc_2B392:
 	addq.w	#5,y_pos(a1)
 
 loc_2B3BC:
-	move.w	#SndID_Flipper,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Flipper
+	rts
 ; ===========================================================================
 byte_2B3C6:
 	dc.b   7,  7,  7,  7,  7,  7,  7,  8,  9, $A, $B, $A,  9,  8,  7,  6
@@ -55895,8 +55534,9 @@ ObjD3:
 	cmpi.w	#5,(Bonus_Countdown_3).w
 	blo.s	+
 	clr.w	(Bonus_Countdown_3).w
-	move.w	#SndID_HurtBySpikes,d0
-	jsr	(PlaySoundStereo).l
+	tst.b	render_flags(a0)
+	bpl.s	+
+	sfx	sfx_SpikeHit
 +
 	tst.b	parent+1(a0)
 	beq.s	++
@@ -56113,8 +55753,7 @@ loc_2BA9C:
 	move.b	status(a0),d0
 	andi.w	#standing_mask,d0
 	beq.s	+	; rts
-	move.w	#SndID_CNZElevator,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Elevator
 	addq.w	#2,objoff_34(a0)
 +
 	rts
@@ -56147,8 +55786,7 @@ loc_2BAEE:
 	move.b	status(a0),d0
 	andi.w	#standing_mask,d0
 	bne.s	+	; rts
-	move.w	#SndID_CNZElevator,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Elevator
 	addq.w	#2,objoff_34(a0)
 +
 	rts
@@ -56400,8 +56038,7 @@ loc_2BDF8:
 	move.b	(Vint_runcount+3).w,d0
 	andi.w	#$F,d0
 	bne.s	+	; rts
-	move.w	#SndID_CasinoBonus,d0
-	jsr	(PlaySound).l
+	sfx	sfx_SlotMachine
 +
 	rts
 ; ===========================================================================
@@ -56427,8 +56064,7 @@ loc_2BE5E:
 	move.w	2(a2),d0
 	andi.w	#$F,d0
 	bne.s	+	; rts
-	move.w	#SndID_CasinoBonus,d0
-	jsr	(PlaySound).l
+	sfx	sfx_SlotMachine
 	moveq	#10,d0
 	movea.w	a1,a3
 	jsr	(AddPoints2).l
@@ -57143,8 +56779,8 @@ ObjD7_BounceEnd:
 	bclr	#4,status(a1)
 	bclr	#5,status(a1)
 	clr.b	jumping(a1)
-	move.w	#SndID_Bumper,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Bumper
+	rts
 ; ===========================================================================
 ; loc_2C57E:
 ObjD7_MainContinued:
@@ -57397,8 +57033,7 @@ loc_2C806:
 	bclr	#4,status(a1)
 	bclr	#5,status(a1)
 	clr.b	jumping(a1)
-	move.w	#SndID_BonusBumper,d0
-	jsr	(PlaySound).l
+	sfx	sfx_TinyBumper
 	movea.w	a1,a3
 	moveq	#4,d3
 	moveq	#1,d0
@@ -58510,9 +58145,7 @@ Obj58_Init:
 	move.b	#$C,width_pixels(a0)
 	move.b	#7,anim_frame_duration(a0)
 	move.b	#0,mapping_frame(a0)
-	move.w	#SndID_BossExplosion,d0
-	jmp	(PlaySound).l
-; ===========================================================================
+	sfx	sfx_Explode
 	rts
 ; ===========================================================================
 ; loc_2D4EC:
@@ -58558,8 +58191,7 @@ Boss_HandleHits:
 	tst.b	boss_invulnerable_time(a0)	; is boss invulnerable?
 	bne.s	+				; if yes, branch
 	move.b	#$20,boss_invulnerable_time(a0)	; make boss invulnerable
-	move.w	#SndID_BossHit,d0	; play "boss hit" sound
-	jsr	(PlaySound).l
+	sfx	sfx_BossHit
 +
 	; do palette flashing effect
 	lea	(Normal_palette_line2+2).w,a1
@@ -59058,8 +58690,7 @@ Obj5D_Main_Pos_and_Collision:
 	tst.b	Obj5D_invulnerable_time(a0)
 	bne.s	+			; branch, if still invulnerable
 	move.b	#$20,Obj5D_invulnerable_time(a0)
-	move.w	#SndID_BossHit,d0
-	jsr	(PlaySound).l
+	sfx	sfx_BossHit
 +
 	lea	(Normal_palette_line2+2).w,a1
 	moveq	#0,d0		; color black
@@ -60062,8 +59693,7 @@ Obj5D_Gunk_Main:
 	move.b	#2,routine_secondary(a1)
 	addq.b	#2,routine_secondary(a0)	; => Obj5D_Gunk_Droplets
 	move.b	#0,subtype(a0)
-	move.w	#SndID_MegaMackDrop,d0
-	jsrto	(PlaySound).l, JmpTo5_PlaySound
+	sfx	sfx_GloopDrop
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 
@@ -60424,8 +60054,6 @@ JmpTo51_DeleteObject
 	jmp	(DeleteObject).l
 JmpTo35_MarkObjGone
 	jmp	(MarkObjGone).l
-JmpTo5_PlaySound
-	jmp	(PlaySound).l
 JmpTo8_Adjust2PArtPointer2
 	jmp	(Adjust2PArtPointer2).l
 JmpTo5_LoadPLC
@@ -60873,8 +60501,7 @@ loc_2F4A6:	; routine to handle hits
 	tst.b	objoff_3E(a0)
 	bne.s	loc_2F4D0	; boss already invincibile
 	move.b	#$20,objoff_3E(a0)	; boss invincibility timer
-	move.w	#SndID_BossHit,d0
-	jsr	(PlaySound).l	; play boss hit sound
+	sfx	sfx_BossHit	; play boss hit sound
 
 loc_2F4D0:
 	lea	(Normal_palette_line2+2).w,a1
@@ -60940,8 +60567,7 @@ loc_2F560:	; Obj56_Propeller_Sub0
 	move.b	#1,anim(a0)
 	move.w	#$18,objoff_2A(a0)	; timer until deletion
 	addq.b	#2,routine_secondary(a0)
-	move.b	#MusID_StopSFX,d0
-	jsrto	(PlaySound).l, JmpTo6_PlaySound
+;	command	mus_StopSFX
 	bra.s	loc_2F5A0
 ; ---------------------------------------------------------------------------
 
@@ -60949,8 +60575,7 @@ loc_2F58E:	; not on ground
 	move.b	(Vint_runcount+3).w,d0
 	andi.b	#$1F,d0
 	bne.s	loc_2F5A0
-	move.b	#SndID_Helicopter,d0
-	jsrto	(PlaySound).l, JmpTo6_PlaySound
+	sfx	sfx_Helicopter
 
 loc_2F5A0:
 	move.w	x_pos(a1),x_pos(a0)
@@ -61358,8 +60983,6 @@ JmpTo36_MarkObjGone
 	jmp	(MarkObjGone).l
 JmpTo5_DeleteObject2
 	jmp	(DeleteObject2).l
-JmpTo6_PlaySound
-	jmp	(PlaySound).l
 JmpTo21_SingleObjLoad2
 	jmp	(SingleObjLoad2).l
 JmpTo17_AnimateSprite
@@ -61570,8 +61193,7 @@ Obj52_CreateLavaBall:
 	move.b	#6,boss_subtype(a1)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
-	move.b	#SndID_LavaBall,d0
-	jsrto	(PlaySound).l, JmpTo7_PlaySound
+	sfx	sfx_LavaBall
 
 loc_2FE58:
 	tst.b	objoff_2C(a0)
@@ -61748,8 +61370,7 @@ loc_30008:
 	move.b	#0,mapping_frame(a0)
 	move.w	#9,objoff_32(a0)
 	move.b	#3,objoff_36(a0)
-	move.b	#SndID_FireBurn,d0
-	jsrto	(PlaySound).l, JmpTo7_PlaySound
+	sfx	sfx_Fire
 	jmpto	(Obj20).l, JmpTo_Obj20
 ; ===========================================================================
 
@@ -61788,8 +61409,7 @@ loc_300A4:
 	tst.b	objoff_14(a0)
 	bne.s	loc_300CE
 	move.b	#$20,objoff_14(a0)
-	move.w	#SndID_BossHit,d0
-	jsr	(PlaySound).l
+	sfx	sfx_BossHit
 
 loc_300CE:
 	lea	(Normal_palette_line2+2).w,a1
@@ -61991,8 +61611,6 @@ JmpTo13_SingleObjLoad
 	jmp	(SingleObjLoad).l
 JmpTo37_MarkObjGone
 	jmp	(MarkObjGone).l
-JmpTo7_PlaySound
-	jmp	(PlaySound).l
 JmpTo18_AnimateSprite
 	jmp	(AnimateSprite).l
 JmpTo4_ObjCheckFloorDist
@@ -62233,8 +61851,7 @@ Obj89_Main_Sub4:
 	btst	#0,render_flags(a0)
 	sne	obj89_target(a0)		; target opposite side
 	move.w	#$1E,(Boss_Countdown).w
-	move.b	#SndID_Hammer,d0
-	jsrto	(PlaySound).l, JmpTo8_PlaySound
+	sfx	sfx_Chain
 
 ; loc_306F8:
 Obj89_Main_Sub4_Standard:
@@ -62312,8 +61929,7 @@ Obj89_Main_HandleHoveringAndHits:
 	tst.b	boss_invulnerable_time(a0)	; is boss invulnerable?
 	bne.s	Obj89_Main_Flash		; if yes, branch
 	move.b	#$40,boss_invulnerable_time(a0)	; make boss invulnerable
-	move.w	#SndID_BossHit,d0		; play "boss hit" sound
-	jsr	(PlaySound).l
+	sfx	sfx_BossHit
 
 ; loc_307D6:
 Obj89_Main_Flash:
@@ -62513,8 +62129,7 @@ Obj89_Pillar_Sub0:
 	move.b	(Vint_runcount+3).w,d0
 	andi.b	#$1F,d0
 	bne.s	+
-	move.w	#SndID_Rumbling2,d0		; play rumbling sound every 32 frames
-	jsrto	(PlaySound).l, JmpTo8_PlaySound
+	sfx	sfx_Rumble2			; play rumbling sound every 32 frames
 +
 	subi_.w	#1,y_pos(a0)			; raise pillar
 	cmpi.w	#$488,y_pos(a0)			; has pillar reached its target height?
@@ -62754,8 +62369,7 @@ Obj89_Arrow_Sub2_GoingRight:
 Obj89_Arrow_Sub2_Stop:
 	addi_.b	#2,obj89_arrow_routine(a0)	; => Obj89_Arrow_Sub4
 	move.w	d0,x_pos(a0)			; update position
-	move.b	#SndID_ArrowStick,d0
-	jsrto	(PlaySound).l, JmpTo8_PlaySound
+	sfx	sfx_ArrowStick
 	jmpto	(DisplaySprite).l, JmpTo37_DisplaySprite
 ; ===========================================================================
 ; loc_30C7E:
@@ -62886,8 +62500,6 @@ JmpTo55_DeleteObject
 	jmp	(DeleteObject).l
 JmpTo14_SingleObjLoad
 	jmp	(SingleObjLoad).l
-JmpTo8_PlaySound
-	jmp	(PlaySound).l
 JmpTo22_SingleObjLoad2
 	jmp	(SingleObjLoad2).l
 JmpTo19_AnimateSprite
@@ -63288,8 +62900,7 @@ Obj57_HandleHits_Main:
 	tst.b	boss_invulnerable_time(a0)
 	bne.s	+
 	move.b	#$20,boss_invulnerable_time(a0)	; set invincibility timer
-	move.w	#SndID_BossHit,d0
-	jsr	(PlaySound).l
+	sfx	sfx_BossHit
 +
 	lea	(Normal_palette_line2+2).w,a1
 	moveq	#0,d0
@@ -63586,8 +63197,7 @@ loc_31A04:
 	move.b	(Vint_runcount+3).w,d0
 	andi.b	#$1F,d0
 	bne.s	loc_31A1C
-	move.b	#SndID_CNZBossZap,d0
-	jsrto	(PlaySound).l, JmpTo9_PlaySound
+	sfx	sfx_Zapper
 
 loc_31A1C:
 	moveq	#0,d0
@@ -63829,8 +63439,7 @@ loc_31CDC:
 	tst.b	mainspr_height(a0)
 	bne.s	loc_31D24
 	move.b	#$30,mainspr_height(a0)
-	move.w	#SndID_BossHit,d0
-	jsr	(PlaySound).l
+	sfx	sfx_BossHit
 
 loc_31D24:
 	lea	(Normal_palette_line2+2).w,a1
@@ -64105,8 +63714,7 @@ loc_31FF8:
 ; ===========================================================================
 
 loc_32030:
-	move.b	#SndID_BossExplosion,d0
-	jsrto	(PlaySound).l, JmpTo9_PlaySound
+	sfx	sfx_Explode
 	move.w	#make_art_tile(ArtTile_ArtNem_CNZBoss_Fudge,0,0),art_tile(a0)
 	move.b	#7,anim(a0)
 	move.w	#-$300,y_vel(a0)
@@ -64188,8 +63796,6 @@ JmpTo59_DeleteObject
 	jmp	(DeleteObject).l
 JmpTo16_SingleObjLoad
 	jmp	(SingleObjLoad).l
-JmpTo9_PlaySound
-	jmp	(PlaySound).l
 JmpTo23_SingleObjLoad2
 	jmp	(SingleObjLoad2).l
 JmpTo20_AnimateSprite
@@ -64734,8 +64340,7 @@ Obj54_CheckHit:
 	tst.b	boss_invulnerable_time(a0)
 	bne.s	+
 	move.b	#$40,boss_invulnerable_time(a0)
-	move.w	#SndID_BossHit,d0
-	jsr	(PlaySound).l
+	sfx	sfx_BossHit
 +
 	lea	(Normal_palette_line2+2).w,a1
 	moveq	#0,d0
@@ -65069,8 +64674,7 @@ Obj53_CheckPlayerHit:
 ; ===========================================================================
 ;loc_32C98
 Obj53_Burst:
-	move.b	#SndID_BossExplosion,d0
-	jsrto	(PlaySound).l, JmpTo10_PlaySound
+	sfx	sfx_Explode
 	movea.l	objoff_34(a0),a1 ; a1=object
 	subi_.b	#1,objoff_2C(a1)
 
@@ -65113,8 +64717,8 @@ Obj54_Laser_Init:
 +
 	move.w	d0,x_vel(a0)
 	move.b	#$99,collision_flags(a0)
-	move.b	#SndID_LaserBurst,d0
-	jsrto	(PlaySound).l, JmpTo10_PlaySound
+	sfx	sfx_Lazer
+
 ;loc_32D2C
 Obj54_Laser_Main:
 	jsrto	(ObjectMove).l, JmpTo24_ObjectMove
@@ -65187,8 +64791,6 @@ JmpTo61_DeleteObject
 	jmp	(DeleteObject).l
 JmpTo17_SingleObjLoad
 	jmp	(SingleObjLoad).l
-JmpTo10_PlaySound
-	jmp	(PlaySound).l
 JmpTo21_AnimateSprite
 	jmp	(AnimateSprite).l
 JmpTo11_LoadPLC
@@ -65567,8 +65169,8 @@ Obj55_LaserShooter_Fire:
 	move.b	#ObjID_OOZBoss,id(a1) ; load obj55
 	move.b	#8,boss_subtype(a1)	; => Obj55_Laser
 	move.l	a0,Obj55_Wave_parent(a1)
-	move.b	#SndID_LaserBurst,d0
-	jsrto	(PlaySound).l, JmpTo11_PlaySound
+	sfx	sfx_Lazer
+
 	move.b	#4,boss_routine(a0)	; => Obj55_LaserShooter_ChooseTarget
 	move.w	#$28,(Boss_Countdown).w
 	move.w	#-$80,(Boss_Y_vel).w
@@ -65869,8 +65471,7 @@ Obj55_Laser_CreateWave:
 	move.w	x_vel(a0),x_vel(a1)
 	move.w	d1,x_pos(a1)
 	move.w	#$250,y_pos(a1)
-	move.b	#SndID_LaserFloor,d0
-	jsrto	(PlaySound).l, JmpTo11_PlaySound
+	sfx	sfx_LazerFloor
 
 return_336B0:
 	rts
@@ -65903,8 +65504,7 @@ Obj55_Wave:
 	neg.w	d0		; flip offset
 +
 	add.w	d0,x_pos(a1)	; set position
-	move.b	#SndID_LaserFloor,d0
-	jsrto	(PlaySound).l, JmpTo11_PlaySound
+	sfx	sfx_LazerFloor
 
 Obj55_Wave_End:
 	lea	(Ani_obj55).l,a1
@@ -65959,8 +65559,6 @@ JmpTo18_SingleObjLoad
 	jmp	(SingleObjLoad).l
 JmpTo38_MarkObjGone
 	jmp	(MarkObjGone).l
-JmpTo11_PlaySound
-	jmp	(PlaySound).l
 JmpTo24_SingleObjLoad2
 	jmp	(SingleObjLoad2).l
 JmpTo22_AnimateSprite
@@ -66233,8 +65831,7 @@ loc_33B9E:
 	not.b	(SS_Swap_Positions_Flag).w
 
 loc_33BA2:
-	move.w	#SndID_Jump,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Jump
 
 return_33BAC:
 	rts
@@ -66470,8 +66067,7 @@ SSPlayer_Collision:
 	tst.w	(Ring_count_2P).w
 	beq.s	loc_33E38
 +
-	move.w	#SndID_RingSpill,d0
-	jsr	(PlaySound).l
+	sfx	sfx_RingLoss
 
 loc_33E38:
 	move.b	#2,routine_secondary(a0)		; hurt state
@@ -67267,9 +66863,11 @@ loc_34F28:
 	bsr.w	loc_350A0
 	bcc.s	return_34F68
 	move.b	#1,collision_property(a1)
-	move.w	#SndID_SlowSmash,d0
-	jsr	(PlaySoundStereo).l
-	move.b	#6,routine(a0)
+	tst.b	render_flags(a0)
+	bpl.s	.no
+	sfx	sfx_Collapse
+
+.no	move.b	#6,routine(a0)
 	move.b	#0,anim_frame(a0)
 	move.b	#0,anim_frame_duration(a0)
 	move.l	objoff_34(a0),d0
@@ -67388,8 +66986,9 @@ loc_3507A:
 	st	objoff_2A(a1)
 
 loc_35094:
-	move.w	#SndID_Ring,d0
-	jsr	(PlaySoundStereo).l
+	tst.b	render_flags(a0)
+	bpl.s	return_3509E
+	sfx	sfx_RingRight
 
 return_3509E:
 	rts
@@ -68318,8 +67917,7 @@ Obj5A_Rainbow_Positions:
 	st.b	(SS_NoCheckpointMsg_flag).w
 	tst.b	(SS_2p_Flag).w			; Is it VS mode?
 	beq.w	loc_35978					; Branch if not
-	move.w	#SndID_Checkpoint,d0
-	jsr	(PlaySound).l
+	sfx	sfx_StarPost
 	addi.b	#$10,(SS_2P_BCD_Score).w
 	moveq	#0,d6
 	addi_.b	#1,(Current_Special_Act).w
@@ -68363,15 +67961,15 @@ Obj5A_Rainbow_Positions:
 
 loc_35978:
 	move.w	#6,d1
-	move.w	#SndID_Error,d0
+	moveq	#sfx_Error,d0
 	move.w	(Ring_count).w,d2
 	add.w	(Ring_count_2P).w,d2
 	cmp.w	(SS_Ring_Requirement).w,d2
 	blt.s	+
 	move.w	#4,d1
-	move.w	#SndID_Checkpoint,d0
+	moveq	#sfx_StarPost,d0
 +
-	jsr	(PlaySound).l
+	move.b	d0,mQueue+2.w
 	move.w	d1,d0
 	bsr.w	Obj5A_PrintCheckpointMessage
 	bra.w	JmpTo63_DeleteObject
@@ -68427,8 +68025,7 @@ Obj5A_Handshake:
 	tst.b	objoff_2F(a0)
 	beq.s	+
 -
-	move.w	#MusID_FadeOut,d0
-	jsr	(PlayMusic).l
+	command	Mus_FadeOut
 	move.w	#$30,objoff_2A(a0)
 	move.b	#$C,routine(a0)	; => Obj5A_RingCheckTrigger
 	rts
@@ -68947,8 +68544,7 @@ loc_360F0:
 	blo.s	return_36140
 	tst.b	objoff_3E(a0)
 	bne.s	loc_3610C
-	move.w	#MusID_FadeOut,d0
-	jsr	(PlayMusic).l
+	command	Mus_FadeOut
 	st	objoff_3E(a0)
 
 loc_3610C:
@@ -68962,8 +68558,7 @@ loc_3610C:
 	blo.s	return_36140
 	move.w	#$63,objoff_2A(a0)
 	move.b	#8,routine(a0)
-	move.w	#MusID_Emerald,d0
-	jsr	(PlayMusic).l
+	music	mus_Emerald
 
 return_36140:
 	rts
@@ -74038,8 +73633,7 @@ loc_397BA:
 	move.w	d0,(Camera_Min_X_pos).w
 	move.w	d0,(Camera_Max_X_pos).w
 	move.b	#9,(Current_Boss_ID).w
-	moveq	#MusID_FadeOut,d0
-	jsrto	(PlaySound).l, JmpTo12_PlaySound
+	command	Mus_FadeOut
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -74051,8 +73645,7 @@ loc_397E6:
 
 loc_397F0:
 	addq.b	#2,routine(a0)
-	moveq	#MusID_Boss,d0
-	jsrto	(PlayMusic).l, JmpTo5_PlayMusic
+	music	mus_Boss
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -74060,8 +73653,7 @@ loc_397FE:
 	move.b	(Vint_runcount+3).w,d0
 	andi.b	#$1F,d0
 	bne.s	loc_3980E
-	moveq	#SndID_Fire,d0
-	jsrto	(PlaySound).l, JmpTo12_PlaySound
+	sfx	sfx_Fire
 
 loc_3980E:
 	jsr	(ObjCheckFloorDist).l
@@ -74091,8 +73683,7 @@ loc_3984A:
 	beq.s	loc_39886
 	cmpi.b	#$32,objoff_2A(a0)
 	bne.s	loc_3986A
-	moveq	#SndID_MechaSonicBuzz,d0
-	jsrto	(PlaySound).l, JmpTo12_PlaySound
+	sfx	sfx_MechaSonic
 	jsrto	(DisplaySprite).l, JmpTo45_DisplaySprite
 
 loc_3986A:
@@ -74203,8 +73794,8 @@ loc_3994E:
 	bsr.w	loc_39D60
 	movea.w	parent(a0),a1 ; a1=object
 	move.b	#2,anim(a1)
-	moveq	#SndID_SpindashRelease,d0
-	jmpto	(PlaySound).l, JmpTo12_PlaySound
+	sfx	sfx_Dash
+	rts
 ; ===========================================================================
 
 loc_39976:
@@ -74249,8 +73840,7 @@ loc_399D6:
 	move.b	#$12,routine(a1)
 	movea.w	objoff_3C(a0),a1 ; a1=object
 	move.b	#$18,routine(a1)
-	moveq	#SndID_MechaSonicBuzz,d0
-	jsrto	(PlaySound).l, JmpTo12_PlaySound
+	sfx	sfx_MechaSonic
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -74272,8 +73862,7 @@ loc_39A2A:
 	addq.b	#2,routine_secondary(a0)
 	move.b	#$20,objoff_2A(a0)
 	move.b	#4,anim(a0)
-	moveq	#SndID_LaserBeam,d0
-	jsrto	(PlaySound).l, JmpTo12_PlaySound
+	sfx	sfx_Lazer
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -74391,8 +73980,7 @@ loc_39B44:
 	bmi.s	loc_39B66
 	st	objoff_2E(a0)
 	bsr.w	loc_39D82
-	moveq	#SndID_SpikeSwitch,d0
-	jsrto	(PlaySound).l, JmpTo12_PlaySound
+	sfx	sfx_SpikeSwitch
 
 loc_39B66:
 	jsr	(ObjCheckFloorDist).l
@@ -74424,10 +74012,8 @@ loc_39B92:
 loc_39BA4:
 	move.w	#$1000,(Camera_Max_X_pos).w
 	addq.b	#2,(Dynamic_Resize_Routine).w
-	; There's a bug here: Level_Music is a word long, not a byte.
-	; All this does is try to play Sound 0, which doesn't do anything.
-	move.b	(Level_Music).w,d0
-	jsrto	(PlayMusic).l, JmpTo5_PlayMusic
+	move.w	(Level_Music).w,d0
+	move.b	d0,mQueue+1.w
 	bra.w	JmpTo65_DeleteObject
 ; ===========================================================================
 
@@ -74538,8 +74124,7 @@ loc_39CAE:
 	tst.b	objoff_30(a0)
 	bne.s	loc_39CD0
 	move.b	#$20,objoff_30(a0)
-	move.w	#SndID_BossHit,d0
-	jsr	(PlaySound).l
+	sfx	sfx_BossHit
 
 loc_39CD0:
 	lea	(Normal_palette_line2+2).w,a1
@@ -74941,8 +74526,7 @@ loc_3A3DA:
 loc_3A3E6:
 	addq.b	#2,routine(a0)
 	st	(SegaScr_PalDone_Flag).w
-	move.b	#SndID_SegaSound,d0
-	jsrto	(PlaySound).l, JmpTo12_PlaySound
+	music	mus_SEGA
 
 return_3A3F6:
 	rts
@@ -75368,8 +74952,7 @@ ObjB2_Main_WFZ_Start_shot_down:
 	move.b	(Vint_runcount+3).w,d0
 	andi.b	#$1F,d0
 	bne.s	+
-	moveq	#SndID_Scatter,d0
-	jsrto	(PlaySound).l, JmpTo12_PlaySound
+	sfx	sfx_LazerFloor
 + ; loc_3A92A:
 	subq.w	#1,objoff_2A(a0)
 	bmi.s	+
@@ -76170,8 +75753,9 @@ ObjB4_Main:
 	move.b	(Vint_runcount+3).w,d0
 	andi.b	#$1F,d0
 	bne.s	+
-	moveq	#SndID_Helicopter,d0
-	jsrto	(PlaySoundLocal).l, JmpTo_PlaySoundLocal
+	tst.b	render_flags(a0)
+	bpl.s	+
+	sfx	sfx_Helicopter
 +
 	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
 ; ===========================================================================
@@ -76413,8 +75997,8 @@ loc_3B674:
 	clr.b	anim_frame_duration(a0)
 	bsr.w	loc_3B7BC
 	bsr.w	loc_3B7F8
-	moveq	#SndID_Fire,d0
-	jmpto	(PlaySound).l, JmpTo12_PlaySound
+	sfx	sfx_Fire
+	rts
 ; ===========================================================================
 
 loc_3B6A6:
@@ -76777,8 +76361,7 @@ loc_3BAD2:
 +
 	addq.b	#2,routine(a0)
 	move.w	#-$1000,x_vel(a0)
-	moveq	#SndID_LargeLaser,d0
-	jsrto	(PlaySound).l, JmpTo12_PlaySound
+	sfx	sfx_LargeLazer
 	bra.w	loc_3BAF8
 ; ===========================================================================
 
@@ -77518,8 +77101,8 @@ loc_3C20E:
 	dbf	d1,loc_3C208
 
 loc_3C26C:
-	move.w	#SndID_SlowSmash,d0
-	jmp	(PlaySound).l
+	sfx	sfx_Collapse
+	rts
 ; ===========================================================================
 ; off_3C276:
 ObjC1_SubObjData:
@@ -77734,8 +77317,7 @@ ObjC5_CaseStart:
 	lea	(ObjC5_RobotnikData).l,a2
 	bsr.w	LoadChildObject
 	move.w	#$5A,objoff_2A(a0)	; How long for the boss music to start playing and the boss to start
-	moveq	#MusID_FadeOut,d0
-	jsrto	(PlaySound).l, JmpTo12_PlaySound
+	command	Mus_FadeOut
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -77748,8 +77330,7 @@ ObjC5_CaseWaitDown:
 ObjC5_CaseSpeedDown:
 	addq.b	#2,routine_secondary(a0)
 	move.w	#$60,objoff_2A(a0)	; How long the laser carrier goes down
-	moveq	#MusID_Boss,d0
-	jsrto	(PlayMusic).l, JmpTo5_PlayMusic
+	music	mus_Boss
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -77941,8 +77522,7 @@ ObjC5_CaseDefeated:
 ; ===========================================================================
 
 ObjC5_End:	; play music and change camera speed
-	moveq	#MusID_WFZ,d0
-	jsrto	(PlayMusic).l, JmpTo5_PlayMusic
+	music	mus_WFZ
 	move.w	#$720,d0
 	move.w	d0,(Camera_Max_Y_pos_now).w
 	move.w	d0,(Camera_Max_Y_pos).w
@@ -78443,8 +78023,7 @@ ObjC5_HandleHits:
 	btst	#6,status(a0)
 	beq.s	return_3CC3A
 	move.b	#$20,objoff_30(a0)
-	move.w	#SndID_BossHit,d0
-	jsr	(PlaySound).l
+	sfx	sfx_BossHit
 
 ObjC5_FlashSetUp:
 	lea	(Normal_palette_line2+2).w,a1
@@ -78944,11 +78523,7 @@ loc_3D3A4:
 	bclr	#4,status(a1)
 	bclr	#5,status(a1)
 	clr.b	jumping(a1)
-	move.w	#SndID_Bumper,d0
-	jsr	(PlaySound).l
-	rts
-; ===========================================================================
-	; unused
+	sfx	sfx_Bumper
 	rts
 ; ===========================================================================
 
@@ -79076,8 +78651,8 @@ loc_3D5A8:
 +
 	addq.b	#2,routine_secondary(a0)
 	move.b	#$3C,anim_frame_duration(a0)
-	moveq	#MusID_FadeOut,d0
-	jmpto	(PlaySound).l, JmpTo12_PlaySound
+	command	Mus_FadeOut
+	rts
 ; ===========================================================================
 
 loc_3D5C2:
@@ -79091,15 +78666,14 @@ loc_3D5C2:
 	move.w	#-$100,y_vel(a0)
 	movea.w	objoff_38(a0),a1 ; a1=object
 	move.b	#4,routine_secondary(a1)
-	moveq	#MusID_EndBoss,d0
-	jmpto	(PlayMusic).l, JmpTo5_PlayMusic
+	music	mus_FinalBoss
+	rts
 ; ===========================================================================
 
 loc_3D5EA:
 	subq.b	#1,anim_frame_duration(a0)
 	beq.s	+
-	moveq	#SndID_Rumbling,d0
-	jsrto	(PlaySound).l, JmpTo12_PlaySound
+	sfx	sfx_Rumble
 	jsrto	(ObjectMove).l, JmpTo26_ObjectMove
 	lea	(ObjC7_ChildDeltas).l,a1
 	bra.w	ObjC7_PositionChildren
@@ -79258,8 +78832,10 @@ loc_3D744:
 	move.b	(Vint_runcount+3).w,d0
 	andi.b	#$1F,d0
 	bne.s	+
-	moveq	#SndID_Fire,d0
-	jsrto	(PlaySoundLocal).l, JmpTo_PlaySoundLocal
+	tst.b	render_flags(a0)
+	bpl.s	+
+	sfx	sfx_Fire
+
 +
 	jsrto	(ObjectMove).l, JmpTo26_ObjectMove
 	lea	(ObjC7_ChildDeltas).l,a1
@@ -79308,8 +78884,8 @@ loc_3D7B8:
 	move.w	#$40,(DEZ_Shake_Timer).w
 	movea.w	objoff_38(a0),a1 ; a1=object
 	move.b	#6,routine_secondary(a1)
-	moveq	#SndID_Smash,d0
-	jmpto	(PlaySound).l, JmpTo12_PlaySound
+	sfx	sfx_Smash
+	rts
 ; ===========================================================================
 
 loc_3D7F0:
@@ -79481,8 +79057,7 @@ ObjC7_SetupEnding:
 	move.b	(Vint_runcount+3).w,d0
 	andi.b	#$1F,d0
 	bne.s	+
-	moveq	#SndID_Rumbling2,d0
-	jsrto	(PlaySound).l, JmpTo12_PlaySound
+	sfx	sfx_Rumble2
 	subq.w	#1,objoff_2A(a0)
 +
 	lea	(MainCharacter).w,a1 ; a1=character
@@ -79536,8 +79111,7 @@ loc_3D9D6:
 -	move.l	d0,(a1)+
 	dbf	d6,-
 
-	moveq	#MusID_FadeOut,d0
-	jsrto	(PlaySound).l, JmpTo12_PlaySound
+	command	Mus_FadeOut
 	move.b	#GameModeID_EndingSequence,(Game_Mode).w ; => EndingSequence
 	bra.w	JmpTo65_DeleteObject
 ; ===========================================================================
@@ -79666,8 +79240,8 @@ loc_3DACC:
 	neg.w	d2
 +
 	move.w	d2,x_vel(a0)
-	moveq	#SndID_SpindashRelease,d0
-	jmpto	(PlaySound).l, JmpTo12_PlaySound
+	sfx	sfx_Dash
+	rts
 ; ===========================================================================
 word_3DB2A:
 	dc.w  $200
@@ -80004,8 +79578,8 @@ loc_3DDA6:
 	bpl.s	+
 	subq.b	#1,objoff_27(a0)
 	move.b	objoff_27(a0),angle(a0)
-	moveq	#SndID_Beep,d0
-	jsrto	(PlaySound).l, JmpTo12_PlaySound
+	sfx	sfx_Beep
+
 +
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -80031,8 +79605,8 @@ loc_3DE3C:
 	subq.b	#1,angle(a0)
 	bpl.s	+
 	move.b	#4,angle(a0)
-	moveq	#SndID_Beep,d0
-	jsrto	(PlaySound).l, JmpTo12_PlaySound
+	sfx	sfx_Beep
+
 +
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -80138,8 +79712,7 @@ loc_3DF4C:
 	move.b	#1,priority(a0)
 	move.b	#7,anim_frame_duration(a0)
 	move.b	#0,mapping_frame(a0)
-	move.w	#SndID_BossExplosion,d0
-	jsr	(PlaySound).l
+	sfx	sfx_Explode
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -80200,8 +79773,7 @@ ObjC7_CheckHit:
 	beq.s	ObjC7_Beaten
 +
 	move.b	#$3C,objoff_2A(a0)
-	move.w	#SndID_BossHit,d0
-	jsr	(PlaySound).l
+	sfx	sfx_BossHit
 ;loc_3E02E
 ObjC7_Flashing:
 	lea	(Normal_palette_line2+2).w,a1
@@ -80478,8 +80050,7 @@ loc_3E252:
 	bne.s	return_3E23C
 	move.b	anim_frame(a0),d1
 	addq.b	#1,d1
-	move.b	(a1,d1.w),d0
-	jsrto	(PlaySound).l, JmpTo12_PlaySound ; sound id most likely came from off_3E40C or off_3E42C
+	move.b	(a1,d1.w),mQueue+2.w
 	addq.b	#1,d1
 	move.b	d1,anim_frame(a0)
 	move.b	(a1,d1.w),d0
@@ -80708,13 +80279,13 @@ byte_3E3F8_End
 
 off_3E40C:
 	dc.l ObjC7_GroupAni_3E438
-	dc.b   0,  1,  2,  3, $40, SndID_Hammer
-	dc.b   4,  5,  6,  7,   8, $40, SndID_Hammer
-	dc.b   9, $A,  1,  2,   3, $40, SndID_Hammer
-	dc.b   4,  5,  6,  7,   8, $40, SndID_Hammer, $C0
+	dc.b   0,  1,  2,  3, $40, sfx_Chain
+	dc.b   4,  5,  6,  7,   8, $40, sfx_Chain
+	dc.b   9, $A,  1,  2,   3, $40, sfx_Chain
+	dc.b   4,  5,  6,  7,   8, $40, sfx_Chain, $C0
 off_3E42C:
 	dc.l ObjC7_GroupAni_3E438
-	dc.b $88, $87, $86, $85, $B, $40, SndID_Hammer, $C0
+	dc.b $88, $87, $86, $85, $B, $40, sfx_Chain, $C0
 ; -----------------------------------------------------------------------------
 ; Custom animation
 ; -----------------------------------------------------------------------------
@@ -81217,14 +80788,10 @@ JmpTo39_MarkObjGone
 	jmp	(MarkObjGone).l
 JmpTo6_DeleteObject2
 	jmp	(DeleteObject2).l
-JmpTo12_PlaySound
-	jmp	(PlaySound).l
 JmpTo25_SingleObjLoad2
 	jmp	(SingleObjLoad2).l
 JmpTo25_AnimateSprite
 	jmp	(AnimateSprite).l
-JmpTo_PlaySoundLocal
-	jmp	(PlaySoundLocal).l
 JmpTo6_RandomNumber
 	jmp	(RandomNumber).l
 JmpTo2_MarkObjGone_P1
@@ -81239,8 +80806,6 @@ JmpTo8_MarkObjGone3
 	jmp	(MarkObjGone3).l
 JmpTo64_Adjust2PArtPointer
 	jmp	(Adjust2PArtPointer).l
-JmpTo5_PlayMusic
-	jmp	(PlayMusic).l
 JmpTo_Boss_LoadExplosion
 	jmp	(Boss_LoadExplosion).l
 JmpTo9_PlatformObject
@@ -81255,9 +80820,6 @@ JmpTo26_ObjectMove
 
 	align 4
     endif
-
-
-
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -81999,14 +81561,14 @@ Hurt_ChkSpikes:
 	move.w	#0,inertia(a0)
 	move.b	#AniIDSonAni_Hurt2,anim(a0)
 	move.w	#$78,invulnerable_time(a0)
-	move.w	#SndID_Hurt,d0	; load normal damage sound
+	moveq	#sfx_Death,d0		; load normal damage sound
 	cmpi.b	#ObjID_Spikes,(a2)	; was damage caused by spikes?
-	bne.s	Hurt_Sound	; if not, branch
-	move.w	#SndID_HurtBySpikes,d0	; load spikes damage sound
+	bne.s	Hurt_Sound		; if not, branch
+	moveq	#sfx_SpikeHit,d0	; load spikes damage sound
 
 ; loc_3F91C:
 Hurt_Sound:
-	jsr	(PlaySound).l
+	move.b	d0,mQueue+2.w
 	moveq	#-1,d0
 	rts
 ; ===========================================================================
@@ -82030,12 +81592,12 @@ KillCharacter:
 	move.w	#0,inertia(a0)
 	move.b	#AniIDSonAni_Death,anim(a0)
 	bset	#high_priority_bit,art_tile(a0)
-	move.w	#SndID_Hurt,d0
+	moveq	#sfx_Death,d0
 	cmpi.b	#ObjID_Spikes,id(a2)
 	bne.s	+
-	move.w	#SndID_HurtBySpikes,d0
+	moveq	#sfx_SpikeHit,d0
 +
-	jsr	(PlaySound).l
+	move.b	d0,mQueue+2.w
 +
 	moveq	#-1,d0
 	rts
@@ -84158,8 +83720,7 @@ AddPoints:
 	addi.l	#5000,(Next_Extra_life_score).w
 	addq.b	#1,(Life_count).w
 	addq.b	#1,(Update_HUD_lives).w
-	move.w	#MusID_ExtraLife,d0
-	jmp	(PlayMusic).l
+	music	mus_ExtraLife
 ; ===========================================================================
 +	rts
 ; End of function AddPoints
@@ -84193,8 +83754,7 @@ AddPoints2:
 	addi.l	#5000,(Next_Extra_life_score_2P).w
 	addq.b	#1,(Life_count_2P).w
 	addq.b	#1,(Update_HUD_lives_2P).w
-	move.w	#MusID_ExtraLife,d0
-	jmp	(PlayMusic).l
+	music	mus_ExtraLife
 ; ===========================================================================
 +	rts
 ; End of function AddPoints2
@@ -84430,8 +83990,7 @@ loc_40FE4:
 	move.b	#$3C,(a1)
 	cmpi.b	#$C,-1(a1)
 	bne.s	loc_41010
-	move.w	#MusID_Countdown,d0
-	jsr	(PlayMusic).l
+	music	mus_Drowning
 
 loc_41010:
 	subq.b	#1,-(a1)
@@ -88727,15 +88286,17 @@ DualPCM_sz:
 	if padToPowerOfTwo && (*)&(*-1)
 		cnop	-1,2<<lastbit(*-1)
 		dc.b	0
-paddingSoFar	:= paddingSoFar+1
 	else
 		even
 	endif
 	if MOMPASS=2
 		; "About" because it will be off by the same amount that Size_of_Snd_driver_guess is incorrect (if you changed it), and because I may have missed a small amount of internal padding somewhere
-		message "ROM size is $\{*} bytes (\{*/1024.0} kb). About $\{paddingSoFar} bytes are padding. "
+		message "ROM size is $\{*} bytes (\{*/1024.0} kb)."
 	endif
 	; share these symbols externally (WARNING: don't rename, move or remove these labels!)
-	shared word_728C_user,Obj5F_MapUnc_7240,off_3A294,MapRUnc_Sonic,movewZ80CompSize
+	shared word_728C_user,Obj5F_MapUnc_7240,off_3A294,MapRUnc_Sonic
+
+; --------------------------------------------------------------------
+	include	"ErrorDebugger/ErrorHandler.asm"
 EndOfRom:
 	END
