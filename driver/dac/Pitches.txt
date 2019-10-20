@@ -1,0 +1,17 @@
+81 - 8286 - Kick
+82 - 24517 - Snare
+83 - 16965 - Clap
+84 - 15104 - Scratch
+85 - 7396 - Timpani
+86 - 13610 - Tom
+87 - 7396 - Bongo
+88 - 9754 - Timpani
+89 - 8817 - Timpani
+8A - 7202 - Timpani
+8B - 7019 - Timpani
+8C - 22513 - Tom
+8D - 18079 - Tom
+8E - 15104 - Tom
+8F - 15104 - Bongo
+90 - 12969 - Bongo
+91 - 9754 - Bongo
