@@ -151,6 +151,11 @@ __mus :=	__mus+1
 		dc.l (($10)<<24)|_mus_Credits
 
 
+mus_SEGA =	__mus
+__mus :=	__mus+1
+		dc.l (($00)<<24)|_mus_SEGA
+
+
 MusCount =	__mus-MusOff		; number of installed music tracks
 SFXoff =	__mus			; first SFX ID
 
@@ -792,6 +797,8 @@ _mus_Continue:	fuckingincludeit "driver/music/Continue.asm"
 _mus_Ending:	fuckingincludeit "driver/music/Ending.asm"
 		align 2
 _mus_Credits:	fuckingincludeit "driver/music/Credits.asm"
+		align 2
+_mus_SEGA:	fuckingincludeit "driver/music/SEGA.asm"
 
 musend:
 ; ===========================================================================

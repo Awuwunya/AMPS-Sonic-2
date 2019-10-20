@@ -50,6 +50,7 @@ MusicIndex:
 	ptrMusic SuperSonic, $00, Boss, $00, FinalBoss, $37, Drowning, $80
 	ptrMusic Title, $33, GotThroughAct, $56, Emerald, $2B, ExtraLife, $33
 	ptrMusic GameOver, $0E, Continue, $25, Ending, $69, Credits, $10
+	ptrMusic SEGA, $00
 
 MusCount =	__mus-MusOff		; number of installed music tracks
 SFXoff =	__mus			; first SFX ID
