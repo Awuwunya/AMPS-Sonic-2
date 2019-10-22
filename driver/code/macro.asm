@@ -187,6 +187,7 @@ mMasterVolDAC	ds.b 1		; master volume for DAC channels
 mSpindash	ds.b 1		; spindash rev counter
 mContCtr	ds.b 1		; continous sfx loop counter
 mContLast	ds.b 1		; last continous sfx played
+mLastCue	ds.b 1		; last YM Cue the sound driver was accessing
 	if 1&(*)
 		ds.b 1		; even's are broke in 64-bit values?
 	endif			; align channel data
@@ -377,6 +378,60 @@ stopZ80 	macro
 
 startZ80 	macro
 	move.w	#0,$A11100		; start the Z80
+    endm
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Initializes YM writes
+; ---------------------------------------------------------------------------
+
+InitChYM	macro
+	move.b	cType(a5),d2		; get channel type to d2
+	move.b	d2,d1			; copy to d1
+	and.b	#3,d1			; get only the important part
+	lsr.b	#1,d2			; halve part value
+	and.b	#2,d2			; clear extra bits away
+    endm
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Write data to channel-specific YM part
+; ---------------------------------------------------------------------------
+
+WriteChYM	macro reg, value
+	move.b	d2,(a0)+		; write part
+	move.b	value,(a0)+		; write register value to cue
+	move.b	d1,d0			; get the channel offset into d0
+	or.b	reg,d0			; or the actual register value
+	move.b	d0,(a0)+		; write register to cue
+    endm
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Write data to YM part 1
+; ---------------------------------------------------------------------------
+
+WriteYM1	macro reg, value
+	clr.b	(a0)+			; write to part 1
+	move.b	value,(a0)+		; write value to cue
+	move.b	reg,(a0)+		; write register to cue
+    endm
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Write data to YM part 2
+; ---------------------------------------------------------------------------
+
+WriteYM2	macro reg, value
+	move.b	#2,(a0)+		; write to part 2
+	move.b	value,(a0)+		; write value to cue
+	move.b	reg,(a0)+		; write register to cue
+    endm
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Macro to check cue address
+; ---------------------------------------------------------------------------
+
+CheckCue	macro
+	if safe=1
+		AMPS_Debug_CuePtr Gen		; check if cue pointer is valid
+	endif
     endm
 ; ===========================================================================
 ; ---------------------------------------------------------------------------

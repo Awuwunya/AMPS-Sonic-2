@@ -11983,7 +11983,6 @@ LevSel_MarkTable:	; 4 bytes per level select entry
 ; ===========================================================================
 ; loc_9746:
 CheckCheats:	; This is called from 2 places: the options screen and the level select screen
-	sfx	sfx_RingRight
 	move.w	(Correct_cheat_entries).w,d0	; Get the number of correct sound IDs entered so far
 	adda.w	d0,a0				; Skip to the next entry
 	move.w	(Sound_test_sound).w,d0		; Get the current sound test sound
@@ -33942,7 +33941,7 @@ Obj01_DoRoll:
 	move.b	#7,x_radius(a0)
 	move.b	#AniIDSonAni_Roll,anim(a0)	; use "rolling" animation
 	addq.w	#5,y_pos(a0)
-	sfx	sfx_Roll	; play rolling sound
+	sfx	sfx_Roll			; play rolling sound
 	tst.w	inertia(a0)
 	bne.s	return_1AA36
 	move.w	#$200,inertia(a0)
@@ -33993,13 +33992,13 @@ Sonic_Jump:
 	addq.l	#4,sp
 	move.b	#1,jumping(a0)
 	clr.b	stick_to_convex(a0)
+
 	sfx	sfx_Jump	; play jumping sound
-	move.b	#$13,y_radius(a0)
-	move.b	#9,x_radius(a0)
-	btst	#2,status(a0)
-	bne.s	Sonic_RollJump
 	move.b	#$E,y_radius(a0)
 	move.b	#7,x_radius(a0)
+	btst	#2,status(a0)
+	bne.s	Sonic_RollJump
+
 	move.b	#AniIDSonAni_Roll,anim(a0)	; use "jumping" animation
 	bset	#2,status(a0)
 	addq.w	#5,y_pos(a0)
@@ -34217,6 +34216,7 @@ Sonic_UpdateSpindash:
 	bset	#2,status(a0)
 	move.b	#0,(Sonic_Dust+anim).w
 	sfx	sfx_Dash
+	rts
 	bra.s	Obj01_Spindash_ResetScr
 ; ===========================================================================
 ; word_1AD0C:
@@ -36842,7 +36842,7 @@ Obj02_DoRoll:
 	move.b	#7,x_radius(a0)
 	move.b	#AniIDTailsAni_Roll,anim(a0)	; use "rolling" animation
 	addq.w	#1,y_pos(a0)
-	sfx	sfx_Roll	; play rolling sound
+	sfx	sfx_Roll			; play rolling sound
 	tst.w	inertia(a0)
 	bne.s	return_1C61C
 	move.w	#$200,inertia(a0)
@@ -36890,12 +36890,11 @@ Tails_Jump:
 	move.b	#1,jumping(a0)
 	clr.b	stick_to_convex(a0)
 	sfx	sfx_Jump	; play jumping sound
-	move.b	#$F,y_radius(a0)
-	move.b	#9,x_radius(a0)
-	btst	#2,status(a0)
-	bne.s	Tails_RollJump
+
 	move.b	#$E,y_radius(a0)
 	move.b	#7,x_radius(a0)
+	btst	#2,status(a0)
+	bne.s	Tails_RollJump
 	move.b	#AniIDTailsAni_Roll,anim(a0)	; use "jumping" animation
 	bset	#2,status(a0)
 	addq.w	#1,y_pos(a0)
@@ -61851,7 +61850,7 @@ Obj89_Main_Sub4:
 	btst	#0,render_flags(a0)
 	sne	obj89_target(a0)		; target opposite side
 	move.w	#$1E,(Boss_Countdown).w
-	sfx	sfx_Chain
+	sfx	sfx_Stomp
 
 ; loc_306F8:
 Obj89_Main_Sub4_Standard:
@@ -73862,7 +73861,7 @@ loc_39A2A:
 	addq.b	#2,routine_secondary(a0)
 	move.b	#$20,objoff_2A(a0)
 	move.b	#4,anim(a0)
-	sfx	sfx_Lazer
+	sfx	sfx_Saw
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -80279,13 +80278,13 @@ byte_3E3F8_End
 
 off_3E40C:
 	dc.l ObjC7_GroupAni_3E438
-	dc.b   0,  1,  2,  3, $40, sfx_Chain
-	dc.b   4,  5,  6,  7,   8, $40, sfx_Chain
-	dc.b   9, $A,  1,  2,   3, $40, sfx_Chain
-	dc.b   4,  5,  6,  7,   8, $40, sfx_Chain, $C0
+	dc.b   0,  1,  2,  3, $40, sfx_Stomp
+	dc.b   4,  5,  6,  7,   8, $40, sfx_Stomp
+	dc.b   9, $A,  1,  2,   3, $40, sfx_Stomp
+	dc.b   4,  5,  6,  7,   8, $40, sfx_Stomp, $C0
 off_3E42C:
 	dc.l ObjC7_GroupAni_3E438
-	dc.b $88, $87, $86, $85, $B, $40, sfx_Chain, $C0
+	dc.b $88, $87, $86, $85, $B, $40, sfx_Stomp, $C0
 ; -----------------------------------------------------------------------------
 ; Custom animation
 ; -----------------------------------------------------------------------------

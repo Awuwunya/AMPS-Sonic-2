@@ -2,11 +2,11 @@
 
 REM // make sure we can write to the file s2built.bin
 REM // also make a backup to s2built.prev.bin
-IF NOT EXIST s2built.bin goto LABLNOCOPY
-IF EXIST s2built.prev.bin del s2built.prev.bin
-IF EXIST s2built.prev.bin goto LABLNOCOPY
-move /Y s2built.bin s2built.prev.bin > NUL
-IF EXIST s2built.bin goto LABLERROR3
+IF NOT EXIST s2built.md goto LABLNOCOPY
+IF EXIST s2built.prev.md del s2built.prev.md
+IF EXIST s2built.prev.md goto LABLNOCOPY
+move /Y s2built.md s2built.prev.md > NUL
+IF EXIST s2built.md goto LABLERROR3
 
 :LABLNOCOPY
 REM // delete some intermediate assembler output just in case
