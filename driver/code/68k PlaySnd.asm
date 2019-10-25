@@ -484,6 +484,7 @@ dPlaySnd_SFX:
 
 .setcont
 		move.b	d1,mContLast.w		; save new continous SFX ID
+
 .nocont
 		movea.l	a4,a1			; copy tracker header pointer to a1
 
@@ -598,11 +599,11 @@ dPlaySnd_SFX:
 	CheckCue				; check that YM cue is valid
 	InitChYM				; prepare to write to channel
 	stopZ80
+	WriteYM1	#$28, cType(a5)		; Key on/off: all operators off
 	WriteChYM	#$80, d3		; Release Rate Operator 1
 	WriteChYM	#$88, d3		; Release Rate Operator 2
 	WriteChYM	#$84, d3		; Release Rate Operator 3
 	WriteChYM	#$8C, d3		; Release Rate Operator 4
-	WriteYM1	#$28, cType(a5)		; Key on/off: all operators off
 	;	st	(a0)			; write end marker
 	startZ80
 
