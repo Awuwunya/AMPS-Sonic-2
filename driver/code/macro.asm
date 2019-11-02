@@ -11,6 +11,7 @@ FEATURE_DACFMVOLENV =	0	; set to 1 to enable volume envelopes for FM & DAC chann
 FEATURE_UNDERWATER =	1	; set to 1 to enable underwater mode
 FEATURE_BACKUP =	1	; set to 1 to enable back-up channels. Used for the 1-up SFX in Sonic 1, 2 and 3K...
 FEATURE_BACKUPNOSFX =	1	; set to 1 to disable SFX while a song is backed up. Used for the 1-up SFX.
+FEATURE_FM6 =		1	; set to 1 to enable FM6 to be used in music
 
 ; if safe mode is enabled (1), then the driver will attempt to find any issues.
 ; if Vladik's error debugger is installed, then the error will be displayed.
@@ -118,6 +119,9 @@ ctFM2 =		$01		; FM 2
 ctFM3 =		$02		; FM 3	- Valid for SFX
 ctFM4 =		$04		; FM 4	- Valid for SFX
 ctFM5 =		$05		; FM 5	- Valid for SFX
+	if FEATURE_FM6
+ctFM6 =		$06		; FM 6
+	endif
 
 ctbDAC =	$03		; DAC bit
 ctDAC1 =	(1<<ctbDAC)|$03	; DAC 1	- Valid for SFX
@@ -133,7 +137,7 @@ ctPSG4 =	$E0		; PSG 4
 ; ---------------------------------------------------------------------------
 
 Mus_DAC =	2		; number of DAC channels
-Mus_FM =	5		; number of FM channels
+Mus_FM =	5+(FEATURE_FM6<>0); number of FM channels (5 or 6)
 Mus_PSG =	3		; number of PSG channels
 Mus_Ch =	Mus_DAC+Mus_FM+Mus_PSG; total number of music channels
 SFX_DAC =	1		; number of DAC SFX channels
@@ -199,6 +203,9 @@ mFM2		ds.b cSize	; FM 2 data
 mFM3		ds.b cSize	; FM 3 data
 mFM4		ds.b cSize	; FM 4 data
 mFM5		ds.b cSize	; FM 5 data
+	if FEATURE_FM6
+mFM6		ds.b cSize	; FM 6 data
+	endif
 mPSG1		ds.b cSize	; PSG 1 data
 mPSG2		ds.b cSize	; PSG 2 data
 mPSG3		ds.b cSize	; PSG 3 data
@@ -219,6 +226,9 @@ mBackFM2	ds.b cSize	; back-up FM 2 data
 mBackFM3	ds.b cSize	; back-up FM 3 data
 mBackFM4	ds.b cSize	; back-up FM 4 data
 mBackFM5	ds.b cSize	; back-up FM 5 data
+	if FEATURE_FM6
+mBackFM6	ds.b cSize	; back-up FM 6 data
+	endif
 mBackPSG1	ds.b cSize	; back-up PSG 1 data
 mBackPSG2	ds.b cSize	; back-up PSG 2 data
 mBackPSG3	ds.b cSize	; back-up PSG 3 data
@@ -519,11 +529,22 @@ d{"start"} =	__samp		; else, use the first one!
 	endif
 
 __samp :=	__samp+1	; increase sample ID
+
 ; create offsets for the sample normal, reverse, loop normal, loop reverse.
-	dc.b SWF_start&$FF,((SWF_start>>$08)&$7F)|$80,(SWF_start>>$0F)&$FF
-	dc.b (SWFR_start-1)&$FF,(((SWFR_start-1)>>$08)&$7F)|$80,((SWFR_start-1)>>$0F)&$FF
-	dc.b SWF_loop&$FF,((SWF_loop>>$08)&$7F)|$80, (SWF_loop>>$0F)&$FF
-	dc.b (SWFR_loop-1)&$FF,(((SWFR_loop-1)>>$08)&$7F)|$80,((SWFR_loop-1)>>$0F)&$FF
+	if ("start"="Stop")|("start"="STOP")|("start"="stop")
+		dc.b [6] 0
+	else
+		dc.b SWF_start&$FF,((SWF_start>>$08)&$7F)|$80,(SWF_start>>$0F)&$FF
+		dc.b (SWFR_start-1)&$FF,(((SWFR_start-1)>>$08)&$7F)|$80,((SWFR_start-1)>>$0F)&$FF
+	endif
+
+	if ("loop"="Stop")|("loop"="STOP")|("loop"="stop")
+		dc.b [6] 0
+	else
+		dc.b SWF_loop&$FF,((SWF_loop>>$08)&$7F)|$80, (SWF_loop>>$0F)&$FF
+		dc.b (SWFR_loop-1)&$FF,(((SWFR_loop-1)>>$08)&$7F)|$80,((SWFR_loop-1)>>$0F)&$FF
+	endif
+
 	dc.w freq-$100		; sample frequency (actually offset, so we remove $100)
 	dc.w 0			; unused!
     endm

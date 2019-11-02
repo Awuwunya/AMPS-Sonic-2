@@ -1,14 +1,14 @@
 Emerald_Header:
 	sHeaderInit						; Z80 offset is $D6C9
 	sHeaderTempo	$01, $2B
-	sHeaderCh	$05, $02
+	sHeaderCh	$06, $02
 	sHeaderDAC	Emerald_DAC1
 	sHeaderDAC	Emerald_DAC2
 	sHeaderFM	Emerald_FM1, $F4, $08
 	sHeaderFM	Emerald_FM2, $F4, $08
 	sHeaderFM	Emerald_FM3, $F4, $07
 	sHeaderFM	Emerald_FM4, $F4, $16
-;	sHeaderFM	Emerald_FM5, $F4, $16
+	sHeaderFM	Emerald_FM5, $F4, $16
 	sHeaderFM	Emerald_FM6, $F4, $16
 	sHeaderPSG	Emerald_PSG1, $F4+$0C, $02, $00, v04
 	sHeaderPSG	Emerald_PSG2, $F4+$0C, $02, $00, v05

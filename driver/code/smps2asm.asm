@@ -37,7 +37,7 @@ sHeaderCh	macro fm,psg
 	dc.b fm-1
 
 	if "psg"<>""
-		if fm>5
+		if fm>(5+(FEATURE_FM6<>0))
 			warning "You sure there are fm FM channels?"
 		endif
 

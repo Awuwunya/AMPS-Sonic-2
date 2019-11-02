@@ -391,6 +391,11 @@ dPlaySnd_Music:
 ; clears some YM registers.
 ; ---------------------------------------------------------------------------
 
+	if FEATURE_FM6
+		tst.b	mFM6.w			; check if FM6 is used by music
+		bmi.s	.yesFM6			; if so, do NOT initialize FM6 to mute
+	endif
+
 	CheckCue				; check that cue is valid
 	stopZ80
 	WriteYM1	#$28, #6		; Key on/off: FM6, all operators off
@@ -403,6 +408,7 @@ dPlaySnd_Music:
 	;	st	(a0)			; write end marker
 	startZ80
 
+.yesFM6
 		move.w	#fLog>>$0F,d0		; use logarithmic filter
 		jmp	dSetFilter(pc)		; set filter
 
@@ -412,6 +418,9 @@ dPlaySnd_Music:
 ; ---------------------------------------------------------------------------
 dDACtypeVals:	dc.b ctDAC1, ctDAC2
 dFMtypeVals:	dc.b ctFM1, ctFM2, ctFM3, ctFM4, ctFM5
+	if FEATURE_FM6
+		dc.b ctFM6
+	endif
 dPSGtypeVals:	dc.b ctPSG1, ctPSG2, ctPSG3
 		even
 ; ===========================================================================

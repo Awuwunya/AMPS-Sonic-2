@@ -4,7 +4,7 @@
 ; ---------------------------------------------------------------------------
 ; size variables - you'll get an informational error if you need to change these...
 ; they are all in units of bytes
-Size_of_Snd_driver_guess =	$7C8 ; approximate post-compressed size of the Z80 sound driver
+Size_of_Snd_driver_guess =	$7FC ; approximate post-compressed size of the Z80 sound driver
 
 ; ---------------------------------------------------------------------------
 ; Object Status Table offsets (for everything between Object_RAM and Primary_Collision)
@@ -30,7 +30,7 @@ x_radius =		$17 ; collision width / 2
 anim_frame =		$1B
 anim =			$1C
 next_anim =		$1D
-anim_frame_duration =	$1E
+anim_frame_duration =	$23
 status =		$22 ; note: exact meaning depends on the object... for sonic/tails: bit 0: leftfacing. bit 1: inair. bit 2: spinning. bit 3: onobject. bit 4: rolljumping. bit 5: pushing. bit 6: underwater.
 routine =		$24
 routine_secondary =	$25
@@ -39,7 +39,7 @@ angle =			$26 ; angle about the z axis (360 degrees = 256)
 ; conventions followed by many objects but NOT sonic/tails:
 collision_flags =	$20
 collision_property =	$21
-respawn_index =		$23
+respawn_index =		$1E
 subtype =		$28
 ; ---------------------------------------------------------------------------
 ; conventions specific to sonic/tails (Obj01, Obj02, and ObjDB):
@@ -123,7 +123,6 @@ objoff_F =		3+y_pos ; unused
 objoff_10 =		$10
 objoff_14 =		$14
 objoff_15 =		$15
-objoff_1F =		$1F
 objoff_27 =		$27
 objoff_28 =		$28 ; overlaps subtype, but a few objects use it for other things anyway
  enum               objoff_29=$29,objoff_2A=$2A,objoff_2B=$2B,objoff_2C=$2C,objoff_2D=$2D,objoff_2E=$2E,objoff_2F=$2F

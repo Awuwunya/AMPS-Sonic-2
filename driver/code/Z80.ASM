@@ -443,18 +443,12 @@ Z80_Int1:	ei					; 04	; enabled interrupts
 Z80_Init:
 			ld	sp,Z80_Stack			; 10	; set stack address
 
-	; --- YM2612 DAC Setup ---
-
-			ld	a,02Bh				; 07	; set YM2612 address to DAC switch
-			ld	(04000h),a			; 13	; ''
-			ld	a,080h				; 07	; turn DAC on/FM6 off
-			ld	(04001h),a			; 13	; ''
-			ld	a,02Ah				; 07	; set YM2612 address to DAC port
-			ld	(04000h),a			; 13	; ''
-
 	; --- Final register setup ---
 
-			ld	bc,04001h			; 10	; prepare YM2612 port address
+			ld	bc,04000h			; 10	; prepare YM2612 port address
+			ld	a,02Ah				; 07
+			ld	(bc),a				; 07
+			inc	c				; 04
 			ld	d,(PCM_Volume2>>008h)&0FFh	; 07	; prepare volume list address (upper byte only)
 			ld	hl,PCM_Buffer2			; 10	; prepare OUT buffer 2
 
@@ -906,36 +900,6 @@ Z80_Flush2:	ld	b,00Ch
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; When PCM sample 1 has reached an end marker & needs to loop back
-; ---------------------------------------------------------------------------
-
-PCM1_Mute:
-		dec	iyl				; 08	; set non-read interrupt
-		ld	a,(PCM1_PitchQuo+001h)		; 13	; load quotient
-		inc	a				; 04	; increase by 1 (because FF00 is stopped), is it playing normally?
-		jp	p,PCM1_Normal			; 10	; if so, branch
-		ld	hl,(PCM1_SampleNext_Rev)	; 16	; load next sample address
-		ld	a,(PCM1_BankNext_Rev)		; 13	; load next bank address
-		jp	PCM1_Reverse			; 10	; continue
-
-PCM1_Normal:
-		ld	hl,(PCM1_SampleNext)		; 16	; load next sample address
-		ld	a,(PCM1_BankNext)		; 13	; load next bank address
-
-PCM1_Reverse:
-		ld	(PCM1_SampCur+001h),hl		; 16	; set sample address
-		ld	(PCM1_BankCur),a		; 13	; set bank address
-		ld	de,PCM1_Switch			; 10	; load PCM switch list to edit
-		call	SetBank				; 17	; set bank address
-		xor	a				; 04	; clear the pitch current position
-		ld	(PCM1_PitchCur+001h),a		; 13	; ''
-			exx					; 04	; switch registers
-			M_Revert01				; 59	; move pointer back
-			exx					; 04	; switch registers
-		jp	PCM1_MuteRet			; 10	; return
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
 ; When PCM sample 1 address has reached the end of a window, just to play the last bit
 ; ---------------------------------------------------------------------------
 
@@ -1037,66 +1001,6 @@ PCM1_ResJump:	jp	00000h				; 10	; jump back to correct LDI instruction
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; 68K SET - routine to load a new sample 1
-; ---------------------------------------------------------------------------
-
-PCM1_NewSample:
-		ld	a,(PCM1_PitchQuo+001h)		; 13	; load quotient
-		inc	a				; 04	; increase by 1 (because FF00 is stopped), is it playing normally?
-		jp	p,PCM1_NewNormal		; 10	; if so, branch
-		ld	hl,(PCM1_Sample_Rev)		; 16	; load sample address (reversed)
-		ld	a,(PCM1_Bank_Rev)		; 13	; load bank address (reversed)
-		jp	PCM1_NewReverse			; 10	; continue to save reversed samples
-
-PCM1_NewNormal:
-		ld	hl,(PCM1_Sample)		; 16	; load sample address
-		ld	a,(PCM1_Bank)			; 13	; load bank address
-
-PCM1_NewReverse:
-		ld	(PCM1_SampCur+001h),hl		; 16	; save as current address (68k to z80)
-		ld	(PCM1_BankCur),a		; 13	; save as current bank (68k to z80)
-		ld	de,PCM1_Switch			; 10	; load PCM switch list to edit
-		call	SetBank				; 17	; set bank address
-		xor	a				; 04	; clear the pitch current position
-		ld	(PCM1_PitchCur+001h),a		; 13	; ''
-
-		ld	hl,PCM1_NewRET			; 10	; load return address
-		ld	(hl),011010010b			; 10	; change instruction back to "JP NC"
-		scf					; 04	; set C flag (for "JP NC" instruction)
-		jp	(hl)				; 04	; return to address
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; When PCM sample 2 has reached an end marker & needs to loop back
-; ---------------------------------------------------------------------------
-
-PCM2_Mute:
-		db 0FDh, 02Dh	; dec	iyl		; 08	; set non-read interrupt
-		ld	a,(PCM2_PitchQuo+001h)		; 13	; load quotient
-		inc	a				; 04	; increase by 1 (because FF00 is stopped), is it playing normally?
-		jp	p,PCM2_Normal			; 10	; if so, branch
-		ld	hl,(PCM2_SampleNext_Rev)	; 16	; load next sample address
-		ld	a,(PCM2_BankNext_Rev)		; 13	; load next bank address
-		jp	PCM2_Reverse			; 10	; continue
-
-PCM2_Normal:
-		ld	hl,(PCM2_SampleNext)		; 16	; load next sample address
-		ld	a,(PCM2_BankNext)		; 13	; load next bank address
-
-PCM2_Reverse:
-		ld	(PCM2_SampCur+001h),hl		; 16	; set sample address
-		ld	(PCM2_BankCur),a		; 13	; set bank address
-		ld	de,PCM2_Switch			; 10	; load PCM switch list to edit
-		call	SetBank				; 17	; set bank address
-		xor	a				; 04	; clear the pitch current position
-		ld	(PCM2_PitchCur+001h),a		; 13	; ''
-			exx					; 04	; switch registers
-			M_Revert02				; 59	; move pointer back
-			exx					; 04	; switch registers
-		jp	PCM2_MuteRet			; 10	; return
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
 ; When PCM sample 2 address has reached the end of a window, just to play the last bit
 ; ---------------------------------------------------------------------------
 
@@ -1121,7 +1025,7 @@ PCM2_PrepLoc:	ld	hl,(PCM2_PrepTable)		; 10	; load correct LDI instruction to cha
 		ld	(PCM2_ResJump+001h),hl		; 16	; ''
 		ld	(hl),011000111b|PCM2_ResetJmp	; 10	; change LDI to "rst 30h"
 		ld	h,080h				; 07	; set h to negative address (for V-blank)
-		db 0FDh, 02Ch	; inc	iyl		; 08	; set window interrupt
+		inc	iyl				; 08	; set window interrupt
 Int2_jp:	jp	PCM2_PrepRet			; 10	; return
 
 ; ===========================================================================
@@ -1147,7 +1051,7 @@ PCM2_ValueAdd:	ld	de,00000h			; 10	; load to de
 
 		ld	sp,Z80_Stack			; 10	; set valid stack
 
-		db 0FDh, 02Dh	; dec	iyl		; 08	; set non-read interrupt
+		dec	iyl				; 08	; set non-read interrupt
 
 		ld	a,011010010b			; 07	; set bank change request flag
 		ld	(PCM2_ChangeBank),a		; 13	; ''
@@ -1161,7 +1065,7 @@ PCM2_ValueAdd:	ld	de,00000h			; 10	; load to de
 		add	a,(hl)				; 07	; increment/decrement the bank address
 
 		ld	hl,06001h			; 10	; load bank switch register port
-		db 0FDh, 02Dh	; dec	iyl		; 08	; set bank interrupt
+		dec	iyl				; 08	; set bank interrupt
 Int2_ldhl:	ld	(hl),a				; 07	; 0000 0000 1  32KB -  64KB (  8000 -   10000)
 		rrca					; 04
 		ld	(hl),a				; 07	; 0000 0001 0  64KB - 128KB ( 10000 -   20000)
@@ -1179,7 +1083,7 @@ Int2_ldhl:	ld	(hl),a				; 07	; 0000 0000 1  32KB -  64KB (  8000 -   10000)
 		ld	(hl),a				; 07	; 0100 0000 0   4MB -   8MB (400000 -  800000)
 		ld	(hl),h	; clear			; 07	; 1000 0000 0   8MB -  16MB (800000 - 1000000)
 
-		db 0FDh, 02Ch	; inc	iyl		; 08	; set non-read interrupt
+		inc	iyl				; 08	; set non-read interrupt
 
 PCM2_ResInst:	ld	hl,00000h			; 10	; load instruction address to change back to "LDI"
 		ld	(hl),0EDh			; 10	; change to LDI again
@@ -1188,40 +1092,10 @@ PCM2_ResSamp:	ld	hl,00000h			; 10	; restore registers
 PCM2_ResBuff:	ld	de,00000h			; 10	; ''
 PCM2_ResDiv:	ld	bc,00000h			; 10	; ''
 PCM2_ResPitCur:	ld	a,000h				; 07	; ''
-		db 0FDh, 02Ch	; inc	iyl		; 08	; set window interrupt
+		inc	iyl				; 08	; set window interrupt
 PCM2_ResQuo:	ld	sp,00000h			; 10	; restore stack AFTER iy setting
 
 PCM2_ResJump:	jp	00000h				; 10	; jump back to correct LDI instruction
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; 68K SET - routine to load a new sample 2
-; ---------------------------------------------------------------------------
-
-PCM2_NewSample:
-		ld	a,(PCM2_PitchQuo+001h)		; 13	; load quotient
-		inc	a				; 04	; increase by 1 (because FF00 is stopped), is it playing normally?
-		jp	p,PCM2_NewNormal		; 10	; if so, branch
-		ld	hl,(PCM2_Sample_Rev)		; 16	; load sample address (reversed)
-		ld	a,(PCM2_Bank_Rev)		; 13	; load bank address (reversed)
-		jp	PCM2_NewReverse			; 10	; continue to save reversed samples
-
-PCM2_NewNormal:
-		ld	hl,(PCM2_Sample)		; 16	; load sample address
-		ld	a,(PCM2_Bank)			; 13	; load bank address
-
-PCM2_NewReverse:
-		ld	(PCM2_SampCur+001h),hl		; 16	; save as current address (68k to z80)
-		ld	(PCM2_BankCur),a		; 13	; save as current bank (68k to z80)
-		ld	de,PCM2_Switch			; 10	; load PCM switch list to edit
-		call	SetBank				; 17	; set bank address
-		xor	a				; 04	; clear the pitch current position
-		ld	(PCM2_PitchCur+001h),a		; 13	; ''
-
-		ld	hl,PCM2_NewRET			; 10	; load return address
-		ld	(hl),011010010b			; 10	; change instruction back to "JP NC"
-		scf					; 04	; set C flag (for "JP NC" instruction)
-		jp	(hl)				; 04	; return to address
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -1266,179 +1140,235 @@ PCM_Volume2:	db	000h,081h,082h,083h,084h,085h,086h,087h,088h,089h,08Ah,08Bh,08Ch
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Bank interrupt preparation list
-; ---------------------------------------------------------------------------
-		align	00080h
+; 68K SET - routine to load a new sample 1
 ; ---------------------------------------------------------------------------
 
-PCM1_PrepTable:	dw	PCM1_PreInst01
-		dw	PCM1_PreInst02
-		dw	PCM1_PreInst03
-		dw	PCM1_PreInst04
-		dw	PCM1_PreInst05
-		dw	PCM1_PreInst06
-		dw	PCM1_PreInst07
-		dw	PCM1_PreInst08
-		dw	PCM1_PreInst09
-		dw	PCM1_PreInst0A
-		dw	PCM1_PreInst0B
-		dw	PCM1_PreInst0C
-		dw	PCM1_PreInst0D
-		dw	PCM1_PreInst0E
-		dw	PCM1_PreInst0F
-		dw	PCM1_PreInst10
-		dw	PCM1_PreInst11
-		dw	PCM1_PreInst12
-		dw	PCM1_PreInst13
-		dw	PCM1_PreInst14
-		dw	PCM1_PreInst15
-		dw	PCM1_PreInst16
-		dw	PCM1_PreInst17
-		dw	PCM1_PreInst18
-PCM2_PrepTable:	dw	PCM2_PreInst01
-		dw	PCM2_PreInst02
-		dw	PCM2_PreInst03
-		dw	PCM2_PreInst04
-		dw	PCM2_PreInst05
-		dw	PCM2_PreInst06
-		dw	PCM2_PreInst07
-		dw	PCM2_PreInst08
-		dw	PCM2_PreInst09
-		dw	PCM2_PreInst0A
-		dw	PCM2_PreInst0B
-		dw	PCM2_PreInst0C
-		dw	PCM2_PreInst0D
-		dw	PCM2_PreInst0E
-		dw	PCM2_PreInst0F
-		dw	PCM2_PreInst10
-		dw	PCM2_PreInst11
-		dw	PCM2_PreInst12
-		dw	PCM2_PreInst13
-		dw	PCM2_PreInst14
-		dw	PCM2_PreInst15
-		dw	PCM2_PreInst16
-		dw	PCM2_PreInst17
-		dw	PCM2_PreInst18
+PCM1_NewSample:
+		push	de				; 11	; store IN buffer
+		ld	a,(PCM1_PitchQuo+001h)		; 13	; load quotient
+		inc	a				; 04	; increase by 1 (because FF00 is stopped), is it playing normally?
+		jp	p,PCM1_NewNormal		; 10	; if so, branch
+		ld	hl,(PCM1_Sample_Rev)		; 16	; load next sample address
+		ld	a,(PCM1_Bank_Rev)		; 13	; load next bank address
+		ld	de,08000h|(SWFR_Stop&7FFFh)	; 10	; set address to blank/mute sample
+		ld	c,(SWFR_Stop>>0Fh)&0FFh		; 07	; change bank address to mute sample
+		jp	PCM1_NewReverse			; 10	; continue and apply sample
+
+PCM1_NewNormal:
+		ld	hl,(PCM1_Sample)		; 16	; load next sample address
+		ld	a,(PCM1_Bank)			; 13	; load next bank address
+		ld	de,08000h|(SWF_Stop&7FFFh) 	; 10	; set address to blank/mute sample
+		ld	c,(SWF_Stop>>0Fh)&0FFh		; 07	; change bank address to mute sample
+
+PCM1_NewReverse:
+		call	PCM1_GetSample			; 17	; load correct sample (and control DAC status)
+		ld	de,PCM1_Switch			; 10	; load PCM switch list to edit
+		call	SetBank				; 17	; set bank address
+		xor	a				; 04	; clear the pitch current position
+		ld	(PCM1_PitchCur+001h),a		; 13	; ''
+		pop	de				; 10	; restore IN buffer
+		ld	hl,PCM1_NewRET			; 10	; load return address
+		ld	(hl),011010010b			; 10	; change instruction back to "JP NC"
+		scf					; 04	; set C flag (for "JP NC" instruction)
+		jp	(hl)				; 04	; return to address
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Specific variable data...
+; 68K SET - routine to load a new sample 2
 ; ---------------------------------------------------------------------------
 
-	; --- Current bank address for PCM channels ---
+PCM2_NewSample:
+		push	de				; 11	; store IN buffer
+		ld	a,(PCM2_PitchQuo+001h)		; 13	; load quotient
+		inc	a				; 04	; increase by 1 (because FF00 is stopped), is it playing normally?
+		jp	p,PCM2_NewNormal		; 10	; if so, branch
+		ld	hl,(PCM2_Sample_Rev)		; 16	; load next sample address
+		ld	a,(PCM2_Bank_Rev)		; 13	; load next bank address
+		ld	de,08000h|(SWFR_Stop&7FFFh)	; 10	; set address to blank/mute sample
+		ld	c,(SWFR_Stop>>0Fh)&0FFh		; 07	; change bank address to mute sample
+		jp	PCM2_NewReverse			; 10	; continue and apply sample
 
-PCM1_BankCur:	db	(SWF_Stop>>0Fh)&0FFh			; The current bank address of PCM 1
-PCM2_BankCur:	db	(SWF_Stop>>0Fh)&0FFh			; The current bank address of PCM 2
+PCM2_NewNormal:
+		ld	hl,(PCM2_Sample)		; 16	; load next sample address
+		ld	a,(PCM2_Bank)			; 13	; load next bank address
+		ld	de,08000h|(SWF_Stop&7FFFh)	; 10	; set address to blank/mute sample
+		ld	c,(SWF_Stop>>0Fh)&0FFh		; 07	; change bank address to mute sample
 
-	; --- YM2612 Pointers ---
-
-YM_Buffer:	db	000h					; 00 = Z80 Buffer 1 | 68k Buffer 2 ... FF = Z80 Buffer 2 | 68k Buffer 1
+PCM2_NewReverse:
+		call	PCM2_GetSample			; 17	; load correct sample (and control DAC status)
+		ld	de,PCM2_Switch			; 10	; load PCM switch list to edit
+		call	SetBank				; 17	; set bank address
+		xor	a				; 04	; clear the pitch current position
+		ld	(PCM2_PitchCur+001h),a		; 13	; ''
+		pop	de				; 10	; restore IN buffer
+		ld	hl,PCM2_NewRET			; 10	; load return address
+		ld	(hl),011010010b			; 10	; change instruction back to "JP NC"
+		scf					; 04	; set C flag (for "JP NC" instruction)
+		jp	(hl)				; 04	; return to address
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Sample requested by 68k
+; When PCM sample 1 has reached an end marker & needs to loop back
 ; ---------------------------------------------------------------------------
 
-	; --- PCM 1 start sample ---
+PCM1_Mute:
+		dec	iyl				; 08	; set non-read interrupt
+		ld	a,(PCM1_PitchQuo+001h)		; 13	; load quotient
+		inc	a				; 04	; increase by 1 (because FF00 is stopped), is it playing normally?
+		jp	p,PCM1_Normal			; 10	; if so, branch
+		ld	hl,(PCM1_SampleNext_Rev)	; 16	; load next sample address
+		ld	a,(PCM1_BankNext_Rev)		; 13	; load next bank address
+		ld	de,08000h|(SWFR_Stop&7FFFh)	; 10	; set address to blank/mute sample
+		ld	c,(SWFR_Stop>>0Fh)&0FFh		; 07	; change bank address to mute sample
+		jp	PCM1_Reverse			; 10	; continue and apply sample
 
-PCM1_Sample:		dw	08000h|(SWF_Stop&7FFFh)		; PCM 1 requested sample
-PCM1_Bank:		db	(SWF_Stop>>0Fh)&0FFh		; PCM 1 requested bank
-PCM1_Sample_Rev:	dw	08000h|(SWFR_Stop&7FFFh)	; PCM 1 requested sample (reverse position)
-PCM1_Bank_Rev:		db	(SWFR_Stop>>0Fh)&0FFh		; PCM 1 requested bank (reverse position)
+PCM1_Normal:
+		ld	hl,(PCM1_SampleNext)		; 16	; load next sample address
+		ld	a,(PCM1_BankNext)		; 13	; load next bank address
+		ld	de,08000h|(SWF_Stop&7FFFh)	; 10	; set address to blank/mute sample
+		ld	c,(SWF_Stop>>0Fh)&0FFh		; 07	; change bank address to mute sample
 
-	; --- PCM 1 next sample ---
+PCM1_Reverse:
+		call	PCM1_GetSample			; 17	; load correct sample (and control DAC status)
 
-PCM1_SampleNext:	dw	08000h|(SWF_Stop&7FFFh)		; PCM 1 requested sample
-PCM1_BankNext:		db	(SWF_Stop>>0Fh)&0FFh		; PCM 1 requested bank
-PCM1_SampleNext_Rev:	dw	08000h|(SWFR_Stop&7FFFh)	; PCM 1 requested sample (reverse position)
-PCM1_BankNext_Rev:	db	(SWFR_Stop>>0Fh)&0FFh		; PCM 1 requested bank (reverse position)
-
-	; --- PCM 2 start sample ---
-
-PCM2_Sample:		dw	08000h|(SWF_Stop&7FFFh)		; PCM 2 requested sample
-PCM2_Bank:		db	(SWF_Stop>>0Fh)&0FFh		; PCM 2 requested bank
-PCM2_Sample_Rev:	dw	08000h|(SWFR_Stop&7FFFh)	; PCM 2 requested sample (reverse position)
-PCM2_Bank_Rev:		db	(SWFR_Stop>>0Fh)&0FFh		; PCM 2 requested bank (reverse position)
-
-	; --- PCM 2 next sample ---
-
-PCM2_SampleNext:	dw	08000h|(SWF_Stop&7FFFh)		; PCM 2 requested sample
-PCM2_BankNext:		db	(SWF_Stop>>0Fh)&0FFh		; PCM 2 requested bank
-PCM2_SampleNext_Rev:	dw	08000h|(SWFR_Stop&7FFFh)	; PCM 2 requested sample (reverse position)
-PCM2_BankNext_Rev:	db	(SWFR_Stop>>0Fh)&0FFh		; PCM 2 requested bank (reverse position)
+		ld	de,PCM1_Switch			; 10	; load PCM switch list to edit
+		call	SetBank				; 17	; set bank address
+		xor	a				; 04	; clear the pitch current position
+		ld	(PCM1_PitchCur+001h),a		; 13	; ''
+			exx					; 04	; switch registers
+			M_Revert01				; 59	; move pointer back
+			exx					; 04	; switch registers
+		jp	PCM1_MuteRet			; 10	; return
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; PCM buffer (1000h = start of cue, Make sure both buffers end in a multiple of 100)
+; When PCM sample 2 has reached an end marker & needs to loop back
 ; ---------------------------------------------------------------------------
 
-		align	(01000h-00200h)-00150h
-PCM_Buffer1:	rept	00150h
-		db	080h
-		endm
+PCM2_Mute:
+		dec	iyl				; 08	; set non-read interrupt
+		ld	a,(PCM2_PitchQuo+001h)		; 13	; load quotient
+		inc	a				; 04	; increase by 1 (because FF00 is stopped), is it playing normally?
+		jp	p,PCM2_Normal			; 10	; if so, branch
+		ld	hl,(PCM2_SampleNext_Rev)	; 16	; load next sample address
+		ld	a,(PCM2_BankNext_Rev)		; 13	; load next bank address
+		ld	de,08000h|(SWFR_Stop&7FFFh)	; 10	; set address to blank/mute sample
+		ld	c,(SWFR_Stop>>0Fh)&0FFh		; 07	; change bank address to mute sample
+		jp	PCM2_Reverse			; 10	; continue and apply sample
 
-		align	01000h-00150h
-PCM_Buffer2:	rept	00150h
-		db	080h
-		endm
+PCM2_Normal:
+		ld	hl,(PCM2_SampleNext)		; 16	; load next sample address
+		ld	a,(PCM2_BankNext)		; 13	; load next bank address
+		ld	de,08000h|(SWF_Stop&7FFFh)	; 10	; set address to blank/mute sample
+		ld	c,(SWF_Stop>>0Fh)&0FFh		; 07	; change bank address to mute sample
+
+PCM2_Reverse:
+		call	PCM2_GetSample			; 17	; load correct sample (and control DAC status)
+		ld	de,PCM2_Switch			; 10	; load PCM switch list to edit
+		call	SetBank				; 17	; set bank address
+		xor	a				; 04	; clear the pitch current position
+		ld	(PCM2_PitchCur+001h),a		; 13	; ''
+			exx					; 04	; switch registers
+			M_Revert02				; 59	; move pointer back
+			exx					; 04	; switch registers
+		jp	PCM2_MuteRet			; 10	; return
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; The YM2612 operator writing lists (68k writes here, z80 must flush off)
+; Subroutine to load the sample (and if blank, load mute and disable DAC)
 ; ---------------------------------------------------------------------------
 
-YM_Buffer1:	rept	00400h
-		db	0FFh
-		endm
+	; --- PCM 1 ---
 
-YM_Buffer2:	rept	00400h
-		db	0FFh
-		endm
+PCM1_GetSample:
+		ld	(PCM1_BankCur),a		; 13	; set bank address
+		ld	b,000000010b			; 07	; prepare to enable DAC for PCM 1
+		ld	a,h				; 04	; is the address blank?
+		or	l				; 04	; ''
+		jr	nz,PCM1_NoMute			; 12/07	; if not, branch
+		ex	de,hl				; 04	; set mute sample address
+		ld	a,c				; 04	; ''
+		ld	(PCM1_BankCur),a		; 13	; ''
+		ld	b,011111101b			; 07	; prepare to disable DAC for PCM 1
+
+PCM1_NoMute:
+		call	PCM_SetDAC			; 17	; enable/disable DAC port correctly
+		ld	(PCM1_SampCur+001h),hl		; 16	; set sample address
+		ld	a,(PCM1_BankCur)		; 13	; reload bank address
+		ret					; 10	; return
+
+	; --- PCM 2 ---
+
+PCM2_GetSample:
+		ld	(PCM2_BankCur),a		; 13	; set bank address
+		ld	b,000000001b			; 07	; prepare to enable DAC for PCM 2
+		ld	a,h				; 04	; is the address blank?
+		or	l				; 04	; ''
+		jr	nz,PCM2_NoMute			; 12/07	; if not, branch
+		ex	de,hl				; 04	; set mute sample address
+		ld	a,c				; 04	; ''
+		ld	(PCM2_BankCur),a		; 13	; ''
+		ld	b,011111110b			; 07	; prepare to disable DAC for PCM 2
+
+PCM2_NoMute:
+		call	PCM_SetDAC			; 17	; enable/disable DAC port correctly
+		ld	(PCM2_SampCur+001h),hl		; 16	; set sample address
+		ld	a,(PCM2_BankCur)		; 13	; reload bank address
+		ret					; 10	; return
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Overflow calculation multiplication tables
+; Subroutine to enable/disable the DAC correctly
 ; ---------------------------------------------------------------------------
 
-PCM_OverflwCalc:
+PCM_SetDAC:
+		ld	a,b				; 04	; load set/clear value
+		or	a				; 04	; are we meant to be enabling DAC?
+		jp	m,PCM_DisableDAC		; 10	; if negative, this is meant to be an AND instruction
 
-		; --- Lower byte ---
+	; --- Enabling DAC ---
 
-		db	000h,018h,030h,048h,060h,078h,090h,0A8h,0C0h,0D8h,0F0h,008h,020h,038h,050h,068h
-		db	080h,098h,0B0h,0C8h,0E0h,0F8h,010h,028h,040h,058h,070h,088h,0A0h,0B8h,0D0h,0E8h
-		db	000h,018h,030h,048h,060h,078h,090h,0A8h,0C0h,0D8h,0F0h,008h,020h,038h,050h,068h
-		db	080h,098h,0B0h,0C8h,0E0h,0F8h,010h,028h,040h,058h,070h,088h,0A0h,0B8h,0D0h,0E8h
-		db	000h,018h,030h,048h,060h,078h,090h,0A8h,0C0h,0D8h,0F0h,008h,020h,038h,050h,068h
-		db	080h,098h,0B0h,0C8h,0E0h,0F8h,010h,028h,040h,058h,070h,088h,0A0h,0B8h,0D0h,0E8h
-		db	000h,018h,030h,048h,060h,078h,090h,0A8h,0C0h,0D8h,0F0h,008h,020h,038h,050h,068h
-		db	080h,098h,0B0h,0C8h,0E0h,0F8h,010h,028h,040h,058h,070h,088h,0A0h,0B8h,0D0h,0E8h
-		db	000h,018h,030h,048h,060h,078h,090h,0A8h,0C0h,0D8h,0F0h,008h,020h,038h,050h,068h
-		db	080h,098h,0B0h,0C8h,0E0h,0F8h,010h,028h,040h,058h,070h,088h,0A0h,0B8h,0D0h,0E8h
-		db	000h,018h,030h,048h,060h,078h,090h,0A8h,0C0h,0D8h,0F0h,008h,020h,038h,050h,068h
-		db	080h,098h,0B0h,0C8h,0E0h,0F8h,010h,028h,040h,058h,070h,088h,0A0h,0B8h,0D0h,0E8h
-		db	000h,018h,030h,048h,060h,078h,090h,0A8h,0C0h,0D8h,0F0h,008h,020h,038h,050h,068h
-		db	080h,098h,0B0h,0C8h,0E0h,0F8h,010h,028h,040h,058h,070h,088h,0A0h,0B8h,0D0h,0E8h
-		db	000h,018h,030h,048h,060h,078h,090h,0A8h,0C0h,0D8h,0F0h,008h,020h,038h,050h,068h
-		db	080h,098h,0B0h,0C8h,0E0h,0F8h,010h,028h,040h,058h,070h,088h,0A0h,0B8h,0D0h,0E8h
+		ld	a,(StatusDAC)			; 13	; load current DAC status
+		or	a				; 04	; is DAC already enabled?
+		jr	nz,PCM_IgnoreEnable		; 12/07	; if so, branch
+		ex	de,hl				; 04	; store hl
+		ld	hl,04000h			; 10	; load YM2612 address port
+		ld	(hl),02Bh			; 10	; set YM2612 address
+		inc	l				; 04	; advance to data port
+	nop					; 04	; delay (MIGHT NOT NEED IT!)
+		ld	(hl),080h			; 10	; enable DAC (disable FM6)
+		dec	l				; 04	; revert back to address port
+	nop					; 04	; delay (MIGHT NOT NEED IT!)
+		ld	(hl),02Ah			; 10	; restore YM address back to DAC
+		ex	de,hl				; 04	; restore hl
 
-		; --- Upper byte ---
+PCM_IgnoreEnable:
+		or	b				; 04	; enable current PCM channels' bit
+		ld	(StatusDAC),a			; 13	; update status
+		ret					; 10	; return
 
-		db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,001h,001h,001h,001h,001h
-		db	001h,001h,001h,001h,001h,001h,002h,002h,002h,002h,002h,002h,002h,002h,002h,002h
-		db	003h,003h,003h,003h,003h,003h,003h,003h,003h,003h,003h,004h,004h,004h,004h,004h
-		db	004h,004h,004h,004h,004h,004h,005h,005h,005h,005h,005h,005h,005h,005h,005h,005h
-		db	006h,006h,006h,006h,006h,006h,006h,006h,006h,006h,006h,007h,007h,007h,007h,007h
-		db	007h,007h,007h,007h,007h,007h,008h,008h,008h,008h,008h,008h,008h,008h,008h,008h
-		db	009h,009h,009h,009h,009h,009h,009h,009h,009h,009h,009h,00Ah,00Ah,00Ah,00Ah,00Ah
-		db	00Ah,00Ah,00Ah,00Ah,00Ah,00Ah,00Bh,00Bh,00Bh,00Bh,00Bh,00Bh,00Bh,00Bh,00Bh,00Bh
-		db	00Ch,00Ch,00Ch,00Ch,00Ch,00Ch,00Ch,00Ch,00Ch,00Ch,00Ch,00Dh,00Dh,00Dh,00Dh,00Dh
-		db	00Dh,00Dh,00Dh,00Dh,00Dh,00Dh,00Eh,00Eh,00Eh,00Eh,00Eh,00Eh,00Eh,00Eh,00Eh,00Eh
-		db	00Fh,00Fh,00Fh,00Fh,00Fh,00Fh,00Fh,00Fh,00Fh,00Fh,00Fh,010h,010h,010h,010h,010h
-		db	010h,010h,010h,010h,010h,010h,011h,011h,011h,011h,011h,011h,011h,011h,011h,011h
-		db	012h,012h,012h,012h,012h,012h,012h,012h,012h,012h,012h,013h,013h,013h,013h,013h
-		db	013h,013h,013h,013h,013h,013h,014h,014h,014h,014h,014h,014h,014h,014h,014h,014h
-		db	015h,015h,015h,015h,015h,015h,015h,015h,015h,015h,015h,016h,016h,016h,016h,016h
-		db	016h,016h,016h,016h,016h,016h,017h,017h,017h,017h,017h,017h,017h,017h,017h,017h
+	; --- Disabling DAC ---
+
+PCM_DisableDAC:
+		ld	a,(StatusDAC)			; 13	; load DAC status
+		or	a				; 04	; is the DAC disabled already?
+		jr	z,PCM_SetDAC_Finish		; 12/07	; if so, branch
+		and	b				; 04	; clear the PCM channel's status
+		ld	(StatusDAC),a			; 13	; update
+		jr	nz,PCM_SetDAC_Finish		; 12/07	; if the other PCM channel is still running, branch
+		ex	de,hl				; 04	; store hl
+		ld	hl,04000h			; 10	; load YM2612 address port
+		ld	(hl),02Bh			; 10	; set YM2612 address
+		inc	l				; 04	; advance to data port
+	nop					; 04	; delay (MIGHT NOT NEED IT!)
+		ld	(hl),000h			; 10	; disable DAC (enable FM6)
+		dec	l				; 04	; revert back to address port
+	nop					; 04	; delay (MIGHT NOT NEED IT!)
+		ld	(hl),02Ah			; 10	; restore YM address back to DAC
+		ex	de,hl				; 04	; restore hl
+
+PCM_SetDAC_Finish:
+		ret					; 10	; return
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -1590,13 +1520,8 @@ SVF_StartVolume:
 		dec	e				; 04	; check volume table counter
 		inc	e				; 04	; ''
 		jp	nz,SVF_LoadVolume		; 10	; if not finished, branch
-		ld	a,000h				; 07	; set timer for PCM volume changing
+		ld	a,004h				; 07	; set timer for PCM volume changing
 		ret					; 10	; return
-
-; NAT: Changed the above line from 4 to 0 thanks to advice from Markey
-; This should make the buffer loop when volume is changed too often, instead of
-; stopping playback and distorting. It may or may not sound better, but I think
-; it sounds better, so I changed it to be so.
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -1634,15 +1559,194 @@ SetBank:
 
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
+; PCM buffer 1 (Make sure buffer ends at 00E00h)
+; ---------------------------------------------------------------------------
+
+		align	(01000h-00200h)-00150h
+PCM_Buffer1:	rept	00150h
+		db	080h
+		endm
+
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Bank interrupt preparation list
+; ---------------------------------------------------------------------------
+		align	00080h
+; ---------------------------------------------------------------------------
+
+PCM1_PrepTable:	dw	PCM1_PreInst01
+		dw	PCM1_PreInst02
+		dw	PCM1_PreInst03
+		dw	PCM1_PreInst04
+		dw	PCM1_PreInst05
+		dw	PCM1_PreInst06
+		dw	PCM1_PreInst07
+		dw	PCM1_PreInst08
+		dw	PCM1_PreInst09
+		dw	PCM1_PreInst0A
+		dw	PCM1_PreInst0B
+		dw	PCM1_PreInst0C
+		dw	PCM1_PreInst0D
+		dw	PCM1_PreInst0E
+		dw	PCM1_PreInst0F
+		dw	PCM1_PreInst10
+		dw	PCM1_PreInst11
+		dw	PCM1_PreInst12
+		dw	PCM1_PreInst13
+		dw	PCM1_PreInst14
+		dw	PCM1_PreInst15
+		dw	PCM1_PreInst16
+		dw	PCM1_PreInst17
+		dw	PCM1_PreInst18
+PCM2_PrepTable:	dw	PCM2_PreInst01
+		dw	PCM2_PreInst02
+		dw	PCM2_PreInst03
+		dw	PCM2_PreInst04
+		dw	PCM2_PreInst05
+		dw	PCM2_PreInst06
+		dw	PCM2_PreInst07
+		dw	PCM2_PreInst08
+		dw	PCM2_PreInst09
+		dw	PCM2_PreInst0A
+		dw	PCM2_PreInst0B
+		dw	PCM2_PreInst0C
+		dw	PCM2_PreInst0D
+		dw	PCM2_PreInst0E
+		dw	PCM2_PreInst0F
+		dw	PCM2_PreInst10
+		dw	PCM2_PreInst11
+		dw	PCM2_PreInst12
+		dw	PCM2_PreInst13
+		dw	PCM2_PreInst14
+		dw	PCM2_PreInst15
+		dw	PCM2_PreInst16
+		dw	PCM2_PreInst17
+		dw	PCM2_PreInst18
+
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Specific variable data...
+; ---------------------------------------------------------------------------
+
+	; --- Current bank address for PCM channels ---
+
+PCM1_BankCur:	db	(SWF_Stop>>0Fh)&0FFh			; The current bank address of PCM 1
+PCM2_BankCur:	db	(SWF_Stop>>0Fh)&0FFh			; The current bank address of PCM 2
+
+	; --- YM2612 Pointers ---
+
+YM_Buffer:	db	000h					; 00 = Z80 Buffer 1 | 68k Buffer 2 ... FF = Z80 Buffer 2 | 68k Buffer 1
+StatusDAC:	db	000000000b				; DAC status (000000AB, A = 0 PCM 1 mute | B = 0 PCM 2 mute)
+
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Sample requested by 68k
+; ---------------------------------------------------------------------------
+
+	; --- PCM 1 start sample ---
+
+PCM1_Sample:		dw	00000h					; PCM 1 requested sample
+PCM1_Bank:		db	000h					; PCM 1 requested bank
+PCM1_Sample_Rev:	dw	00000h					; PCM 1 requested sample (reverse position)
+PCM1_Bank_Rev:		db	000h					; PCM 1 requested bank (reverse position)
+
+	; --- PCM 1 next sample ---
+
+PCM1_SampleNext:	dw	00000h					; PCM 1 requested sample
+PCM1_BankNext:		db	000h					; PCM 1 requested bank
+PCM1_SampleNext_Rev:	dw	00000h					; PCM 1 requested sample (reverse position)
+PCM1_BankNext_Rev:	db	000h					; PCM 1 requested bank (reverse position)
+
+	; --- PCM 2 start sample ---
+
+PCM2_Sample:		dw	00000h					; PCM 2 requested sample
+PCM2_Bank:		db	000h					; PCM 2 requested bank
+PCM2_Sample_Rev:	dw	00000h					; PCM 2 requested sample (reverse position)
+PCM2_Bank_Rev:		db	000h					; PCM 2 requested bank (reverse position)
+
+	; --- PCM 2 next sample ---
+
+PCM2_SampleNext:	dw	00000h					; PCM 2 requested sample
+PCM2_BankNext:		db	000h					; PCM 2 requested bank
+PCM2_SampleNext_Rev:	dw	00000h					; PCM 2 requested sample (reverse position)
+PCM2_BankNext_Rev:	db	000h					; PCM 2 requested bank (reverse position)
+
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; PCM buffer 2 (Make sure buffer ends at 01000h)
+; ---------------------------------------------------------------------------
+
+		align	01000h-00150h
+PCM_Buffer2:	rept	00150h
+		db	080h
+		endm
+
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Overflow calculation multiplication tables
+; ---------------------------------------------------------------------------
+
+PCM_OverflwCalc:
+
+		; --- Lower byte ---
+
+		db	000h,018h,030h,048h,060h,078h,090h,0A8h,0C0h,0D8h,0F0h,008h,020h,038h,050h,068h
+		db	080h,098h,0B0h,0C8h,0E0h,0F8h,010h,028h,040h,058h,070h,088h,0A0h,0B8h,0D0h,0E8h
+		db	000h,018h,030h,048h,060h,078h,090h,0A8h,0C0h,0D8h,0F0h,008h,020h,038h,050h,068h
+		db	080h,098h,0B0h,0C8h,0E0h,0F8h,010h,028h,040h,058h,070h,088h,0A0h,0B8h,0D0h,0E8h
+		db	000h,018h,030h,048h,060h,078h,090h,0A8h,0C0h,0D8h,0F0h,008h,020h,038h,050h,068h
+		db	080h,098h,0B0h,0C8h,0E0h,0F8h,010h,028h,040h,058h,070h,088h,0A0h,0B8h,0D0h,0E8h
+		db	000h,018h,030h,048h,060h,078h,090h,0A8h,0C0h,0D8h,0F0h,008h,020h,038h,050h,068h
+		db	080h,098h,0B0h,0C8h,0E0h,0F8h,010h,028h,040h,058h,070h,088h,0A0h,0B8h,0D0h,0E8h
+		db	000h,018h,030h,048h,060h,078h,090h,0A8h,0C0h,0D8h,0F0h,008h,020h,038h,050h,068h
+		db	080h,098h,0B0h,0C8h,0E0h,0F8h,010h,028h,040h,058h,070h,088h,0A0h,0B8h,0D0h,0E8h
+		db	000h,018h,030h,048h,060h,078h,090h,0A8h,0C0h,0D8h,0F0h,008h,020h,038h,050h,068h
+		db	080h,098h,0B0h,0C8h,0E0h,0F8h,010h,028h,040h,058h,070h,088h,0A0h,0B8h,0D0h,0E8h
+		db	000h,018h,030h,048h,060h,078h,090h,0A8h,0C0h,0D8h,0F0h,008h,020h,038h,050h,068h
+		db	080h,098h,0B0h,0C8h,0E0h,0F8h,010h,028h,040h,058h,070h,088h,0A0h,0B8h,0D0h,0E8h
+		db	000h,018h,030h,048h,060h,078h,090h,0A8h,0C0h,0D8h,0F0h,008h,020h,038h,050h,068h
+		db	080h,098h,0B0h,0C8h,0E0h,0F8h,010h,028h,040h,058h,070h,088h,0A0h,0B8h,0D0h,0E8h
+
+		; --- Upper byte ---
+
+		db	000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,001h,001h,001h,001h,001h
+		db	001h,001h,001h,001h,001h,001h,002h,002h,002h,002h,002h,002h,002h,002h,002h,002h
+		db	003h,003h,003h,003h,003h,003h,003h,003h,003h,003h,003h,004h,004h,004h,004h,004h
+		db	004h,004h,004h,004h,004h,004h,005h,005h,005h,005h,005h,005h,005h,005h,005h,005h
+		db	006h,006h,006h,006h,006h,006h,006h,006h,006h,006h,006h,007h,007h,007h,007h,007h
+		db	007h,007h,007h,007h,007h,007h,008h,008h,008h,008h,008h,008h,008h,008h,008h,008h
+		db	009h,009h,009h,009h,009h,009h,009h,009h,009h,009h,009h,00Ah,00Ah,00Ah,00Ah,00Ah
+		db	00Ah,00Ah,00Ah,00Ah,00Ah,00Ah,00Bh,00Bh,00Bh,00Bh,00Bh,00Bh,00Bh,00Bh,00Bh,00Bh
+		db	00Ch,00Ch,00Ch,00Ch,00Ch,00Ch,00Ch,00Ch,00Ch,00Ch,00Ch,00Dh,00Dh,00Dh,00Dh,00Dh
+		db	00Dh,00Dh,00Dh,00Dh,00Dh,00Dh,00Eh,00Eh,00Eh,00Eh,00Eh,00Eh,00Eh,00Eh,00Eh,00Eh
+		db	00Fh,00Fh,00Fh,00Fh,00Fh,00Fh,00Fh,00Fh,00Fh,00Fh,00Fh,010h,010h,010h,010h,010h
+		db	010h,010h,010h,010h,010h,010h,011h,011h,011h,011h,011h,011h,011h,011h,011h,011h
+		db	012h,012h,012h,012h,012h,012h,012h,012h,012h,012h,012h,013h,013h,013h,013h,013h
+		db	013h,013h,013h,013h,013h,013h,014h,014h,014h,014h,014h,014h,014h,014h,014h,014h
+		db	015h,015h,015h,015h,015h,015h,015h,015h,015h,015h,015h,016h,016h,016h,016h,016h
+		db	016h,016h,016h,016h,016h,016h,017h,017h,017h,017h,017h,017h,017h,017h,017h,017h
+
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; The YM2612 operator writing lists (68k writes here, z80 must flush off)
+; This SHOULD be at offset 1200 (Flood this space with FF's on 68k side...)
+; ---------------------------------------------------------------------------
+
+YM_Buffer1 =	01200h
+YM_Buffer2 =	01200h+((02000h-01200h)/2)
+YM_BufferEnd =	02000h
+
+; ===========================================================================
+; ---------------------------------------------------------------------------
 ; Warning stuff
 ; ---------------------------------------------------------------------------
 
-  if (PCM1_Switch&0FFh)>0F8h
-	inform 3,"   Warning!  PCM1_Switch's instructions have crossed a boundary."
-  endif
+	if (PCM1_Switch&0FFh)>0F8h
+		fatal "   Warning!  PCM1_Switch's instructions have crossed a boundary."
+	endif
 
-  if (PCM2_Switch&0FFh)>0F8h
-	inform 3,"   Warning!  PCM1_Switch's instructions have crossed a boundary."
-  endif
+	if (PCM2_Switch&0FFh)>0F8h
+		fatal "   Warning!  PCM1_Switch's instructions have crossed a boundary."
+	endif
 
 ; ===========================================================================
