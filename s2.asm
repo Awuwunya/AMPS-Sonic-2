@@ -29,19 +29,19 @@ padToPowerOfTwo = 0
 allOptimizations = 1
 ;	| If 1, enables all optimizations
 ;
-skipChecksumCheck = 0|allOptimizations
+skipChecksumCheck = 1
 ;	| If 1, disables the unnecessary (and slow) bootup checksum calculation
 ;
-zeroOffsetOptimization = 0|allOptimizations
+zeroOffsetOptimization = 1
 ;	| If 1, makes a handful of zero-offset instructions smaller
 ;
-removeJmpTos = 0|gameRevision=2|allOptimizations
+removeJmpTos = 1
 ;	| If 1, many unnecessary JmpTos are removed, improving performance
 ;
-addsubOptimize = 0|gameRevision=2|allOptimizations
+addsubOptimize = 1
 ;	| If 1, some add/sub instructions are optimized to addq/subq
 ;
-relativeLea = 0|gameRevision<>2|allOptimizations
+relativeLea = 1
 ;	| If 1, makes some instructions use pc-relative addressing, instead of absolute long
 ;
 useFullWaterTables = 0
@@ -5828,9 +5828,9 @@ SpecialStage:
 ; | of our data structures.                                                |
 ; \------------------------------------------------------------------------/
 	; Bug: These '+4's shouldn't be here; clearRAM accidentally clears an additional 4 bytes
-	clearRAM SS_Sprite_Table,SS_Sprite_Table_End+4
-	clearRAM SS_Horiz_Scroll_Buf_1,SS_Horiz_Scroll_Buf_1_End+4
-	clearRAM SS_Misc_Variables,SS_Misc_Variables_End+4
+	clearRAM SS_Sprite_Table,SS_Sprite_Table_End
+	clearRAM SS_Horiz_Scroll_Buf_1,SS_Horiz_Scroll_Buf_1_End
+	clearRAM SS_Misc_Variables,SS_Misc_Variables_End
 	clearRAM SS_Sprite_Table_Input,SS_Sprite_Table_Input_End
 	clearRAM SS_Object_RAM,SS_Object_RAM_End
 
@@ -6167,7 +6167,7 @@ SSObjectsManager:
 	add.w	d3,d3
 	movea.l	(SS_CurrentLevelObjectLocations).w,a0
 -
-	bsr.w	SSSingleObjLoad
+	jsr	SSSingleObjLoad
 	bne.s	return_55DC
 	moveq	#0,d0
 	move.b	(a0)+,d0
@@ -8663,45 +8663,6 @@ SSTrack_ApplyVscroll:
 	rts
 ; End of function SSTrack_SetVscroll
 
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-
-; sub_6F8E:
-SSSingleObjLoad:
-	lea	(SS_Dynamic_Object_RAM).w,a1
-	move.w	#(SS_Dynamic_Object_RAM_End-SS_Dynamic_Object_RAM)/object_size-1,d5
-
--	tst.b	id(a1)
-	beq.s	+	; rts
-	lea	next_object(a1),a1 ; a1=object
-	dbf	d5,-
-+
-	rts
-; End of function sub_6F8E
-
-; ===========================================================================
-
-;loc_6FA4:
-SSSingleObjLoad2:
-	movea.l	a0,a1
-	move.w	#SS_Dynamic_Object_RAM_End,d5
-	sub.w	a0,d5
-    if object_size=$40
-	lsr.w	#6,d5
-    else
-	divu.w	#object_size,d5
-    endif
-	subq.w	#1,d5
-	bcs.s	+	; rts
-
--	tst.b	id(a1)
-	beq.s	+	; rts
-	lea	next_object(a1),a1
-	dbf	d5,-
-
-+	rts
-
-
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 5E - HUD from Special Stage
@@ -8896,7 +8857,7 @@ word_728C_user: lea	(Obj5F_MapUnc_7240+$4C).l,a2 ; word_728C
 	move.w	#8,objoff_14(a0)
 	move.b	#6,routine(a0)
 
--	bsr.w	SSSingleObjLoad
+-	jsr	SSSingleObjLoad
 	bne.s	+
 	moveq	#0,d0
 
@@ -9010,7 +8971,7 @@ Obj87_Init:
 	rts
 ; ===========================================================================
 +
-	bsr.w	SSSingleObjLoad
+	jsr	SSSingleObjLoad
 	bne.s	+	; rts
 	move.b	#ObjID_SSNumberOfRings,id(a1) ; load obj87
 	move.b	#4,objoff_A(a1)		; => loc_753E
@@ -9028,7 +8989,7 @@ Obj87_Init:
 /	rts
 ; ===========================================================================
 +
-	bsr.w	SSSingleObjLoad
+	jsr	SSSingleObjLoad
 	bne.s	-	; rts
 	move.b	#ObjID_SSNumberOfRings,id(a1) ; load obj87
 	move.b	#6,objoff_A(a1)		; => loc_75DE
@@ -20607,32 +20568,14 @@ Obj15_State4:
 	beq.s	+
 	neg.w	x_vel(a1)
 +
-	bset	#1,status(a1)
-	move.w	a0,d0
-	subi.w	#Object_RAM,d0
-    if object_size=$40
-	lsr.w	#6,d0
-    else
-	divu.w	#object_size,d0
-    endif
-	andi.w	#$7F,d0
-	move.w	a1,d1
-	subi.w	#Object_RAM,d1
-    if object_size=$40
-	lsr.w	#6,d1
-    else
-	divu.w	#object_size,d1
-    endif
-	andi.w	#$7F,d1
-	lea	(MainCharacter).w,a1 ; a1=character
-	cmp.b	interact(a1),d0
+	bset	#1,status(a1)		; NAT: optimized the following code.
+	cmp.w	MainCharacter+interact.w,a0
 	bne.s	+
-	move.b	d1,interact(a1)
+	move.w	a1,MainCharacter+interact.w
 +
-	lea	(Sidekick).w,a1 ; a1=character
-	cmp.b	interact(a1),d0
+	cmp.w	Sidekick+interact.w,a0
 	bne.s	loc_100E4
-	move.b	d1,interact(a1)
+	move.w	a1,Sidekick+interact.w
 
 loc_100E4:
 	move.b	#3,mapping_frame(a0)
@@ -23760,14 +23703,7 @@ swap_loop_objects:
 	btst	#3,status(a1)	; is Sonic on an object?
 	beq.s	+		; if not, branch
 	moveq	#0,d0
-	move.b	interact(a1),d0
-    if object_size=$40
-	lsl.w	#6,d0
-    else
-	mulu.w	#object_size,d0
-    endif
-	addi.l	#Object_RAM,d0
-	movea.l	d0,a2	; a2=object
+	move.w	interact(a1),a2
 	bclr	#4,status(a2)
 	bset	#3,status(a2)
 
@@ -23786,14 +23722,7 @@ swap_loop_objects:
 	btst	#3,status(a1)	; is Tails on an object?
 	beq.s	+		; if not, branch
 	moveq	#0,d0
-	move.b	interact(a1),d0
-    if object_size=$40
-	lsl.w	#6,d0
-    else
-	mulu.w	#object_size,d0
-    endif
-	addi.l	#Object_RAM,d0
-	movea.l	d0,a2	; a2=object
+	move.w	interact(a1),a2
 	bclr	#3,status(a2)
 	bset	#4,status(a2)
 
@@ -30587,23 +30516,71 @@ return_17FF8:
 ; loc_17FFA: ; allocObjectAfterCurrent:
 SingleObjLoad2:
 	movea.l	a0,a1
-	move.w	#Dynamic_Object_RAM_End,d0	; $D000
-	sub.w	a0,d0	; subtract current object location
-    if object_size=$40
-	lsr.w	#6,d0	; divide by $40
-    else
-	divu.w	#object_size,d0
-    endif
-	subq.w	#1,d0	; keep from going over the object zone
-	bcs.s	return_18014
+	move.w	#Dynamic_Object_RAM_End,d0; $D000
+	sub.w	a0,d0			; subtract current object location
+	lsr.w	#6,d0			; divide by $40
+	move.b	SOLtbl(pc,d0.w),d0	; load the right number of objects from table
+	bmi.s	.rts			; if negative, we have failed!
 
--
-	tst.b	id(a1)	; is object RAM slot empty?
-	beq.s	return_18014	; if yes, branch
-	lea	next_object(a1),a1 ; load obj address ; goto next object RAM slot
-	dbf	d0,-	; repeat until end
+.check	tst.b	id(a1)			; is object RAM slot empty?
+	beq.s	.rts			; if yes, branch
+	lea	next_object(a1),a1	; load obj address ; goto next object RAM slot
+	dbf	d0,.check		; repeat until end
+.rts	rts
+; ---------------------------------------------------------------------------
 
-return_18014:
+;loc_6FA4:
+SSSingleObjLoad2:
+	movea.l	a0,a1
+	move.w	#SS_Dynamic_Object_RAM_End,d5
+	sub.w	a0,d5			; subtract current object location
+	lsr.w	#6,d5			; divide by $40
+	move.b	SOLtbl(pc,d5.w),d5	; load the right number of objects from table
+	bmi.s	.rts			; if negative, we have failed!
+
+.check	tst.b	id(a1)			; is object RAM slot empty?
+	beq.s	.rts			; if yes, branch
+	lea	next_object(a1),a1	; load obj address ; goto next object RAM slot
+	dbf	d5,.check		; repeat until end
+.rts	rts
+; ---------------------------------------------------------------------------
+
+SOLtbl:
+	dc.b -1
+; decide whether Special Stage has more RAM slots than normal levels. Use the one that is the highest
+.ss :=	(LevelOnly_Object_RAM-Reserved_Object_RAM_End)/object_size
+.nm :=	(SS_Dynamic_Object_RAM_End-SS_Dynamic_Object_RAM)/object_size
+
+	if .ss > .nm
+.nm :=		.ss
+	endif
+
+.a :=	1		; .a is the object slot we are currently processing
+.b :=	1		; .b is used to calculate when there will be a conversion error due to object_size being > $40
+
+	rept .nm-1
+		if (object_size * (.a-1)) / $40 > .b+1	; this line checks, if there would be a conversion error
+			dc.b .a-1, .a-1			; and if is, it generates 2 entries to correct for the error
+		else
+			dc.b .a-1
+		endif
+
+.b :=	(object_size * (.a-1)) / $40			; this line adjusts .b based on the iteration count to check
+.a :=	.a+1						; run interation counter
+	endm
+		even
+; ---------------------------------------------------------------------------
+
+; sub_6F8E:
+SSSingleObjLoad:
+	lea	(SS_Dynamic_Object_RAM).w,a1
+	move.w	#(SS_Dynamic_Object_RAM_End-SS_Dynamic_Object_RAM)/object_size-1,d5
+
+-	tst.b	id(a1)
+	beq.s	+	; rts
+	lea	next_object(a1),a1 ; a1=object
+	dbf	d5,-
++
 	rts
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -32683,26 +32660,11 @@ RideObject_SetRide:
 	btst	#3,status(a1)
 	beq.s	loc_19E30
 	moveq	#0,d0
-	move.b	interact(a1),d0
-    if object_size=$40
-	lsl.w	#6,d0
-    else
-	mulu.w	#object_size,d0
-    endif
-	addi.l	#Object_RAM,d0
-	movea.l	d0,a3	; a3=object
+	move.w	interact(a1),a3
 	bclr	d6,status(a3)
 
 loc_19E30:
-	move.w	a0,d0
-	subi.w	#Object_RAM,d0
-    if object_size=$40
-	lsr.w	#6,d0
-    else
-	divu.w	#object_size,d0
-    endif
-	andi.w	#$7F,d0
-	move.b	d0,interact(a1)
+	move.w	a0,interact(a1)
 	move.b	#0,angle(a1)
 	move.w	#0,y_vel(a1)
 	move.w	x_vel(a1),inertia(a1)
@@ -33236,14 +33198,7 @@ Obj01_NotRight:
 	btst	#3,status(a0)
 	beq.w	Sonic_Balance
 	moveq	#0,d0
-	move.b	interact(a0),d0
-    if object_size=$40
-	lsl.w	#6,d0
-    else
-	mulu.w	#object_size,d0
-    endif
-	lea	(Object_RAM).w,a1 ; a1=character
-	lea	(a1,d0.w),a1 ; a1=object
+	move.w	interact(a0),a1
 	tst.b	status(a1)
 	bmi.w	Sonic_Lookup
 	moveq	#0,d1
@@ -35949,14 +35904,7 @@ TailsCPU_CheckDespawn:
 	beq.s	TailsCPU_TickRespawnTimer
 
 	moveq	#0,d0
-	move.b	interact(a0),d0
-    if object_size=$40
-	lsl.w	#6,d0
-    else
-	mulu.w	#object_size,d0
-    endif
-	addi.l	#Object_RAM,d0
-	movea.l	d0,a3	; a3=object
+	move.w	interact(a0),a3
 	move.b	(Tails_interact_ID).w,d0
 	cmp.b	(a3),d0
 	bne.s	BranchTo_TailsCPU_Despawn
@@ -35976,14 +35924,7 @@ TailsCPU_ResetRespawnTimer:
 ; loc_1BEA2:
 TailsCPU_UpdateObjInteract:
 	moveq	#0,d0
-	move.b	interact(a0),d0
-    if object_size=$40
-	lsl.w	#6,d0
-    else
-	mulu.w	#object_size,d0
-    endif
-	addi.l	#Object_RAM,d0
-	movea.l	d0,a3	; a3=object
+	move.w	interact(a0),a3
 	move.b	(a3),(Tails_interact_ID).w
 	rts
 
@@ -36239,14 +36180,7 @@ Obj02_NotRight:
 	btst	#3,status(a0)
 	beq.s	Tails_Balance
 	moveq	#0,d0
-	move.b	interact(a0),d0
-    if object_size=$40
-	lsl.w	#6,d0
-    else
-	mulu.w	#object_size,d0
-    endif
-	lea	(Object_RAM).w,a1 ; a1=character
-	lea	(a1,d0.w),a1 ; a1=object
+	move.w	interact(a0),a1
 	tst.b	status(a1)
 	bmi.s	Tails_Lookup
 	moveq	#0,d1
@@ -47556,15 +47490,7 @@ loc_25002:
 	bclr	#5,status(a1)
 	bset	#1,status(a1)
 	bset	#3,status(a1)
-	move.w	a0,d0
-	subi.w	#Object_RAM,d0
-    if object_size=$40
-	lsr.w	#6,d0
-    else
-	divu.w	#object_size,d0
-    endif
-	andi.w	#$7F,d0
-	move.b	d0,interact(a1)
+	move.w	a0,interact(a1)
 	sfx	sfx_Roll
 
 return_25034:
@@ -47767,25 +47693,10 @@ loc_252F0:
 	btst	#3,status(a1)
 	beq.s	+
 	moveq	#0,d0
-	move.b	interact(a1),d0
-    if object_size=$40
-	lsl.w	#6,d0
-    else
-	mulu.w	#object_size,d0
-    endif
-	addi.l	#Object_RAM,d0
-	movea.l	d0,a3	; a3=object
+	move.w	interact(a1),a3
 	move.b	#0,(a3,d2.w)
 +
-	move.w	a0,d0
-	subi.w	#Object_RAM,d0
-    if object_size=$40
-	lsr.w	#6,d0
-    else
-	divu.w	#object_size,d0
-    endif
-	andi.w	#$7F,d0
-	move.b	d0,interact(a1)
+	move.w	a0,interact(a1)
 	addq.b	#2,(a4)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
@@ -52360,7 +52271,7 @@ Obj76_Init:
 	move.b	(a2)+,mapping_frame(a0)
 	move.w	x_pos(a0),objoff_34(a0)
 	move.w	y_pos(a0),objoff_30(a0)
-	andi.w	#$F,subtype(a0)
+;	andi.w	#$F,subtype(a0)		; this... Makes the subtype 0? I've disabled it anyway, since its not needed
 ; loc_28E5E:
 Obj76_Main:
 	move.w	x_pos(a0),-(sp)
@@ -63663,14 +63574,14 @@ loc_31F96:
 	movea.l	objoff_34(a0),a1 ; a1=object
 	move.w	x_pos(a1),x_pos(a0)
 	move.w	y_pos(a1),y_pos(a0)
-	move.w	objoff_28(a0),d0
+	move.w	objoff_40(a0),d0
 	add.w	d0,y_pos(a0)
 	addi_.w	#1,d0
 	cmpi.w	#$2E,d0
 	blt.s	+
 	move.w	#$2E,d0
 +
-	move.w	d0,objoff_28(a0)
+	move.w	d0,objoff_40(a0)
 	tst.w	(Boss_Countdown).w
 	bne.w	JmpTo39_DisplaySprite
 	addq.b	#2,routine_secondary(a0)
@@ -64402,7 +64313,7 @@ Obj53_Init:
 	move.b	#3,priority(a1)
 	addq.b	#2,routine(a1)		; => Obj53_Main
 	move.b	#5,mapping_frame(a1)
-	move.b	byte_329CC(pc,d2.w),objoff_28(a1)
+	move.b	byte_329CC(pc,d2.w),objoff_40(a1)
 	move.b	byte_329CC(pc,d2.w),objoff_3B(a1)
 	move.b	byte_329D3(pc,d2.w),objoff_3A(a1)
 	move.b	#$40,objoff_29(a1)
@@ -78831,8 +78742,8 @@ loc_3D744:
 	move.b	(Vint_runcount+3).w,d0
 	andi.b	#$1F,d0
 	bne.s	+
-	tst.b	render_flags(a0)
-	bpl.s	+
+;	tst.b	render_flags(a0)	; NAT :?
+;	bpl.s	+
 	sfx	sfx_Fire
 
 +
@@ -78846,12 +78757,12 @@ loc_3D744:
 	lea	(ChildObjC7_TargettingSensor).l,a2
 	bsr.w	LoadChildObject
 	clr.w	x_vel(a0)
-	clr.w	objoff_28(a0)
+	clr.w	objoff_40(a0)
 	rts
 ; ===========================================================================
 
 loc_3D784:
-	move.w	objoff_28(a0),d0
+	move.w	objoff_40(a0),d0
 	bne.s	+
 	rts
 ; ---------------------------------------------------------------------------
@@ -79358,7 +79269,7 @@ loc_3DBF6:
 
 loc_3DC02:
 	movea.w	(DEZ_Eggman).w,a1
-	btst	#3,$22(a1)
+	btst	#3,status(a1)
 	bne.s	+
 	rts
 ; ---------------------------------------------------------------------------
@@ -79550,7 +79461,7 @@ loc_3DD64:
 loc_3DDA6:
 	subq.w	#1,objoff_2A(a0)
 	bmi.s	loc_3DE0A
-	lea	next_object(a0),a1 ; a1=object
+	lea	objoff_40(a0),a1		; NAT: Who TF codes like this
 	movea.l	a1,a2
 	move.w	-(a1),y_vel(a0)
 	move.w	-(a1),x_vel(a0)
@@ -79575,8 +79486,8 @@ loc_3DDA6:
 	jsrto	(AnimateSprite).l, JmpTo25_AnimateSprite
 	subq.b	#1,angle(a0)
 	bpl.s	+
-	subq.b	#1,objoff_27(a0)
-	move.b	objoff_27(a0),angle(a0)
+	subq.b	#1,objoff_41(a0)
+	move.b	objoff_41(a0),angle(a0)
 	sfx	sfx_Beep
 
 +
@@ -79612,7 +79523,7 @@ loc_3DE3C:
 
 loc_3DE62:
 	movea.w	objoff_2C(a0),a1 ; a1=object
-	move.w	x_pos(a0),objoff_28(a1)
+	move.w	x_pos(a0),objoff_40(a1)
 	bra.w	JmpTo65_DeleteObject
 ; ===========================================================================
 ;loc_3DE70
@@ -81732,7 +81643,7 @@ BossCollision_HTZ:
 +
 	move.w	d7,-(sp)
 	moveq	#0,d1
-	move.b	objoff_15(a1),d1
+	move.b	objoff_41(a1),d1
 	subq.b	#2,d1
 	cmpi.b	#7,d1
 	bgt.s	loc_3FAA8

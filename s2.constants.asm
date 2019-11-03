@@ -9,147 +9,177 @@ Size_of_Snd_driver_guess =	$7FC ; approximate post-compressed size of the Z80 so
 ; ---------------------------------------------------------------------------
 ; Object Status Table offsets (for everything between Object_RAM and Primary_Collision)
 ; ---------------------------------------------------------------------------
-; universally followed object conventions:
-id =			  0 ; object ID (if you change this, change insn1op and insn2op in s2.macrosetup.asm, if you still use them)
-render_flags =		  1 ; bitfield ; bit 7 = onscreen flag, bit 0 = x mirror, bit 1 = y mirror, bit 2 = coordinate system, bit 6 = render subobjects
-art_tile =		  2 ; and 3 ; start of sprite's art
-mappings =		  4 ; and 5 and 6 and 7
-x_pos =			  8 ; and 9 ... some objects use $A and $B as well when extra precision is required (see ObjectMove) ... for screen-space objects this is called x_pixel instead
-x_sub =			 $A ; and $B
-y_pos =			 $C ; and $D ... some objects use $E and $F as well when extra precision is required ... screen-space objects use y_pixel instead
-y_sub =			 $E ; and $F
-priority =		$18 ; 0 = front
-width_pixels =		$19
-mapping_frame =		$1A
-; ---------------------------------------------------------------------------
-; conventions followed by most objects:
-x_vel =			$10 ; and $11 ; horizontal velocity
-y_vel =			$12 ; and $13 ; vertical velocity
-y_radius =		$16 ; collision height / 2
-x_radius =		$17 ; collision width / 2
-anim_frame =		$1B
-anim =			$1C
-next_anim =		$1D
-anim_frame_duration =	$23
-status =		$22 ; note: exact meaning depends on the object... for sonic/tails: bit 0: leftfacing. bit 1: inair. bit 2: spinning. bit 3: onobject. bit 4: rolljumping. bit 5: pushing. bit 6: underwater.
-routine =		$24
-routine_secondary =	$25
-angle =			$26 ; angle about the z axis (360 degrees = 256)
-; ---------------------------------------------------------------------------
-; conventions followed by many objects but NOT sonic/tails:
-collision_flags =	$20
-collision_property =	$21
-respawn_index =		$1E
-subtype =		$28
-; ---------------------------------------------------------------------------
-; conventions specific to sonic/tails (Obj01, Obj02, and ObjDB):
-; note: $1F, $20, and $21 are unused and available
-inertia =		$14 ; and $15 ; directionless representation of speed... not updated in the air
-flip_angle =		$27 ; angle about the x axis (360 degrees = 256) (twist/tumble)
-air_left =		$28
-flip_turned =		$29 ; 0 for normal, 1 to invert flipping (it's a 180 degree rotation about the axis of Sonic's spine, so he stays in the same position but looks turned around)
-obj_control =		$2A ; 0 for normal, 1 for hanging or for resting on a flipper, $81 for going through CNZ/OOZ/MTZ tubes or stopped in CNZ cages or stoppers or flying if Tails
-status_secondary =	$2B
-flips_remaining =	$2C ; number of flip revolutions remaining
-flip_speed =		$2D ; number of flip revolutions per frame / 256
-move_lock =		$2E ; and $2F ; horizontal control lock, counts down to 0
-invulnerable_time =	$30 ; and $31 ; time remaining until you stop blinking
-invincibility_time =	$32 ; and $33 ; remaining
-speedshoes_time =	$34 ; and $35 ; remaining
-next_tilt =		$36 ; angle on ground in front of sprite
-tilt =			$37 ; angle on ground
-stick_to_convex =	$38 ; 0 for normal, 1 to make Sonic stick to convex surfaces like the rotating discs in Sonic 1 and 3 (unused in Sonic 2 but fully functional)
-spindash_flag =		$39 ; 0 for normal, 1 for charging a spindash or forced rolling
-pinball_mode =		spindash_flag
-spindash_counter =	$3A ; and $3B
-restart_countdown =	spindash_counter; and 1+spindash_counter
-jumping =		$3C
-interact =		$3D ; RAM address of the last object Sonic stood on, minus $FFFFB000 and divided by $40
-top_solid_bit =   $3E ; the bit to check for top solidity (either $C or $E)
-lrb_solid_bit =		$3F ; the bit to check for left/right/bottom solidity (either $D or $F)
-; ---------------------------------------------------------------------------
-; conventions followed by several objects but NOT sonic/tails:
-y_pixel =		2+x_pos ; and 3+x_pos ; y coordinate for objects using screen-space coordinate system
-x_pixel =		x_pos ; and 1+x_pos ; x coordinate for objects using screen-space coordinate system
-parent =		$3E ; and $3F ; address of object that owns or spawned this one, if applicable
-; TODO: $2C is often parent instead (see LoadChildObject); consider defining parent2 = $2C and changing some objoff_2Cs to that
-; ---------------------------------------------------------------------------
-; conventions followed by some/most bosses:
-boss_subtype		= $A
-boss_invulnerable_time	= $14
-boss_sine_count		= $1A	;mapping_frame
-boss_routine		= $26	;angle
-boss_defeated		= $2C
-boss_hitcount2		= $32
-boss_hurt_sonic		= $38	; flag set by collision response routine when sonic has just been hurt (by boss?)
-; ---------------------------------------------------------------------------
-; when childsprites are activated (i.e. bit #6 of render_flags set)
-mainspr_mapframe	= $B
-mainspr_width		= $E
-mainspr_childsprites 	= $F	; amount of child sprites
-mainspr_height		= $14
-sub2_x_pos		= $10	;x_vel
-sub2_y_pos		= $12	;y_vel
-sub2_mapframe		= $15
-sub3_x_pos		= $16	;y_radius
-sub3_y_pos		= $18	;priority
-sub3_mapframe		= $1B	;anim_frame
-sub4_x_pos		= $1C	;anim
-sub4_y_pos		= $1E	;anim_frame_duration
-sub4_mapframe		= $21	;collision_property
-sub5_x_pos		= $22	;status
-sub5_y_pos		= $24	;routine
-sub5_mapframe		= $27
-sub6_x_pos		= $28	;subtype
-sub6_y_pos		= $2A
-sub6_mapframe		= $2D
-sub7_x_pos		= $2E
-sub7_y_pos		= $30
-sub7_mapframe		= $33
-sub8_x_pos		= $34
-sub8_y_pos		= $36
-sub8_mapframe		= $39
-sub9_x_pos		= $3A
-sub9_y_pos		= $3C
-sub9_mapframe		= $3F
-next_subspr		= $6
-; ---------------------------------------------------------------------------
-; unknown or inconsistently used offsets that are not applicable to sonic/tails:
-; (provided because rearrangement of the above values sometimes requires making space in here too)
-objoff_A =		2+x_pos ; note: x_pos can be 4 bytes, but sometimes the last 2 bytes of x_pos are used for other unrelated things
-objoff_B =		3+x_pos ; unused
-objoff_E =		2+y_pos	; unused
-objoff_F =		3+y_pos ; unused
-objoff_10 =		$10
-objoff_14 =		$14
-objoff_15 =		$15
-objoff_27 =		$27
-objoff_28 =		$28 ; overlaps subtype, but a few objects use it for other things anyway
- enum               objoff_29=$29,objoff_2A=$2A,objoff_2B=$2B,objoff_2C=$2C,objoff_2D=$2D,objoff_2E=$2E,objoff_2F=$2F
- enum objoff_30=$30,objoff_31=$31,objoff_32=$32,objoff_33=$33,objoff_34=$34,objoff_35=$35,objoff_36=$36,objoff_37=$37
- enum objoff_38=$38,objoff_39=$39,objoff_3A=$3A,objoff_3B=$3B,objoff_3C=$3C,objoff_3D=$3D,objoff_3E=$3E,objoff_3F=$3F
+; NAT: By the way, some of these are grossly out of order. I know, I know,
+; Bad Natsumi, etc.
+; But I did this to help make more sense for the changes I am about to do,
+; to make it faster. Sonic 2 is slow as molasses.
+; you may also note, objoff_xx will not match with the actual addresses
+
+	phase 0
+id			ds.b 1		; object ID (if you change this, change insn1op and insn2op in s2.macrosetup.asm, if you still use them)
+render_flags		ds.b 1		; bitfield ; bit 7 = onscreen flag, bit 0 = x mirror, bit 1 = y mirror, bit 2 = coordinate system, bit 6 = render subobjects
+art_tile		ds.w 1		; start of sprite's art
+mappings		ds.l 1		; address of object mappings data
+x_pixel =		*		; x coordinate for objects using screen-space coordinate system
+x_pos			ds.l 1		; object x-position
+x_sub =			*-2		; object sub-pixel x-position
+y_pixel =		*-2		; y coordinate for objects using screen-space coordinate system
+boss_subtype =		*-2		;
+objoff_A =		*-2
+
+y_pos			ds.l 1		; object y-position
+y_sub =			*-2		; object sub-pixel y-position
+objoff_10 =		*
+x_vel			ds.w 1		; horizontal velocity
+y_vel			ds.w 1		; vertical velocity
+objoff_14 =		*		; objects can use this space for anything
+boss_invulnerable_time = *		; BYTE	; the amount of time boss is invulnerable for
+inertia			ds.w 1		; Sonic&Tails - directionless representation of speed... not updated in the air
+
+y_radius		ds.b 1		; object's height / 2, often used for floor/wall collision
+x_radius		ds.b 1		; object's width / 2, often used for floor/wall collision
+priority 		ds.w 1		; address for object's target priority layer. CAN NOT BE INVALID ADDRESS, IF SPRITE IS DISPLAYED!
+boss_sine_count =	*		;
+mapping_frame		ds.b 1		; the frame the object is currently intending to display
+anim_frame		ds.b 1		; offset into animation script. Yes, it has nothing to do with frames as such.
+anim			ds.b 1		; animation ID
+next_anim		ds.b 1		; animation to be played next. If same as anim, animation will not reset
+anim_frame_duration	ds.b 1		; how long until next frame of animation must be played
+width_pixels		ds.b 1		; object's width / 2, often used for determining when object is offscreen (no need to draw sprites)
+
+invulnerable_time =	*		; Sonic&Tails - time remaining until player stops blinking
+collision_flags		ds.b 1		; various flags related to enemy collision
+collision_property	ds.b 1		; various object collision properties, usually boss hit count
+move_lock =		*		; Sonic&Tails - horizontal control lock, counts down to 0
+respawn_index		ds.w 1		; address where the object's respawn data is stored. Unique for every object in level
+status			ds.b 1		; note: exact meaning depends on the object... for sonic/tails: bit 0: leftfacing. bit 1: inair. bit 2: spinning. bit 3: onobject. bit 4: rolljumping. bit 5: pushing. bit 6: underwater.
+objoff_28 =		*		; overlaps subtype, but a few objects use it for other things anyway
+air_left =		*		; the amount of air left for the player.
+subtype			ds.b 1		; object subtype property
+routine			ds.b 1		; objects routine counter
+routine_secondary	ds.b 1		; secondary object routine counter
+boss_routine =		*		;
+angle			ds.w 1		; angle about the z axis. There is 256 degrees, as opposed to 360
+flip_angle =		*-1		; angle about the x axis (360 degrees = 256) (twist/tumble)
+objoff_29 =		*-1
+
+objoff_2A =		*
+obj_control		ds.b 1		; 0 for normal, 1 for hanging or for resting on a flipper, $81 for going through CNZ/OOZ/MTZ tubes or stopped in CNZ cages or stoppers or flying if Tails
+objoff_2B =		*
+status_secondary	ds.b 1		;
+objoff_2C =		*
+boss_defeated =		*
+flips_remaining		ds.b 1		; number of flip revolutions remaining
+objoff_2D =		*
+flip_speed		ds.b 1		; number of flip revolutions per frame / 256
+objoff_2E =		*
+objoff_2F =		*+1
+invincibility_time	ds.w 1		; number of frames until invincibility ends
+objoff_30 =		*
+objoff_31 =		*+1
+speedshoes_time		ds.w 1		; number of frames until speed shoes end
+objoff_32 =		*
+objoff_33 =		*+1
+boss_hitcount2 =	*
+interact		ds.w 1		; Full RAM address of the last object Sonic stood on
+objoff_34 =		*
+top_solid_bit		ds.b 1		; the bit to check for top solidity (either $C or $E)
+objoff_35 =		*
+lrb_solid_bit		ds.b 1		; the bit to check for left/right/bottom solidity (either $D or $F)
+objoff_36 =		*
+next_tilt		ds.b 1		; angle on ground in front of sprite
+objoff_37 =		*
+tilt			ds.b 1		; angle on ground
+objoff_38 =		*
+boss_hurt_sonic =	*		; flag set by collision response routine when sonic has just been hurt (by boss?)
+stick_to_convex		ds.b 1		; 0 for normal, 1 to make Sonic stick to convex surfaces like the rotating discs in Sonic 1 and 3 (unused in Sonic 2 but fully functional)
+
+objoff_39 =		*
+pinball_mode =		*
+spindash_flag		ds.b 1		; 0 for normal, 1 for charging a spindash or forced rolling
+restart_countdown =	*
+objoff_3A =		*
+objoff_3B =		*+1
+spindash_counter	ds.w 1
+objoff_3C =		*
+objoff_3D =		*+1
+jumping			ds.w 1		; set when Sonic is jumping... This should REALLY be a byte...
+objoff_3E =		*
+objoff_3F =		*+1
+parent			ds.w 1		; address of object that owns or spawned this one, if applicable
+flip_turned =		*		; 0 for normal, 1 to invert flipping (it's a 180 degree rotation about the axis of Sonic's spine, so he stays in the same position but looks turned around)
+objoff_40 =		*
+objoff_41 =		*
+			ds.w 1		; this space is not used (aside from a couple of objects, due to lack of object RAM)
+object_size =		*		; the size of an object
+next_object =		*
 ; ---------------------------------------------------------------------------
 ; Special Stage object properties:
-ss_dplc_timer = $23
-ss_x_pos = objoff_2A
-ss_x_sub = objoff_2C
-ss_y_pos = objoff_2E
-ss_y_sub = objoff_30
-ss_init_flip_timer = objoff_32
-ss_flip_timer = objoff_33
-ss_z_pos = objoff_34
-ss_hurt_timer = objoff_36
-ss_slide_timer = objoff_37
-ss_parent = objoff_38
-ss_rings_base = objoff_3C	; word
-ss_rings_hundreds = objoff_3C
-ss_rings_tens = objoff_3D
-ss_rings_units = objoff_3E
-ss_last_angle_index = objoff_3F
+ss_dplc_timer =		objoff_28
+ss_x_pos =		objoff_2A
+ss_x_sub =		objoff_2C
+ss_y_pos =		objoff_2E
+ss_y_sub =		objoff_30
+ss_init_flip_timer =	objoff_32
+ss_flip_timer =		objoff_33
+ss_z_pos =		objoff_34
+ss_hurt_timer =		objoff_36
+ss_slide_timer =	objoff_37
+ss_parent =		objoff_38
+ss_rings_base =		objoff_3C	; word
+ss_rings_hundreds =	objoff_3C
+ss_rings_tens =		objoff_3D
+ss_rings_units =	objoff_3E
+ss_last_angle_index =	objoff_3F
+; ---------------------------------------------------------------------------
+; when childsprites are activated (i.e. bit #6 of render_flags set)
+mainspr_mapframe	= x_pos+3
+mainspr_width		= y_pos+2
+mainspr_childsprites 	= y_pos+3	; amount of child sprites
+
+	phase x_vel
+sub2_x_pos		ds.w 1		; x_vel
+sub2_y_pos		ds.w 1		; y_vel
+mainspr_height		ds.b 1
+sub2_mapframe		ds.b 1
+
+sub3_x_pos		ds.w 1		; y_radius
+sub3_y_pos		ds.w 1		; priority
+			ds.b 1		; unused
+sub3_mapframe		ds.b 1		; anim_frame
+
+sub4_x_pos		ds.w 1		; anim
+sub4_y_pos		ds.w 1		; anim_frame_duration
+			ds.b 1		; DO NOT USE, BRIDGES WILL HURT YOU
+sub4_mapframe		ds.b 1		; collision_property
+
+sub5_x_pos		ds.w 1		; status
+sub5_y_pos		ds.w 1		; routine
+			ds.b 1		; unused
+sub5_mapframe		ds.b 1
+
+sub6_x_pos		ds.w 1		; subtype
+sub6_y_pos		ds.w 1
+			ds.b 1		; unused
+sub6_mapframe		ds.b 1
+
+sub7_x_pos		ds.w 1
+sub7_y_pos		ds.w 1
+			ds.b 1		; unused
+sub7_mapframe		ds.b 1
+
+sub8_x_pos		ds.w 1
+sub8_y_pos		ds.w 1
+			ds.b 1		; unused
+sub8_mapframe		ds.b 1
+
+sub9_x_pos		ds.w 1
+sub9_y_pos		ds.w 1
+			ds.b 1		; unused
+sub9_mapframe		ds.b 1
+next_subspr		= 6
 ; ---------------------------------------------------------------------------
 ; property of all objects:
-object_size =		$40 ; the size of an object
-next_object =		object_size
 
 ; ---------------------------------------------------------------------------
 ; Bits 3-6 of an object's status after a SolidObject call is a
@@ -902,15 +932,15 @@ Tails_InvincibilityStars:
 LevelOnly_Object_RAM_End:
 
 Object_RAM_End:
-				ds.b	$200	; unused
 
+		phase	ramaddr($FFFFD600)		; must be aligned for Special Stage's sake
 Primary_Collision:		ds.b	$300
 Secondary_Collision:		ds.b	$300
-VDP_Command_Buffer:		ds.w	7*$12	; stores 18 ($12) VDP commands to issue the next time ProcessDMAQueue is called
-VDP_Command_Buffer_Slot:	ds.l	1	; stores the address of the next open slot for a queued VDP command
-
 Sprite_Table_2:			ds.b	$280	; Sprite attribute table buffer for the bottom split screen in 2-player mode
 				ds.b	$80	; unused, but SAT buffer can spill over into this area when there are too many sprites on-screen
+
+VDP_Command_Buffer:		ds.w	7*$12	; stores 18 ($12) VDP commands to issue the next time ProcessDMAQueue is called
+VDP_Command_Buffer_Slot:	ds.l	1	; stores the address of the next open slot for a queued VDP command
 
 Horiz_Scroll_Buf:		ds.b	$400
 Horiz_Scroll_Buf_End:
@@ -1480,6 +1510,7 @@ unk_FFDD:			ds.b	1	; Written to near loc_175EA, never read from
 unk_FFDE:			ds.b	1	; Written to near loc_175EA, never read from
 unk_FFDF:			ds.b	1	; Written to near loc_175EA, never read from
 
+; NAT: The comment below is no longer true, and these values are unused
 ; Values in these variables are passed to the sound driver during V-INT.
 ; They use a playlist index, not a sound test index.
 Music_to_play:			ds.b	1
@@ -1668,14 +1699,13 @@ SS_NoRingsTogoLifetime:	ds.w	1
 SS_RingsToGoBCD:		ds.w	1
 SS_HideRingsToGo:	ds.b	1
 SS_TriggerRingsToGo:	ds.b	1
-			ds.b	$58	; unused
 SS_Misc_Variables_End:
 
 	phase	ramaddr(Horiz_Scroll_Buf)	; Still in SS RAM
 SS_Horiz_Scroll_Buf_1:		ds.b	$400
 SS_Horiz_Scroll_Buf_1_End:
 
-	phase	ramaddr($FFFFF73E)	; Still in SS RAM
+	phase	ramaddr(Boss_AnimationArray)	; Still in SS RAM
 SS_Offset_X:			ds.w	1
 SS_Offset_Y:			ds.w	1
 SS_Swap_Positions_Flag:	ds.b	1

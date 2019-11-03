@@ -966,8 +966,8 @@ AMPS_DebugR_ChkTracker_Ch:
 
 	move.b	cSample(a5),d0
 	move.b	cLoop(a5),d1
-	move.w	cLoop+1(a5),d2
-	move.w	cLoop+2(a5),d3
+	move.b	cLoop+1(a5),d2
+	move.b	cLoop+2(a5),d3
 	Console.WriteLine " %<.b d0> %<.b d1> %<.b d2> %<.b d3>"
 
 	move.l	cData(a5),d0
