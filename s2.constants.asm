@@ -56,10 +56,10 @@ status			ds.b 1		; note: exact meaning depends on the object... for sonic/tails:
 objoff_28 =		*		; overlaps subtype, but a few objects use it for other things anyway
 air_left =		*		; the amount of air left for the player.
 subtype			ds.b 1		; object subtype property
-routine			ds.b 1		; objects routine counter
-routine_secondary	ds.b 1		; secondary object routine counter
 boss_routine =		*		;
 angle			ds.w 1		; angle about the z axis. There is 256 degrees, as opposed to 360
+routine			ds.b 1		; objects routine counter
+routine_secondary	ds.b 1		; secondary object routine counter
 flip_angle =		*-1		; angle about the x axis (360 degrees = 256) (twist/tumble)
 objoff_29 =		*-1
 

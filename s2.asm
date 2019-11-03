@@ -63741,7 +63741,7 @@ Obj54_Index:	offsetTable
 		offsetTableEntry.w Obj54_Init			; 0
 		offsetTableEntry.w Obj54_Main		 	; 2
 		offsetTableEntry.w Obj54_Laser			; 4
-		offsetTableEntry.w Obj54_LaserShooter	; 6
+		offsetTableEntry.w Obj54_LaserShooter		; 6
 ; ===========================================================================
 ; loc_3229E:
 Obj54_Init:
@@ -64313,7 +64313,7 @@ Obj53_Init:
 	move.b	#3,priority(a1)
 	addq.b	#2,routine(a1)		; => Obj53_Main
 	move.b	#5,mapping_frame(a1)
-	move.b	byte_329CC(pc,d2.w),objoff_40(a1)
+	move.b	byte_329CC(pc,d2.w),objoff_28(a1)
 	move.b	byte_329CC(pc,d2.w),objoff_3B(a1)
 	move.b	byte_329D3(pc,d2.w),objoff_3A(a1)
 	move.b	#$40,objoff_29(a1)
@@ -73098,8 +73098,8 @@ loc_39182:
 	tst.b	objoff_30(a0)
 	beq.s	+
 	movea.w	objoff_32(a0),a3
-	move.b	#0,$2A(a3)
-	bset	#1,$22(a3)
+	move.b	#0,objoff_2A(a3)
+	bset	#1,status(a3)
 +
 	moveq	#0,d6
 	move.b	objoff_2D(a0),d6
