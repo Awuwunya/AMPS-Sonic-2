@@ -38,7 +38,10 @@ inertia			ds.w 1		; Sonic&Tails - directionless representation of speed... not u
 
 y_radius		ds.b 1		; object's height / 2, often used for floor/wall collision
 x_radius		ds.b 1		; object's width / 2, often used for floor/wall collision
-priority 		ds.w 1		; address for object's target priority layer. CAN NOT BE INVALID ADDRESS, IF SPRITE IS DISPLAYED!
+flip_turned =		*		; 0 for normal, 1 to invert flipping (it's a 180 degree rotation about the axis of Sonic's spine, so he stays in the same position but looks turned around)
+objoff_40 =		*
+objoff_41 =		*
+			ds.w 1		; this space is not used (aside from a couple of objects, due to lack of object RAM)
 boss_sine_count =	*		;
 mapping_frame		ds.b 1		; the frame the object is currently intending to display
 anim_frame		ds.b 1		; offset into animation script. Yes, it has nothing to do with frames as such.
@@ -107,10 +110,7 @@ jumping			ds.w 1		; set when Sonic is jumping... This should REALLY be a byte...
 objoff_3E =		*
 objoff_3F =		*+1
 parent			ds.w 1		; address of object that owns or spawned this one, if applicable
-flip_turned =		*		; 0 for normal, 1 to invert flipping (it's a 180 degree rotation about the axis of Sonic's spine, so he stays in the same position but looks turned around)
-objoff_40 =		*
-objoff_41 =		*
-			ds.w 1		; this space is not used (aside from a couple of objects, due to lack of object RAM)
+priority 		ds.w 1		; address for object's target priority layer. CAN NOT BE INVALID ADDRESS, IF SPRITE IS DISPLAYED!
 object_size =		*		; the size of an object
 next_object =		*
 ; ---------------------------------------------------------------------------
@@ -830,6 +830,11 @@ AniIDTailsAni_Fly			= id(TailsAni_Fly_ptr)			; 32 ; $20
 palette_line_size =	$10*2	; 16 word entries
 
 ; ---------------------------------------------------------------------------
+; function for converting priority to proper format
+prlayer =		$80
+prio	function x, Sprite_Table_Input+(x*prlayer)
+
+; ---------------------------------------------------------------------------
 ; I run the main 68k RAM addresses through this function
 ; to let them work in both 16-bit and 32-bit addressing modes.
 ramaddr function x,-(-x)&$FFFFFFFF
@@ -850,7 +855,7 @@ Block_Table_End:
 
 TempArray_LayerDef:		ds.b	$200	; used by some layer deformation routines
 Decomp_Buffer:			ds.b	$200
-Sprite_Table_Input:		ds.b	$400	; in custom format before being converted and stored in Sprite_Table/Sprite_Table_2
+Sprite_Table_Input:		ds.b	prlayer*8	; in custom format before being converted and stored in Sprite_Table/Sprite_Table_2
 Sprite_Table_Input_End:
 
 Object_RAM:			; The various objects in the game are loaded in this area.
@@ -1599,7 +1604,7 @@ SSRAM_MiscKoz_SpecialObjectLocations:
 				ds.b	$1AE0
 
 	phase	Sprite_Table_Input
-SS_Sprite_Table_Input:		ds.b	$400	; in custom format before being converted and stored in Sprite_Table
+SS_Sprite_Table_Input:		ds.b	prlayer*8	; in custom format before being converted and stored in Sprite_Table
 SS_Sprite_Table_Input_End:
 
 	phase	Object_RAM	; Move back to the object RAM

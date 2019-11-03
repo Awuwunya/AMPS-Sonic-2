@@ -181,8 +181,8 @@ zoneTableEnd macro
 ; macro to declare sub-object data
 subObjData macro mappings,vram,renderflags,priority,width,collision
 	dc.l mappings
-	dc.w vram
-	dc.b renderflags,priority,width,collision
+	dc.w vram, prio(priority)
+	dc.b renderflags,width,collision,0
     endm
 
 ; macros for defining animated PLC script lists
