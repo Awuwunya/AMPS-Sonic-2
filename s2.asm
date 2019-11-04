@@ -19779,6 +19779,7 @@ Obj11_MakeBdgSegment:
 	move.w	y_pos(a0),y_pos(a1)
 	move.l	mappings(a0),mappings(a1)
 	move.w	art_tile(a0),art_tile(a1)
+	move.w	priority(a0),priority(a1)
 	move.b	render_flags(a0),render_flags(a1)
 	bset	#6,render_flags(a1)
 	move.b	#$40,mainspr_width(a1)
@@ -25556,6 +25557,7 @@ Obj6F_Init:
 	move.b	(a2)+,routine(a1)
 	move.b	(a2)+,mapping_frame(a1)
 	move.l	#Obj6F_MapUnc_14ED0,mappings(a1)
+	move.w	#prio(0),priority(a1)
 	move.b	#$78,width_pixels(a1)
 	move.b	#0,render_flags(a1)
 	lea	next_object(a1),a1 ; go to next object ; a1=object
@@ -79444,7 +79446,7 @@ loc_3DD64:
 loc_3DDA6:
 	subq.w	#1,objoff_2A(a0)
 	bmi.s	loc_3DE0A
-	lea	objoff_40(a0),a1		; NAT: Who TF codes like this
+	lea	objoff_3F+1(a0),a1		; NAT: Who TF codes like this
 	movea.l	a1,a2
 	move.w	-(a1),y_vel(a0)
 	move.w	-(a1),x_vel(a0)
