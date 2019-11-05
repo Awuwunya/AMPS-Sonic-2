@@ -243,10 +243,10 @@ dPlaySnd_Music:
 ; out the exact same though...
 ; ---------------------------------------------------------------------------
 
+		move.b	d6,mTempoSpeed.w	; save loaded value into tempo speed setting
 		jsr	dStopMusic(pc)		; mute hardware and reset all driver memory
 		jsr	dResetVolume(pc)	; reset volumes and end any fades
 
-		move.b	d6,mTempoSpeed.w	; save loaded value into tempo speed setting
 		move.l	a4,a3			; copy pointer to a3
 		addq.w	#4,a4			; go to DAC1 data section
 

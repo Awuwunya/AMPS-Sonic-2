@@ -11550,6 +11550,7 @@ MenuScreen_LevelSelect:
 	move.b	#VintID_Menu,(Vint_routine).w
 	bsr.w	WaitForVint
 	music	mus_Options
+	command	Mus_Reset
 
 	move.w	(VDP_Reg1_val).w,d0
 	ori.b	#$40,d0
@@ -36006,6 +36007,12 @@ Obj02_InWater:
 
 	movea.l	a0,a1
 	bsr.w	ResumeMusic
+
+	cmpa.w	#MainCharacter,a0	; is this Tails alone?
+	bne.s	+			; if not, skip
+	command	Mus_ToWater		; enable underwater mode
+
++
 	move.b	#ObjID_SmallBubbles,(Tails_BreathingBubbles+id).w ; load Obj0A (tail's breathing bubbles) at $FFFFD0C0
 	move.b	#$81,(Tails_BreathingBubbles+subtype).w
 	move.l	a0,(Tails_BreathingBubbles+$3C).w ; set its parent to be this (obj0A uses $3C instead of $3E for some reason)
@@ -36031,8 +36038,13 @@ Obj02_OutWater:
 	move.w	#$C,(Tails_acceleration).w
 	move.w	#$80,(Tails_deceleration).w
 
-	cmpi.b	#4,routine(a0)	; is Tails falling back from getting hurt?
-	beq.s	+		; if yes, branch
+	cmpa.w	#MainCharacter,a0	; is this Tails alone?
+	bne.s	+			; if not, skip
+	command	Mus_OutWater		; disable underwater mode
+
++
+	cmpi.b	#4,routine(a0)		; is Tails falling back from getting hurt?
+	beq.s	+			; if yes, branch
 	asl	y_vel(a0)
 +
 	tst.w	y_vel(a0)
@@ -36045,6 +36057,7 @@ Obj02_OutWater:
 	move.w	#-$1000,y_vel(a0)	; limit upward y velocity exiting the water
 +
 	sfx	sfx_Splash
+	rts
 ; End of subroutine Tails_Water
 
 ; ===========================================================================
