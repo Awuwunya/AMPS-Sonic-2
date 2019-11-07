@@ -78142,6 +78142,7 @@ loc_3CFC0:
 	tst.b	render_flags(a0)
 	bpl.s	+
 	addq.b	#2,routine_secondary(a0) ; => ObjC6_State2_State5
+	move.w	#prio(3),priority(a0)
 	move.w	#$80,x_vel(a0)
 	move.w	#-$200,y_vel(a0)
 	move.b	#2,mapping_frame(a0)
