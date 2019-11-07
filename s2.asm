@@ -464,6 +464,9 @@ V_Int:
 	jsr	Vint_SwitchTbl(pc,d0.w)
 
 VintRet:
+	if Debug_Lagometer
+		move.w	#$9193,VDP_control_port		; enable window plane
+	endif
 	jsr	UpdateAMPS			; run AMPS
 	addq.l	#1,(Vint_runcount).w
 	movem.l	(sp)+,d0-a6
@@ -1142,7 +1145,7 @@ VDPSetupArray:
 	dc.w $8004		; H-INT disabled
 	dc.w $8134		; Genesis mode, DMA enabled, VBLANK-INT enabled
 	dc.w $8200|(VRAM_Plane_A_Name_Table/$400)	; PNT A base: $C000
-	dc.w $8328		; PNT W base: $A000
+	dc.w $8300|($B000/$400)				; PNT W base: $B000
 	dc.w $8400|(VRAM_Plane_B_Name_Table/$2000)	; PNT B base: $E000
 	dc.w $8500|(VRAM_Sprite_Attribute_Table/$200)	; Sprite attribute table base: $F800
 	dc.w $8600
@@ -3383,9 +3386,6 @@ Pal_Result:palette Special Stage Results Screen.bin ; Special Stage Results Scre
 	nop
     endif
 
-
-
-
 ; ---------------------------------------------------------------------------
 ; Subroutine to perform vertical synchronization
 ; ---------------------------------------------------------------------------
@@ -3395,6 +3395,9 @@ Pal_Result:palette Special Stage Results Screen.bin ; Special Stage Results Scre
 ; sub_3384: DelayProgram:
 WaitForVint:
 	move	#$2300,sr
+	if Debug_Lagometer
+		move.w	#$9100,VDP_control_port		; disable window plane
+	endif
 
 -	tst.b	(Vint_routine).w
 	bne.s	-
@@ -4110,8 +4113,7 @@ Level_ClrRam:
 	clearRAM MiscLevelVariables,MiscLevelVariables_End
 	clearRAM Misc_Variables,Misc_Variables_End
 	clearRAM Oscillating_Data,Oscillating_variables_End
-	; Bug: The '+C0' shouldn't be here; CNZ_saucer_data is only $40 bytes large
-	clearRAM CNZ_saucer_data,CNZ_saucer_data_End+$C0
+	clearRAM CNZ_saucer_data,CNZ_saucer_data_End
 
 	cmpi.w	#chemical_plant_zone_act_2,(Current_ZoneAndAct).w ; CPZ 2
 	beq.s	Level_InitWater
@@ -5828,12 +5830,15 @@ SpecialStage:
 ; | Now we clear out some regions in main RAM where we want to store some  |
 ; | of our data structures.                                                |
 ; \------------------------------------------------------------------------/
-	; Bug: These '+4's shouldn't be here; clearRAM accidentally clears an additional 4 bytes
 	clearRAM SS_Sprite_Table,SS_Sprite_Table_End
 	clearRAM SS_Horiz_Scroll_Buf_1,SS_Horiz_Scroll_Buf_1_End
 	clearRAM SS_Misc_Variables,SS_Misc_Variables_End
 	clearRAM SS_Sprite_Table_Input,SS_Sprite_Table_Input_End
 	clearRAM SS_Object_RAM,SS_Object_RAM_End
+
+	clr.w	(VDP_Command_Buffer).w
+	move.l	#VDP_Command_Buffer,(VDP_Command_Buffer_Slot).w
+	bsr.w	ClearPLC
 
 	move	#$2300,sr
 	lea	(VDP_control_port).l,a6
@@ -19712,7 +19717,7 @@ Obj11:
 	jmp	Obj11_Index(pc,d1.w)
 ; ===========================================================================
 +	; child sprite objects only need to be drawn
-	move.w	#$180,d0
+	move.w	#prio(3),a1
 	bra.w	DisplaySprite3
 ; ===========================================================================
 ; off_F68C:
@@ -20233,7 +20238,7 @@ Obj15:
 	jmp	Obj15_Index(pc,d1.w)
 ; ---------------------------------------------------------------------------
 +
-	move.w	#$200,d0
+	move.w	#prio(4),a1
 	bra.w	DisplaySprite3
 ; ===========================================================================
 ; off_FCBC: Obj15_States:
@@ -23145,11 +23150,9 @@ Obj26_Init:
 	move.w	#prio(3),priority(a0)
 	move.b	#$F,width_pixels(a0)
 
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	bclr	#7,2(a2,d0.w)
-	btst	#0,2(a2,d0.w)	; if this bit is set it means the monitor is already broken
+	move.w	respawn_index(a0),a2
+	bclr	#7,(a2)
+	btst	#0,(a2)		; if this bit is set it means the monitor is already broken
 	beq.s	+
 	move.b	#8,routine(a0)	; set monitor to 'broken' state
 	move.b	#$B,mapping_frame(a0)
@@ -23288,10 +23291,8 @@ Obj26_SpawnSmoke:
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 +
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	bset	#0,2(a2,d0.w)	; mark monitor as destroyed
+	move.w	respawn_index(a0),a2
+	bset	#0,(a2)		; mark monitor as destroyed
 	move.b	#$A,anim(a0)
 	bra.w	DisplaySprite
 ; ===========================================================================
@@ -23716,8 +23717,9 @@ teleport_swap_table:
 	dc.w Obj_respawn_index,		Obj_respawn_index_P2,		  0
 	dc.w Obj_load_addr_right,	Obj_load_addr_2,		  3
 	dc.w Sonic_top_speed,		Tails_top_speed,		  2
-	dc.w Ring_start_addr,		Ring_start_addr_P2,		  1
-	dc.w CNZ_Visible_bumpers_start,	CNZ_Visible_bumpers_start_P2,  3
+	dc.w Ring_start_addr_RAM,	Ring_start_addr_RAM_P2,		  0
+	dc.w Ring_start_addr_ROM,	Ring_start_addr_ROM_P2,		  3
+	dc.w CNZ_Visible_bumpers_start,	CNZ_Visible_bumpers_start_P2,	  3
 	dc.w Camera_X_pos,		Camera_X_pos_P2,		 $F
 	dc.w Camera_X_pos_coarse,	Camera_X_pos_coarse_P2,		  0
 	dc.w Camera_Min_X_pos,		Tails_Min_X_pos,		  3
@@ -27399,11 +27401,8 @@ MarkObjGone:
 	bhi.w	+
 	bra.w	DisplaySprite
 
-+	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	+
-	bclr	#7,2(a2,d0.w)
++	move.w	respawn_index(a0),a2
+	bclr	#7,(a2)
 +
 	bra.w	DeleteObject
 ; ===========================================================================
@@ -27420,11 +27419,8 @@ MarkObjGone2:
 	bhi.w	+
 	bra.w	DisplaySprite
 +
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	+
-	bclr	#7,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bclr	#7,(a2)
 +
 	bra.w	DeleteObject
 ; ===========================================================================
@@ -27443,11 +27439,8 @@ MarkObjGone3:
 	bhi.w	+
 	rts
 +
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	+
-	bclr	#7,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bclr	#7,2(a2)
 +
 	bra.w	DeleteObject
 ; ===========================================================================
@@ -27463,11 +27456,8 @@ MarkObjGone_P1:
 	bhi.w	+
 	bra.w	DisplaySprite
 +
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	+
-	bclr	#7,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bclr	#7,2(a2)
 +
 	bra.w	DeleteObject
 ; ---------------------------------------------------------------------------
@@ -27487,11 +27477,8 @@ MarkObjGone_P2:
 	bhi.w	+
 	bra.w	DisplaySprite
 +
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	+
-	bclr	#7,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bclr	#7,2(a2)
 +
 	bra.w	DeleteObject ; useless branch...
 
@@ -27530,11 +27517,11 @@ DeleteObject2:
 DisplaySprite:
 	; temp
 	tst.w	priority(a0)
-	bmi.s	.ok
-	bra.w	*
+	bpl.s	*
 
-.ok
 	move.w	priority(a0),a1		; NAT: Priority is now the direct address
+
+DisplaySprite3:
 	cmpi.w	#$7E,(a1)
 	bhs.s	return_16510
 	addq.w	#2,(a1)
@@ -27543,8 +27530,6 @@ DisplaySprite:
 
 return_16510:
 	rts
-; End of function DisplaySprite
-
 ; ---------------------------------------------------------------------------
 ; Subroutine to display a sprite/object, when a1 is the object RAM
 ; ---------------------------------------------------------------------------
@@ -27554,11 +27539,9 @@ return_16510:
 ; sub_16512:
 DisplaySprite2:
 	; temp
-	tst.w	priority(a0)
-	bmi.s	.ok
-	bra.w	*
+	tst.w	priority(a1)
+	bpl.s	*
 
-.ok
 	move.w	priority(a1),a2		; NAT: Priority is now the direct address
 	cmpi.w	#$7E,(a2)
 	bhs.s	return_1652E
@@ -27568,26 +27551,6 @@ DisplaySprite2:
 
 return_1652E:
 	rts
-; End of function DisplaySprite2
-
-; ---------------------------------------------------------------------------
-; Subroutine to display a sprite/object, when a0 is the object RAM
-; and d0 is already (priority/2)&$380
-; ---------------------------------------------------------------------------
-
-; loc_16530:
-DisplaySprite3:
-	lea	(Sprite_Table_Input).w,a1
-	adda.w	d0,a1
-	cmpi.w	#$7E,(a1)
-	bhs.s	return_16542
-	addq.w	#2,(a1)
-	adda.w	(a1),a1
-	move.w	a0,(a1)
-
-return_16542:
-	rts
-
 ; ---------------------------------------------------------------------------
 ; Subroutine to animate a sprite using an animation script
 ; ---------------------------------------------------------------------------
@@ -28791,15 +28754,11 @@ JmpTo_BuildHUD_P2
 	jmp	(BuildHUD_P2).l
 
 	align 4
-    endif
-
-
-
-
-; ===========================================================================
+    endif; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Pseudo-object that manages where rings are placed onscreen
 ; as you move through the level, and otherwise updates them.
+; This is a version ported from Sonic 3 & Knuckles
 ; ----------------------------------------------------------------------------
 
 ; loc_16F88:
@@ -28810,36 +28769,40 @@ RingsManager:
 	jmp	RingsManager_States(pc,d0.w)
 ; ===========================================================================
 ; off_16F96:
-RingsManager_States:	offsetTable
-	offsetTableEntry.w RingsManager_Init	;   0
-	offsetTableEntry.w RingsManager_Main	;   2
+RingsManager_States:
+	dc.w RingsManager_Init - RingsManager_States
+	dc.w RingsManager_Main - RingsManager_States
 ; ===========================================================================
 ; loc_16F9A:
 RingsManager_Init:
 	addq.b	#2,(Rings_manager_routine).w ; => RingsManager_Main
 	bsr.w	RingsManager_Setup	; perform initial setup
-	lea	(Ring_Positions).w,a1
+	movea.l	(Ring_start_addr_ROM).w,a1
+	lea	(Ring_Positions).w,a2
 	move.w	(Camera_X_pos).w,d4
 	subq.w	#8,d4
 	bhi.s	+
 	moveq	#1,d4	; no negative values allowed
 	bra.s	+
 -
-	lea	6(a1),a1	; load next ring
+	addq.w	#4,a1	; load next ring
+	addq.w	#2,a2
 +
-	cmp.w	2(a1),d4	; is the X pos of the ring < camera X pos?
+	cmp.w	(a1),d4	; is the X pos of the ring < camera X pos?
 	bhi.s	-		; if it is, check next ring
-	move.w	a1,(Ring_start_addr).w	; set start addresses
-	move.w	a1,(Ring_start_addr_P2).w
+	move.l	a1,(Ring_start_addr_ROM).w	; set start addresses in both ROM and RAM
+	move.l	a1,(Ring_start_addr_ROM_P2).w
+	move.w	a2,(Ring_start_addr_RAM).w
+	move.w	a2,(Ring_start_addr_RAM_P2).w
 	addi.w	#320+16,d4	; advance by a screen
 	bra.s	+
 -
-	lea	6(a1),a1	; load next ring
+	addq.w	#4,a1	; load next ring
 +
-	cmp.w	2(a1),d4	; is the X pos of the ring < camera X + 336?
-	bhi.s	-		; if it is, check next ring
-	move.w	a1,(Ring_end_addr).w	; set end addresses
-	move.w	a1,(Ring_end_addr_P2).w
+	cmp.w	(a1),d4		; is the X pos of the ring < camera X + 336?
+	bhi.s	-	; if it is, check next ring
+	move.l	a1,(Ring_end_addr_ROM).w	; set end addresses
+	move.l	a1,(Ring_end_addr_ROM_P2).w
 	rts
 ; ===========================================================================
 ; loc_16FDE:
@@ -28863,82 +28826,92 @@ RingsManager_Main:
 	subq.w	#1,(Ring_consumption_table).w	; subtract count
 +	dbf	d1,-	; repeat for all rings in table
 +
-	; update ring start and end addresses
-	movea.w	(Ring_start_addr).w,a1
+	; update ring start addresses
+	movea.l	(Ring_start_addr_ROM).w,a1
+	movea.w	(Ring_start_addr_RAM).w,a2
 	move.w	(Camera_X_pos).w,d4
 	subq.w	#8,d4
 	bhi.s	+
 	moveq	#1,d4
 	bra.s	+
 -
-	lea	6(a1),a1
+	addq.w	#4,a1
+	addq.w	#2,a2
 +
-	cmp.w	2(a1),d4
+	cmp.w	(a1),d4
 	bhi.s	-
 	bra.s	+
 -
-	subq.w	#6,a1
+	subq.w	#4,a1
+	subq.w	#2,a2
 +
 	cmp.w	-4(a1),d4
 	bls.s	-
-	move.w	a1,(Ring_start_addr).w	; update start address
-
-	movea.w	(Ring_end_addr).w,a2
-	addi.w	#320+16,d4
+	move.l	a1,(Ring_start_addr_ROM).w	; update start addresses
+	move.w	a2,(Ring_start_addr_RAM).w
+	tst.w	(Two_player_mode).w	; are we in 2P mode?
+	bne.s	+	; if we are, avoid copying over the P1 address
+	move.w	a2,(Ring_start_addr_RAM_P2).w
++
+	movea.l	(Ring_end_addr_ROM).w,a2	; set end address
+	addi.w	#320+16,d4	; advance by a screen
 	bra.s	+
 -
-	lea	6(a2),a2
+	addq.w	#4,a2
 +
-	cmp.w	2(a2),d4
+	cmp.w	(a2),d4
 	bhi.s	-
 	bra.s	+
 -
-	subq.w	#6,a2
+	subq.w	#4,a2
 +
 	cmp.w	-4(a2),d4
 	bls.s	-
-	move.w	a2,(Ring_end_addr).w	; update end address
+	move.l	a2,(Ring_end_addr_ROM).w	; update end address
 	tst.w	(Two_player_mode).w	; are we in 2P mode?
 	bne.s	+	; if we are, update P2 addresses
-	move.w	a1,(Ring_start_addr_P2).w	; otherwise, copy over P1 addresses
-	move.w	a2,(Ring_end_addr_P2).w
+	move.l	a1,(Ring_start_addr_ROM_P2).w	; otherwise, copy over P1 addresses
+	move.l	a2,(Ring_end_addr_ROM_P2).w
 	rts
 +
 	; update ring start and end addresses for P2
-	movea.w	(Ring_start_addr_P2).w,a1
+	movea.l	(Ring_start_addr_ROM_P2).w,a1
+	movea.w	(Ring_start_addr_RAM_P2).w,a2
 	move.w	(Camera_X_pos_P2).w,d4
 	subq.w	#8,d4
 	bhi.s	+
 	moveq	#1,d4
 	bra.s	+
 -
-	lea	6(a1),a1
+	addq.w	#4,a1
+	addq.w	#2,a2
 +
-	cmp.w	2(a1),d4
+	cmp.w	(a1),d4
 	bhi.s	-
 	bra.s	+
 -
-	subq.w	#6,a1
+	subq.w	#4,a1
+	subq.w	#2,a2
 +
 	cmp.w	-4(a1),d4
 	bls.s	-
-	move.w	a1,(Ring_start_addr_P2).w	; update start address
-
-	movea.w	(Ring_end_addr_P2).w,a2
-	addi.w	#320+16,d4
+	move.l	a1,(Ring_start_addr_ROM_P2).w	; update start addresses
+	move.w	a2,(Ring_start_addr_RAM_P2).w
+	movea.l	(Ring_end_addr_ROM_P2).w,a2		; set end address
+	addi.w	#320+16,d4	; advance by a screen
 	bra.s	+
 -
-	lea	6(a2),a2
+	addq.w	#4,a2
 +
-	cmp.w	2(a2),d4
+	cmp.w	(a2),d4
 	bhi.s	-
 	bra.s	+
 -
-	subq.w	#6,a2
+	subq.w	#4,a2
 +
 	cmp.w	-4(a2),d4
 	bls.s	-
-	move.w	a2,(Ring_end_addr_P2).w		; update end address
+	move.l	a2,(Ring_end_addr_ROM_P2).w		; update end address
 	rts
 
 ; ---------------------------------------------------------------------------
@@ -28949,20 +28922,39 @@ RingsManager_Main:
 
 ; loc_170BA:
 Touch_Rings:
-	movea.w	(Ring_start_addr).w,a1
-	movea.w	(Ring_end_addr).w,a2
-	cmpa.w	#MainCharacter,a0
-	beq.s	+
-	movea.w	(Ring_start_addr_P2).w,a1
-	movea.w	(Ring_end_addr_P2).w,a2
+	movea.l	(Ring_start_addr_ROM).w,a1	; load start and end addresses
+	movea.l	(Ring_end_addr_ROM).w,a2
+	cmpa.w	#MainCharacter,a0	; are we the main character?
+	beq.s	+		; if we are, continue on
+	movea.l	(Ring_start_addr_ROM_P2).w,a1	; load start and end addresses for P2
+	movea.l	(Ring_end_addr_ROM_P2).w,a2
 +
 	cmpa.l	a1,a2	; are there no rings in this area?
 	beq.w	Touch_Rings_Done	; if so, return
+	movea.w	(Ring_start_addr_RAM).w,a4	; load start address
+	cmpa.w	#MainCharacter,a0	; are we the main character?
+	beq.s	+		; if we are, continue on
+	movea.w	(Ring_start_addr_RAM_P2).w,a4	; load start address for P2
++
 	cmpi.w	#$5A,invulnerable_time(a0)
-	bhs.w	Touch_Rings_Done
+	bcc.w	Touch_Rings_Done
+	btst	#5,status_secondary(a0)	; does character have a lightning shield?
+	beq.s	Touch_Rings_NoAttraction	; if not, branch
 	move.w	x_pos(a0),d2
 	move.w	y_pos(a0),d3
-	subi_.w	#8,d2	; assume X radius to be 8
+	subi.w	#$40,d2
+	subi.w	#$40,d3
+	move.w	#6,d1
+	move.w	#$C,d6
+	move.w	#$80,d4
+	move.w	#$80,d5
+	bra.s	Touch_Rings_Loop
+; ===========================================================================
+
+Touch_Rings_NoAttraction:
+	move.w	x_pos(a0),d2	; get character's position
+	move.w	y_pos(a0),d3
+	subi.w	#8,d2	; assume X radius to be 8
 	moveq	#0,d5
 	move.b	y_radius(a0),d5
 	subq.b	#3,d5
@@ -28973,46 +28965,50 @@ Touch_Rings:
 	moveq	#$A,d5
 +
 	move.w	#6,d1	; set ring radius
-	move.w	#12,d6	; set ring diameter
-	move.w	#16,d4	; set Sonic's X diameter
+	move.w	#$C,d6	; set ring diameter
+	move.w	#$10,d4	; set character's X diameter
 	add.w	d5,d5	; set Y diameter
 ; loc_17112:
 Touch_Rings_Loop:
-	tst.w	(a1)		; has this ring already been collided with?
+	tst.w	(a4)	; has this ring already been collided with?
 	bne.w	Touch_NextRing	; if it has, branch
-	move.w	2(a1),d0	; get ring X pos
+	move.w	(a1),d0		; get ring X pos
 	sub.w	d1,d0		; get ring left edge X pos
-	sub.w	d2,d0		; subtract Sonic's left edge X pos
-	bcc.s	+		; if Sonic's to the left of the ring, branch
+	sub.w	d2,d0		; subtract character's left edge X pos
+	bcc.s	+		; if character's to the left of the ring, branch
 	add.w	d6,d0		; add ring diameter
-	bcs.s	++		; if Sonic's colliding, branch
+	bcs.s	++		; if character's colliding, branch
 	bra.w	Touch_NextRing	; otherwise, test next ring
 +
-	cmp.w	d4,d0		; has Sonic crossed the ring?
-	bhi.w	Touch_NextRing	; if he has, branch
+	cmp.w	d4,d0		; has character crossed the ring?
+	bhi.w	Touch_NextRing	; if they have, branch
 +
-	move.w	4(a1),d0	; get ring Y pos
+	move.w	2(a1),d0	; get ring Y pos
 	sub.w	d1,d0		; get ring top edge pos
-	sub.w	d3,d0		; subtract Sonic's top edge pos
-	bcc.s	+		; if Sonic's above the ring, branch
+	sub.w	d3,d0		; subtract character's top edge pos
+	bcc.s	+		; if character's above the ring, branch
 	add.w	d6,d0		; add ring diameter
-	bcs.s	++		; if Sonic's colliding, branch
+	bcs.s	++		; if character's colliding, branch
 	bra.w	Touch_NextRing	; otherwise, test next ring
 +
-	cmp.w	d5,d0		; has Sonic crossed the ring?
-	bhi.w	Touch_NextRing	; if he has, branch
+	cmp.w	d5,d0		; has character crossed the ring?
+	bhi.w	Touch_NextRing	; if they have, branch
 +
-	move.w	#$604,(a1)	; set frame and destruction timer
+	btst	#5,status_secondary(a0)	; does character have a lightning shield?
+	bne.s	AttractRing			; if so, attract the ring towards the player
+-
+	move.w	#$604,(a4)		; set frame and destruction timer
 	bsr.s	Touch_ConsumeRing
 	lea	(Ring_consumption_table+2).w,a3
 
 -	tst.w	(a3)+		; is this slot free?
 	bne.s	-		; if not, repeat until you find one
-	move.w	a1,-(a3)	; set ring address
+	move.w	a4,-(a3)	; set ring address
 	addq.w	#1,(Ring_consumption_table).w	; increase count
 ; loc_1715C:
 Touch_NextRing:
-	lea	6(a1),a1
+	addq.w	#4,a1
+	addq.w	#2,a4
 	cmpa.l	a1,a2		; are we at the last ring for this area?
 	bne.w	Touch_Rings_Loop	; if not, branch
 ; return_17166:
@@ -29023,8 +29019,23 @@ Touch_Rings_Done:
 Touch_ConsumeRing:
 	subq.w	#1,(Perfect_rings_left).w
 	cmpa.w	#MainCharacter,a0	; who collected the ring?
-	beq.w	CollectRing_Sonic	; if it was Sonic, branch here
+	beq.w	CollectRing		; if it was Sonic, branch here
 	bra.w	CollectRing_Tails	; if it was Tails, branch here
+; ===========================================================================
+AttractRing:
+	movea.l	a1,a3
+	jsr	SingleObjLoad
+	bne.w	AttractRing_NoFreeSlot
+	move.b	#$4C,(a1)
+	move.w	(a3),x_pos(a1)
+	move.w	2(a3),y_pos(a1)
+	move.w	a0,parent(a1)
+	move.w	#-1,(a4)
+	rts
+; ===========================================================================
+AttractRing_NoFreeSlot:
+	movea.l	a3,a1
+	bra.s	-
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to draw on-screen rings
@@ -29034,21 +29045,22 @@ Touch_ConsumeRing:
 
 ; loc_17178:
 BuildRings:
-	movea.w	(Ring_start_addr).w,a0
-	movea.w	(Ring_end_addr).w,a4
-	cmpa.l	a0,a4	; are there any rings on-screen?
-	bne.s	+	; if there are, branch
-	rts		; otherwise, return
+	movea.l	(Ring_start_addr_ROM).w,a0
+	move.l	(Ring_end_addr_ROM).w,d7
+	sub.l	a0,d7		; are there any rings on-screen?
+	bne.s	+		; if there are, branch
+	rts			; otherwise, return
 +
-	lea	(Camera_X_pos).w,a3
-; loc_1718A:
+	movea.w	(Ring_start_addr_RAM).w,a4	; load start address
+	lea	(Camera_X_pos).w,a3		; load camera x position
+
 BuildRings_Loop:
-	tst.w	(a0)		; has this ring been consumed?
+	tst.w	(a4)+		; has this ring been consumed?
 	bmi.w	BuildRings_NextRing	; if it has, branch
-	move.w	2(a0),d3	; get ring X pos
+	move.w	(a0),d3		; get ring X pos
 	sub.w	(a3),d3		; subtract camera X pos
 	addi.w	#128,d3		; screen top is 128x128 not 0x0
-	move.w	4(a0),d2	; get ring Y pos
+	move.w	2(a0),d2	; get ring Y pos
 	sub.w	4(a3),d2	; subtract camera Y pos
 	andi.w	#$7FF,d2
 	addi_.w	#8,d2
@@ -29056,9 +29068,9 @@ BuildRings_Loop:
 	cmpi.w	#240,d2
 	bge.s	BuildRings_NextRing	; if the ring is not on-screen, branch
 	addi.w	#128-8,d2
-	lea	(MapUnc_Rings).l,a1
+	lea	MapUnc_Rings(pc),a1
 	moveq	#0,d1
-	move.b	1(a0),d1	; get ring frame
+	move.b	-1(a4),d1	; get ring frame
 	bne.s	+		; if this ring is using a specific frame, branch
 	move.b	(Rings_anim_frame).w,d1	; use global frame
 +
@@ -29080,8 +29092,8 @@ BuildRings_Loop:
 	move.w	d0,(a2)+	; set X pos
 ; loc_171EC:
 BuildRings_NextRing:
-	lea	6(a0),a0
-	cmpa.l	a0,a4
+	addq.w	#4,a0
+	subq.w	#4,d7
 	bne.w	BuildRings_Loop
 	rts
 
@@ -29091,15 +29103,15 @@ BuildRings_NextRing:
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
-; loc_171F8:
 BuildRings_P1:
 	lea	(Camera_X_pos).w,a3
 	move.w	#128-8,d6
-	movea.w	(Ring_start_addr).w,a0
-	movea.w	(Ring_end_addr).w,a4
-	cmpa.l	a0,a4	; are there rings on-screen?
+	movea.l	(Ring_start_addr_ROM).w,a0
+	move.l	(Ring_end_addr_ROM).w,d7
+	movea.w	(Ring_start_addr_RAM).w,a4
+	sub.l	a0,d7	; are there rings on-screen?
 	bne.s	BuildRings_2P_Loop	; if there are, draw them
-	rts	; otherwise, return
+	rts
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to draw on-screen rings for player 2 in a 2P versus game
@@ -29111,20 +29123,21 @@ BuildRings_P1:
 BuildRings_P2:
 	lea	(Camera_X_pos_P2).w,a3
 	move.w	#224+128-8,d6
-	movea.w	(Ring_start_addr_P2).w,a0
-	movea.w	(Ring_end_addr_P2).w,a4
-	cmpa.l	a0,a4	; are there rings on-screen?
+	movea.l	(Ring_start_addr_ROM_P2).w,a0
+	move.l	(Ring_end_addr_ROM_P2).w,d7
+	movea.w	(Ring_start_addr_RAM_P2).w,a4
+	sub.l	a0,d7	; are there rings on-screen?
 	bne.s	BuildRings_2P_Loop	; if there are, draw them
-	rts	; otherwise, return
+	rts
 ; ===========================================================================
 ; loc_17224:
 BuildRings_2P_Loop:
-	tst.w	(a0)		; has this ring been consumed?
+	tst.w	(a4)+		; has this ring been consumed?
 	bmi.w	BuildRings_2P_NextRing	; if it has, branch
-	move.w	2(a0),d3	; get ring X pos
+	move.w	(a0),d3		; get ring X pos
 	sub.w	(a3),d3		; subtract camera X pos
 	addi.w	#128,d3
-	move.w	4(a0),d2	; get ring Y pos
+	move.w	2(a0),d2	; get ring Y pos
 	sub.w	4(a3),d2	; subtract camera Y pos
 	andi.w	#$7FF,d2
 	addi.w	#128+8,d2
@@ -29132,11 +29145,11 @@ BuildRings_2P_Loop:
 	cmpi.w	#240+128,d2
 	bge.s	BuildRings_2P_NextRing
 	add.w	d6,d2		; add base Y pos
-	lea	(MapUnc_Rings).l,a1
+	lea	MapUnc_Rings(pc),a1
 	moveq	#0,d1
-	move.b	1(a0),d1	; use ring-specific frame
-	bne.s	+		; if there is one
-	move.b	(Rings_anim_frame).w,d1	; otherwise use global frame
+	move.b	-1(a4),d1	; get ring frame
+	bne.s	+		; if this ring is using a specific frame, branch
+	move.b	(Rings_anim_frame).w,d1	; use global frame
 +
 	add.w	d1,d1
 	adda.w	(a1,d1.w),a1
@@ -29157,9 +29170,9 @@ BuildRings_2P_Loop:
 	move.w	d0,(a2)+	; set X pos
 
 BuildRings_2P_NextRing:
-	lea	6(a0),a0	; load next ring
-	cmpa.l	a0,a4		; are there any rings left?
-	bne.w	BuildRings_2P_Loop	; if there are, loop
+	addq.w	#4,a0	; load next ring
+	subq.w	#4,d7
+	bne.w	BuildRings_2P_Loop	; if there are rings left, loop
 	rts
 ; ===========================================================================
 ; cells are double the height in 2P mode, so halve the number of rows
@@ -29186,85 +29199,31 @@ RingsManager_Setup:
 	clearRAM Ring_Positions,Ring_Positions_End
 	; d0 = 0
 	lea	(Ring_consumption_table).w,a1
-
-	move.w	#bytesToLcnt(Ring_consumption_table_End-Ring_consumption_table-$40),d1	; coding error, that '-$40' shouldn't be there
--	move.l	d0,(a1)+	; only half of Ring_consumption_table is cleared
+	; in the Sonic 2 version a coding error is present that causes only half of the Ring_consumption_table to be cleared.
+	move.w	#bytesToLcnt(Ring_consumption_table_End-Ring_consumption_table),d1
+-	move.l	d0,(a1)+
 	dbf	d1,-
 
 	moveq	#0,d5
 	moveq	#0,d0
-	move.w	(Current_ZoneAndAct).w,d0
+	move.w	(Current_ZoneAndAct).w,d0	; get the current zone and act
 	ror.b	#1,d0
-	lsr.w	#6,d0
-	lea	(Off_Rings).l,a1
+	lsr.w	#6,d0			; get the act
+	lea	(Off_Rings).l,a1	; get the rings for the act
 	move.w	(a1,d0.w),d0
 	lea	(a1,d0.w),a1
-	lea	(Ring_Positions+6).w,a2	; first ring is left blank
-; loc_172E0:
-RingsMgr_NextRowOrCol:
-	move.w	(a1)+,d2	; is this the last ring?
-	bmi.s	RingsMgr_SortRings	; if it is, sort the rings
-	move.w	(a1)+,d3	; is this a column of rings?
-	bmi.s	RingsMgr_RingCol	; if it is, branch
-	move.w	d3,d0
-	rol.w	#4,d0
-	andi.w	#7,d0		; store number of rings
-	andi.w	#$FFF,d3	; store Y pos
-; loc_172F4:
-RingsMgr_NextRingInRow:
-	move.w	#0,(a2)+	; set initial status
-	move.w	d2,(a2)+	; set X pos
-	move.w	d3,(a2)+	; set Y pos
-	addi.w	#$18,d2		; increment X pos
-	addq.w	#1,d5		; increment perfect counter
-	dbf	d0,RingsMgr_NextRingInRow
-	bra.s	RingsMgr_NextRowOrCol
-; ===========================================================================
-; loc_17308:
-RingsMgr_RingCol:
-	move.w	d3,d0
-	rol.w	#4,d0
-	andi.w	#7,d0		; store number of rings
-	andi.w	#$FFF,d3	; store Y pos
-; loc_17314:
-RingsMgr_NextRingInCol:
-	move.w	#0,(a2)+	; set initial status
-	move.w	d2,(a2)+	; set X pos
-	move.w	d3,(a2)+	; set Y pos
-	addi.w	#$18,d3		; increment Y pos
-	addq.w	#1,d5		; increment perfect counter
-	dbf	d0,RingsMgr_NextRingInCol
-	bra.s	RingsMgr_NextRowOrCol
-; ===========================================================================
-; loc_17328:
-RingsMgr_SortRings:
-	move.w	d5,(Perfect_rings_left).w
-	move.w	#0,(Perfect_rings_flag).w	; no idea what this is
-	moveq	#-1,d0
-	move.l	d0,(a2)+	; set X pos of last ring to -1
-	lea	(Ring_Positions+2).w,a1	; X pos of first ring
-
-	move.w	#$FE,d3		; sort 255 rings
--	move.w	d3,d4
-	lea	6(a1),a2	; load next ring for comparison
-	move.w	(a1),d0		; get X pos of current ring
-
--	tst.w	(a2)		; is the next ring blank?
-	beq.s	+		; if it is, branch
-	cmp.w	(a2),d0		; is the X pos of current ring <= X pos of next ring?
-	bls.s	+		; if so, branch
-	move.l	(a1),d1		; otherwise, swap the rings
-	move.l	(a2),d0
-	move.l	d0,(a1)
-	move.l	d1,(a2)
-	swap	d0
+	move.l	a1,(Ring_start_addr_ROM).w
+	addq.w	#4,a1
+	moveq	#0,d5
+	move.w	#(Max_Rings-1),d0
+-
+	tst.l	(a1)+	; get the next ring
+	bmi.s	+		; if there's no more, carry on
+	addq.w	#1,d5	; increment perfect counter
+	dbf	d0,-
 +
-	lea	6(a2),a2	; load next comparison ring
-	dbf	d4,-		; repeat
-
-	lea	6(a1),a1	; load next ring
-	dbf	d3,--		; repeat
-
+	move.w	d5,(Perfect_rings_left).w	; set the perfect ring amount for the act
+	move.w	#0,(Perfect_rings_flag).w	; clear the perfect ring flag
 	rts
 ; ===========================================================================
 
@@ -29274,14 +29233,9 @@ RingsMgr_SortRings:
 
 ; off_1736A:
 MapUnc_Rings:	BINCLUDE "mappings/sprite/Rings.bin"
-
     if ~~removeJmpTos
 	align 4
     endif
-
-
-
-
 ; ---------------------------------------------------------------------------
 ; Pseudo-object to do collision with (and initialize?) the special bumpers in CNZ.
 ; These are the bumpers that are part of the level layout but have object-like collision.
@@ -29833,6 +29787,7 @@ ObjectsManager_Init:
 	lea	(Off_Objects).l,a0	; Next, we load the first pointer in the object layout list pointer index,
 	movea.l	a0,a1			; then copy it for quicker use later.
 	adda.w	(a0,d0.w),a0		; (Point1 * 2) + $003E
+
 	tst.w	(Two_player_mode).w	; skip if not in 2-player vs mode
 	beq.s	+
 	cmpi.b	#casino_night_zone,(Current_Zone).w	; skip if not Casino Night Zone
@@ -29848,20 +29803,20 @@ ObjectsManager_Init:
 	move.l	a0,(Obj_load_addr_2).w
 	move.l	a0,(Obj_load_addr_3).w
 	lea	(Object_Respawn_Table).w,a2
-	move.w	#$101,(a2)+	; the first two bytes are not used as respawn values
+	move.l	#((Object_Respawn_Table&$FFFF)+4)|(((Object_Respawn_Table&$FFFF)+4)<<16),(a2)+
+	; the first two words are not used as respawn values
 	; instead, they are used to keep track of the current respawn indexes
 
-	; Bug: The '+7E' shouldn't be here; this loop accidentally clears an additional $7E bytes
-	move.w	#bytesToLcnt(Obj_respawn_data_End-Obj_respawn_data+$7E),d0 ; set loop counter
+	move.w	#bytesToLcnt(Obj_respawn_data_End-Obj_respawn_data),d0 ; set loop counter
 -	clr.l	(a2)+		; loop clears all other respawn values
 	dbf	d0,-
 
 	lea	(Obj_respawn_index).w,a2	; reset a2
-	moveq	#0,d2
+	moveq	#-1,d2
 	move.w	(Camera_X_pos).w,d6
-	subi.w	#$80,d6	; look one chunk to the left
-	bcc.s	+	; if the result was negative,
-	moveq	#0,d6	; cap at zero
+	subi.w	#$80,d6		; look one chunk to the left
+	bcc.s	+		; if the result was negative,
+	moveq	#0,d6		; cap at zero
 +
 	andi.w	#$FF80,d6	; limit to increments of $80 (width of a chunk)
 	movea.l	(Obj_load_addr_right).w,a0	; load address of object placement list
@@ -29870,12 +29825,12 @@ ObjectsManager_Init:
 	; behind the left edge of the screen that needs to remember its state (Monitors, Badniks, etc.)
 	cmp.w	(a0),d6		; is object's x position >= d6?
 	bls.s	loc_17B3E	; if yes, branch
-	tst.b	2(a0)	; does the object get a respawn table entry?
-	bpl.s	+	; if not, branch
-	move.b	(a2),d2
-	addq.b	#1,(a2)	; respawn index of next object to the right
+	tst.b	2(a0)		; does the object get a respawn table entry?
+	bpl.s	+		; if not, branch
+	move.w	(a2),d2
+	addq.w	#1,(a2)		; respawn index of next object to the right
 +
-	addq.w	#6,a0	; next object
+	addq.w	#6,a0		; next object
 	bra.s	-
 ; ---------------------------------------------------------------------------
 
@@ -29889,9 +29844,9 @@ loc_17B3E:
 -	; count how many objects are behind the screen that are not in range and need to remember their state
 	cmp.w	(a0),d6		; is object's x position >= d6?
 	bls.s	loc_17B62	; if yes, branch
-	tst.b	2(a0)	; does the object get a respawn table entry?
-	bpl.s	+	; if not, branch
-	addq.b	#1,1(a2)	; respawn index of current object to the left
+	tst.b	2(a0)		; does the object get a respawn table entry?
+	bpl.s	+		; if not, branch
+	addq.w	#1,2(a2)	; respawn index of current object to the left
 
 +
 	addq.w	#6,a0
@@ -29916,7 +29871,7 @@ ObjectsManager_Main:
 	move.w	d1,(Camera_X_pos_coarse).w
 
 	lea	(Obj_respawn_index).w,a2
-	moveq	#0,d2
+	moveq	#-1,d2
 	move.w	(Camera_X_pos).w,d6
 	andi.w	#$FF80,d6
 	cmp.w	(Camera_X_pos_last).w,d6	; is the X range the same as last time?
@@ -29934,8 +29889,8 @@ ObjectsManager_Main:
 	subq.w	#6,a0		; get object's address
 	tst.b	2(a0)	; does the object get a respawn table entry?
 	bpl.s	+	; if not, branch
-	subq.b	#1,1(a2)	; respawn index of this object
-	move.b	1(a2),d2
+	subq.w	#1,2(a2)	; respawn index of this object
+	move.w	2(a2),d2
 +
 	bsr.w	ChkLoadObj	; load object
 	bne.s	+		; branch, if SST is full
@@ -29946,7 +29901,7 @@ ObjectsManager_Main:
 +	; undo a few things, if the object couldn't load
 	tst.b	2(a0)	; does the object get a respawn table entry?
 	bpl.s	+	; if not, branch
-	addq.b	#1,1(a2)	; since we didn't load the object, undo last change
+	addq.w	#1,2(a2)	; since we didn't load the object, undo last change
 +
 	addq.w	#6,a0	; go back to last object
 
@@ -29960,7 +29915,7 @@ loc_17BE6:
 	bgt.s	loc_17C04	; if it is, branch
 	tst.b	-4(a0)	; does the previous object get a respawn table entry?
 	bpl.s	+	; if not, branch
-	subq.b	#1,(a2)		; respawn index of next object to the right
+	subq.w	#1,(a2)		; respawn index of next object to the right
 +
 	subq.w	#6,a0
 	bra.s	-	; continue with previous object
@@ -29981,8 +29936,8 @@ ObjectsManager_GoingForward:
 	bls.s	loc_17C2A	; if yes, branch
 	tst.b	2(a0)	; does the object get a respawn table entry?
 	bpl.s	+	; if not, branch
-	move.b	(a2),d2		; respawn index of this object
-	addq.b	#1,(a2)		; respawn index of next object to the right
+	move.w	(a2),d2		; respawn index of this object
+	addq.w	#1,(a2)		; respawn index of next object to the right
 +
 	bsr.w	ChkLoadObj	; load object (and get address of next object)
 	beq.s	-	; continue loading objects, if the SST isn't full
@@ -29998,7 +29953,7 @@ loc_17C2A:
 	bls.s	loc_17C4A	; if yes, branch
 	tst.b	2(a0)	; does the object get a respawn table entry?
 	bpl.s	+	; if not, branch
-	addq.b	#1,1(a2)	; respawn index of next object to the left
+	addq.w	#1,2(a2)	; respawn index of next object to the left
 +
 	addq.w	#6,a0
 	bra.s	-	; continue with previous object
@@ -30020,8 +29975,8 @@ ObjectsManager_2P_Init:
 	move.w	#0,(Camera_X_pos_last).w
 	move.w	#0,(Camera_X_pos_last_P2).w
 	lea	(Obj_respawn_index).w,a2
-	move.w	(a2),(Obj_respawn_index_P2).w	; mirrior first two bytes (respawn indices) for player 2(?)
-	moveq	#0,d2
+	move.l	(a2),(Obj_respawn_index_P2).w	; mirror first two words (respawn indices) for player 2(?)
+	moveq	#-1,d2
 	; run initialization for player 1
 	lea	(Obj_respawn_index).w,a5
 	lea	(Obj_load_addr_right).w,a4
@@ -30089,7 +30044,7 @@ return_17D34:
 
 ObjectsManager_2P_Run:
 	lea	(Obj_respawn_index).w,a2
-	moveq	#0,d2
+	moveq	#-1,d2
 	cmp.w	d0,d6				; is the X range the same as last time?
 	beq.w	ObjectsManager_SameXRange	; if yes, branch (rts)
 	bge.w	ObjMan2P_GoingForward	; if new pos is greater than old pos, branch
@@ -30121,7 +30076,7 @@ loc_17D70:
 	bne.s	loc_17D8E
 	tst.b	-4(a0)
 	bpl.s	+
-	subq.b	#1,1(a5)
+	subq.w	#1,2(a5)
 +
 	subq.w	#6,a0
 	bra.s	-
@@ -30142,8 +30097,8 @@ loc_17D94:
 	subq.w	#6,a0
 	tst.b	2(a0)
 	bpl.s	+
-	subq.b	#1,1(a5)
-	move.b	1(a5),d2
+	subq.w	#1,2(a5)
+	move.w	2(a5),d2
 +
 	bsr.w	ChkLoadObj_2P
 	bne.s	loc_17DBA
@@ -30154,7 +30109,7 @@ loc_17D94:
 loc_17DBA:
 	tst.b	2(a0)
 	bpl.s	+
-	addq.b	#1,1(a5)
+	addq.w	#1,2(a5)
 +
 	addq.w	#6,a0
 
@@ -30170,7 +30125,7 @@ loc_17DCA:
 	bne.s	loc_17DE0
 	tst.b	-4(a0)
 	bpl.s	+
-	subq.b	#1,(a5)
+	subq.w	#1,(a5)
 +
 	subq.w	#6,a0
 	bra.s	-
@@ -30213,7 +30168,7 @@ loc_17E10:
 	bne.s	loc_17E28
 	tst.b	2(a0)	; does the object get a respawn table entry?
 	bpl.s	+	; if not, branch
-	addq.b	#1,(a5)
+	addq.w	#1,(a5)
 +
 	addq.w	#6,a0
 	bra.s	-
@@ -30233,8 +30188,8 @@ loc_17E2C:
 	bne.s	loc_17E44
 	tst.b	2(a0)	; does the object get a respawn table entry?
 	bpl.s	+	; if not, branch
-	move.b	(a5),d2
-	addq.b	#1,(a5)
+	move.w	(a5),d2
+	addq.w	#1,(a5)
 +
 	bsr.w	ChkLoadObj_2P
 	beq.s	-
@@ -30252,7 +30207,7 @@ loc_17E4E:
 	bne.s	loc_17E60
 	tst.b	2(a0)
 	bpl.s	loc_17E5C
-	addq.b	#1,1(a5)
+	addq.w	#1,2(a5)
 
 loc_17E5C:
 	addq.w	#6,a0
@@ -30304,9 +30259,9 @@ ObjMan_2P_UnkSub2:
 	bmi.s	+
 	lea	(Dynamic_Object_RAM_2P_End+$3C*object_size).w,a3
 	tst.b	(a1)+
-	bmi.s	+
-	nop
-	nop
+;	bmi.s	+
+;	nop
+;	nop
 +
 	subq.w	#1,a1
 	rts
@@ -30335,9 +30290,9 @@ ObjectsManager_2P_UnkSub3:
 	beq.s	+
 	lea	(Dynamic_Object_RAM_2P_End+$3C*object_size).w,a3
 	cmp.b	(a1)+,d2
-	beq.s	+
-	nop
-	nop
+;	beq.s	+
+;	nop
+;	nop
 +
 	move.b	#-1,-(a1)
 	movem.l	a1/a3,-(sp)
@@ -30349,10 +30304,8 @@ ObjMan2P_UnkSub3_DeleteBlockLoop:
 	tst.b	(a3)
 	beq.s	ObjMan2P_UnkSub3_DeleteBlock_SkipObj	; branch if slot is empty
 	movea.l	a3,a1
-	moveq	#0,d0
-	move.b	respawn_index(a1),d0	; does object remember its state?
-	beq.s	+			; if not, branch
-	bclr	#7,2(a2,d0.w)	; else, clear entry in respawn table
+	move.w	respawn_index(a1),a2	; does object remember its state?
+	bclr	#7,2(a2)		; else, clear entry in respawn table
 
 	; inlined DeleteObject2:
 +
@@ -30370,7 +30323,7 @@ ObjMan2P_UnkSub3_DeleteBlockLoop:
 ObjMan2P_UnkSub3_DeleteBlock_SkipObj:
 	lea	next_object(a3),a3 ; a3=object
 	dbf	d2,ObjMan2P_UnkSub3_DeleteBlockLoop
-	moveq	#0,d2
+	moveq	#-1,d2
 	movem.l	(sp)+,a1/a3
 	rts
 ; ===========================================================================
@@ -30378,7 +30331,7 @@ ObjMan2P_UnkSub3_DeleteBlock_SkipObj:
 ; Subroutine to check if an object needs to be loaded.
 ;
 ; input variables:
-;  d2 = respawn index of object to be loaded
+;  d2 = respawn address for current object
 ;
 ;  a0 = address in object placement list
 ;  a2 = object respawn table
@@ -30389,31 +30342,35 @@ ObjMan2P_UnkSub3_DeleteBlock_SkipObj:
 ; ---------------------------------------------------------------------------
 ;loc_17F36:
 ChkLoadObj:
-	tst.b	2(a0)	; does the object get a respawn table entry?
-	bpl.s	+	; if not, branch
-	bset	#7,2(a2,d2.w)	; mark object as loaded
+	tst.b	2(a0)		; does the object get a respawn table entry?
+	bpl.s	++		; if not, branch
+	exg	d2,a2		; swap current index to view
+	bset	#7,(a2)		; mark object as loaded
 	beq.s	+		; branch if it wasn't already loaded
-	addq.w	#6,a0	; next object
-	moveq	#0,d0	; let the objects manager know that it can keep going
+
+	exg	d2,a2		; swap back
+	addq.w	#6,a0		; next object
+	moveq	#0,d0		; let the objects manager know that it can keep going
 	rts
 ; ---------------------------------------------------------------------------
-
++
+	exg	d2,a2		; swap back
 +
 	bsr.w	SingleObjLoad	; find empty slot
 	bne.s	return_17F7E	; branch, if there is no room left in the SST
 	move.w	(a0)+,x_pos(a1)
 	move.w	(a0)+,d0	; there are three things stored in this word
 	bpl.s	+		; branch, if the object doesn't get a respawn table entry
-	move.b	d2,respawn_index(a1)
+	move.w	d2,respawn_index(a1)
 +
 	move.w	d0,d1		; copy for later
 	andi.w	#$FFF,d0	; get y-position
 	move.w	d0,y_pos(a1)
-	rol.w	#3,d1	; adjust bits
-	andi.b	#3,d1	; get render flags
+	rol.w	#3,d1		; adjust bits
+	andi.b	#3,d1		; get render flags
 	move.b	d1,render_flags(a1)
 	move.b	d1,status(a1)
-	_move.b	(a0)+,id(a1) ; load obj
+	_move.b	(a0)+,id(a1)	; load obj
 	move.b	(a0)+,subtype(a1)
 	moveq	#0,d0
 
@@ -30423,14 +30380,19 @@ return_17F7E:
 ;loc_17F80:
 ChkLoadObj_2P:
 	tst.b	2(a0)		; does the object get a respawn table entry?
-	bpl.s	+		; if not, branch
-	bset	#7,2(a2,d2.w)	; mark object as loaded
+	bpl.s	++		; if not, branch
+	exg	d2,a5		; swap current index to view
+	bset	#7,(a5)		; mark object as loaded
 	beq.s	+		; branch if it wasn't already loaded
-	addq.w	#6,a0	; next object
-	moveq	#0,d0	; let the objects manager know that it can keep going
+
+	exg	d2,a5		; swap back
+	addq.w	#6,a0		; next object
+	moveq	#0,d0		; let the objects manager know that it can keep going
 	rts
 ; ---------------------------------------------------------------------------
 
++
+	exg	d2,a5		; swap back
 +
 	btst	#4,2(a0)	; the bit that's being tested for here should always be zero,
 	beq.s	+		; but assuming it weren't and this branch isn't taken,
@@ -30447,7 +30409,7 @@ ChkLoadObj_2P_LoadData:
 	move.w	(a0)+,x_pos(a1)
 	move.w	(a0)+,d0	; there are three things stored in this word
 	bpl.s	+		; branch, if the object doesn't get a respawn table entry
-	move.b	d2,respawn_index(a1)
+	move.w	d2,respawn_index(a1)
 +
 	move.w	d0,d1		; copy for later
 	andi.w	#$FFF,d0	; get y-position
@@ -38776,7 +38738,7 @@ loc_1DA44:
 
 loc_1DA74:
 	add.b	d0,objoff_34(a0)
-	move.w	#$80,d0
+	move.w	#prio(1),a1
 	bra.w	DisplaySprite3
 ; ===========================================================================
 
@@ -38843,7 +38805,7 @@ loc_1DAE4:
 
 loc_1DB20:
 	add.b	d0,objoff_34(a0)
-	move.w	#$80,d0
+	move.w	#prio(1),a1
 	bra.w	DisplaySprite3
 ; ===========================================================================
 
@@ -40772,12 +40734,12 @@ Obj79_Init:
 	move.b	#4,render_flags(a0)
 	move.b	#8,width_pixels(a0)
 	move.w	#prio(5),priority(a0)
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	bclr	#7,2(a2,d0.w)
-	btst	#0,2(a2,d0.w)
+
+	move.w	respawn_index(a0),a2
+	bclr	#7,(a2)
+	btst	#0,(a2)
 	bne.s	loc_1F120
+
 	move.b	(Last_star_pole_hit).w,d1
 	andi.b	#$7F,d1
 	move.b	subtype(a0),d2
@@ -40848,10 +40810,8 @@ Obj79_CheckActivation:
 loc_1F206:
 	move.b	#1,anim(a0)
 	bsr.w	Obj79_SaveData
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	bset	#0,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bset	#0,(a2)
 
 return_1F220:
 	rts
@@ -41322,13 +41282,12 @@ Obj44_BumpCharacter:
 	clr.b	jumping(a1)
 	move.b	#1,anim(a0)
 	sfx	sfx_Bumper
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	+
-	cmpi.b	#$8A,2(a2,d0.w)
+
+	move.w	respawn_index(a0),a2
+	cmpi.b	#$8A,(a2)
 	bhs.s	return_1F83C
-	addq.b	#1,2(a2,d0.w)
+	addq.b	#1,(a2)
+
 +
 	moveq	#1,d0
 	movea.w	a1,a3
@@ -45875,11 +45834,8 @@ Obj30_Init:
 	cmpi.w	#$380,(Camera_Y_pos).w
 	blo.s	Obj30_Main
 +
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	+
-	bclr	#7,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bclr	#7,(a2)
 +
 	jmpto	(DeleteObject).l, JmpTo23_DeleteObject
 ; ===========================================================================
@@ -46376,11 +46332,8 @@ loc_23F36:
 	jsr	(DeleteObject2).l
 
 loc_23F44:
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	JmpTo24_DeleteObject
-	bclr	#7,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bclr	#7,(a2)
 
 JmpTo24_DeleteObject
 	jmp	(DeleteObject).l
@@ -46973,12 +46926,9 @@ Obj46_Index:	offsetTable
 ; ===========================================================================
 ; loc_24A2C:
 Obj46_Init:
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	+
-	bclr	#7,2(a2,d0.w)
-	bset	#0,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bclr	#7,(a2)
+	bset	#0,(a2)
 	bne.w	JmpTo25_DeleteObject
 +
 	; loads the ball itself
@@ -47089,11 +47039,8 @@ loc_24BA4:
 
 loc_24BC4:
 	move.w	(sp)+,d4
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	BranchTo_JmpTo25_DeleteObject
-	bclr	#7,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bclr	#7,(a2)
 
     if removeJmpTos
 JmpTo25_DeleteObject
@@ -49304,11 +49251,8 @@ loc_26B6E:
 	move.l	a0,objoff_3C(a1)
 
 loc_26C04:
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	loc_26C16
-	bclr	#7,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bclr	#7,(a2)
 
 loc_26C16:
 	andi.b	#$F,subtype(a0)
@@ -49338,11 +49282,8 @@ loc_26C1C:
 ; ===========================================================================
 
 loc_26C66:
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	+
-	bclr	#7,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bclr	#7,(a2)
 +
 	jmp	(DeleteObject).l
 ; ===========================================================================
@@ -49406,11 +49347,9 @@ loc_26CF2:
 	addq.b	#1,subtype(a0)
 	move.w	#$B4,objoff_36(a0)
 	clr.b	objoff_38(a0)
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	loc_26CD0
-	bset	#0,2(a2,d0.w)
+
+	move.w	respawn_index(a0),a2
+	bset	#0,(a2)
 	bra.s	loc_26CD0
 ; ===========================================================================
 
@@ -49457,11 +49396,8 @@ loc_26D72:
 	subq.b	#1,subtype(a0)
 	move.w	#$B4,objoff_36(a0)
 	clr.b	objoff_38(a0)
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	loc_26D50
-	bclr	#0,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bclr	#0,(a2)
 	bra.s	loc_26D50
 ; ===========================================================================
 
@@ -51492,11 +51428,8 @@ loc_28432:
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 +
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	+
-	bclr	#7,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bclr	#7,(a2)
 +
 	jmp	(DeleteObject).l
 ; ===========================================================================
@@ -51533,11 +51466,8 @@ loc_284BC:
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 +
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	+
-	bclr	#7,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bclr	#7,(a2)
 +
 	jmp	(DeleteObject).l
 ; ===========================================================================
@@ -52049,7 +51979,7 @@ Obj75:
 	jmp	Obj75_Index(pc,d1.w)
 ; ===========================================================================
 +
-	move.w	#$280,d0
+	move.w	#prio(5),a1
 	jmpto	(DisplaySprite3).l, JmpTo_DisplaySprite3
 ; ===========================================================================
 ; off_28BE8:
@@ -52830,11 +52760,8 @@ loc_294C4:
 	beq.s	+
 	jsr	(DeleteObject2).l
 +
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	JmpTo39_DeleteObject
-	bclr	#7,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bclr	#7,(a2)
 
 JmpTo39_DeleteObject
 	jmp	(DeleteObject).l
@@ -53543,7 +53470,7 @@ Obj81:
 	jmp	Obj81_Index(pc,d1.w)
 ; ===========================================================================
 +
-	move.w	#$280,d0
+	move.w	#prio(5),a1
 	jmpto	(DisplaySprite3).l, JmpTo2_DisplaySprite3
 ; ===========================================================================
 ; off_2A020:
@@ -54040,7 +53967,7 @@ Obj83:
 	jmp	Obj83_Index(pc,d1.w)
 ; ===========================================================================
 .isMultispriteObject:
-	move.w	#$280,d0
+	move.w	#prio(5),a1
 	jmpto	(DisplaySprite3).l, JmpTo3_DisplaySprite3
 ; ===========================================================================
 ; off_2A51C:
@@ -54550,7 +54477,7 @@ Obj85:
 	move.b	routine(a0),d0
 	move.w	Obj85_Index(pc,d0.w),d1
 	jsr	Obj85_Index(pc,d1.w)
-	move.w	#$200,d0
+	move.w	#prio(4),a1
 	tst.w	(Two_player_mode).w
 	beq.s	+
 	jmpto	(DisplaySprite3).l, JmpTo4_DisplaySprite3
@@ -54564,11 +54491,8 @@ Obj85:
 	jmpto	(DisplaySprite3).l, JmpTo4_DisplaySprite3
 ; ===========================================================================
 +
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	BranchTo_JmpTo43_DeleteObject
-	bclr	#7,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bclr	#7,(a2)
 
 BranchTo_JmpTo43_DeleteObject
 	jmpto	(DeleteObject).l, JmpTo43_DeleteObject
@@ -56737,11 +56661,8 @@ loc_2C5C4:
 ; ===========================================================================
 
 loc_2C5F8:
-	lea	(Object_Respawn_Table).w,a2
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	+
-	bclr	#7,2(a2,d0.w)
+	move.w	respawn_index(a0),a2
+	bclr	#7,(a2)
 +
 	jmp	(DeleteObject).l
 
@@ -57591,7 +57512,7 @@ Obj50_ControlWing:
 	move.w	x_pos(a0),x_pos(a1)	; align child with parent object
 	move.w	y_pos(a0),y_pos(a1)
 	move.b	status(a0),status(a1)
-	move.b	respawn_index(a0),respawn_index(a1)
+	move.w	respawn_index(a0),respawn_index(a1)
 	move.b	render_flags(a0),render_flags(a1)
 	btst	#0,status(a1)	; is object facing right?
 	beq.s	+		; if yes, branch
@@ -71444,7 +71365,7 @@ loc_37EFC:
 	dbf	d6,-
 
 loc_37F6C:
-	move.w	#$280,d0
+	move.w	#prio(5),a1
 	jmpto	(DisplaySprite3).l, JmpTo5_DisplaySprite3
 ; ===========================================================================
 
@@ -73087,11 +73008,9 @@ loc_39182:
 	bhi.w	+
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ---------------------------------------------------------------------------
-+	lea	(Object_Respawn_Table).w,a3
-	moveq	#0,d0
-	move.b	respawn_index(a0),d0
-	beq.s	+
-	bclr	#7,2(a3,d0.w)
++
+	move.w	respawn_index(a0),a3
+	bclr	#7,(a3)
 +
 	tst.b	objoff_30(a0)
 	beq.s	+

@@ -4,7 +4,8 @@
 ; ---------------------------------------------------------------------------
 ; size variables - you'll get an informational error if you need to change these...
 ; they are all in units of bytes
-Size_of_Snd_driver_guess =	$7FC ; approximate post-compressed size of the Z80 sound driver
+Size_of_Snd_driver_guess =	$7FC	; approximate post-compressed size of the Z80 sound driver
+Debug_Lagometer =	1		; set to 1 to enable on-screen lagometer
 
 ; ---------------------------------------------------------------------------
 ; Object Status Table offsets (for everything between Object_RAM and Primary_Collision)
@@ -955,8 +956,10 @@ Tails_Pos_Record_Buf:		ds.b $100
 CNZ_saucer_data:		ds.b $40	; the number of saucer bumpers in a group which have been destroyed. Used to decide when to give 500 points instead of 10
 CNZ_saucer_data_End:
 				ds.b $C0	; $FFFFE740-$FFFFE7FF ; unused as far as I can tell
-Ring_Positions:			ds.b $600
+Max_Rings =			511
+Ring_Positions:			ds.w Max_Rings+1
 Ring_Positions_End:
+				ds.b $200		; unused, must exist for Special Stage alignment
 
 Camera_RAM:
 Camera_X_pos:			ds.l 1
@@ -1183,10 +1186,12 @@ Tails_CPU_jumping:		ds.b 1
 
 Rings_manager_routine:		ds.b 1
 Level_started_flag:		ds.b 1
-Ring_start_addr:		ds.w 1
-Ring_end_addr:			ds.w 1
-Ring_start_addr_P2:		ds.w 1
-Ring_end_addr_P2:		ds.w 1
+Ring_start_addr_RAM:		ds.w 1
+Ring_start_addr_RAM_P2:		ds.w 1
+Ring_start_addr_ROM		ds.l 1
+Ring_end_addr_ROM		ds.l 1
+Ring_start_addr_ROM_P2		ds.l 1
+Ring_end_addr_ROM_P2		ds.l 1
 CNZ_Bumper_routine:		ds.b 1
 CNZ_Bumper_UnkFlag:		ds.b 1		; Set only, never used again
 CNZ_Visible_bumpers_start:	ds.l 1
@@ -1239,7 +1244,7 @@ unk_F780:			ds.b 6		; seems to be an array of horizontal chunk positions, used f
 unk_F786:			ds.b 3
 unk_F789:			ds.b 3
 Camera_X_pos_last_P2:		ds.w 1
-Obj_respawn_index_P2:		ds.b 2		; respawn table indices of the next objects when moving left or right for the second player
+Obj_respawn_index_P2:		ds.w 2		; respawn table indices of the next objects when moving left or right for the second player
 
 Demo_button_index:		ds.w 1		; index into button press demo data, for player 1
 Demo_press_counter:		ds.b 1		; frames remaining until next button press, for player 1
@@ -1295,10 +1300,10 @@ Target_palette_line4:		ds.b palette_line_size
 Target_palette_End:
 
 Object_Respawn_Table:
-Obj_respawn_index:		ds.b 2		; respawn table indices of the next objects when moving left or right for the first player
+Obj_respawn_index:		ds.w 2		; respawn table indices of the next objects when moving left or right for the first player
 Obj_respawn_data:		ds.b $100	; Maximum possible number of respawn entries that S2 can handle; for stock S2, $80 is enough
 Obj_respawn_data_End:
-				ds.b $FE	; Stack; the first $7E bytes are cleared by ObjectsManager_Init, with possibly disastrous consequences. At least $A0 bytes are needed.
+				ds.b $FC	; Stack; the first $7E bytes are cleared by ObjectsManager_Init, with possibly disastrous consequences. At least $A0 bytes are needed.
 System_Stack:
 
 SS_2p_Flag:			ds.w 1		; $FFFFFE00-$FFFFFE01 ; seems unused
@@ -1514,16 +1519,6 @@ unk_FFDC:			ds.b 1		; Written to near loc_175EA, never read from
 unk_FFDD:			ds.b 1		; Written to near loc_175EA, never read from
 unk_FFDE:			ds.b 1		; Written to near loc_175EA, never read from
 unk_FFDF:			ds.b 1		; Written to near loc_175EA, never read from
-
-; NAT: The comment below is no longer true, and these values are unused
-; Values in these variables are passed to the sound driver during V-INT.
-; They use a playlist index, not a sound test index.
-Music_to_play:			ds.b 1
-SFX_to_play:			ds.b 1		; normal
-SFX_to_play_2:			ds.b 1		; alternating stereo
-unk_FFE3:			ds.b 1
-Music_to_play_2:		ds.b 1		; alternate (higher priority?) slot
-				ds.b $B		; $FFFFFFE5-$FFFFFFEF ; seems unused
 
 Demo_mode_flag:			ds.w 1		; 1 if a demo is playing (2 bytes)
 Demo_number:			ds.w 1		; which demo will play next (2 bytes)
