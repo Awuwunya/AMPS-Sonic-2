@@ -27440,7 +27440,7 @@ MarkObjGone3:
 	rts
 +
 	move.w	respawn_index(a0),a2
-	bclr	#7,2(a2)
+	bclr	#7,(a2)
 +
 	bra.w	DeleteObject
 ; ===========================================================================
@@ -27457,7 +27457,7 @@ MarkObjGone_P1:
 	bra.w	DisplaySprite
 +
 	move.w	respawn_index(a0),a2
-	bclr	#7,2(a2)
+	bclr	#7,(a2)
 +
 	bra.w	DeleteObject
 ; ---------------------------------------------------------------------------
@@ -27478,7 +27478,7 @@ MarkObjGone_P2:
 	bra.w	DisplaySprite
 +
 	move.w	respawn_index(a0),a2
-	bclr	#7,2(a2)
+	bclr	#7,(a2)
 +
 	bra.w	DeleteObject ; useless branch...
 
@@ -27516,8 +27516,8 @@ DeleteObject2:
 ; sub_164F4:
 DisplaySprite:
 	; temp
-	tst.w	priority(a0)
-	bpl.s	*
+;	tst.w	priority(a0)
+;	bpl.s	*
 
 	move.w	priority(a0),a1		; NAT: Priority is now the direct address
 
@@ -27539,8 +27539,8 @@ return_16510:
 ; sub_16512:
 DisplaySprite2:
 	; temp
-	tst.w	priority(a1)
-	bpl.s	*
+;	tst.w	priority(a1)
+;	bpl.s	*
 
 	move.w	priority(a1),a2		; NAT: Priority is now the direct address
 	cmpi.w	#$7E,(a2)
@@ -30305,7 +30305,7 @@ ObjMan2P_UnkSub3_DeleteBlockLoop:
 	beq.s	ObjMan2P_UnkSub3_DeleteBlock_SkipObj	; branch if slot is empty
 	movea.l	a3,a1
 	move.w	respawn_index(a1),a2	; does object remember its state?
-	bclr	#7,2(a2)		; else, clear entry in respawn table
+	bclr	#7,(a2)			; else, clear entry in respawn table
 
 	; inlined DeleteObject2:
 +
@@ -44689,13 +44689,11 @@ Obj1E:
 	jsr	Obj1E_Index(pc,d1.w)
 	move.b	objoff_2C(a0),d0
 	add.b	objoff_36(a0),d0
-	beq.w	JmpTo_MarkObjGone3
+	beq.s	JmpTo_MarkObjGone3
 	rts
 
-    if removeJmpTos
-JmpTo_MarkObjGone3
+JmpTo_MarkObjGone3:
 	jmp	(MarkObjGone3).l
-    endif
 ; ===========================================================================
 ; JmpTbl_225B8: Obj1E_States:
 Obj1E_Index:	offsetTable

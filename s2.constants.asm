@@ -5,7 +5,7 @@
 ; size variables - you'll get an informational error if you need to change these...
 ; they are all in units of bytes
 Size_of_Snd_driver_guess =	$7FC	; approximate post-compressed size of the Z80 sound driver
-Debug_Lagometer =	1		; set to 1 to enable on-screen lagometer
+Debug_Lagometer =	0		; set to 1 to enable on-screen lagometer. Seems to have an odd habit of breaking Special Stages....
 
 ; ---------------------------------------------------------------------------
 ; Object Status Table offsets (for everything between Object_RAM and Primary_Collision)
@@ -959,7 +959,6 @@ CNZ_saucer_data_End:
 Max_Rings =			511
 Ring_Positions:			ds.w Max_Rings+1
 Ring_Positions_End:
-				ds.b $200		; unused, must exist for Special Stage alignment
 
 Camera_RAM:
 Camera_X_pos:			ds.l 1
