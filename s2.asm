@@ -490,6 +490,7 @@ Vint_CtrlDMA_ptr:	offsetTableEntry.w Vint_CtrlDMA		; $1A
 ; ===========================================================================
 ;VintSub0
 Vint_Lag:
+	addq.w	#1,LagFrames.w				; NAT: Increase lag frame counter
 	cmpi.b	#GameModeID_TitleCard|GameModeID_Demo,(Game_Mode).w	; pre-level Demo Mode?
 	beq.s	loc_4C4
 	cmpi.b	#GameModeID_TitleCard|GameModeID_Level,(Game_Mode).w	; pre-level Zone play mode?
@@ -9626,6 +9627,7 @@ ObjDA_Index:	offsetTable
 ; loc_7A7E:
 ObjDA_Init:
 	addq.b	#2,routine(a0)
+	move.w	#prio(0),priority(a0)
 	move.l	#ObjDA_MapUnc_7CB6,mappings(a0)
 	move.w	#make_art_tile(ArtTile_ArtNem_ContinueText,0,1),art_tile(a0)
 	jsrto	(Adjust2PArtPointer).l, JmpTo_Adjust2PArtPointer
@@ -9671,6 +9673,7 @@ loc_7AD0:
 	move.w	#$D0,y_pixel(a1)
 	move.b	#4,mapping_frame(a1)
 	move.b	#6,routine(a1)
+	move.w	#prio(0),priority(a1)
 	move.l	#ObjDA_MapUnc_7CB6,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_ContinueText_2,0,1),art_tile(a1)
 	jsrto	(Adjust2PArtPointer2).l, JmpTo_Adjust2PArtPointer2
@@ -22824,13 +22827,24 @@ Obj37_Init:
 ; Obj_37_sub_2:
 Obj37_Main:
 	move.b	(Ring_spill_anim_frame).w,mapping_frame(a0)
-	bsr.w	ObjectMove
+
+	move.w	x_vel(a0),d0	; load horizontal speed
+	ext.l	d0
+	asl.l	#8,d0		; convert to 16.16 fixed point
+	add.l	d0,x_pos(a0)	; add to x-position
+
+	move.w	y_vel(a0),d0	; load vertical speed
+	ext.l	d0
+	asl.l	#8,d0		; convert to 16.16 fixed point
+	add.l	d0,y_pos(a0)	; add to y-position
 	addi.w	#$18,y_vel(a0)
 	bmi.s	loc_121B8
+
 	move.b	(Vint_runcount+3).w,d0
 	add.b	d7,d0
 	andi.b	#7,d0
 	bne.s	loc_121B8
+
 	tst.b	render_flags(a0)
 	bpl.s	loc_121D0
 	jsr	(RingCheckFloorDist).l
@@ -22843,19 +22857,27 @@ Obj37_Main:
 	neg.w	y_vel(a0)
 
 loc_121B8:
-
 	tst.b	(Ring_spill_anim_counter).w
 	beq.s	Obj37_Delete
 	move.w	(Camera_Max_Y_pos_now).w,d0
 	addi.w	#$E0,d0
 	cmp.w	y_pos(a0),d0
 	blo.s	Obj37_Delete
-	bra.w	DisplaySprite
+
+	move.w	priority(a0),a1		; NAT: Priority is now the direct address
+	cmpi.w	#$7E,(a1)
+	bhs.s	.rts
+	addq.w	#2,(a1)
+	adda.w	(a1),a1
+	move.w	a0,(a1)
+
+.rts
+	rts
 ; ===========================================================================
 
 loc_121D0:
 	tst.w	(Two_player_mode).w
-	bne.w	Obj37_Delete
+	bne.s	Obj37_Delete
 	bra.s	loc_121B8
 ; ===========================================================================
 ; Obj_37_sub_4:
@@ -27339,19 +27361,16 @@ ObjNull: ;;
 
 ; sub_16380: ObjectFall:
 ObjectMoveAndFall:
-	move.l	x_pos(a0),d2	; load x position
-	move.l	y_pos(a0),d3	; load y position
-	move.w	x_vel(a0),d0	; load x speed
+	move.w	x_vel(a0),d0	; load horizontal speed
 	ext.l	d0
-	asl.l	#8,d0	; shift velocity to line up with the middle 16 bits of the 32-bit position
-	add.l	d0,d2	; add x speed to x position	; note this affects the subpixel position x_sub(a0) = 2+x_pos(a0)
-	move.w	y_vel(a0),d0	; load y speed
+	asl.l	#8,d0		; convert to 16.16 fixed point
+	add.l	d0,x_pos(a0)	; add to x-position
+
+	move.w	y_vel(a0),d0	; load vertical speed
 	addi.w	#$38,y_vel(a0)	; increase vertical speed (apply gravity)
 	ext.l	d0
-	asl.l	#8,d0	; shift velocity to line up with the middle 16 bits of the 32-bit position
-	add.l	d0,d3	; add old y speed to y position	; note this affects the subpixel position y_sub(a0) = 2+y_pos(a0)
-	move.l	d2,x_pos(a0)	; store new x position
-	move.l	d3,y_pos(a0)	; store new y position
+	asl.l	#8,d0		; convert to 16.16 fixed point
+	add.l	d0,y_pos(a0)	; add to y-position
 	rts
 ; End of function ObjectMoveAndFall
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -27366,18 +27385,15 @@ ObjectMoveAndFall:
 
 ; sub_163AC: SpeedToPos:
 ObjectMove:
-	move.l	x_pos(a0),d2	; load x position
-	move.l	y_pos(a0),d3	; load y position
 	move.w	x_vel(a0),d0	; load horizontal speed
 	ext.l	d0
-	asl.l	#8,d0	; shift velocity to line up with the middle 16 bits of the 32-bit position
-	add.l	d0,d2	; add to x-axis position	; note this affects the subpixel position x_sub(a0) = 2+x_pos(a0)
+	asl.l	#8,d0		; convert to 16.16 fixed point
+	add.l	d0,x_pos(a0)	; add to x-position
+
 	move.w	y_vel(a0),d0	; load vertical speed
 	ext.l	d0
-	asl.l	#8,d0	; shift velocity to line up with the middle 16 bits of the 32-bit position
-	add.l	d0,d3	; add to y-axis position	; note this affects the subpixel position y_sub(a0) = 2+y_pos(a0)
-	move.l	d2,x_pos(a0)	; update x-axis position
-	move.l	d3,y_pos(a0)	; update y-axis position
+	asl.l	#8,d0		; convert to 16.16 fixed point
+	add.l	d0,y_pos(a0)	; add to y-position
 	rts
 ; End of function ObjectMove
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -83599,12 +83615,16 @@ AddPoints2:
 
 ; sub_40D8A:
 HudUpdate:
-	nop
 	lea	(VDP_data_port).l,a6
 	tst.w	(Two_player_mode).w
 	bne.w	loc_40F50
 	tst.w	(Debug_mode_flag).w	; is debug mode on?
-	bne.w	loc_40E9A	; if yes, branch
+
+	if Debug_Lagometer
+    		bra.w	loc_40E9A
+	else
+		bne.w	loc_40E9A	; if yes, branch
+	endif
 	tst.b	(Update_HUD_score).w	; does the score need updating?
 	beq.s	Hud_ChkRings	; if not, branch
 	clr.b	(Update_HUD_score).w
@@ -83694,9 +83714,9 @@ loc_40E84:
 
 loc_40E9A:
 	bsr.w	HudDb_XY
-	tst.b	(Update_HUD_rings).w
-	beq.s	loc_40EBE
-	bpl.s	loc_40EAA
+;	tst.b	(Update_HUD_rings).w
+;	beq.s	loc_40EBE
+;	bpl.s	loc_40EAA
 	bsr.w	Hud_InitRings
 
 loc_40EAA:
@@ -83704,7 +83724,8 @@ loc_40EAA:
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_HUD_Rings),VRAM,WRITE),d0
 
 	moveq	#0,d1
-	move.w	(Ring_count).w,d1
+	move.w	(LagFrames).w,d1
+	clr.w	LagFrames.w			; clear lag frame counter
 	bsr.w	Hud_Rings
 
 loc_40EBE:

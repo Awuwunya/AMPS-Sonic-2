@@ -5,7 +5,7 @@
 ; size variables - you'll get an informational error if you need to change these...
 ; they are all in units of bytes
 Size_of_Snd_driver_guess =	$7FC	; approximate post-compressed size of the Z80 sound driver
-Debug_Lagometer =	0		; set to 1 to enable on-screen lagometer. Seems to have an odd habit of breaking Special Stages....
+Debug_Lagometer =	1		; set to 1 to enable on-screen lagometer. Seems to have an odd habit of breaking Special Stages....
 
 ; ---------------------------------------------------------------------------
 ; Object Status Table offsets (for everything between Object_RAM and Primary_Collision)
@@ -1522,7 +1522,7 @@ unk_FFDF:			ds.b 1		; Written to near loc_175EA, never read from
 Demo_mode_flag:			ds.w 1		; 1 if a demo is playing (2 bytes)
 Demo_number:			ds.w 1		; which demo will play next (2 bytes)
 Ending_demo_number:		ds.w 1		; zone for the ending demos (2 bytes, unused)
-				ds.w 1
+LagFrames:			ds.w 1
 ConsoleRegion:
 Graphics_Flags:			ds.w 1		; misc. bitfield
 Debug_mode_flag:		ds.w 1		; (2 bytes)
