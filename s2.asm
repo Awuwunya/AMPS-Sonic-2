@@ -3453,11 +3453,10 @@ RandomNumber:
 ; sub_33B6:
 CalcSine:
 	andi.w	#$FF,d0
+	addq.w	#8,d0
 	add.w	d0,d0
-	addi.w	#$80,d0
-	move.w	Sine_Data(pc,d0.w),d1 ; cos
-	subi.w	#$80,d0
-	move.w	Sine_Data(pc,d0.w),d0 ; sin
+	move.w	Sine_Data+$80-16(pc,d0.w),d1 ; cos
+	move.w	Sine_Data-16(pc,d0.w),d0 ; sin
 	rts
 ; End of function CalcSine
 
@@ -10877,7 +10876,7 @@ MenuScreen:
 	move.w	#$9001,(a6)		; Scroll table size: 64x32
 
 	clearRAM Sprite_Table_Input,Sprite_Table_Input_End
-	clearRAM Menus_Object_RAM,Menus_Object_RAM_End
+;	clearRAM Menus_Object_RAM,Menus_Object_RAM_End
 
 	; load background + graphics of font/LevSelPics
 	clr.w	(VDP_Command_Buffer).w
@@ -19707,13 +19706,13 @@ JmpTo2_LoadPLC
 ; Object 11 - Bridge in Emerald Hill Zone and Hidden Palace Zone
 ; ----------------------------------------------------------------------------
 ; OST Variables:
-Obj11_child1		= objoff_30	; pointer to first set of bridge segments
+Obj11_child1		= objoff_32	; pointer to first set of bridge segments
 Obj11_child2		= objoff_34	; pointer to second set of bridge segments, if applicable
 
 ; Sprite_F66C:
 Obj11:
 	btst	#6,render_flags(a0)	; is this a child sprite object?
-	bne.w	+			; if yes, branch
+	bne.s	+			; if yes, branch
 	moveq	#0,d0
 	move.b	routine(a0),d0
 	move.w	Obj11_Index(pc,d0.w),d1
@@ -19748,6 +19747,7 @@ Obj11_Init:
 	move.w	y_pos(a0),d2
 	move.w	d2,objoff_3C(a0)
 	move.w	x_pos(a0),d3
+
 	lea	subtype(a0),a2	; copy bridge subtype to a2
 	moveq	#0,d1
 	move.b	(a2),d1		; d1 = subtype
@@ -19758,17 +19758,19 @@ Obj11_Init:
 	swap	d1	; store subtype in high word for later
 	move.w	#8,d1
 	bsr.s	Obj11_MakeBdgSegment
+
 	move.w	sub6_x_pos(a1),d0
 	subq.w	#8,d0
 	move.w	d0,x_pos(a1)		; center of first subsprite object
-	move.l	a1,Obj11_child1(a0)	; pointer to first subsprite object
+	move.w	a1,Obj11_child1(a0)	; pointer to first subsprite object
 	swap	d1	; retrieve subtype
 	subq.w	#8,d1
 	bls.s	+	; branch, if subtype <= 8 (bridge has no more than 8 logs)
+
 	; else, create a second subsprite object for the rest of the bridge
 	move.w	d1,d4
 	bsr.s	Obj11_MakeBdgSegment
-	move.l	a1,Obj11_child2(a0)	; pointer to second subsprite object
+	move.w	a1,Obj11_child2(a0)	; pointer to second subsprite object
 	move.w	d4,d0
 	add.w	d0,d0
 	add.w	d4,d0	; d0*3
@@ -19862,11 +19864,11 @@ Obj11_Unload:
 	rts
 ; ---------------------------------------------------------------------------
 +	; delete first subsprite object
-	movea.l	Obj11_child1(a0),a1 ; a1=object
+	movea.w	Obj11_child1(a0),a1 ; a1=object
 	bsr.w	DeleteObject2
 	cmpi.b	#8,subtype(a0)
 	bls.s	+	; if bridge has more than 8 logs, delete second subsprite object
-	movea.l	Obj11_child2(a0),a1 ; a1=object
+	movea.w	Obj11_child2(a0),a1 ; a1=object
 	bsr.w	DeleteObject2
 +
 	bra.w	DeleteObject
@@ -19914,7 +19916,7 @@ loc_F852:
 	add.w	d2,d2
 	moveq	#8,d3
 	move.w	x_pos(a0),d4
-	bsr.w	sub_F872
+	bsr.s	sub_F872
 	bsr.w	sub_F912
 	bra.w	Obj11_Unload
 
@@ -19924,13 +19926,13 @@ loc_F852:
 sub_F872:
 	lea	(Sidekick).w,a1 ; a1=character
 	moveq	#p2_standing_bit,d6
-	moveq	#$3B,d5
+	moveq	#objoff_3B,d5
 	movem.l	d1-d4,-(sp)
 	bsr.s	+
 	movem.l	(sp)+,d1-d4
 	lea	(MainCharacter).w,a1 ; a1=character
 	subq.b	#1,d6
-	moveq	#$3F,d5
+	moveq	#objoff_3F,d5
 +
 	btst	d6,status(a0)
 	beq.s	loc_F8F0
@@ -19952,11 +19954,11 @@ sub_F872:
 +
 	lsr.w	#4,d0
 	move.b	d0,(a0,d5.w)
-	movea.l	Obj11_child1(a0),a2
+	movea.w	Obj11_child1(a0),a2
 	cmpi.w	#8,d0
 	blo.s	+
-	movea.l	Obj11_child2(a0),a2 ; a2=object
-	subi_.w	#8,d0
+	movea.w	Obj11_child2(a0),a2 ; a2=object
+	subq.w	#8,d0
 +
 	add.w	d0,d0
 	move.w	d0,d1
@@ -20040,7 +20042,7 @@ byte_F950:
 	beq.s	+
 	move.b	objoff_3B(a0),d4
 +
-	movea.l	Obj11_child1(a0),a1
+	movea.w	Obj11_child1(a0),a1
 	lea	sub9_mapframe+next_subspr(a1),a2
 	lea	sub2_mapframe(a1),a1
 	moveq	#0,d1
@@ -20088,7 +20090,7 @@ byte_F950:
 	addq.w	#6,a1
 	cmpa.w	a2,a1
 	bne.s	+
-	movea.l	Obj11_child2(a0),a1 ; a1=object
+	movea.w	Obj11_child2(a0),a1 ; a1=object
 	lea	sub2_mapframe(a1),a1
 +	dbf	d1,-
 
@@ -20104,7 +20106,7 @@ Obj11_Depress:
 	move.b	objoff_3E(a0),d0
 	jsrto	(CalcSine).l, JmpTo_CalcSine
 	move.w	d0,d4
-	lea	(byte_FB28).l,a4
+	lea	byte_FB28,a4
 	moveq	#0,d0
 	move.b	subtype(a0),d0
 	lsl.w	#4,d0
@@ -20113,12 +20115,12 @@ Obj11_Depress:
 	move.w	d3,d2
 	add.w	d0,d3
 	moveq	#0,d5
-	lea	(Obj11_DepressionOffsets-$80).l,a5
+	lea	Obj11_DepressionOffsets-$80,a5
 	move.b	(a5,d3.w),d5
 	andi.w	#$F,d3
 	lsl.w	#4,d3
 	lea	(a4,d3.w),a3
-	movea.l	Obj11_child1(a0),a1
+	movea.w	Obj11_child1(a0),a1
 	lea	sub9_y_pos+next_subspr(a1),a2
 	lea	sub2_y_pos(a1),a1
 
@@ -20133,7 +20135,7 @@ Obj11_Depress:
 	addq.w	#6,a1
 	cmpa.w	a2,a1
 	bne.s	+
-	movea.l	Obj11_child2(a0),a1 ; a1=object
+	movea.w	Obj11_child2(a0),a1 ; a1=object
 	lea	sub2_y_pos(a1),a1
 +	dbf	d2,-
 
@@ -20163,7 +20165,7 @@ Obj11_Depress:
 	addq.w	#6,a1
 	cmpa.w	a2,a1
 	bne.s	+
-	movea.l	Obj11_child2(a0),a1 ; a1=object
+	movea.w	Obj11_child2(a0),a1 ; a1=object
 	lea	sub2_y_pos(a1),a1
 +	dbf	d2,-
 +

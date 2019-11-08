@@ -17,7 +17,8 @@ Debug_Lagometer =	1		; set to 1 to enable on-screen lagometer. Seems to have an 
 ; you may also note, objoff_xx will not match with the actual addresses
 
 	phase 0
-id			ds.b 1		; object ID (if you change this, change insn1op and insn2op in s2.macrosetup.asm, if you still use them)
+id			ds.l 1		; object ID (if you change this, change insn1op and insn2op in s2.macrosetup.asm, if you still use them)
+			ds.b 1		; object's height / 2, often used for determining when object is offscreen (no need to draw sprites)
 render_flags		ds.b 1		; bitfield ; bit 7 = onscreen flag, bit 0 = x mirror, bit 1 = y mirror, bit 2 = coordinate system, bit 6 = render subobjects
 art_tile		ds.w 1		; start of sprite's art
 mappings		ds.l 1		; address of object mappings data
@@ -94,10 +95,10 @@ objoff_36 =		*
 next_tilt		ds.b 1		; angle on ground in front of sprite
 objoff_37 =		*
 tilt			ds.b 1		; angle on ground
+
 objoff_38 =		*
 boss_hurt_sonic =	*		; flag set by collision response routine when sonic has just been hurt (by boss?)
 stick_to_convex		ds.b 1		; 0 for normal, 1 to make Sonic stick to convex surfaces like the rotating discs in Sonic 1 and 3 (unused in Sonic 2 but fully functional)
-
 objoff_39 =		*
 pinball_mode =		*
 spindash_flag		ds.b 1		; 0 for normal, 1 for charging a spindash or forced rolling
@@ -111,6 +112,7 @@ jumping			ds.w 1		; set when Sonic is jumping... This should REALLY be a byte...
 objoff_3E =		*
 objoff_3F =		*+1
 parent			ds.w 1		; address of object that owns or spawned this one, if applicable
+
 priority 		ds.w 1		; address for object's target priority layer. CAN NOT BE INVALID ADDRESS, IF SPRITE IS DISPLAYED!
 object_size =		*		; the size of an object
 next_object =		*
@@ -903,9 +905,9 @@ WaterSurface2:			; Second water surface
 Reserved_Object_RAM_End:
 
 Dynamic_Object_RAM:		; Dynamic object RAM
-				ds.b $28*object_size
+				ds.b $26*object_size
 Dynamic_Object_RAM_2P_End:	; SingleObjLoad stops searching here in 2P mode
-				ds.b $48*object_size
+				ds.b $45*object_size
 Dynamic_Object_RAM_End:
 
 LevelOnly_Object_RAM:
@@ -939,7 +941,6 @@ LevelOnly_Object_RAM_End:
 
 Object_RAM_End:
 
-		phase	ramaddr($FFFFD600)		; must be aligned for Special Stage's sake
 Primary_Collision:		ds.b $300
 Secondary_Collision:		ds.b $300
 Sprite_Table_2:			ds.b $280	; Sprite attribute table buffer for the bottom split screen in 2-player mode
@@ -1544,8 +1545,6 @@ SegaScreenObject:		; Sega screen
 				ds.b object_size
 SegaHideTM:				; Object that hides TM symbol on JP region
 				ds.b object_size
-
-				ds.b ($80-3)*object_size
 SegaScr_Object_RAM_End:
 
 
@@ -1580,8 +1579,6 @@ TitleScreenMenu:
 				ds.b object_size
 IntroSmallStar2:
 				ds.b object_size
-
-				ds.b ($70-2)*object_size
 TtlScr_Object_RAM_End:
 
 
@@ -1624,7 +1621,7 @@ SpecialStageResults:
 				ds.b $C*object_size
 SpecialStageResults2:
 				ds.b object_size
-				ds.b $51*object_size
+				ds.b $4C*object_size
 SS_Dynamic_Object_RAM_End:
 				ds.b object_size
 SS_Object_RAM_End:
@@ -1724,9 +1721,6 @@ ContinueText:			; "CONTINUE" on the Continue screen
 				ds.b object_size
 ContinueIcons:			; The icons in the Continue screen
 				ds.b $D*object_size
-
-				; Free slots
-				ds.b $70*object_size
 ContScr_Object_RAM_End:
 
 
@@ -1735,16 +1729,12 @@ ContScr_Object_RAM_End:
 VSRslts_Object_RAM:
 VSResults_HUD:			; Blinking text at the bottom of the screen
 				ds.b object_size
-
-				; Free slots
-				ds.b $7F*object_size
 VSRslts_Object_RAM_End:
 
 
 ; RAM variables - Menu screens
 	phase	Object_RAM	; Move back to the object RAM
 Menus_Object_RAM:		; No objects are loaded in the menu screens
-				ds.b $80*object_size
 Menus_Object_RAM_End:
 
 
@@ -1759,7 +1749,6 @@ EndSeqPaletteChanger:
 				ds.b object_size
 CutScene:
 				ds.b object_size
-				ds.b ($80-5)*object_size
 EndSeq_Object_RAM_End:
 
 	dephase		; Stop pretending
