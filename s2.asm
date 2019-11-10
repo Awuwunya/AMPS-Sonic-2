@@ -3584,7 +3584,7 @@ SegaScreen:
 	bmi.s	SegaScreen_Contin ; if not, branch
 	; load an extra sprite to hide the TM (trademark) symbol on the SEGA screen
 	lea	(SegaHideTM).w,a1
-	move.b	#ObjID_SegaHideTM,id(a1)	; load Obj_SegaHideTM at $FFFFB080
+	move.l	#Obj_SegaHideTM,id(a1)	; load Obj_SegaHideTM at $FFFFB080
 	move.b	#$4E,subtype(a1) ; <== Obj_SegaHideTM_SubObjData
 ; loc_38CE:
 SegaScreen_Contin:
@@ -3595,7 +3595,7 @@ SegaScreen_Contin:
 	move.w	#0,(SegaScr_VInt_Subrout).w
 	move.w	#0,(SegaScr_PalDone_Flag).w
 	lea	(SegaScreenObject).w,a1
-	move.b	#ObjID_SonicOnSegaScr,id(a1) ; load Obj_SonicOnSegaScreen (sega screen?) at $FFFFB040
+	move.l	#Obj_SonicOnSegaScreen,id(a1) ; load Obj_SonicOnSegaScreen (sega screen?) at $FFFFB040
 	move.b	#$4C,subtype(a1) ; <== Obj_SonicOnSegaScreen_SubObjData
 	move.w	#4*60,(Demo_Time_left).w	; 4 seconds
 	move.w	(VDP_Reg1_val).w,d0
@@ -3772,7 +3772,7 @@ TitleScreen:
 	move.w	#0,(Two_player_mode).w
 	move.w	#$280,(Demo_Time_left).w
 	clr.w	(Ctrl_1).w
-	move.b	#ObjID_IntroStars,(IntroSonic+id).w ; load Obj_IntroStars (flashing intro star)
+	move.l	#Obj_IntroStars,(IntroSonic+id).w	; load Obj_IntroStars (flashing intro star)
 	move.b	#2,(IntroSonic+subtype).w				; Sonic
 	jsr	(RunObjects).l
 	jsr	(BuildSprites).l
@@ -4209,7 +4209,7 @@ Level_PlayBgm:
 	move.w	d0,(Level_Music).w	; store level music
 	move.b	d0,mQueue+1.w
 	command	Mus_Reset
-	move.b	#ObjID_TitleCard,(TitleCard+id).w ; load Obj_TitleCard (level title card) at $FFFFB080
+	move.l	#Obj_TitleCard,(TitleCard+id).w ; load Obj_TitleCard (level title card) at $FFFFB080
 ; loc_40DA:
 Level_TtlCard:
 	move.b	#VintID_TitleCard,(Vint_routine).w
@@ -4253,18 +4253,18 @@ Level_TtlCard:
 ; Level_ChkWater:
 	tst.b	(Water_flag).w	; does level have water?
 	beq.s	+	; if not, branch
-	move.b	#ObjID_WaterSurface,(WaterSurface1+id).w ; load Obj_WaterSurface (water surface) at $FFFFB380
+	move.l	#Obj_WaterSurface,(WaterSurface1+id).w ; load Obj_WaterSurface (water surface) at $FFFFB380
 	move.w	#$60,(WaterSurface1+x_pos).w ; set horizontal offset
-	move.b	#ObjID_WaterSurface,(WaterSurface2+id).w ; load Obj_WaterSurface (water surface) at $FFFFB3C0
+	move.l	#Obj_WaterSurface,(WaterSurface2+id).w ; load Obj_WaterSurface (water surface) at $FFFFB3C0
 	move.w	#$120,(WaterSurface2+x_pos).w ; set different horizontal offset
 +
 	cmpi.b	#chemical_plant_zone,(Current_Zone).w	; check if zone == CPZ
 	bne.s	+			; branch if not
-	move.b	#ObjID_CPZPylon,(CPZPylon+id).w ; load Obj_CPZPylon (CPZ pylon) at $FFFFB340
+	move.l	#Obj_CPZPylon,(CPZPylon+id).w ; load Obj_CPZPylon (CPZ pylon) at $FFFFB340
 +
 	cmpi.b	#oil_ocean_zone,(Current_Zone).w	; check if zone == OOZ
 	bne.s	Level_ClrHUD		; branch if not
-	move.b	#ObjID_Oil,(Oil+id).w ; load Obj_Oil (OOZ oil) at $FFFFB380
+	move.l	#Obj_Oil,(Oil+id).w ; load Obj_Oil (OOZ oil) at $FFFFB380
 ; Level_LoadObj: misnomer now
 Level_ClrHUD:
 	moveq	#0,d0
@@ -4353,7 +4353,7 @@ Level_FromCheckpoint:
 	jsr	(RunObjects).l
 	jsr	(BuildSprites).l
 	bsr.w	RunPLC_RAM
-	tst.b	(TitleCard_Background+id).w
+	tst.l	(TitleCard_Background+id).w
 	bne.s	-	; loop while the title card background is still loaded
 
 	lea	(TitleCard).w,a1
@@ -4361,7 +4361,7 @@ Level_FromCheckpoint:
 	move.b	#$2D,TitleCard_ZoneName-TitleCard+anim_frame_duration(a1)
 	move.b	#$16,TitleCard_Zone-TitleCard+routine(a1)
 	move.b	#$2D,TitleCard_Zone-TitleCard+anim_frame_duration(a1)
-	tst.b	TitleCard_ActNumber-TitleCard+id(a1)
+	tst.l	TitleCard_ActNumber-TitleCard+id(a1)
 	beq.s	+	; branch if the act number has been unloaded
 	move.b	#$16,TitleCard_ActNumber-TitleCard+routine(a1)
 	move.b	#$2D,TitleCard_ActNumber-TitleCard+anim_frame_duration(a1)
@@ -4469,8 +4469,8 @@ InitPlayers:
 	move.w	(Player_mode).w,d0
 	bne.s	InitPlayers_Alone ; branch if this isn't a Sonic and Tails game
 
-	move.b	#ObjID_Sonic,(MainCharacter+id).w ; load Obj_Sonic Sonic object at $FFFFB000
-	move.b	#ObjID_SpindashDust,(Sonic_Dust+id).w ; load Obj_Splash Sonic's spindash dust/splash object at $FFFFD100
+	move.l	#Obj_Sonic,(MainCharacter+id).w ; load Obj_Sonic Sonic object at $FFFFB000
+	move.l	#Obj_SpindashDust,(Sonic_Dust+id).w ; load Obj_Splash Sonic's spindash dust/splash object at $FFFFD100
 
 	cmpi.b	#wing_fortress_zone,(Current_Zone).w
 	beq.s	+ ; skip loading Tails if this is WFZ
@@ -4479,12 +4479,12 @@ InitPlayers:
 	cmpi.b	#sky_chase_zone,(Current_Zone).w
 	beq.s	+ ; skip loading Tails if this is SCZ
 
-	move.b	#ObjID_Tails,(Sidekick+id).w ; load Obj_Tails Tails object at $FFFFB040
+	move.l	#Obj_Tails,(Sidekick+id).w ; load Obj_Tails Tails object at $FFFFB040
 	move.w	(MainCharacter+x_pos).w,(Sidekick+x_pos).w
 	move.w	(MainCharacter+y_pos).w,(Sidekick+y_pos).w
 	subi.w	#$20,(Sidekick+x_pos).w
 	addi_.w	#4,(Sidekick+y_pos).w
-	move.b	#ObjID_SpindashDust,(Tails_Dust+id).w ; load Obj_Splash Tails' spindash dust/splash object at $FFFFD140
+	move.l	#Obj_SpindashDust,(Tails_Dust+id).w ; load Obj_Splash Tails' spindash dust/splash object at $FFFFD140
 +
 	rts
 ; ===========================================================================
@@ -4493,21 +4493,17 @@ InitPlayers_Alone: ; either Sonic or Tails but not both
 	subq.w	#1,d0
 	bne.s	InitPlayers_TailsAlone ; branch if this is a Tails alone game
 
-	move.b	#ObjID_Sonic,(MainCharacter+id).w ; load Obj_Sonic Sonic object at $FFFFB000
-	move.b	#ObjID_SpindashDust,(Sonic_Dust+id).w ; load Obj_Splash Sonic's spindash dust/splash object at $FFFFD100
+	move.l	#Obj_Sonic,(MainCharacter+id).w ; load Obj_Sonic Sonic object at $FFFFB000
+	move.l	#Obj_SpindashDust,(Sonic_Dust+id).w ; load Obj_Splash Sonic's spindash dust/splash object at $FFFFD100
 	rts
 ; ===========================================================================
 ; loc_44D0:
 InitPlayers_TailsAlone:
-	move.b	#ObjID_Tails,(MainCharacter+id).w ; load Obj_Tails Tails object at $FFFFB000
-	move.b	#ObjID_SpindashDust,(Tails_Dust+id).w ; load Obj_Splash Tails' spindash dust/splash object at $FFFFD100
+	move.l	#Obj_Tails,(MainCharacter+id).w ; load Obj_Tails Tails object at $FFFFB000
+	move.l	#Obj_SpindashDust,(Tails_Dust+id).w ; load Obj_Splash Tails' spindash dust/splash object at $FFFFD100
 	addi_.w	#4,(MainCharacter+y_pos).w
 	rts
 ; End of function InitPlayers
-
-
-
-
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to move the water or oil surface sprites to where the screen is at
@@ -5855,13 +5851,13 @@ SpecialStage:
 	move.l	#0,(Camera_Y_pos_copy).w
 	cmpi.w	#1,(Player_mode).w	; is this a Tails alone game?
 	bgt.s	+			; if yes, branch
-	move.b	#ObjID_SonicSS,(MainCharacter+id).w ; load Obj_SonicSS (special stage Sonic)
+	move.l	#Obj_SonicSS,(MainCharacter+id).w ; load Obj_SonicSS (special stage Sonic)
 	tst.w	(Player_mode).w		; is this a Sonic and Tails game?
 	bne.s	++			; if not, branch
-+	move.b	#ObjID_TailsSS,(Sidekick+id).w ; load Obj_TailsSS (special stage Tails)
-+	move.b	#ObjID_SSHUD,(SpecialStageHUD+id).w ; load Obj_SSHUD (special stage HUD)
-	move.b	#ObjID_StartBanner,(SpecialStageStartBanner+id).w ; load Obj_EndingController (special stage banner)
-	move.b	#ObjID_SSNumberOfRings,(SpecialStageNumberOfRings+id).w ; load Obj_SSNumberOfRings (special stage ring count)
++	move.l	#Obj_TailsSS,(Sidekick+id).w ; load Obj_TailsSS (special stage Tails)
++	move.l	#Obj_SSHUD,(SpecialStageHUD+id).w ; load Obj_SSHUD (special stage HUD)
+	move.l	#Obj_StartBanner,(SpecialStageStartBanner+id).w ; load Obj_EndingController (special stage banner)
+	move.l	#Obj_SSNumberOfRings,(SpecialStageNumberOfRings+id).w ; load Obj_SSNumberOfRings (special stage ring count)
 	move.w	#$80,(SS_Offset_X).w
 	move.w	#$36,(SS_Offset_Y).w
 	bsr.w	SSPlaneB_Background
@@ -6022,7 +6018,7 @@ SpecialStage:
 	clearRAM SS_Sprite_Table_Input,SS_Sprite_Table_Input_End
 	clearRAM SS_Object_RAM,SS_Object_RAM_End
 
-	move.b	#ObjID_SSResults,(SpecialStageResults+id).w ; load Obj_SSResults (special stage results) at $FFFFB800
+	move.l	#Obj_SSResults,(SpecialStageResults+id).w ; load Obj_SSResults (special stage results) at $FFFFB800
 -
 	move.b	#VintID_Level,(Vint_routine).w
 	bsr.w	WaitForVint
@@ -6182,7 +6178,7 @@ SSObjectsManager:
 	andi.b	#$40,d1
 	bne.s	+
 	addq.w	#1,(SS_Perfect_rings_left).w
-	move.b	#ObjID_SSRing,id(a1)
+	move.l	#Obj_SSRing,id(a1)
 	add.w	d0,d0
 	add.w	d0,d0
 	add.w	d3,d0
@@ -6192,7 +6188,7 @@ SSObjectsManager:
 ; ===========================================================================
 +
 	andi.w	#$3F,d0
-	move.b	#ObjID_SSBomb,id(a1)
+	move.l	#Obj_SSBomb,id(a1)
 	add.w	d0,d0
 	add.w	d0,d0
 	add.w	d3,d0
@@ -6215,11 +6211,11 @@ SSObjectsManager:
 +
 	tst.b	(SS_2p_Flag).w
 	bne.s	+
-	move.b	#ObjID_SSEmerald,id(a1)
+	move.l	#Obj_SSEmerald,id(a1)
 	rts
 ; ===========================================================================
 +
-	move.b	#ObjID_SSMessage,id(a1)
+	move.l	#Obj_SSMessage,id(a1)
 
 return_55DC:
 	rts
@@ -8781,6 +8777,7 @@ Obj_SSHUD_MapUnc_7070:	BINCLUDE "mappings/sprite/Obj_SSHUD.bin"
 ; ----------------------------------------------------------------------------
 ; Sprite_70F0:
 Obj_EndingController:
+Obj_StartBanner:
 	moveq	#0,d0
 	move.b	routine(a0),d0
 	move.w	Obj_EndingController_Index(pc,d0.w),d1
@@ -8979,7 +8976,7 @@ Obj_SSNumberOfRings_Init:
 +
 	jsr	SSSingleObjLoad
 	bne.s	+	; rts
-	move.b	#ObjID_SSNumberOfRings,id(a1) ; load Obj_SSNumberOfRings
+	move.l	#Obj_SSNumberOfRings,id(a1) ; load Obj_SSNumberOfRings
 	move.w	#prio(0),priority(a1)
 	move.b	#4,objoff_A(a1)		; => loc_753E
 	move.l	#Obj_EndingController_MapUnc_72D2,mappings(a1)
@@ -8998,7 +8995,7 @@ Obj_SSNumberOfRings_Init:
 +
 	jsr	SSSingleObjLoad
 	bne.s	-	; rts
-	move.b	#ObjID_SSNumberOfRings,id(a1) ; load Obj_SSNumberOfRings
+	move.l	#Obj_SSNumberOfRings,id(a1) ; load Obj_SSNumberOfRings
 	move.w	#prio(0),priority(a1)
 	move.b	#6,objoff_A(a1)		; => loc_75DE
 	move.l	#Obj_EndingController_MapUnc_72D2,mappings(a1)
@@ -9498,11 +9495,11 @@ ContinueScreen:
 	clr.b	(Level_started_flag).w
 	clr.l	(Camera_X_pos_copy).w
 	move.l	#$1000000,(Camera_Y_pos_copy).w
-	move.b	#ObjID_ContinueChars,(MainCharacter+id).w ; load Obj_ContinueChars (sonic on continue screen)
-	move.b	#ObjID_ContinueChars,(Sidekick+id).w ; load Obj_ContinueChars (tails on continue screen)
+	move.l	#Obj_ContinueChars,(MainCharacter+id).w ; load Obj_ContinueChars (sonic on continue screen)
+	move.l	#Obj_ContinueChars,(Sidekick+id).w ; load Obj_ContinueChars (tails on continue screen)
 	move.b	#6,(Sidekick+routine).w ; => Obj_ContinueChars_Tails_Init
-	move.b	#ObjID_ContinueText,(ContinueText+id).w ; load Obj_ContinueText (continue screen text)
-	move.b	#ObjID_ContinueIcons,(ContinueIcons+id).w ; load Obj_ContinueText (continue icons)
+	move.l	#Obj_ContinueText,(ContinueText+id).w ; load Obj_ContinueText (continue screen text)
+	move.l	#Obj_ContinueIcons,(ContinueIcons+id).w ; load Obj_ContinueText (continue icons)
 	move.b	#4,(ContinueIcons+routine).w ; => loc_7AD0
 	jsr	(RunObjects).l
 	jsr	(BuildSprites).l
@@ -9611,6 +9608,7 @@ ContinueScreen_AdditionalLetters:
 ; ----------------------------------------------------------------------------
 ; loc_7A68:
 Obj_ContinueText: ; (screen-space obj)
+Obj_ContinueIcons:
 	moveq	#0,d0
 	move.b	routine(a0),d0
 	move.w	Obj_ContinueText_Index(pc,d0.w),d1
@@ -9663,7 +9661,7 @@ loc_7AD0:
 	move.b	d1,d2
 	andi.b	#1,d2
 
--	_move.b	#ObjID_ContinueIcons,id(a1) ; load Obj_ContinueText
+-	_move.l	#Obj_ContinueIcons,id(a1) ; load Obj_ContinueText
 	move.w	(a2)+,x_pixel(a1)
 	tst.b	d2
 	beq.s	+
@@ -9911,7 +9909,7 @@ TwoPlayerResults:
 	clr.l	(Vscroll_Factor).w
 	clr.l	(Vscroll_Factor_P2).w
 	clr.l	(Vscroll_Factor_P2_HInt).w
-	move.b	#ObjID_HUD,(VSResults_HUD+id).w
+	move.l	#Obj_HUD,(VSResults_HUD+id).w
 	move.b	#VintID_Menu,(Vint_routine).w
 	bsr.w	WaitForVint
 	move.w	(VDP_Reg1_val).w,d0
@@ -12171,7 +12169,7 @@ EndingSequence:
 
 	move.w	#$7FFF,(PalCycle_Timer).w
 	lea	(CutScene).w,a1
-	move.b	#ObjID_CutScene,id(a1) ; load Obj_CutScene (end of game cutscene) at $FFFFB100
+	move.l	#Obj_CutScene,id(a1) ; load Obj_CutScene (end of game cutscene) at $FFFFB100
 	move.b	#6,routine(a1)
 	move.w	#$60,objoff_3C(a1)
 	move.w	#1,objoff_30(a1)
@@ -12418,7 +12416,7 @@ Obj_CutScene_Init:
 sub_A22A:
 
 	lea	(EndSeqPaletteChanger).w,a1
-	move.b	#ObjID_TtlScrPalChanger,id(a1) ; load Obj_TitleScreenPalChanger (palette change handler) at $FFFFB0C0
+	move.l	#Obj_TitleScreenPalChanger,id(a1) ; load Obj_TitleScreenPalChanger (palette change handler) at $FFFFB0C0
 	move.b	d0,subtype(a1)
 	addq.b	#2,routine(a0)
 	move.w	d1,objoff_3C(a0)
@@ -12492,7 +12490,7 @@ Obj_CutScene_State5_States:	offsetTable
 loc_A2E0:
 	moveq	#8,d0
 -
-	move.b	#ObjID_Sonic,id(a1) ; load Sonic object
+	move.l	#Obj_Sonic,id(a1) ; load Sonic object
 	move.b	#$81,obj_control(a1)
 	rts
 ; ===========================================================================
@@ -12504,9 +12502,9 @@ loc_A2EE:
 
 loc_A2F2:
 	moveq	#$E,d0
-	move.b	#ObjID_Tails,id(a1) ; load Tails object
+	move.l	#Obj_Tails,id(a1) ; load Tails object
 	move.b	#$81,obj_control(a1)
-	move.b	#ObjID_TailsTails,(Tails_Tails_Cutscene+id).w ; load Obj_TailsTails (Tails' tails) at $FFFFB080
+	move.l	#Obj_TailsTails,(Tails_Tails_Cutscene+id).w ; load Obj_TailsTails (Tails' tails) at $FFFFB080
 	move.w	a1,(Tails_Tails_Cutscene+parent).w
 	rts
 ; ===========================================================================
@@ -12684,7 +12682,7 @@ loc_A4B6:
 	clr.b	anim(a0)
 	clr.b	anim_frame(a0)
 	clr.b	anim_frame_duration(a0)
-	move.l	#Obj_TordanoHelixes_MapUnc_ADA2,mappings(a0)
+	move.l	#Obj_TornadoHelixes_MapUnc_ADA2,mappings(a0)
 	move.w	#make_art_tile(ArtTile_ArtKos_LevelArt,0,0),art_tile(a0)
 	jsr	(Adjust2PArtPointer).l
 	subi.w	#$14,x_pos(a0)
@@ -12961,6 +12959,8 @@ word_A874:
 ; ----------------------------------------------------------------------------
 ; Sprite_A894:
 Obj_EndingPlyer:
+Obj_EndingSonic:
+Obj_EndingTails:
 	moveq	#0,d0
 	move.b	routine(a0),d0
 	move.w	Obj_EndingPlyer_Index(pc,d0.w),d1
@@ -12977,7 +12977,7 @@ Obj_EndingPlyer_Index:	offsetTable
 Obj_EndingPlyer_Init:
 	lea	(Obj_Cloud_SubObjData).l,a1
 	jsrto	(LoadSubObject_Part3).l, JmpTo_LoadSubObject_Part3
-	move.l	#Obj_TordanoHelixes_MapUnc_ADA2,mappings(a0)
+	move.l	#Obj_TornadoHelixes_MapUnc_ADA2,mappings(a0)
 	move.w	#make_art_tile(ArtTile_ArtKos_LevelArt,0,1),art_tile(a0)
 	move.w	#prio(1),priority(a0)
 	jsr	(Adjust2PArtPointer).l
@@ -13057,22 +13057,22 @@ byte_A984:
 ; Object CF - "Plane's helixes" from ending sequence
 ; ----------------------------------------------------------------------------
 ; Sprite_A988:
-Obj_TordanoHelixes:
+Obj_TornadoHelixes:
 	moveq	#0,d0
 	move.b	routine(a0),d0
-	move.w	Obj_TordanoHelixes_Index(pc,d0.w),d1
-	jmp	Obj_TordanoHelixes_Index(pc,d1.w)
+	move.w	Obj_TornadoHelixes_Index(pc,d0.w),d1
+	jmp	Obj_TornadoHelixes_Index(pc,d1.w)
 ; ===========================================================================
 ; off_A996:
-Obj_TordanoHelixes_Index:	offsetTable
-		offsetTableEntry.w Obj_TordanoHelixes_Init		; 0
-		offsetTableEntry.w Obj_TordanoHelixes_Animate	; 2
+Obj_TornadoHelixes_Index:	offsetTable
+		offsetTableEntry.w Obj_TornadoHelixes_Init		; 0
+		offsetTableEntry.w Obj_TornadoHelixes_Animate	; 2
 ; ===========================================================================
 ; loc_A99A:
-Obj_TordanoHelixes_Init:
+Obj_TornadoHelixes_Init:
 	lea	(Obj_Cloud_SubObjData).l,a1
 	jsrto	(LoadSubObject_Part3).l, JmpTo_LoadSubObject_Part3
-	move.l	#Obj_TordanoHelixes_MapUnc_ADA2,mappings(a0)
+	move.l	#Obj_TornadoHelixes_MapUnc_ADA2,mappings(a0)
 	move.w	#make_art_tile(ArtTile_ArtKos_LevelArt,0,1),art_tile(a0)
 	move.w	#prio(3),priority(a0)
 	jsr	(Adjust2PArtPointer).l
@@ -13087,8 +13087,8 @@ Obj_TordanoHelixes_Init:
 	rts
 ; ===========================================================================
 ; loc_A9E4:
-Obj_TordanoHelixes_Animate:
-	lea	(Ani_Obj_TordanoHelixes).l,a1
+Obj_TornadoHelixes_Animate:
+	lea	(Ani_Obj_TornadoHelixes).l,a1
 	jsrto	(AnimateSprite).l, JmpTo_AnimateSprite
 	bra.w	loc_A90E
 ; ===========================================================================
@@ -13385,25 +13385,19 @@ Pal_AD3E:	BINCLUDE	"art/palettes/Ending Super Sonic.bin"
 
 word_AD5E:
 	dc.w objoff_3E
-	dc.b ObjID_EndingSeqClouds
-	dc.b $00
+	dc.l ($00<<24)|Obj_EndingClouds
 word_AD62:
 	dc.w objoff_3E
-	dc.b ObjID_EndingSeqTrigger
-	dc.b $00
+	dc.l ($00<<24)|Obj_EndingTrigger
 word_AD66:
 	dc.w objoff_3E
-	dc.b ObjID_EndingSeqBird
-	dc.b $00
+	dc.l ($00<<24)|Obj_EndingBird
 word_AD6A:
 	dc.w objoff_3E
-	dc.b ObjID_EndingSeqSonic
-	dc.b $00
+	dc.l ($00<<24)|Obj_EndingSonic
 word_AD6E:
 	dc.w objoff_3E
-	dc.b ObjID_TornadoHelixes
-	dc.b $00
-
+	dc.l ($00<<24)|Obj_TornadoHelixes
 ; off_AD72:
 Obj_Animal_SubObjData:
 	SubObjData Obj_Animal_MapUnc_11E1C,make_art_tile(ArtTile_ArtNem_Animal_2,0,0),4,2,8,0
@@ -13416,7 +13410,7 @@ byte_AD7E:	dc.b   5,  0,  1,$FF
 
 ; animation script
 ; off_AD82
-Ani_Obj_TordanoHelixes:	offsetTable
+Ani_Obj_TornadoHelixes:	offsetTable
 		offsetTableEntry.w byte_AD88	; 0
 		offsetTableEntry.w byte_AD8E	; 1
 		offsetTableEntry.w byte_AD9E	; 2
@@ -13427,7 +13421,7 @@ byte_AD9E:	dc.b   1,  5,  6,$FF
 ; -----------------------------------------------------------------------------
 ; sprite mappings
 ; -----------------------------------------------------------------------------
-Obj_TordanoHelixes_MapUnc_ADA2:	BINCLUDE "mappings/sprite/Obj_TordanoHelixes.bin"
+Obj_TornadoHelixes_MapUnc_ADA2:	BINCLUDE "mappings/sprite/Obj_TornadoHelixes.bin"
 ; --------------------------------------------------------------------------------------
 ; Enigma compressed art mappings
 ; "Sonic the Hedgehog 2" mappings		; MapEng_B23A:
@@ -18264,7 +18258,7 @@ LevEvents_EHZ2_Routine3:
 	jsrto	(SingleObjLoad).l, JmpTo_SingleObjLoad
 	bne.s	+
 
-	move.b	#ObjID_EHZBoss,id(a1) ; load Obj_EHZBoss (EHZ boss)
+	move.l	#Obj_EHZBoss,id(a1) ; load Obj_EHZBoss (EHZ boss)
 	move.b	#$81,subtype(a1)
 	move.w	#$29D0,x_pos(a1)
 	move.w	#$426,y_pos(a1)
@@ -18369,7 +18363,7 @@ LevEvents_MTZ3_Routine4:
 	blo.s	++
 	jsrto	(SingleObjLoad).l, JmpTo_SingleObjLoad
 	bne.s	+
-	move.b	#ObjID_MTZBoss,id(a1) ; load Obj_MTZBoss (MTZ boss)
+	move.l	#Obj_MTZBoss,id(a1) ; load Obj_MTZBoss (MTZ boss)
 +
 	addq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_MTZ3_Routine5
 	music	mus_Boss
@@ -19074,7 +19068,7 @@ LevEvents_HTZ2_Routine8:
 	blo.s	++	; rts
 	jsrto	(SingleObjLoad).l, JmpTo_SingleObjLoad
 	bne.s	+
-	move.b	#ObjID_HTZBoss,id(a1) ; load Obj_HTZBoss (HTZ boss)
+	move.l	#Obj_HTZBoss,id(a1) ; load Obj_HTZBoss (HTZ boss)
 +
 	addq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_HTZ2_Routine9
 	music	mus_Boss
@@ -19175,7 +19169,7 @@ LevEvents_OOZ2_Routine3:
 	blo.s	++	; rts
 	jsrto	(SingleObjLoad).l, JmpTo_SingleObjLoad
 	bne.s	+
-	move.b	#ObjID_OOZBoss,id(a1) ; load Obj_OOZBoss (OOZ boss)
+	move.l	#Obj_OOZBoss,id(a1) ; load Obj_OOZBoss (OOZ boss)
 +
 	addq.b	#2,(Dynamic_Resize_Routine).w
 	music	mus_Boss
@@ -19272,7 +19266,7 @@ LevEvents_MCZ2_Routine3:
 	blo.s	++	; rts
 	jsrto	(SingleObjLoad).l, JmpTo_SingleObjLoad
 	bne.s	+
-	move.b	#ObjID_MCZBoss,id(a1) ; load Obj_MCZBoss (MCZ boss)
+	move.l	#Obj_MCZBoss,id(a1) ; load Obj_MCZBoss (MCZ boss)
 +
 	addq.b	#2,(Dynamic_Resize_Routine).w
 	music	mus_Boss
@@ -19367,7 +19361,7 @@ LevEvents_CNZ2_Routine3:
 	blo.s	++	; rts
 	jsrto	(SingleObjLoad).l, JmpTo_SingleObjLoad
 	bne.s	+
-	move.b	#ObjID_CNZBoss,id(a1) ; load Obj_CNZBoss
+	move.l	#Obj_CNZBoss,id(a1) ; load Obj_CNZBoss
 +
 	addq.b	#2,(Dynamic_Resize_Routine).w
 	music	mus_Boss
@@ -19448,7 +19442,7 @@ LevEvents_CPZ2_Routine3:
 	blo.s	++
 	jsrto	(SingleObjLoad).l, JmpTo_SingleObjLoad
 	bne.s	+
-	move.b	#ObjID_CPZBoss,id(a1) ; load Obj_CPZBoss
+	move.l	#Obj_CPZBoss,id(a1) ; load Obj_CPZBoss
 +
 	addq.b	#2,(Dynamic_Resize_Routine).w
 	music	mus_Boss
@@ -19485,7 +19479,7 @@ LevEvents_DEZ_Routine1:
 	addq.b	#2,(Dynamic_Resize_Routine).w
 	jsrto	(SingleObjLoad).l, JmpTo_SingleObjLoad
 	bne.s	+	; rts
-	move.b	#ObjID_MechaSonic,id(a1) ; load Obj_MechaSonic (silver sonic)
+	move.l	#Obj_MechaSonic,id(a1) ; load Obj_MechaSonic (silver sonic)
 	move.b	#$48,subtype(a1)
 	move.w	#$348,x_pos(a1)
 	move.w	#$A0,y_pos(a1)
@@ -19576,7 +19570,7 @@ LevEvents_ARZ2_Routine2:
 	clr.b	(ScreenShift).w
 	jsrto	(SingleObjLoad).l, JmpTo_SingleObjLoad
 	bne.s	+	; rts
-	move.b	#ObjID_ARZBoss,id(a1) ; load Obj_ARZBoss
+	move.l	#Obj_ARZBoss,id(a1) ; load Obj_ARZBoss
 +
 	rts
 ; ===========================================================================
@@ -19785,7 +19779,7 @@ Obj_Bridge_Init:
 Obj_Bridge_MakeBdgSegment:
 	jsrto	(SingleObjLoad2).l, JmpTo_SingleObjLoad2
 	bne.s	+	; rts
-	_move.b	id(a0),id(a1) ; load Obj_Bridge
+	_move.l	id(a0),id(a1) ; load Obj_Bridge
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.l	mappings(a0),mappings(a1)
@@ -20294,7 +20288,7 @@ Obj_SwingingPlatform_Init:
 	move.w	y_pos(a0),d3
 	jsrto	(SingleObjLoad2).l, JmpTo2_SingleObjLoad2
 	bne.w	+++
-	_move.b	id(a0),id(a1) ; load Obj_SwingingPlatform
+	_move.l	id(a0),id(a1) ; load Obj_SwingingPlatform
 	move.l	mappings(a0),mappings(a1)
 	move.w	art_tile(a0),art_tile(a1)
 	move.b	#4,render_flags(a1)
@@ -20781,7 +20775,7 @@ Obj17_Init:
 	move.b	#8,width_pixels(a0)
 	move.w	y_pos(a0),d2
 	move.w	x_pos(a0),d3
-	_move.b	id(a0),d4
+	_move.l	id(a0),d4
 	lea	subtype(a0),a2	; move helix length to a2
 	moveq	#0,d1
 	move.b	(a2),d1	; move a2 to d1
@@ -20808,7 +20802,7 @@ Obj17_MakeHelix:
 	andi.w	#$7F,d5
 	move.b	d5,(a2)+
 	move.b	#4,routine(a1)
-	_move.b	d4,id(a1) ; load obj17
+	_move.l	d4,id(a1) ; load obj17
 	move.w	d2,y_pos(a1)
 	move.w	d3,x_pos(a1)
 	move.l	mappings(a0),mappings(a1)
@@ -20903,6 +20897,9 @@ Obj17_MapUnc_10452:	BINCLUDE "mappings/sprite/obj17.bin"
 ; ----------------------------------------------------------------------------
 ; Sprite_104AC:
 Obj_FloatingPlatform:
+Obj_EHZPlatform:
+Obj_ARZPlatform:
+Obj_HTZPlatform:
 	moveq	#0,d0
 	move.b	routine(a0),d0
 	move.w	Obj_FloatingPlatform_Index(pc,d0.w),d1
@@ -21553,7 +21550,7 @@ Obj_HPZCollapsingPlatform_CreateFragments:
 	move.w	(a3)+,d1
 	subq.w	#1,d1
 	bset	#5,render_flags(a0)
-	_move.b	id(a0),d4
+	_move.l	id(a0),d4
 	move.b	render_flags(a0),d5
 	movea.l	a0,a1
 	bra.s	+
@@ -21563,7 +21560,7 @@ Obj_HPZCollapsingPlatform_CreateFragments:
 	addq.w	#8,a3
 +
 	move.b	#4,routine(a1)
-	_move.b	d4,id(a1) ; load Obj_CollapsingPlatform
+	_move.l	d4,id(a1) ; load Obj_CollapsingPlatform
 	move.l	a3,mappings(a1)
 	move.b	d5,render_flags(a1)
 	move.w	x_pos(a0),x_pos(a1)
@@ -21683,6 +21680,8 @@ JmpTo2_PlatformObject
 ; ----------------------------------------------------------------------------
 ; Sprite_111D4:
 Obj_Scenery:
+Obj_BridgeStake:
+Obj_FallingOil:
 	moveq	#0,d0
 	move.b	routine(a0),d0
 	move.w	Obj_Scenery_Index(pc,d0.w),d1
@@ -21753,6 +21752,9 @@ Obj_Scenery_InitData:
 ; ----------------------------------------------------------------------------
 ; Sprite_112F0:
 Obj_Scenery2:
+Obj_MTZLavaBubble:
+Obj_HPZBridgeStake:
+Obj_PulsingOrb:
 	moveq	#0,d0
 	move.b	routine(a0),d0
 	move.w	Obj_Scenery2_Index(pc,d0.w),d1
@@ -22261,7 +22263,7 @@ Obj_Animal_InitRandom:
 	bne.s	++
 	bsr.w	SingleObjLoad
 	bne.s	+
-	_move.b	#ObjID_Points,id(a1) ; load Obj_Points
+	_move.l	#Obj_Points,id(a1) ; load Obj_Points
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.w	objoff_3E(a0),d0
@@ -22774,7 +22776,7 @@ Obj_LostRings_Init:
 -	bsr.w	SingleObjLoad
 	bne.w	+++
 +
-	_move.b	#ObjID_LostRings,id(a1) ; load Obj_LostRings
+	_move.l	#Obj_LostRings,id(a1) ; load Obj_LostRings
 	addq.b	#2,routine(a1)
 	move.b	#8,y_radius(a1)
 	move.b	#8,x_radius(a1)
@@ -22953,7 +22955,7 @@ BigRing_Enter:
 	; If you want to restore the big ring object, you'll also have to
 	; restore the ring flash object (right after this) and assign its ID to
 	; the created object here (a1).
-	;move.b	#ObjID_BigRingFlash,id(a1)
+	;move.l	#Obj_BigRingFlash,id(a1)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.l	a0,objoff_3C(a1)
@@ -23301,7 +23303,7 @@ Obj_Monitor_SpawnIcon:
 	move.b	#0,collision_flags(a0)
 	bsr.w	SingleObjLoad
 	bne.s	Obj_Monitor_SpawnSmoke
-	_move.b	#ObjID_MonitorContents,id(a1) ; load Obj_MonitorContents
+	_move.l	#Obj_MonitorContents,id(a1) ; load Obj_MonitorContents
 	move.w	x_pos(a0),x_pos(a1)	; set icon's position
 	move.w	y_pos(a0),y_pos(a1)
 	move.b	anim(a0),anim(a1)
@@ -23310,7 +23312,7 @@ Obj_Monitor_SpawnIcon:
 Obj_Monitor_SpawnSmoke:
 	bsr.w	SingleObjLoad
 	bne.s	+
-	_move.b	#ObjID_Explosion,id(a1) ; load Obj_Explosion
+	_move.l	#Obj_Explosion,id(a1) ; load Obj_Explosion
 	addq.b	#2,routine(a1)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
@@ -23552,12 +23554,12 @@ shield_monitor:
 	sfx	sfx_Shield
 	tst.b	parent+1(a0)
 	bne.s	+
-	move.b	#ObjID_Shield,(Sonic_Shield+id).w ; load Obj_Shield (shield) at $FFFFD180
+	move.l	#Obj_Shield,(Sonic_Shield+id).w ; load Obj_Shield (shield) at $FFFFD180
 	move.w	a1,(Sonic_Shield+parent).w
 	rts
 ; ---------------------------------------------------------------------------
 +	; give shield to sidekick
-	move.b	#ObjID_Shield,(Tails_Shield+id).w ; load Obj_Shield (shield) at $FFFFD1C0
+	move.l	#Obj_Shield,(Tails_Shield+id).w ; load Obj_Shield (shield) at $FFFFD1C0
 	move.w	a1,(Tails_Shield+parent).w
 	rts
 ; ===========================================================================
@@ -23579,12 +23581,12 @@ invincible_monitor:
 +
 	tst.b	parent+1(a0)
 	bne.s	+
-	move.b	#ObjID_InvStars,(Sonic_InvincibilityStars+id).w ; load Obj_InvincibilityStars (invincibility stars) at $FFFFD200
+	move.l	#Obj_InvincibilityStars,(Sonic_InvincibilityStars+id).w ; load Obj_InvincibilityStars (invincibility stars) at $FFFFD200
 	move.w	a1,(Sonic_InvincibilityStars+parent).w
 	rts
 ; ---------------------------------------------------------------------------
 +	; give invincibility to sidekick
-	move.b	#ObjID_InvStars,(Tails_InvincibilityStars+id).w ; load Obj_InvincibilityStars (invincibility stars) at $FFFFD300
+	move.l	#Obj_InvincibilityStars,(Tails_InvincibilityStars+id).w ; load Obj_InvincibilityStars (invincibility stars) at $FFFFD300
 	move.w	a1,(Tails_InvincibilityStars+parent).w
 +
 	rts
@@ -23661,9 +23663,9 @@ process_swap_table:
 
 ; process objects:
 swap_loop_objects:
-	cmpi.b	#ObjID_PinballMode,id(a1) ; is it Obj_PinballMode (pinball mode switcher)?
+	cmpi.l	#Obj_PinballMode,id(a1) ; is it Obj_PinballMode (pinball mode switcher)?
 	beq.s	+ ; if yes, branch
-	cmpi.b	#ObjID_PlaneSwitcher,id(a1) ; is it Obj_PlaneSwitcher (collision plane switcher)?
+	cmpi.l	#Obj_PlaneSwitcher,id(a1) ; is it Obj_PlaneSwitcher (collision plane switcher)?
 	bne.s	++ ; if not, branch further
 
 +
@@ -23672,14 +23674,14 @@ swap_loop_objects:
 	move.b	d0,objoff_35(a1)
 
 +
-	cmpi.b	#ObjID_PointPokey,id(a1) ; is it Obj_PointPokey (CNZ point giver)?
+	cmpi.l	#Obj_PointPokey,id(a1) ; is it Obj_PointPokey (CNZ point giver)?
 	bne.s	+ ; if not, branch
 	move.l	objoff_30(a1),d0
 	move.l	objoff_34(a1),objoff_30(a1)
 	move.l	d0,objoff_34(a1)
 
 +
-	cmpi.b	#ObjID_LauncherSpring,id(a1) ; is it Obj_LauncherSpring (CNZ pressure spring)?
+	cmpi.l	#Obj_LauncherSpring,id(a1) ; is it Obj_LauncherSpring (CNZ pressure spring)?
 	bne.s	+ ; if not, branch
 	move.b	objoff_36(a1),d0
 	move.b	objoff_37(a1),objoff_36(a1)
@@ -23691,9 +23693,9 @@ swap_loop_objects:
 
 
 	lea	(MainCharacter).w,a1 ; a1=character
-	move.b	#ObjID_Shield,(Sonic_Shield+id).w ; load Obj_Shield (shield) at $FFFFD180
+	move.l	#Obj_Shield,(Sonic_Shield+id).w ; load Obj_Shield (shield) at $FFFFD180
 	move.w	a1,(Sonic_Shield+parent).w
-	move.b	#ObjID_InvStars,(Sonic_InvincibilityStars+id).w ; load Obj_InvincibilityStars (invincibility stars) at $FFFFD200
+	move.l	#Obj_InvincibilityStars,(Sonic_InvincibilityStars+id).w ; load Obj_InvincibilityStars (invincibility stars) at $FFFFD200
 	move.w	a1,(Sonic_InvincibilityStars+parent).w
 	btst	#2,status(a1)	; is Sonic spinning?
 	bne.s	+		; if yes, branch
@@ -23709,9 +23711,9 @@ swap_loop_objects:
 
 +
 	lea	(Sidekick).w,a1 ; a1=character
-	move.b	#ObjID_Shield,(Tails_Shield+id).w ; load Obj_Shield (shield) at $FFFFD1C0
+	move.l	#Obj_Shield,(Tails_Shield+id).w ; load Obj_Shield (shield) at $FFFFD1C0
 	move.w	a1,(Tails_Shield+parent).w
-	move.b	#ObjID_InvStars,(Tails_InvincibilityStars+id).w ; load Obj_InvincibilityStars (invincibility) at $FFFFD300
+	move.l	#Obj_InvincibilityStars,(Tails_InvincibilityStars+id).w ; load Obj_InvincibilityStars (invincibility) at $FFFFD300
 	move.w	a1,(Tails_InvincibilityStars+parent).w
 	btst	#2,status(a1)	; is Tails spinning?
 	bne.s	+		; if yes, branch
@@ -23901,10 +23903,10 @@ Obj_IntroStars_Sonic_Init:
 	move.w	#$110,x_pixel(a0)
 	move.w	#$E0,y_pixel(a0)
 	lea	(IntroLargeStar).w,a1
-	move.b	#ObjID_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro stars) at $FFFFB0C0
+	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro stars) at $FFFFB0C0
 	move.b	#8,subtype(a1)				; large star
 	lea	(IntroEmblemTop).w,a1
-	move.b	#ObjID_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro stars) at $FFFFD140
+	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro stars) at $FFFFD140
 	move.b	#6,subtype(a1)				; logo top
 	sfx	sfx_Sparkle
 	rts
@@ -23918,7 +23920,7 @@ loc_12EC2:
 +
 	addq.b	#2,routine_secondary(a0)
 	lea	(TitleScreenPaletteChanger3).w,a1
-	move.b	#ObjID_TtlScrPalChanger,id(a1)	; load Obj_TitleScreenPalChanger (palette change)
+	move.l	#Obj_TitleScreenPalChanger,id(a1)	; load Obj_TitleScreenPalChanger (palette change)
 	move.b	#0,subtype(a1)
 	st.b	objoff_30(a0)
 	music	mus_Title			 ; title music
@@ -23944,7 +23946,7 @@ loc_12EE8:
 
 sub_12F08:
 	lea	(IntroSmallStar1).w,a1
-	move.b	#ObjID_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro star) at $FFFFB180
+	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro star) at $FFFFB180
 	move.b	#$E,subtype(a1)				; piece of sky
 	rts
 ; End of function sub_12F08
@@ -23984,7 +23986,7 @@ Obj_IntroStars_Sonic_LastFrame:
 	addq.b	#2,routine_secondary(a0)
 	move.b	#$12,mapping_frame(a0)
 	lea	(IntroSonicHand).w,a1
-	move.b	#ObjID_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro star) at $FFFFB1C0
+	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro star) at $FFFFB1C0
 	move.b	#$A,subtype(a1)				; Sonic's hand
 	bra.w	DisplaySprite
 ; ===========================================================================
@@ -23994,7 +23996,7 @@ loc_12F7C:
 	blo.s	+
 	addq.b	#2,routine_secondary(a0)
 	lea	(IntroTails).w,a1
-	move.b	#ObjID_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro star) at $FFFFB080
+	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro star) at $FFFFB080
 	move.b	#4,subtype(a1)				; Tails
 +
 	bra.w	DisplaySprite
@@ -24014,9 +24016,9 @@ loc_12F9A:
 	dbf	d6,-
 
 	lea	(TitleScreenPaletteChanger2).w,a1
-	move.b	#ObjID_TtlScrPalChanger,id(a1) ; load Obj_TitleScreenPalChanger (palette change handler) at $FFFFB240
+	move.l	#Obj_TitleScreenPalChanger,id(a1) ; load Obj_TitleScreenPalChanger (palette change handler) at $FFFFB240
 	move.b	#2,subtype(a1)
-	move.b	#ObjID_TitleMenu,(TitleScreenMenu+id).w ; load Obj_TitleMenu (title screen menu) at $FFFFB400
+	move.l	#Obj_TitleMenu,(TitleScreenMenu+id).w ; load Obj_TitleMenu (title screen menu) at $FFFFB400
 +
 	bra.w	DisplaySprite
 ; ===========================================================================
@@ -24035,7 +24037,7 @@ loc_12FD6:
 ; ===========================================================================
 +
 	lea	(IntroSmallStar2).w,a1
-	move.b	#ObjID_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro star) at $FFFFB440
+	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro star) at $FFFFB440
 	move.b	#$C,subtype(a1)				; small star
 	addq.b	#2,routine_secondary(a0)
 	lea	(IntroSmallStar1).w,a1
@@ -24106,7 +24108,7 @@ loc_13096:
 loc_130A2:
 	addq.b	#2,routine_secondary(a0)
 	lea	(IntroTailsHand).w,a1
-	move.b	#ObjID_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro star) at $FFFFB200
+	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro star) at $FFFFB200
 	move.b	#$10,subtype(a1)			; Tails' hand
 
 BranchTo10_DisplaySprite
@@ -24523,7 +24525,7 @@ TitleScreen_SetFinalState:
 	move.w	#$98,y_pixel(a0)
 	lea	(IntroSonicHand).w,a1
 	bsr.w	TitleScreen_InitSprite
-	move.b	#ObjID_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro star) at $FFFFB1C0
+	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro star) at $FFFFB1C0
 	move.b	#$A,routine(a1)				; Sonic's hand
 	move.w	#prio(2),priority(a1)
 	move.b	#9,mapping_frame(a1)
@@ -24532,7 +24534,7 @@ TitleScreen_SetFinalState:
 	move.w	#$C1,y_pixel(a1)
 	lea	(IntroTails).w,a1
 	bsr.w	TitleScreen_InitSprite
-	move.b	#ObjID_IntroStars,id(a1) ; load Obj_IntroStars
+	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars
 	move.b	#4,routine(a1)				; Tails
 	move.b	#4,mapping_frame(a1)
 	move.b	#6,routine_secondary(a1)
@@ -24541,7 +24543,7 @@ TitleScreen_SetFinalState:
 	move.w	#$A0,y_pixel(a1)
 	lea	(IntroTailsHand).w,a1
 	bsr.w	TitleScreen_InitSprite
-	move.b	#ObjID_IntroStars,id(a1) ; load Obj_IntroStars
+	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars
 	move.b	#$10,routine(a1)			; Tails' hand
 	move.w	#prio(2),priority(a1)
 	move.b	#$13,mapping_frame(a1)
@@ -24549,10 +24551,10 @@ TitleScreen_SetFinalState:
 	move.w	#$10D,x_pixel(a1)
 	move.w	#$D1,y_pixel(a1)
 	lea	(IntroEmblemTop).w,a1
-	move.b	#ObjID_IntroStars,id(a1) ; load Obj_IntroStars
+	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars
 	move.b	#6,subtype(a1)				; logo top
 	bsr.w	sub_12F08
-	move.b	#ObjID_TitleMenu,(TitleScreenMenu+id).w ; load Obj_TitleMenu (title screen menu) at $FFFFB400
+	move.l	#Obj_TitleMenu,(TitleScreenMenu+id).w ; load Obj_TitleMenu (title screen menu) at $FFFFB400
 	lea	(TitleScreenPaletteChanger).w,a1
 	bsr.w	DeleteObject2
 	lea_	Pal_1342C,a1
@@ -24739,7 +24741,7 @@ Obj_TitleCard_Init:
 	lea	Obj_TitleCard_TitleCardData(pc),a2
 
 	moveq	#(Obj_TitleCard_TitleCardData_End-Obj_TitleCard_TitleCardData)/$A-1,d1
--	_move.b	#ObjID_TitleCard,id(a1) ; load Obj_TitleCard
+-	_move.l	#Obj_TitleCard,id(a1) ; load Obj_TitleCard
 	move.w	#prio(0),priority(a1)
 	move.b	(a2)+,routine(a1)
 	move.l	#Obj_TitleCard_MapUnc_147BA,mappings(a1)
@@ -24770,18 +24772,18 @@ Obj_TitleCard_Init:
 ; - the X position where it starts and where it will go back (word)
 ; - the X position to reach (word)
 ; - the Y position (word)
-titlecardObj_ContinueTextta macro routine,frame,width,duration,xstart,xstop,y
+titlecarddata macro routine,frame,width,duration,xstart,xstop,y
 	dc.b routine,frame,width,duration
 	dc.w xstart,xstop,y
     endm
 ; word_13CD4:
 Obj_TitleCard_TitleCardData:
-	titlecardObj_ContinueTextta  8,   0, $80, $1B, $240, $120, $B8	; zone name
-	titlecardObj_ContinueTextta $A, $11, $40, $1C,  $28, $148, $D0	; "ZONE"
-	titlecardObj_ContinueTextta $C, $12, $18, $1C,  $68, $188, $D0	; act number
-	titlecardObj_ContinueTextta  2,   0,   0,   0,    0,    0,   0	; blue background
-	titlecardObj_ContinueTextta  4, $15, $48,   8, $2A8, $168,$120	; bottom yellow part
-	titlecardObj_ContinueTextta  6, $16,   8, $15,  $80,  $F0, $F0	; left red part
+	titlecarddata  8,   0, $80, $1B, $240, $120, $B8	; zone name
+	titlecarddata $A, $11, $40, $1C,  $28, $148, $D0	; "ZONE"
+	titlecarddata $C, $12, $18, $1C,  $68, $188, $D0	; act number
+	titlecarddata  2,   0,   0,   0,    0,    0,   0	; blue background
+	titlecarddata  4, $15, $48,   8, $2A8, $168,$120	; bottom yellow part
+	titlecarddata  6, $16,   8, $15,  $80,  $F0, $F0	; left red part
 Obj_TitleCard_TitleCardData_End:
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
@@ -25072,6 +25074,7 @@ Animal_PLCTable: zoneOrderedTable 1,1
 ; ----------------------------------------------------------------------------
 ; Sprite_13F74:
 Obj_GameOver: ; (screen-space obj)
+Obj_TimeOver:
 	moveq	#0,d0
 	move.b	routine(a0),d0
 	move.w	Obj_GameOver_Index(pc,d0.w),d1
@@ -25209,9 +25212,9 @@ loc_140AC:
 	moveq	#7,d1
 
 loc_140BC:
-	_move.b	id(a1),d0
+	_move.l	id(a1),d0
 	beq.s	loc_140CE
-	cmpi.b	#ObjID_Results,d0
+	cmpi.l	#Obj_Results,d0
 	beq.s	loc_140CE
 	lea	next_object(a1),a1 ; a1=object
 	bra.s	loc_140BC
@@ -25219,7 +25222,7 @@ loc_140BC:
 
 loc_140CE:
 
-	_move.b	#ObjID_Results,id(a1) ; load Obj_Results
+	_move.l	#Obj_Results,id(a1) ; load Obj_Results
 	move.w	#prio(0),priority(a1)
 	move.w	(a2)+,x_pixel(a1)
 	move.w	(a2)+,objoff_30(a1)
@@ -25344,14 +25347,14 @@ loc_141E6:
 	lea	next_object(a0),a1 ; a1=object
 
 loc_14214:
-	_tst.b	id(a1)
+	_tst.l	id(a1)
 	beq.s	loc_14220
 	lea	next_object(a1),a1 ; a1=object
 	bra.s	loc_14214
 ; ===========================================================================
 
 loc_14220:
-	_move.b	#ObjID_Results,id(a1) ; load Obj_Results (uses screen-space)
+	_move.l	#Obj_Results,id(a1) ; load Obj_Results (uses screen-space)
 	move.w	#prio(0),priority(a1)
 	move.b	#$12,routine(a1)
 	move.w	#$188,x_pixel(a1)
@@ -25576,7 +25579,7 @@ Obj_SSResults_Init:
 	lea	byte_14752(pc),a2
 	moveq	#$C,d1
 
--	_move.b	id(a0),id(a1) ; load Obj_SSResults
+-	_move.l	id(a0),id(a1) ; load Obj_SSResults
 	move.w	(a2),x_pixel(a1)
 	move.w	(a2)+,objoff_32(a1)
 	move.w	(a2)+,objoff_30(a1)
@@ -25840,7 +25843,7 @@ Obj_SSResults_InitAndMoveSuperMsg:
 	subq.w	#8,y_pixel(a0)
 	move.b	#$1B,mapping_frame(a0)					; "Change into"
 	lea	(SpecialStageResults2).w,a1
-	_move.b	id(a0),id(a1) ; load Obj_SSResults; (uses screen-space)
+	_move.l	id(a0),id(a1) ; load Obj_SSResults; (uses screen-space)
 	clr.w	x_pixel(a1)
 	move.w	#$120,objoff_30(a1)
 	move.w	#$B4,y_pixel(a1)
@@ -26958,7 +26961,7 @@ BreakObjectToPieces:	; splits up one object into its current mapping frame piece
 	move.w	(a3)+,d1	; amount of pieces the frame consists of
 	subq.w	#1,d1
 	bset	#5,render_flags(a0)
-	_move.b	id(a0),d4
+	_move.l	id(a0),d4
 	move.b	render_flags(a0),d5
 	movea.l	a0,a1
 	bra.s	BreakObjectToPieces_InitObject
@@ -26971,7 +26974,7 @@ BreakObjectToPieces_Loop:
 ; loc_15E46:
 BreakObjectToPieces_InitObject:
 	move.b	#4,routine(a1)
-	_move.b	d4,id(a1) ; load object with ID of parent object and routine 4
+	_move.l	d4,id(a1) ; load object with ID of parent object and routine 4
 	move.l	a3,mappings(a1)
 	move.b	d5,render_flags(a1)
 	move.w	x_pos(a0),x_pos(a1)
@@ -27056,14 +27059,10 @@ RunObjects:
 
 ; sub_15FCC:
 RunObject:
-	move.b	id(a0),d0	; get the object's ID
-	beq.s	RunNextObject ; if it's obj00, skip it
-
-	add.w	d0,d0
-	add.w	d0,d0	; d0 = object ID * 4
-	movea.l	Obj_Index-4(pc,d0.w),a1	; load the address of the object's code
-	jsr	(a1)	; dynamic call! to one of the the entries in Obj_Index
-	moveq	#0,d0
+	move.l	id(a0),d0	; get the object's ID
+	beq.s	RunNextObject	; if it's obj00, skip it
+	move.l	d0,a1
+	jsr	(a1)		; dynamic call! to one of the the entries in Obj_Index
 
 ; loc_15FDC:
 RunNextObject:
@@ -27088,9 +27087,8 @@ RunObjectsWhenPlayerIsDead:
 
 ; sub_15FF2:
 RunObjectDisplayOnly:
-	moveq	#0,d0
-	move.b	id(a0),d0	; get the object's ID
-	beq.s	+	; if it's obj00, skip it
+	tst.l	id(a0)			; test the object's ID
+	beq.s	+			; if it's obj00, skip it
 	tst.b	render_flags(a0)	; should we render it?
 	bpl.s	+			; if not, skip it
 	bsr.w	DisplaySprite
@@ -27099,250 +27097,6 @@ RunObjectDisplayOnly:
 	dbf	d7,RunObjectDisplayOnly
 	rts
 ; End of function RunObjectDisplayOnly
-
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; OBJECT POINTER ARRAY ; object pointers ; sprite pointers ; object list ; sprite list
-;
-; This array contains the pointers to all the objects used in the game.
-; ---------------------------------------------------------------------------
-Obj_Index: ; ObjPtrs: ; loc_1600C:
-ObjPtr_Sonic:		dc.l Obj_Sonic			; $01 ; Sonic
-ObjPtr_Tails:		dc.l Obj_Tails			; $02 ; Tails
-ObjPtr_PlaneSwitcher:	dc.l Obj_PlaneSwitcher		; $03 ; Collision plane/layer switcher
-ObjPtr_WaterSurface:	dc.l Obj_WaterSurface		; $04 ; Surface of the water
-ObjPtr_TailsTails:	dc.l Obj_TailsTails		; $05 ; Tails' tails
-ObjPtr_Spiral:		dc.l Obj_Spiral			; $06 ; Rotating cylinder in MTZ, twisting spiral pathway in EHZ
-ObjPtr_Oil:		dc.l Obj_Oil			; $07 ; Oil in OOZ
-ObjPtr_SpindashDust:
-ObjPtr_Splash:		dc.l Obj_Splash			; $08 ; Water splash in Aquatic Ruin Zone, Spindash dust
-ObjPtr_SonicSS:		dc.l Obj_SonicSS		; $09 ; Sonic in Special Stage
-ObjPtr_SmallBubbles:	dc.l Obj_SmallBubbles		; $0A ; Small bubbles from Sonic's face while underwater
-ObjPtr_TippingFloor:	dc.l Obj_TippingFloor		; $0B ; Section of pipe that tips you off from CPZ
-			dc.l Obj0C			; $0C ; Small floating platform (unused)
-ObjPtr_Signpost:	dc.l Obj_Signpost		; $0D ; End of level signpost
-ObjPtr_IntroStars:	dc.l Obj_IntroStars		; $0E ; Flashing stars from intro
-ObjPtr_TitleMenu:	dc.l Obj_TitleMenu		; $0F ; Title screen menu
-ObjPtr_TailsSS:		dc.l Obj_TailsSS		; $10 ; Tails in Special Stage
-ObjPtr_Bridge:		dc.l Obj_Bridge			; $11 ; Bridge in Emerald Hill Zone and Hidden Palace Zone
-ObjPtr_HPZEmerald:	dc.l Obj_HPZEmerald		; $12 ; Emerald from Hidden Palace Zone (unused)
-ObjPtr_HPZWaterfall:	dc.l Obj_HPZWaterfall		; $13 ; Waterfall in Hidden Palace Zone (unused)
-ObjPtr_Seesaw:		dc.l Obj_Seesaw			; $14 ; Seesaw from Hill Top Zone
-ObjPtr_SwingingPlatform:dc.l Obj_SwingingPlatform	; $15 ; Swinging platform from Aquatic Ruin Zone
-ObjPtr_HTZLift:		dc.l Obj_HTZLift		; $16 ; Diagonally moving lift from HTZ
-			dc.l Obj17			; $17 ; GHZ rotating log helix spikes (from Sonic 1, unused)
-ObjPtr_ARZPlatform:
-ObjPtr_EHZPlatform:	dc.l Obj_FloatingPlatform	; $18 ; Stationary floating platform from ARZ and EHZ
-ObjPtr_CPZPlatform:
-ObjPtr_OOZMovingPform:
-ObjPtr_WFZPlatform:	dc.l Obj_FloatingPlatform2	; $19 ; Platform from CPZ, OOZ and WFZ
-ObjPtr_HPZCollapsPform:	dc.l Obj_HPZCollapsingPlatform	; $1A ; Collapsing platform from HPZ (and GHZ)
-ObjPtr_SpeedBooster:	dc.l Obj_SpeedBooster		; $1B ; Speed booster from from CPZ
-ObjPtr_Scenery:
-ObjPtr_BridgeStake:
-ObjPtr_FallingOil:	dc.l Obj_Scenery		; $1C ; Bridge stake in Emerald Hill Zone and Hill Top Zone, falling oil in Oil Ocean Zone
-ObjPtr_BlueBalls:	dc.l Obj_BlueBalls		; $1D ; Blue balls in CPZ (jumping droplets hazard)
-ObjPtr_CPZSpinTube:	dc.l Obj_CPZSpinTube		; $1E ; Spin tube from CPZ
-ObjPtr_CollapsPform:	dc.l Obj_CollapsingPlatform	; $1F ; Collapsing platform from ARZ, MCZ and OOZ (and MZ, SLZ and SBZ)
-ObjPtr_LavaBubble:	dc.l Obj_LavaBubble		; $20 ; Lava bubble from Hill Top Zone (boss weapon)
-ObjPtr_HUD:		dc.l Obj_HUD			; $21 ; Score/Rings/Time display (HUD)
-ObjPtr_ArrowShooter:	dc.l Obj_ArrowShooter		; $22 ; Arrow shooter from ARZ
-ObjPtr_FallingPillar:	dc.l Obj_FallingPillar		; $23 ; Pillar that drops its lower part from ARZ
-ObjPtr_ARZBubbles:	dc.l Obj_ARZBubbles		; $24 ; Bubbles in Aquatic Ruin Zone
-ObjPtr_Ring:		dc.l Obj_Ring			; $25 ; A ring
-ObjPtr_Monitor:		dc.l Obj_Monitor		; $26 ; Monitor
-ObjPtr_Explosion:	dc.l Obj_Explosion		; $27 ; An explosion, giving off an animal and 100 points
-ObjPtr_Animal:		dc.l Obj_Animal			; $28 ; Animal and the 100 points from a badnik
-ObjPtr_Points:		dc.l Obj_Points			; $29 ; "100 points" text
-ObjPtr_Stomper:		dc.l Obj_Stomper		; $2A ; Stomper from MCZ
-ObjPtr_RisingPillar:	dc.l Obj_RisingPillar		; $2B ; Rising pillar from ARZ
-ObjPtr_LeavesGenerator:	dc.l Obj_LeavesGenerator	; $2C ; Sprite that makes leaves fly off when you hit it from ARZ
-ObjPtr_Barrier:		dc.l Obj_Barrier		; $2D ; One way barrier from CPZ and DEZ
-ObjPtr_MonitorContents:	dc.l Obj_MonitorContents	; $2E ; Monitor contents (code for power-up behavior and rising image)
-ObjPtr_SmashableGround:	dc.l Obj_SmashableGround	; $2F ; Smashable ground in Hill Top Zone
-ObjPtr_RisingLava:	dc.l Obj_RisingLava		; $30 ; Large rising lava during earthquake in HTZ
-ObjPtr_LavaMarker:	dc.l Obj_LavaMarker		; $31 ; Lava collision marker
-ObjPtr_BreakableBlock:
-ObjPtr_BreakableRock:	dc.l Obj_BreakableBlock		; $32 ; Breakable block/rock from CPZ and HTZ
-ObjPtr_OOZPoppingPform:	dc.l Obj_OOZPoppingPlatform	; $33 ; Green platform from OOZ
-ObjPtr_TitleCard:	dc.l Obj_TitleCard		; $34 ; level title card (screen with red, yellow, and blue)
-ObjPtr_InvStars:	dc.l Obj_InvincibilityStars	; $35 ; Invincibility Stars
-ObjPtr_Spikes:		dc.l Obj_Spikes			; $36 ; Vertical spikes
-ObjPtr_LostRings:	dc.l Obj_LostRings		; $37 ; Scattering rings (generated when Sonic is hurt and has rings)
-ObjPtr_Shield:		dc.l Obj_Shield			; $38 ; Shield
-ObjPtr_GameOver:
-ObjPtr_TimeOver:	dc.l Obj_GameOver		; $39 ; Game/Time Over text
-ObjPtr_Results:		dc.l Obj_Results		; $3A ; End of level results screen
-			dc.l Obj3B			; $3B ; Purple rock (from Sonic 1, unused)
-			dc.l Obj3C			; $3C ; Breakable wall (leftover from S1) (mostly unused)
-ObjPtr_OOZLauncher:	dc.l Obj_OOZLauncher		; $3D ; Block thingy in OOZ that launches you into the round ball things
-ObjPtr_EggPrison:	dc.l Obj_EggPrison		; $3E ; Egg prison
-ObjPtr_Fan:		dc.l Obj_Fan			; $3F ; Fan from OOZ
-ObjPtr_Springboard:	dc.l Obj_SpringBoard		; $40 ; Pressure spring from CPZ, ARZ, and MCZ (the red "diving board" springboard)
-ObjPtr_Spring:		dc.l Obj_Spring			; $41 ; Spring
-ObjPtr_SteamSpring:	dc.l Obj_SteamSpring		; $42 ; Steam Spring from MTZ
-ObjPtr_SlidingSpike:	dc.l Obj_SlidingSpike		; $43 ; Sliding spike obstacle thing from OOZ
-ObjPtr_RoundBumper:	dc.l Obj_RoundBumper		; $44 ; Round bumper from Casino Night Zone
-ObjPtr_OOZSpring:	dc.l Obj_OOZSpring		; $45 ; Pressure spring from OOZ
-ObjPtr_OOZBall:		dc.l Obj_OOZBall		; $46 ; Ball from OOZ (unused, beta leftover)
-ObjPtr_Button:		dc.l Obj_Button			; $47 ; Button
-ObjPtr_LauncherBall:	dc.l Obj_LauncherBall		; $48 ; Round ball thing from OOZ that fires you off in a different direction
-ObjPtr_EHZWaterfall:	dc.l Obj_EHZWaterfall		; $49 ; Waterfall from EHZ
-ObjPtr_Octus:		dc.l Obj_Octus			; $4A ; Octus (octopus badnik) from OOZ
-ObjPtr_Buzzer:		dc.l Obj_Buzzer			; $4B ; Buzzer (Buzz bomber) from EHZ
-			dc.l ObjNull			; $4C ; Obj4C
-			dc.l ObjNull			; $4D ; Obj4D
-			dc.l ObjNull			; $4E ; Obj4E
-			dc.l ObjNull			; $4F ; Obj4F
-ObjPtr_Aquis:		dc.l Obj_Aquis			; $50 ; Aquis (seahorse badnik) from OOZ
-ObjPtr_CNZBoss:		dc.l Obj_CNZBoss		; $51 ; CNZ boss
-ObjPtr_HTZBoss:		dc.l Obj_HTZBoss		; $52 ; HTZ boss
-ObjPtr_MTZBossOrb:	dc.l Obj_HTZBossOrb		; $53 ; Shield orbs that surround MTZ boss
-ObjPtr_MTZBoss:		dc.l Obj_MTZBoss		; $54 ; MTZ boss
-ObjPtr_OOZBoss:		dc.l Obj_OOZBoss		; $55 ; OOZ boss
-ObjPtr_EHZBoss:		dc.l Obj_EHZBoss		; $56 ; EHZ boss
-ObjPtr_MCZBoss:		dc.l Obj_MCZBoss		; $57 ; MCZ boss
-ObjPtr_BossExplosion:	dc.l Obj_BossExplosion		; $58 ; Boss explosion
-ObjPtr_SSEmerald:	dc.l Obj_SSEmerald		; $59 ; Emerald from Special Stage
-ObjPtr_SSMessage:	dc.l Obj_SSMessage		; $5A ; Messages/checkpoint from Special Stage
-ObjPtr_SSRingSpill:	dc.l Obj_SSRingSpill		; $5B ; Ring spray/spill in Special Stage
-ObjPtr_Masher:		dc.l Obj_Masher			; $5C ; Masher (jumping piranha fish badnik) from EHZ
-ObjPtr_CPZBoss:		dc.l Obj_CPZBoss		; $5D ; CPZ boss
-ObjPtr_SSHUD:		dc.l Obj_SSHUD			; $5E ; HUD from Special Stage
-ObjPtr_StartBanner:
-ObjPtr_EndingController:dc.l Obj_EndingController	; $5F ; Start banner/"Ending controller" from Special Stage
-ObjPtr_SSRing:		dc.l Obj_SSRing			; $60 ; Rings from Special Stage
-ObjPtr_SSBomb:		dc.l Obj_SSBomb			; $61 ; Bombs from Special Stage
-			dc.l ObjNull			; $62 ; Obj62
-ObjPtr_SSShadow:	dc.l Obj_SSShadow		; $63 ; Character shadow from Special Stage
-ObjPtr_MTZTwinStompers:	dc.l Obj_MTZTwinStompers	; $64 ; Twin stompers from MTZ
-ObjPtr_MTZLongPlatform:	dc.l Obj_MTZLongPlatform	; $65 ; Long moving platform from MTZ
-ObjPtr_MTZSpringWall:	dc.l Obj_MTZSpringWall		; $66 ; Yellow spring walls from MTZ
-ObjPtr_MTZSpinTube:	dc.l Obj_MTZSpinTube		; $67 ; Spin tube from MTZ
-ObjPtr_SpikyBlock:	dc.l Obj_SpikyBlock		; $68 ; Block with a spike that comes out of each side sequentially from MTZ
-ObjPtr_Nut:		dc.l Obj_Nut			; $69 ; Nut from MTZ
-ObjPtr_MCZRotPforms:
-ObjPtr_MTZMovingPforms:	dc.l Obj_MTZMovingPlatforms	; $6A ; Platform that moves when you walk off of it, from MTZ
-ObjPtr_MTZPlatform:
-ObjPtr_CPZSquarePform:	dc.l Obj_CPZSquarePlatform	; $6B ; Immobile platform from MTZ
-ObjPtr_Conveyor:	dc.l Obj_Conveyor		; $6C ; Small platform on pulleys (like at the start of MTZ2)
-ObjPtr_FloorSpike:	dc.l Obj_FloorSpike		; $6D ; Floor spike from MTZ
-ObjPtr_LargeRotPform:	dc.l Obj_LargeRotPlatform	; $6E ; Platform moving in a circle (like at the start of MTZ3)
-ObjPtr_SSResults:	dc.l Obj_SSResults		; $6F ; End of special stage results screen
-ObjPtr_Cog:		dc.l Obj_Cog			; $70 ; Giant rotating cog from MTZ
-ObjPtr_MTZLavaBubble:
-ObjPtr_HPZBridgeStake:
-ObjPtr_PulsingOrb:	dc.l Obj_Scenery2		; $71 ; Bridge stake and pulsing orb from Hidden Palace Zone
-ObjPtr_CNZConveyorBelt:	dc.l Obj_CNZConveyorBelt	; $72 ; Conveyor belt from CNZ
-ObjPtr_RotatingRings:	dc.l Obj_RotatingRings		; $73 ; Solid rotating ring thing from Mystic Cave Zone (mostly unused)
-ObjPtr_InvisibleBlock:	dc.l Obj_InvisibleBlock		; $74 ; Invisible solid block
-ObjPtr_MCZBrick:	dc.l Obj_MCZBrick		; $75 ; Brick from MCZ
-ObjPtr_SlidingSpikes:	dc.l Obj_MCZSlidingSpike	; $76 ; Spike block that slides out of the wall from MCZ
-ObjPtr_MCZBridge:	dc.l Obj_MCZBridge		; $77 ; Bridge from MCZ
-ObjPtr_CPZStaircase:	dc.l Obj_CPZStaircase		; $78 ; Stairs from CPZ that move down to open the way
-ObjPtr_Starpost:	dc.l Obj_Starpost		; $79 ; Star pole / starpost / checkpoint
-ObjPtr_SidewaysPform:	dc.l Obj_SidewaysPlatform	; $7A ; Platform that moves back and fourth on top of water in CPZ
-ObjPtr_PipeExitSpring:	dc.l Obj_PipeExitSpring		; $7B ; Warp pipe exit spring from CPZ
-ObjPtr_CPZPylon:	dc.l Obj_CPZPylon		; $7C ; Big pylon in foreground of CPZ
-			dc.l Obj7D			; $7D ; Points that can be gotten at the end of an act (unused leftover from S1)
-ObjPtr_SuperSonicStars:	dc.l Obj_SuperSonicStars	; $7E ; Super Sonic's stars
-ObjPtr_VineSwitch:	dc.l Obj_VineSwitch		; $7F ; Vine switch that you hang off in MCZ
-ObjPtr_MovingVine:	dc.l Obj_MovingVine		; $80 ; Vine that you hang off and it moves down from MCZ
-ObjPtr_MCZDrawbridge:	dc.l Obj_MCZDrawbridge		; $81 ; Long invisible vertical barrier
-ObjPtr_SwingingPform:	dc.l Obj_SwingingPlatforms	; $82 ; Platform that is usually swinging, from ARZ
-ObjPtr_ARZRotPforms:	dc.l Obj_ARZRotPlatforms	; $83 ; 3 adjoined platforms from ARZ that rotate in a circle
-ObjPtr_ForcedSpin:
-ObjPtr_PinballMode:	dc.l Obj_PinballMode		; $84 ; Pinball mode enable/disable (CNZ)
-ObjPtr_LauncherSpring:	dc.l Obj_LauncherSpring		; $85 ; Spring from CNZ that you hold jump on to pull back further
-ObjPtr_Flipper:		dc.l Obj_Flipper		; $86 ; Flipper from CNZ
-ObjPtr_SSNumberOfRings:	dc.l Obj_SSNumberOfRings	; $87 ; Number of rings in Special Stage
-ObjPtr_SSTailsTails:	dc.l Obj_SSTailsTails		; $88 ; Tails' tails in Special Stage
-ObjPtr_ARZBoss:		dc.l Obj_ARZBoss		; $89 ; ARZ boss
-			dc.l Obj8A			; $8A ; Sonic Team Presents/Credits (seemingly unused leftover from S1)
-ObjPtr_WFZPalSwitcher:	dc.l Obj_WFZPalSwitcher		; $8B ; Cycling palette switcher from Wing Fortress Zone
-ObjPtr_Whisp:		dc.l Obj_Whisp			; $8C ; Whisp (blowfly badnik) from ARZ
-ObjPtr_GrounderInWall:	dc.l Obj_GrounderInWall		; $8D ; Grounder in wall, from ARZ
-ObjPtr_GrounderInWall2:	dc.l Obj_GrounderInWall		; $8E ; Obj8E = Obj_GrounderInWall
-ObjPtr_GrounderWall:	dc.l Obj_GrounderWall		; $8F ; Wall behind which Grounder hides, from ARZ
-ObjPtr_GrounderRocks:	dc.l Obj_GrounderRocks		; $90 ; Rocks thrown by Grounder behind wall, from ARZ
-ObjPtr_ChopChop:	dc.l Obj_ChopChop		; $91 ; Chop Chop (piranha/shark badnik) from ARZ
-ObjPtr_Spiker:		dc.l Obj_Spiker			; $92 ; Spiker (drill badnik) from HTZ
-ObjPtr_SpikerDrill:	dc.l Obj_SpikerDrill		; $93 ; Drill thrown by Spiker from HTZ
-ObjPtr_Rexon:		dc.l Obj_Rexon			; $94 ; Rexon (lava snake badnik), from HTZ
-ObjPtr_Sol:		dc.l Obj_Sol			; $95 ; Sol (fireball-throwing orbit badnik) from HTZ
-ObjPtr_Rexon2:		dc.l Obj_Rexon			; $96 ; Obj96 = Obj_Rexon
-ObjPtr_RexonHead:	dc.l Obj_RexonHead		; $97 ; Rexon's head, from HTZ
-ObjPtr_Projectile:	dc.l Obj_Projectile		; $98 ; Projectile with optional gravity (EHZ coconut, CPZ spiny, etc.)
-ObjPtr_Nebula:		dc.l Obj_Nebula			; $99 ; Nebula (bomber badnik) from SCZ
-ObjPtr_Turtloid:	dc.l Obj_TurtLoid		; $9A ; Turtloid (turtle badnik) from Sky Chase Zone
-ObjPtr_TurtloidRider:	dc.l Obj_TurtLoidRider		; $9B ; Turtloid rider from Sky Chase Zone
-ObjPtr_BalkiryJet:	dc.l Obj_BalkiryJet		; $9C ; Balkiry's jet from Sky Chase Zone
-ObjPtr_Coconuts:	dc.l Obj_Coconuts		; $9D ; Coconuts (monkey badnik) from EHZ
-ObjPtr_Crawlton:	dc.l Obj_CrawlTon		; $9E ; Crawlton (snake badnik) from MCZ
-ObjPtr_Shellcracker:	dc.l Obj_Skullcracker		; $9F ; Shellcraker (crab badnik) from MTZ
-ObjPtr_ShellcrackerClaw:dc.l Obj_SkullcrackerClaw	; $A0 ; Shellcracker's claw from MTZ
-ObjPtr_Slicer:		dc.l Obj_Slicer			; $A1 ; Slicer (praying mantis dude) from MTZ
-ObjPtr_SlicerPincers:	dc.l Obj_SlicerPinchers		; $A2 ; Slicer's pincers from MTZ
-ObjPtr_Flasher:		dc.l Obj_Flasher		; $A3 ; Flasher (firefly/glowbug badnik) from MCZ
-ObjPtr_Asteron:		dc.l Obj_Asteron		; $A4 ; Asteron (exploding starfish badnik) from MTZ
-ObjPtr_Spiny:		dc.l Obj_Spiny			; $A5 ; Spiny (crawling badnik) from CPZ
-ObjPtr_SpinyOnWall:	dc.l Obj_SpinyOnWall		; $A6 ; Spiny (on wall) from CPZ
-ObjPtr_Grabber:		dc.l Obj_Grabber		; $A7 ; Grabber (spider badnik) from CPZ
-ObjPtr_GrabberLegs:	dc.l Obj_GrabberLegs		; $A8 ; Grabber's legs from CPZ
-ObjPtr_GrabberBox:	dc.l Obj_GrabberBox		; $A9 ; The little hanger box thing a Grabber's string comes out of
-ObjPtr_GrabberString:	dc.l Obj_GrabberString		; $AA ; The thin white string a Grabber hangs from
-			dc.l ObjAB			; $AB ; Unknown (maybe unused?)
-ObjPtr_Balkiry:		dc.l Obj_Balkiry		; $AC ; Balkiry (jet badnik) from SCZ
-ObjPtr_CluckerBase:	dc.l Obj_CluckerBase		; $AD ; Clucker's base from WFZ
-ObjPtr_Clucker:		dc.l Obj_Clucker		; $AE ; Clucker (chicken badnik) from WFZ
-ObjPtr_MechaSonic:	dc.l Obj_MechaSonic		; $AF ; Mecha Sonic / Silver Sonic from DEZ
-ObjPtr_SonicOnSegaScr:	dc.l Obj_SonicOnSegaScreen	; $B0 ; Sonic on the Sega screen
-ObjPtr_SegaHideTM:	dc.l Obj_SegaHideTM		; $B1 ; Object that hides TM symbol on JP region
-ObjPtr_Tornado:		dc.l Obj_Tornado		; $B2 ; The Tornado (Tails' plane)
-ObjPtr_Cloud:		dc.l Obj_Cloud			; $B3 ; Clouds (placeable object) from SCZ
-ObjPtr_VPropeller:	dc.l Obj_VPropeller		; $B4 ; Vertical propeller from WFZ
-ObjPtr_HPropeller:	dc.l Obj_HPropeller		; $B5 ; Horizontal propeller from WFZ
-ObjPtr_TiltingPlatform:	dc.l Obj_TiltingPlatform	; $B6 ; Tilting platform from WFZ
-ObjPtr_VerticalLaser:	dc.l Obj_VerticalLaser		; $B7 ; Unused huge vertical laser from WFZ
-ObjPtr_WallTurret:	dc.l Obj_WallTurret		; $B8 ; Wall turret from WFZ
-ObjPtr_Laser:		dc.l Obj_Laser			; $B9 ; Laser from WFZ that shoots down the Tornado
-ObjPtr_WFZWheel:	dc.l Obj_WFZWheel		; $BA ; Wheel from WFZ
-			dc.l ObjBB			; $BB ; Unknown
-ObjPtr_WFZShipFire:	dc.l Obj_WFZShipFire		; $BC ; Fire coming out of Robotnik's ship in WFZ
-ObjPtr_SmallMetalPform:	dc.l Obj_SmallMetalPlatform	; $BD ; Ascending/descending metal platforms from WFZ
-ObjPtr_LateralCannon:	dc.l Obj_LateralCannon		; $BE ; Lateral cannon (temporary platform that pops in/out) from WFZ
-ObjPtr_WFZStick:	dc.l Obj_WFZStick		; $BF ; Rotaty-stick badnik from WFZ
-ObjPtr_SpeedLauncher:	dc.l Obj_SpeedLauncher		; $C0 ; Speed launcher from WFZ
-ObjPtr_BreakablePlating:dc.l Obj_BreakablePlating	; $C1 ; Breakable plating from WFZ / what sonic hangs onto on the back of Robotnic's getaway ship
-ObjPtr_Rivet:		dc.l Obj_Rivet			; $C2 ; Rivet thing you bust to get into ship at the end of WFZ
-ObjPtr_TornadoSmoke:	dc.l Obj_TornadoSmoke		; $C3 ; Plane's smoke from WFZ
-ObjPtr_TornadoSmoke2:	dc.l Obj_TornadoSmoke 		; $C4 ; ObjC4 = Obj_TornadoSmoke
-ObjPtr_WFZBoss:		dc.l Obj_WFZBoss		; $C5 ; WFZ boss
-ObjPtr_Eggman:		dc.l Obj_Eggman			; $C6 ; Eggman
-ObjPtr_Eggrobo:		dc.l Obj_Eggrobo		; $C7 ; Eggrobo (final boss) from Death Egg
-ObjPtr_Crawl:		dc.l Obj_Crawl			; $C8 ; Crawl (shield badnik) from CNZ
-ObjPtr_TtlScrPalChanger:dc.l Obj_TitleScreenPalChanger	; $C9 ; "Palette changing handler" from title screen
-ObjPtr_CutScene:	dc.l Obj_CutScene		; $CA ; Cut scene at end of game
-ObjPtr_EndingSeqClouds:	dc.l Obj_EndingClouds		; $CB ; Background clouds from ending sequence
-ObjPtr_EndingSeqTrigger:dc.l Obj_EndingTrigger		; $CC ; Trigger for rescue plane and birds from ending sequence
-ObjPtr_EndingSeqBird:	dc.l Obj_EndingBird		; $CD ; Birds from ending sequence
-ObjPtr_EndingSeqSonic:
-ObjPtr_EndingSeqTails:	dc.l Obj_EndingPlyer		; $CE ; Sonic and Tails jumping off the plane from ending sequence
-ObjPtr_TornadoHelixes:	dc.l Obj_TordanoHelixes		; $CF ;"Plane's helixes" from ending sequence
-			dc.l ObjNull			; $D0 ; ObjD0
-			dc.l ObjNull			; $D1 ; ObjD1
-ObjPtr_CNZRectBlocks:	dc.l Obj_CNZRectangularBlocks	; $D2 ; Flashing blocks that appear and disappear in a rectangular shape that you can walk across, from CNZ
-ObjPtr_BombPrize:	dc.l Obj_BombPrize		; $D3 ; Bomb prize from CNZ
-ObjPtr_CNZBigBlock:	dc.l Obj_CNZBigBlock		; $D4 ; Big block from CNZ that moves back and fourth
-ObjPtr_Elevator:	dc.l Obj_Elevator		; $D5 ; Elevator from CNZ
-ObjPtr_PointPokey:	dc.l Obj_PointPokey		; $D6 ; Pokey that gives out points from CNZ
-ObjPtr_Bumper:		dc.l Obj_Bumper			; $D7 ; Bumper from Casino Night Zone
-ObjPtr_BonusBlock:	dc.l Obj_BonusBlock		; $D8 ; Block thingy from CNZ that disappears after 3 hits
-ObjPtr_Grab:		dc.l Obj_Grab			; $D9 ; Invisible sprite that you can hang on to, like the blocks in WFZ
-ObjPtr_ContinueText:
-ObjPtr_ContinueIcons:	dc.l Obj_ContinueText		; $DA ; Continue text
-ObjPtr_ContinueChars:	dc.l Obj_ContinueChars		; $DB ; Sonic lying down or Tails nagging (continue screen)
-ObjPtr_RingPrize:	dc.l Obj_RingPrize		; $DC ; Ring prize from Casino Night Zone
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 4C, 4D, 4E, 4F, 62, D0, and D1
@@ -27696,19 +27450,8 @@ BuildSprites_LevelLoop:
 ; loc_16630:
 BuildSprites_ObjLoop:
 	movea.w	(a4,d6.w),a0 ; a0=object
-
-    if gameRevision=0
-	; the additional check prevents a crash triggered by placing an object in debug mode while dead
-	; unfortunately, the code it branches *to* causes a crash of its own
-	tst.b	id(a0)			; is this object slot occupied?
-	beq.w	BuildSprites_Unknown	; if not, branch
-	tst.l	mappings(a0)		; does this object have any mappings?
-	beq.w	BuildSprites_Unknown	; if not, branch
-    else
-	; REV01 uses a better branch, but removed the useful check
-	tst.b	id(a0)			; is this object slot occupied?
+	tst.l	id(a0)			; is this object slot occupied?
 	beq.w	BuildSprites_NextObj	; if not, check next one
-    endif
 
 	andi.b	#$7F,render_flags(a0)	; clear on-screen flag
 	move.b	render_flags(a0),d0
@@ -28104,7 +27847,7 @@ BuildSprites_P1_LevelLoop:
 ; loc_1698C:
 BuildSprites_P1_ObjLoop:
 	movea.w	(a4,d6.w),a0 ; a0=object
-	tst.b	id(a0)
+	tst.l	id(a0)
 	beq.w	BuildSprites_P1_NextObj
 	andi.b	#$7F,render_flags(a0)
 	move.b	render_flags(a0),d0
@@ -28218,7 +27961,7 @@ BuildSprites_P2_LevelLoop:
 ; loc_16AA6:
 BuildSprites_P2_ObjLoop:
 	movea.w	(a4,d6.w),a0 ; a0=object
-	tst.b	id(a0)
+	tst.l	id(a0)
 	beq.w	BuildSprites_P2_NextObj
 	move.b	render_flags(a0),d0
 	move.b	d0,d4
@@ -30388,7 +30131,12 @@ ChkLoadObj:
 	andi.b	#3,d1		; get render flags
 	move.b	d1,render_flags(a1)
 	move.b	d1,status(a1)
-	_move.b	(a0)+,id(a1)	; load obj
+
+	moveq	#0,d0
+	_move.b	(a0)+,d0	; load obj
+	add.w	d0,d0
+	add.w	d0,d0			; d0 = object ID * 4
+	move.l	Obj_Index-4(pc,d0.w),id(a1); load the address of the object's code
 	move.b	(a0)+,subtype(a1)
 	moveq	#0,d0
 
@@ -30436,12 +30184,261 @@ ChkLoadObj_2P_LoadData:
 	andi.b	#3,d1	; get render flags
 	move.b	d1,render_flags(a1)
 	move.b	d1,status(a1)
-	_move.b	(a0)+,id(a1) ; load obj
+
+	moveq	#0,d0
+	_move.b	(a0)+,d0		; load obj
+	add.w	d0,d0
+	add.w	d0,d0			; d0 = object ID * 4
+	move.l	Obj_Index-4(pc,d0.w),id(a1); load the address of the object's code
 	move.b	(a0)+,subtype(a1)
 	moveq	#0,d0
 
 return_17FD8:
 	rts
+
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; OBJECT POINTER ARRAY ; object pointers ; sprite pointers ; object list ; sprite list
+;
+; This array contains the pointers to all the objects used in the game.
+; ---------------------------------------------------------------------------
+Obj_Index: ; ObjPtrs: ; loc_1600C:
+ObjPtr_Sonic:		dc.l Obj_Sonic			; $01 ; Sonic
+ObjPtr_Tails:		dc.l Obj_Tails			; $02 ; Tails
+ObjPtr_PlaneSwitcher:	dc.l Obj_PlaneSwitcher		; $03 ; Collision plane/layer switcher
+ObjPtr_WaterSurface:	dc.l Obj_WaterSurface		; $04 ; Surface of the water
+ObjPtr_TailsTails:	dc.l Obj_TailsTails		; $05 ; Tails' tails
+ObjPtr_Spiral:		dc.l Obj_Spiral			; $06 ; Rotating cylinder in MTZ, twisting spiral pathway in EHZ
+ObjPtr_Oil:		dc.l Obj_Oil			; $07 ; Oil in OOZ
+ObjPtr_SpindashDust:
+ObjPtr_Splash:		dc.l Obj_Splash			; $08 ; Water splash in Aquatic Ruin Zone, Spindash dust
+ObjPtr_SonicSS:		dc.l Obj_SonicSS		; $09 ; Sonic in Special Stage
+ObjPtr_SmallBubbles:	dc.l Obj_SmallBubbles		; $0A ; Small bubbles from Sonic's face while underwater
+ObjPtr_TippingFloor:	dc.l Obj_TippingFloor		; $0B ; Section of pipe that tips you off from CPZ
+			dc.l Obj0C			; $0C ; Small floating platform (unused)
+ObjPtr_Signpost:	dc.l Obj_Signpost		; $0D ; End of level signpost
+ObjPtr_IntroStars:	dc.l Obj_IntroStars		; $0E ; Flashing stars from intro
+ObjPtr_TitleMenu:	dc.l Obj_TitleMenu		; $0F ; Title screen menu
+ObjPtr_TailsSS:		dc.l Obj_TailsSS		; $10 ; Tails in Special Stage
+ObjPtr_Bridge:		dc.l Obj_Bridge			; $11 ; Bridge in Emerald Hill Zone and Hidden Palace Zone
+ObjPtr_HPZEmerald:	dc.l Obj_HPZEmerald		; $12 ; Emerald from Hidden Palace Zone (unused)
+ObjPtr_HPZWaterfall:	dc.l Obj_HPZWaterfall		; $13 ; Waterfall in Hidden Palace Zone (unused)
+ObjPtr_Seesaw:		dc.l Obj_Seesaw			; $14 ; Seesaw from Hill Top Zone
+ObjPtr_SwingingPlatform:dc.l Obj_SwingingPlatform	; $15 ; Swinging platform from Aquatic Ruin Zone
+ObjPtr_HTZLift:		dc.l Obj_HTZLift		; $16 ; Diagonally moving lift from HTZ
+			dc.l Obj17			; $17 ; GHZ rotating log helix spikes (from Sonic 1, unused)
+ObjPtr_ARZPlatform:
+ObjPtr_EHZPlatform:	dc.l Obj_FloatingPlatform	; $18 ; Stationary floating platform from ARZ and EHZ
+ObjPtr_CPZPlatform:
+ObjPtr_OOZMovingPform:
+ObjPtr_WFZPlatform:	dc.l Obj_FloatingPlatform2	; $19 ; Platform from CPZ, OOZ and WFZ
+ObjPtr_HPZCollapsPform:	dc.l Obj_HPZCollapsingPlatform	; $1A ; Collapsing platform from HPZ (and GHZ)
+ObjPtr_SpeedBooster:	dc.l Obj_SpeedBooster		; $1B ; Speed booster from from CPZ
+ObjPtr_Scenery:
+ObjPtr_BridgeStake:
+ObjPtr_FallingOil:	dc.l Obj_Scenery		; $1C ; Bridge stake in Emerald Hill Zone and Hill Top Zone, falling oil in Oil Ocean Zone
+ObjPtr_BlueBalls:	dc.l Obj_BlueBalls		; $1D ; Blue balls in CPZ (jumping droplets hazard)
+ObjPtr_CPZSpinTube:	dc.l Obj_CPZSpinTube		; $1E ; Spin tube from CPZ
+ObjPtr_CollapsPform:	dc.l Obj_CollapsingPlatform	; $1F ; Collapsing platform from ARZ, MCZ and OOZ (and MZ, SLZ and SBZ)
+ObjPtr_LavaBubble:	dc.l Obj_LavaBubble		; $20 ; Lava bubble from Hill Top Zone (boss weapon)
+ObjPtr_HUD:		dc.l Obj_HUD			; $21 ; Score/Rings/Time display (HUD)
+ObjPtr_ArrowShooter:	dc.l Obj_ArrowShooter		; $22 ; Arrow shooter from ARZ
+ObjPtr_FallingPillar:	dc.l Obj_FallingPillar		; $23 ; Pillar that drops its lower part from ARZ
+ObjPtr_ARZBubbles:	dc.l Obj_ARZBubbles		; $24 ; Bubbles in Aquatic Ruin Zone
+ObjPtr_Ring:		dc.l Obj_Ring			; $25 ; A ring
+ObjPtr_Monitor:		dc.l Obj_Monitor		; $26 ; Monitor
+ObjPtr_Explosion:	dc.l Obj_Explosion		; $27 ; An explosion, giving off an animal and 100 points
+ObjPtr_Animal:		dc.l Obj_Animal			; $28 ; Animal and the 100 points from a badnik
+ObjPtr_Points:		dc.l Obj_Points			; $29 ; "100 points" text
+ObjPtr_Stomper:		dc.l Obj_Stomper		; $2A ; Stomper from MCZ
+ObjPtr_RisingPillar:	dc.l Obj_RisingPillar		; $2B ; Rising pillar from ARZ
+ObjPtr_LeavesGenerator:	dc.l Obj_LeavesGenerator	; $2C ; Sprite that makes leaves fly off when you hit it from ARZ
+ObjPtr_Barrier:		dc.l Obj_Barrier		; $2D ; One way barrier from CPZ and DEZ
+ObjPtr_MonitorContents:	dc.l Obj_MonitorContents	; $2E ; Monitor contents (code for power-up behavior and rising image)
+ObjPtr_SmashableGround:	dc.l Obj_SmashableGround	; $2F ; Smashable ground in Hill Top Zone
+ObjPtr_RisingLava:	dc.l Obj_RisingLava		; $30 ; Large rising lava during earthquake in HTZ
+ObjPtr_LavaMarker:	dc.l Obj_LavaMarker		; $31 ; Lava collision marker
+ObjPtr_BreakableBlock:
+ObjPtr_BreakableRock:	dc.l Obj_BreakableBlock		; $32 ; Breakable block/rock from CPZ and HTZ
+ObjPtr_OOZPoppingPform:	dc.l Obj_OOZPoppingPlatform	; $33 ; Green platform from OOZ
+ObjPtr_TitleCard:	dc.l Obj_TitleCard		; $34 ; level title card (screen with red, yellow, and blue)
+ObjPtr_InvStars:	dc.l Obj_InvincibilityStars	; $35 ; Invincibility Stars
+ObjPtr_Spikes:		dc.l Obj_Spikes			; $36 ; Vertical spikes
+ObjPtr_LostRings:	dc.l Obj_LostRings		; $37 ; Scattering rings (generated when Sonic is hurt and has rings)
+ObjPtr_Shield:		dc.l Obj_Shield			; $38 ; Shield
+ObjPtr_GameOver:
+ObjPtr_TimeOver:	dc.l Obj_GameOver		; $39 ; Game/Time Over text
+ObjPtr_Results:		dc.l Obj_Results		; $3A ; End of level results screen
+			dc.l Obj3B			; $3B ; Purple rock (from Sonic 1, unused)
+			dc.l Obj3C			; $3C ; Breakable wall (leftover from S1) (mostly unused)
+ObjPtr_OOZLauncher:	dc.l Obj_OOZLauncher		; $3D ; Block thingy in OOZ that launches you into the round ball things
+ObjPtr_EggPrison:	dc.l Obj_EggPrison		; $3E ; Egg prison
+ObjPtr_Fan:		dc.l Obj_Fan			; $3F ; Fan from OOZ
+ObjPtr_Springboard:	dc.l Obj_SpringBoard		; $40 ; Pressure spring from CPZ, ARZ, and MCZ (the red "diving board" springboard)
+ObjPtr_Spring:		dc.l Obj_Spring			; $41 ; Spring
+ObjPtr_SteamSpring:	dc.l Obj_SteamSpring		; $42 ; Steam Spring from MTZ
+ObjPtr_SlidingSpike:	dc.l Obj_SlidingSpike		; $43 ; Sliding spike obstacle thing from OOZ
+ObjPtr_RoundBumper:	dc.l Obj_RoundBumper		; $44 ; Round bumper from Casino Night Zone
+ObjPtr_OOZSpring:	dc.l Obj_OOZSpring		; $45 ; Pressure spring from OOZ
+ObjPtr_OOZBall:		dc.l Obj_OOZBall		; $46 ; Ball from OOZ (unused, beta leftover)
+ObjPtr_Button:		dc.l Obj_Button			; $47 ; Button
+ObjPtr_LauncherBall:	dc.l Obj_LauncherBall		; $48 ; Round ball thing from OOZ that fires you off in a different direction
+ObjPtr_EHZWaterfall:	dc.l Obj_EHZWaterfall		; $49 ; Waterfall from EHZ
+ObjPtr_Octus:		dc.l Obj_Octus			; $4A ; Octus (octopus badnik) from OOZ
+ObjPtr_Buzzer:		dc.l Obj_Buzzer			; $4B ; Buzzer (Buzz bomber) from EHZ
+			dc.l ObjNull			; $4C ; Obj4C
+			dc.l ObjNull			; $4D ; Obj4D
+			dc.l ObjNull			; $4E ; Obj4E
+			dc.l ObjNull			; $4F ; Obj4F
+ObjPtr_Aquis:		dc.l Obj_Aquis			; $50 ; Aquis (seahorse badnik) from OOZ
+ObjPtr_CNZBoss:		dc.l Obj_CNZBoss		; $51 ; CNZ boss
+ObjPtr_HTZBoss:		dc.l Obj_HTZBoss		; $52 ; HTZ boss
+ObjPtr_MTZBossOrb:	dc.l Obj_MTZBossOrb		; $53 ; Shield orbs that surround MTZ boss
+ObjPtr_MTZBoss:		dc.l Obj_MTZBoss		; $54 ; MTZ boss
+ObjPtr_OOZBoss:		dc.l Obj_OOZBoss		; $55 ; OOZ boss
+ObjPtr_EHZBoss:		dc.l Obj_EHZBoss		; $56 ; EHZ boss
+ObjPtr_MCZBoss:		dc.l Obj_MCZBoss		; $57 ; MCZ boss
+ObjPtr_BossExplosion:	dc.l Obj_BossExplosion		; $58 ; Boss explosion
+ObjPtr_SSEmerald:	dc.l Obj_SSEmerald		; $59 ; Emerald from Special Stage
+ObjPtr_SSMessage:	dc.l Obj_SSMessage		; $5A ; Messages/checkpoint from Special Stage
+ObjPtr_SSRingSpill:	dc.l Obj_SSRingSpill		; $5B ; Ring spray/spill in Special Stage
+ObjPtr_Masher:		dc.l Obj_Masher			; $5C ; Masher (jumping piranha fish badnik) from EHZ
+ObjPtr_CPZBoss:		dc.l Obj_CPZBoss		; $5D ; CPZ boss
+ObjPtr_SSHUD:		dc.l Obj_SSHUD			; $5E ; HUD from Special Stage
+ObjPtr_StartBanner:
+ObjPtr_EndingController:dc.l Obj_EndingController	; $5F ; Start banner/"Ending controller" from Special Stage
+ObjPtr_SSRing:		dc.l Obj_SSRing			; $60 ; Rings from Special Stage
+ObjPtr_SSBomb:		dc.l Obj_SSBomb			; $61 ; Bombs from Special Stage
+			dc.l ObjNull			; $62 ; Obj62
+ObjPtr_SSShadow:	dc.l Obj_SSShadow		; $63 ; Character shadow from Special Stage
+ObjPtr_MTZTwinStompers:	dc.l Obj_MTZTwinStompers	; $64 ; Twin stompers from MTZ
+ObjPtr_MTZLongPlatform:	dc.l Obj_MTZLongPlatform	; $65 ; Long moving platform from MTZ
+ObjPtr_MTZSpringWall:	dc.l Obj_MTZSpringWall		; $66 ; Yellow spring walls from MTZ
+ObjPtr_MTZSpinTube:	dc.l Obj_MTZSpinTube		; $67 ; Spin tube from MTZ
+ObjPtr_SpikyBlock:	dc.l Obj_SpikyBlock		; $68 ; Block with a spike that comes out of each side sequentially from MTZ
+ObjPtr_Nut:		dc.l Obj_Nut			; $69 ; Nut from MTZ
+ObjPtr_MCZRotPforms:
+ObjPtr_MTZMovingPforms:	dc.l Obj_MTZMovingPlatforms	; $6A ; Platform that moves when you walk off of it, from MTZ
+ObjPtr_MTZPlatform:
+ObjPtr_CPZSquarePform:	dc.l Obj_CPZSquarePlatform	; $6B ; Immobile platform from MTZ
+ObjPtr_Conveyor:	dc.l Obj_Conveyor		; $6C ; Small platform on pulleys (like at the start of MTZ2)
+ObjPtr_FloorSpike:	dc.l Obj_FloorSpike		; $6D ; Floor spike from MTZ
+ObjPtr_LargeRotPform:	dc.l Obj_LargeRotPlatform	; $6E ; Platform moving in a circle (like at the start of MTZ3)
+ObjPtr_SSResults:	dc.l Obj_SSResults		; $6F ; End of special stage results screen
+ObjPtr_Cog:		dc.l Obj_Cog			; $70 ; Giant rotating cog from MTZ
+ObjPtr_MTZLavaBubble:
+ObjPtr_HPZBridgeStake:
+ObjPtr_PulsingOrb:	dc.l Obj_Scenery2		; $71 ; Bridge stake and pulsing orb from Hidden Palace Zone
+ObjPtr_CNZConveyorBelt:	dc.l Obj_CNZConveyorBelt	; $72 ; Conveyor belt from CNZ
+ObjPtr_RotatingRings:	dc.l Obj_RotatingRings		; $73 ; Solid rotating ring thing from Mystic Cave Zone (mostly unused)
+ObjPtr_InvisibleBlock:	dc.l Obj_InvisibleBlock		; $74 ; Invisible solid block
+ObjPtr_MCZBrick:	dc.l Obj_MCZBrick		; $75 ; Brick from MCZ
+ObjPtr_SlidingSpikes:	dc.l Obj_MCZSlidingSpike	; $76 ; Spike block that slides out of the wall from MCZ
+ObjPtr_MCZBridge:	dc.l Obj_MCZBridge		; $77 ; Bridge from MCZ
+ObjPtr_CPZStaircase:	dc.l Obj_CPZStaircase		; $78 ; Stairs from CPZ that move down to open the way
+ObjPtr_Starpost:	dc.l Obj_Starpost		; $79 ; Star pole / starpost / checkpoint
+ObjPtr_SidewaysPform:	dc.l Obj_SidewaysPlatform	; $7A ; Platform that moves back and fourth on top of water in CPZ
+ObjPtr_PipeExitSpring:	dc.l Obj_PipeExitSpring		; $7B ; Warp pipe exit spring from CPZ
+ObjPtr_CPZPylon:	dc.l Obj_CPZPylon		; $7C ; Big pylon in foreground of CPZ
+			dc.l Obj7D			; $7D ; Points that can be gotten at the end of an act (unused leftover from S1)
+ObjPtr_SuperSonicStars:	dc.l Obj_SuperSonicStars	; $7E ; Super Sonic's stars
+ObjPtr_VineSwitch:	dc.l Obj_VineSwitch		; $7F ; Vine switch that you hang off in MCZ
+ObjPtr_MovingVine:	dc.l Obj_MovingVine		; $80 ; Vine that you hang off and it moves down from MCZ
+ObjPtr_MCZDrawbridge:	dc.l Obj_MCZDrawbridge		; $81 ; Long invisible vertical barrier
+ObjPtr_SwingingPform:	dc.l Obj_SwingingPlatforms	; $82 ; Platform that is usually swinging, from ARZ
+ObjPtr_ARZRotPforms:	dc.l Obj_ARZRotPlatforms	; $83 ; 3 adjoined platforms from ARZ that rotate in a circle
+ObjPtr_ForcedSpin:
+ObjPtr_PinballMode:	dc.l Obj_PinballMode		; $84 ; Pinball mode enable/disable (CNZ)
+ObjPtr_LauncherSpring:	dc.l Obj_LauncherSpring		; $85 ; Spring from CNZ that you hold jump on to pull back further
+ObjPtr_Flipper:		dc.l Obj_Flipper		; $86 ; Flipper from CNZ
+ObjPtr_SSNumberOfRings:	dc.l Obj_SSNumberOfRings	; $87 ; Number of rings in Special Stage
+ObjPtr_SSTailsTails:	dc.l Obj_SSTailsTails		; $88 ; Tails' tails in Special Stage
+ObjPtr_ARZBoss:		dc.l Obj_ARZBoss		; $89 ; ARZ boss
+			dc.l Obj8A			; $8A ; Sonic Team Presents/Credits (seemingly unused leftover from S1)
+ObjPtr_WFZPalSwitcher:	dc.l Obj_WFZPalSwitcher		; $8B ; Cycling palette switcher from Wing Fortress Zone
+ObjPtr_Whisp:		dc.l Obj_Whisp			; $8C ; Whisp (blowfly badnik) from ARZ
+ObjPtr_GrounderInWall:	dc.l Obj_GrounderInWall		; $8D ; Grounder in wall, from ARZ
+ObjPtr_GrounderInWall2:	dc.l Obj_GrounderInWall		; $8E ; Obj8E = Obj_GrounderInWall
+ObjPtr_GrounderWall:	dc.l Obj_GrounderWall		; $8F ; Wall behind which Grounder hides, from ARZ
+ObjPtr_GrounderRocks:	dc.l Obj_GrounderRocks		; $90 ; Rocks thrown by Grounder behind wall, from ARZ
+ObjPtr_ChopChop:	dc.l Obj_ChopChop		; $91 ; Chop Chop (piranha/shark badnik) from ARZ
+ObjPtr_Spiker:		dc.l Obj_Spiker			; $92 ; Spiker (drill badnik) from HTZ
+ObjPtr_SpikerDrill:	dc.l Obj_SpikerDrill		; $93 ; Drill thrown by Spiker from HTZ
+ObjPtr_Rexon:		dc.l Obj_Rexon			; $94 ; Rexon (lava snake badnik), from HTZ
+ObjPtr_Sol:		dc.l Obj_Sol			; $95 ; Sol (fireball-throwing orbit badnik) from HTZ
+ObjPtr_Rexon2:		dc.l Obj_Rexon			; $96 ; Obj96 = Obj_Rexon
+ObjPtr_RexonHead:	dc.l Obj_RexonHead		; $97 ; Rexon's head, from HTZ
+ObjPtr_Projectile:	dc.l Obj_Projectile		; $98 ; Projectile with optional gravity (EHZ coconut, CPZ spiny, etc.)
+ObjPtr_Nebula:		dc.l Obj_Nebula			; $99 ; Nebula (bomber badnik) from SCZ
+ObjPtr_Turtloid:	dc.l Obj_TurtLoid		; $9A ; Turtloid (turtle badnik) from Sky Chase Zone
+ObjPtr_TurtloidRider:	dc.l Obj_TurtLoidRider		; $9B ; Turtloid rider from Sky Chase Zone
+ObjPtr_BalkiryJet:	dc.l Obj_BalkiryJet		; $9C ; Balkiry's jet from Sky Chase Zone
+ObjPtr_Coconuts:	dc.l Obj_Coconuts		; $9D ; Coconuts (monkey badnik) from EHZ
+ObjPtr_Crawlton:	dc.l Obj_CrawlTon		; $9E ; Crawlton (snake badnik) from MCZ
+ObjPtr_Shellcracker:	dc.l Obj_Shellcracker		; $9F ; Shellcraker (crab badnik) from MTZ
+ObjPtr_ShellcrackerClaw:dc.l Obj_ShellcrackerClaw	; $A0 ; Shellcracker's claw from MTZ
+ObjPtr_Slicer:		dc.l Obj_Slicer			; $A1 ; Slicer (praying mantis dude) from MTZ
+ObjPtr_SlicerPincers:	dc.l Obj_SlicerPincers		; $A2 ; Slicer's pincers from MTZ
+ObjPtr_Flasher:		dc.l Obj_Flasher		; $A3 ; Flasher (firefly/glowbug badnik) from MCZ
+ObjPtr_Asteron:		dc.l Obj_Asteron		; $A4 ; Asteron (exploding starfish badnik) from MTZ
+ObjPtr_Spiny:		dc.l Obj_Spiny			; $A5 ; Spiny (crawling badnik) from CPZ
+ObjPtr_SpinyOnWall:	dc.l Obj_SpinyOnWall		; $A6 ; Spiny (on wall) from CPZ
+ObjPtr_Grabber:		dc.l Obj_Grabber		; $A7 ; Grabber (spider badnik) from CPZ
+ObjPtr_GrabberLegs:	dc.l Obj_GrabberLegs		; $A8 ; Grabber's legs from CPZ
+ObjPtr_GrabberBox:	dc.l Obj_GrabberBox		; $A9 ; The little hanger box thing a Grabber's string comes out of
+ObjPtr_GrabberString:	dc.l Obj_GrabberString		; $AA ; The thin white string a Grabber hangs from
+			dc.l ObjAB			; $AB ; Unknown (maybe unused?)
+ObjPtr_Balkiry:		dc.l Obj_Balkiry		; $AC ; Balkiry (jet badnik) from SCZ
+ObjPtr_CluckerBase:	dc.l Obj_CluckerBase		; $AD ; Clucker's base from WFZ
+ObjPtr_Clucker:		dc.l Obj_Clucker		; $AE ; Clucker (chicken badnik) from WFZ
+ObjPtr_MechaSonic:	dc.l Obj_MechaSonic		; $AF ; Mecha Sonic / Silver Sonic from DEZ
+ObjPtr_SonicOnSegaScr:	dc.l Obj_SonicOnSegaScreen	; $B0 ; Sonic on the Sega screen
+ObjPtr_SegaHideTM:	dc.l Obj_SegaHideTM		; $B1 ; Object that hides TM symbol on JP region
+ObjPtr_Tornado:		dc.l Obj_Tornado		; $B2 ; The Tornado (Tails' plane)
+ObjPtr_Cloud:		dc.l Obj_Cloud			; $B3 ; Clouds (placeable object) from SCZ
+ObjPtr_VPropeller:	dc.l Obj_VPropeller		; $B4 ; Vertical propeller from WFZ
+ObjPtr_HPropeller:	dc.l Obj_HPropeller		; $B5 ; Horizontal propeller from WFZ
+ObjPtr_TiltingPlatform:	dc.l Obj_TiltingPlatform	; $B6 ; Tilting platform from WFZ
+ObjPtr_VerticalLaser:	dc.l Obj_VerticalLaser		; $B7 ; Unused huge vertical laser from WFZ
+ObjPtr_WallTurret:	dc.l Obj_WallTurret		; $B8 ; Wall turret from WFZ
+ObjPtr_Laser:		dc.l Obj_Laser			; $B9 ; Laser from WFZ that shoots down the Tornado
+ObjPtr_WFZWheel:	dc.l Obj_WFZWheel		; $BA ; Wheel from WFZ
+			dc.l ObjBB			; $BB ; Unknown
+ObjPtr_WFZShipFire:	dc.l Obj_WFZShipFire		; $BC ; Fire coming out of Robotnik's ship in WFZ
+ObjPtr_SmallMetalPform:	dc.l Obj_SmallMetalPlatform	; $BD ; Ascending/descending metal platforms from WFZ
+ObjPtr_LateralCannon:	dc.l Obj_LateralCannon		; $BE ; Lateral cannon (temporary platform that pops in/out) from WFZ
+ObjPtr_WFZStick:	dc.l Obj_WFZStick		; $BF ; Rotaty-stick badnik from WFZ
+ObjPtr_SpeedLauncher:	dc.l Obj_SpeedLauncher		; $C0 ; Speed launcher from WFZ
+ObjPtr_BreakablePlating:dc.l Obj_BreakablePlating	; $C1 ; Breakable plating from WFZ / what sonic hangs onto on the back of Robotnic's getaway ship
+ObjPtr_Rivet:		dc.l Obj_Rivet			; $C2 ; Rivet thing you bust to get into ship at the end of WFZ
+ObjPtr_TornadoSmoke:	dc.l Obj_TornadoSmoke		; $C3 ; Plane's smoke from WFZ
+ObjPtr_TornadoSmoke2:	dc.l Obj_TornadoSmoke 		; $C4 ; ObjC4 = Obj_TornadoSmoke
+ObjPtr_WFZBoss:		dc.l Obj_WFZBoss		; $C5 ; WFZ boss
+ObjPtr_Eggman:		dc.l Obj_Eggman			; $C6 ; Eggman
+ObjPtr_Eggrobo:		dc.l Obj_Eggrobo		; $C7 ; Eggrobo (final boss) from Death Egg
+ObjPtr_Crawl:		dc.l Obj_Crawl			; $C8 ; Crawl (shield badnik) from CNZ
+ObjPtr_TtlScrPalChanger:dc.l Obj_TitleScreenPalChanger	; $C9 ; "Palette changing handler" from title screen
+ObjPtr_CutScene:	dc.l Obj_CutScene		; $CA ; Cut scene at end of game
+ObjPtr_EndingSeqClouds:	dc.l Obj_EndingClouds		; $CB ; Background clouds from ending sequence
+ObjPtr_EndingSeqTrigger:dc.l Obj_EndingTrigger		; $CC ; Trigger for rescue plane and birds from ending sequence
+ObjPtr_EndingSeqBird:	dc.l Obj_EndingBird		; $CD ; Birds from ending sequence
+ObjPtr_EndingSeqSonic:
+ObjPtr_EndingSeqTails:	dc.l Obj_EndingPlyer		; $CE ; Sonic and Tails jumping off the plane from ending sequence
+ObjPtr_TornadoHelixes:	dc.l Obj_TornadoHelixes		; $CF ;"Plane's helixes" from ending sequence
+			dc.l ObjNull			; $D0 ; ObjD0
+			dc.l ObjNull			; $D1 ; ObjD1
+ObjPtr_CNZRectBlocks:	dc.l Obj_CNZRectangularBlocks	; $D2 ; Flashing blocks that appear and disappear in a rectangular shape that you can walk across, from CNZ
+ObjPtr_BombPrize:	dc.l Obj_BombPrize		; $D3 ; Bomb prize from CNZ
+ObjPtr_CNZBigBlock:	dc.l Obj_CNZBigBlock		; $D4 ; Big block from CNZ that moves back and fourth
+ObjPtr_Elevator:	dc.l Obj_Elevator		; $D5 ; Elevator from CNZ
+ObjPtr_PointPokey:	dc.l Obj_PointPokey		; $D6 ; Pokey that gives out points from CNZ
+ObjPtr_Bumper:		dc.l Obj_Bumper			; $D7 ; Bumper from Casino Night Zone
+ObjPtr_BonusBlock:	dc.l Obj_BonusBlock		; $D8 ; Block thingy from CNZ that disappears after 3 hits
+ObjPtr_Grab:		dc.l Obj_Grab			; $D9 ; Invisible sprite that you can hang on to, like the blocks in WFZ
+ObjPtr_ContinueText:
+ObjPtr_ContinueIcons:	dc.l Obj_ContinueText		; $DA ; Continue text
+ObjPtr_ContinueChars:	dc.l Obj_ContinueChars		; $DB ; Sonic lying down or Tails nagging (continue screen)
+ObjPtr_RingPrize:	dc.l Obj_RingPrize		; $DC ; Ring prize from Casino Night Zone
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Single object loading subroutine
@@ -30459,7 +30456,7 @@ SingleObjLoad:
 	move.w	#(Dynamic_Object_RAM_2P_End-Dynamic_Object_RAM)/object_size-1,d0 ; search to $BF00 exclusive
 
 /
-	tst.b	id(a1)	; is object RAM slot empty?
+	tst.l	id(a1)	; is object RAM slot empty?
 	beq.s	return_17FF8	; if yes, branch
 	lea	next_object(a1),a1 ; load obj address ; goto next object RAM slot
 	dbf	d0,-	; repeat until end
@@ -30483,7 +30480,7 @@ SingleObjLoad2:
 	move.b	SOLtbl(pc,d0.w),d0	; load the right number of objects from table
 	bmi.s	.rts			; if negative, we have failed!
 
-.check	tst.b	id(a1)			; is object RAM slot empty?
+.check	tst.l	id(a1)			; is object RAM slot empty?
 	beq.s	.rts			; if yes, branch
 	lea	next_object(a1),a1	; load obj address ; goto next object RAM slot
 	dbf	d0,.check		; repeat until end
@@ -30499,7 +30496,7 @@ SSSingleObjLoad2:
 	move.b	SOLtbl(pc,d5.w),d5	; load the right number of objects from table
 	bmi.s	.rts			; if negative, we have failed!
 
-.check	tst.b	id(a1)			; is object RAM slot empty?
+.check	tst.l	id(a1)			; is object RAM slot empty?
 	beq.s	.rts			; if yes, branch
 	lea	next_object(a1),a1	; load obj address ; goto next object RAM slot
 	dbf	d5,.check		; repeat until end
@@ -30537,7 +30534,7 @@ SSSingleObjLoad:
 	lea	(SS_Dynamic_Object_RAM).w,a1
 	move.w	#(SS_Dynamic_Object_RAM_End-SS_Dynamic_Object_RAM)/object_size-1,d5
 
--	tst.b	id(a1)
+-	tst.l	id(a1)
 	beq.s	+	; rts
 	lea	next_object(a1),a1 ; a1=object
 	dbf	d5,-
@@ -30557,7 +30554,7 @@ SingleObjLoad3:
 	move.w	#$B,d0
 
 -
-	tst.b	id(a1)	; is object RAM slot empty?
+	tst.l	id(a1)	; is object RAM slot empty?
 	beq.s	return_18028	; if yes, branch
 	lea	next_object(a1),a1 ; load obj address ; goto next object RAM slot
 	dbf	d0,-	; repeat until end
@@ -31562,7 +31559,7 @@ loc_19398:
 	lea	Obj_Signpost_RingSparklePositions(pc,d0.w),a2
 	bsr.w	SingleObjLoad
 	bne.s	return_19406
-	_move.b	#ObjID_Ring,id(a1) ; load Obj_Ring (a ring) for the sparkly effects over the signpost
+	_move.l	#Obj_Ring,id(a1) ; load Obj_Ring (a ring) for the sparkly effects over the signpost
 	move.b	#6,routine(a1) ; => Obj_25_sub_6
 	move.b	(a2)+,d0
 	ext.w	d0
@@ -31603,7 +31600,7 @@ Obj_Signpost_Main_State3:
 	move.w	#(button_right_mask<<8)|0,(Ctrl_1_Logical).w
 loc_19434:
 	; This check here is for S1's Big Ring, which would set Sonic's Object ID to 0
-	tst.b	(MainCharacter+id).w
+	tst.l	(MainCharacter+id).w
 	beq.s	loc_1944C
 	move.w	(MainCharacter+x_pos).w,d0
 	move.w	(Camera_Max_X_pos).w,d1
@@ -31620,7 +31617,7 @@ Load_EndOfAct:
 	clr.b	(Update_HUD_timer).w
 	bsr.w	SingleObjLoad
 	bne.s	+
-	move.b	#ObjID_Results,id(a1) ; load Obj_Results (end of level results screen)
+	move.l	#Obj_Results,id(a1) ; load Obj_Results (end of level results screen)
 +
 	moveq	#PLCID_Results,d0
 	cmpi.w	#2,(Player_mode).w
@@ -32230,7 +32227,7 @@ loc_19AEE:
 	bmi.s	loc_19B06
 	cmpi.w	#$10,d3
 	blo.s	loc_19B56
-	cmpi.b	#ObjID_LauncherSpring,id(a0)
+	cmpi.l	#Obj_LauncherSpring,id(a0)
 	bne.s	SolidObject_TestClearPush
 	cmpi.w	#$14,d3
 	blo.s	loc_19B56
@@ -32968,7 +32965,7 @@ Obj_Sonic_InWater:
 	movea.l	a0,a1
 	bsr.w	ResumeMusic
 	command	Mus_ToWater
-	move.b	#ObjID_SmallBubbles,(Sonic_BreathingBubbles+id).w ; load Obj_SmallBubbles (sonic's breathing bubbles) at $FFFFD080
+	move.l	#Obj_SmallBubbles,(Sonic_BreathingBubbles+id).w ; load Obj_SmallBubbles (sonic's breathing bubbles) at $FFFFD080
 	move.b	#$81,(Sonic_BreathingBubbles+subtype).w
 	move.l	a0,(Sonic_BreathingBubbles+$3C).w
 	move.w	#$300,(Sonic_top_speed).w
@@ -33996,7 +33993,7 @@ Sonic_CheckGoSuper:
 	move.b	#1,(Super_Sonic_flag).w
 	move.b	#$81,obj_control(a0)
 	move.b	#AniIDSupSonAni_Transform,anim(a0)			; use transformation animation
-	move.b	#ObjID_SuperSonicStars,(SuperSonicStars+id).w ; load Obj_SuperSonicStars (super sonic stars object) at $FFFFD040
+	move.l	#Obj_SuperSonicStars,(SuperSonicStars+id).w ; load Obj_SuperSonicStars (super sonic stars object) at $FFFFD040
 	move.w	#$A00,(Sonic_top_speed).w
 	move.w	#$30,(Sonic_acceleration).w
 	move.w	#$100,(Sonic_deceleration).w
@@ -34593,7 +34590,7 @@ Sonic_ResetOnFloor:
 Sonic_ResetOnFloor_Part2:
 	; some routines outside of Tails' code can call Sonic_ResetOnFloor_Part2
 	; when they mean to call Tails_ResetOnFloor_Part2, so fix that here
-	_cmpi.b	#ObjID_Sonic,id(a0)	; is this object ID Sonic (Obj_Sonic)?
+	_cmpi.l	#Obj_Sonic,id(a0)	; is this object ID Sonic (Obj_Sonic)?
 	bne.w	Tails_ResetOnFloor_Part2	; if not, branch to the Tails version of this code
 
 	btst	#2,status(a0)
@@ -34728,8 +34725,8 @@ CheckGameOver:
 	subq.b	#1,(Life_count).w	; subtract 1 from number of lives
 	bne.s	Obj_Sonic_ResetLevel	; if it's not a game over, branch
 	move.w	#0,restart_countdown(a0)
-	move.b	#ObjID_GameOver,(GameOver_GameText+id).w ; load Obj_GameOver (game over text)
-	move.b	#ObjID_GameOver,(GameOver_OverText+id).w ; load Obj_GameOver (game over text)
+	move.l	#Obj_GameOver,(GameOver_GameText+id).w ; load Obj_GameOver (game over text)
+	move.l	#Obj_GameOver,(GameOver_OverText+id).w ; load Obj_GameOver (game over text)
 	move.b	#1,(GameOver_OverText+mapping_frame).w
 	move.w	a0,(GameOver_GameText+parent).w
 	clr.b	(Time_Over_flag).w
@@ -34752,8 +34749,8 @@ Obj_Sonic_ResetLevel:
 	tst.b	(Time_Over_flag).w
 	beq.s	Obj_Sonic_ResetLevel_Part2
 	move.w	#0,restart_countdown(a0)
-	move.b	#ObjID_TimeOver,(TimeOver_TimeText+id).w ; load Obj_GameOver
-	move.b	#ObjID_TimeOver,(TimeOver_OverText+id).w ; load Obj_GameOver
+	move.l	#Obj_TimeOver,(TimeOver_TimeText+id).w ; load Obj_GameOver
+	move.l	#Obj_TimeOver,(TimeOver_OverText+id).w ; load Obj_GameOver
 	move.b	#2,(TimeOver_TimeText+mapping_frame).w
 	move.b	#3,(TimeOver_OverText+mapping_frame).w
 	move.w	a0,(TimeOver_TimeText+parent).w
@@ -35395,7 +35392,7 @@ Obj_Tails_Init_Continued:
 	move.w	#0,(Tails_CPU_routine).w	; set AI state to TailsCPU_Init
 	move.w	#0,(Tails_control_counter).w
 	move.w	#0,(Tails_respawn_counter).w
-	move.b	#ObjID_TailsTails,(Tails_Tails+id).w ; load Obj_TailsTails (Tails' Tails) at $FFFFD000
+	move.l	#Obj_TailsTails,(Tails_Tails+id).w ; load Obj_TailsTails (Tails' Tails) at $FFFFD000
 	move.w	a0,(Tails_Tails+parent).w ; set its parent object to this
 
 ; ---------------------------------------------------------------------------
@@ -35993,7 +35990,7 @@ Obj_Tails_InWater:
 	command	Mus_ToWater		; enable underwater mode
 
 +
-	move.b	#ObjID_SmallBubbles,(Tails_BreathingBubbles+id).w ; load Obj_SmallBubbles (tail's breathing bubbles) at $FFFFD0C0
+	move.l	#Obj_SmallBubbles,(Tails_BreathingBubbles+id).w ; load Obj_SmallBubbles (tail's breathing bubbles) at $FFFFD0C0
 	move.b	#$81,(Tails_BreathingBubbles+subtype).w
 	move.l	a0,(Tails_BreathingBubbles+$3C).w ; set its parent to be this (Obj_SmallBubbles uses $3C instead of $3E for some reason)
 	move.w	#$300,(Tails_top_speed).w
@@ -37475,8 +37472,8 @@ Obj_Tails_CheckGameOver_2Pmode:
 	subq.b	#1,(Life_count_2P).w
 	bne.s	Obj_Tails_ResetLevel
 	move.w	#0,restart_countdown(a0)
-	move.b	#ObjID_GameOver,(GameOver_GameText+id).w ; load Obj_GameOver
-	move.b	#ObjID_GameOver,(GameOver_OverText+id).w ; load Obj_GameOver
+	move.l	#Obj_GameOver,(GameOver_GameText+id).w ; load Obj_GameOver
+	move.l	#Obj_GameOver,(GameOver_OverText+id).w ; load Obj_GameOver
 	move.b	#1,(GameOver_OverText+mapping_frame).w
 	move.w	a0,(GameOver_GameText+parent).w
 	clr.b	(Time_Over_flag_2P).w
@@ -37516,8 +37513,8 @@ Obj_Tails_ResetLevel_Part2:
 	tst.b	(Time_Over_flag_2P).w
 	beq.s	Obj_Tails_ResetLevel_Part3
 	move.w	#0,restart_countdown(a0)
-	move.b	#ObjID_TimeOver,(TimeOver_TimeText+id).w ; load Obj_GameOver
-	move.b	#ObjID_TimeOver,(TimeOver_OverText+id).w ; load Obj_GameOver
+	move.l	#Obj_TimeOver,(TimeOver_TimeText+id).w ; load Obj_GameOver
+	move.l	#Obj_TimeOver,(TimeOver_OverText+id).w ; load Obj_GameOver
 	move.b	#2,(TimeOver_TimeText+mapping_frame).w
 	move.b	#3,(TimeOver_OverText+mapping_frame).w
 	move.w	a0,(TimeOver_TimeText+parent).w
@@ -38461,7 +38458,7 @@ Obj_SmallBubbles_MakeItem:
 	move.w	d0,objoff_3A(a0)
 	jsr	(SingleObjLoad).l
 	bne.w	return_1D81C
-	_move.b	id(a0),id(a1)		; load Obj_SmallBubbles
+	_move.l	id(a0),id(a1)		; load Obj_SmallBubbles
 	move.w	x_pos(a2),x_pos(a1)	; match its X position to Sonic
 	moveq	#6,d0
 	btst	#0,status(a2)
@@ -38696,7 +38693,7 @@ loc_1D9A4:
 	lea	(a0),a1
 
 	moveq	#3,d1
--	_move.b	id(a0),id(a1) ; load Obj_InvincibilityStars
+-	_move.l	id(a0),id(a1) ; load Obj_InvincibilityStars
 	move.b	#4,objoff_A(a1)		; => loc_1DA80
 	move.l	#Obj_InvincibilityStars_MapUnc_1DCBC,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_Invincible_stars,0,0),art_tile(a1)
@@ -38876,6 +38873,7 @@ Obj_InvincibilityStars_MapUnc_1DCBC:	BINCLUDE "mappings/sprite/Obj_Invincibility
 ; ----------------------------------------------------------------------------
 ; Sprite_1DD20:
 Obj_Splash:
+Obj_SpindashDust:
 	moveq	#0,d0
 	move.b	routine(a0),d0
 	move.w	Obj_Splash_Index(pc,d0.w),d1
@@ -38996,7 +38994,7 @@ Obj_Splash_SkidDust:
 	move.b	#3,objoff_32(a0)
 	bsr.w	SingleObjLoad
 	bne.s	loc_1DEE0
-	_move.b	id(a0),id(a1) ; load Obj_Splash
+	_move.l	id(a0),id(a1) ; load Obj_Splash
 	move.w	x_pos(a2),x_pos(a1)
 	move.w	y_pos(a2),y_pos(a1)
 	addi.w	#$10,y_pos(a1)
@@ -40804,7 +40802,7 @@ Obj_Starpost_CheckActivation:
 
 	jsr	(SingleObjLoad).l
 	bne.s	loc_1F206
-	_move.b	#ObjID_Starpost,id(a1) ; load Obj_Starpost
+	_move.l	#Obj_Starpost,id(a1) ; load Obj_Starpost
 	move.b	#6,routine(a1) ; => Obj_Starpost_Dongle
 	move.w	x_pos(a0),objoff_30(a1)
 	move.w	y_pos(a0),objoff_32(a1)
@@ -40854,7 +40852,7 @@ Obj_Starpost_Dongle:
 	subq.w	#1,objoff_36(a0)
 	bpl.s	Obj_Starpost_MoveDonglyThing
 	movea.w	parent(a0),a1 ; a1=object
-	cmpi.b	#ObjID_Starpost,id(a1)
+	cmpi.l	#Obj_Starpost,id(a1)
 	bne.s	+
 	move.b	#2,anim(a1)
 	move.b	#0,mapping_frame(a1)
@@ -40994,7 +40992,7 @@ Obj_Starpost_MakeSpecialStars:
 
 -	bsr.w	SingleObjLoad2
 	bne.s	+	; rts
-	_move.b	id(a0),id(a1) ; load Obj_Starpost
+	_move.l	id(a0),id(a1) ; load Obj_Starpost
 	move.l	#Obj_Starpost_MapUnc_1F4A0,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_Checkpoint,0,0),art_tile(a1)
 	move.b	#4,render_flags(a1)
@@ -41312,7 +41310,7 @@ Obj_RoundBumper_BumpCharacter:
 	jsr	(AddPoints2).l
 	bsr.w	SingleObjLoad
 	bne.s	return_1F83C
-	_move.b	#ObjID_Points,id(a1) ; load Obj_Points
+	_move.l	#Obj_Points,id(a1) ; load Obj_Points
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.b	#4,mapping_frame(a1)
@@ -41512,7 +41510,7 @@ loc_1FA2A:
 	move.w	d0,objoff_38(a0)
 	bsr.w	SingleObjLoad
 	bne.s	loc_1FAA6
-	_move.b	id(a0),id(a1) ; load Obj_ARZBubbles
+	_move.l	id(a0),id(a1) ; load Obj_ARZBubbles
 	move.w	x_pos(a0),x_pos(a1)
 	jsr	(RandomNumber).l
 	andi.w	#$F,d0
@@ -42378,7 +42376,7 @@ Obj_HPZWaterfall_Init:
 Obj_HPZWaterfall_LoadSubObject:
 	jsr	(SingleObjLoad2).l
 	bne.s	+	; rts
-	_move.b	#ObjID_HPZWaterfall,id(a1) ; load Obj_HPZWaterfall
+	_move.l	#Obj_HPZWaterfall,id(a1) ; load Obj_HPZWaterfall
 	addq.b	#4,routine(a1)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
@@ -42881,7 +42879,7 @@ Obj_Explosion_InitWithAnimal:
 	addq.b	#2,routine(a0) ; => Obj_Explosion_Init
 	jsrto	(SingleObjLoad).l, JmpTo2_SingleObjLoad
 	bne.s	Obj_Explosion_Init
-	_move.b	#ObjID_Animal,id(a1) ; load Obj_Animal (Animal and 100 points)
+	_move.l	#Obj_Animal,id(a1) ; load Obj_Animal (Animal and 100 points)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.w	parent(a0),parent(a1)
@@ -42926,6 +42924,7 @@ Obj_Explosion_MapUnc_21120:	BINCLUDE "mappings/sprite/Obj_Explosion.bin"
 ; ----------------------------------------------------------------------------
 ; Sprite_2115C:
 Obj_PinballMode:
+Obj_ForcedSpin:
 	moveq	#0,d0
 	move.b	routine(a0),d0
 	move.w	Obj_PinballMode_Index(pc,d0.w),d1
@@ -43653,7 +43652,7 @@ Obj_Seesaw_Init:
 	bne.s	loc_219A4
 	jsrto	(SingleObjLoad2).l, JmpTo3_SingleObjLoad2
 	bne.s	loc_219A4
-	_move.b	#ObjID_Seesaw,id(a1) ; load Obj_Seesaw
+	_move.l	#Obj_Seesaw,id(a1) ; load Obj_Seesaw
 	addq.b	#6,routine(a1)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
@@ -44073,7 +44072,7 @@ Obj_HTZLift_Slide:
 	move.w	#0,y_vel(a0)
 	jsrto	(SingleObjLoad2).l, JmpTo4_SingleObjLoad2
 	bne.s	+	; rts
-	_move.b	#ObjID_Scenery,id(a1) ; load Obj_Scenery
+	_move.l	#Obj_Scenery,id(a1) ; load Obj_Scenery
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.b	render_flags(a0),render_flags(a1)
@@ -44136,6 +44135,9 @@ JmpTo4_ObjectMove
 ; ----------------------------------------------------------------------------
 ; Sprite_22018:
 Obj_FloatingPlatform2:
+Obj_CPZPlatform:
+Obj_OOZMovingPlatform:
+Obj_WFZPlatform:
 	moveq	#0,d0
 	move.b	routine(a0),d0
 	move.w	Obj_FloatingPlatform2_Index(pc,d0.w),d1
@@ -44581,7 +44583,7 @@ Obj_BlueBalls_LoadBall:
 	bne.s	++
 ; loc_22458:
 Obj_BlueBalls_InitBall:
-	_move.b	id(a0),id(a1) ; load Obj_BlueBalls
+	_move.l	id(a0),id(a1) ; load Obj_BlueBalls
 	move.b	d5,routine(a1) ; => Obj_BlueBalls_Wait (either one)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
@@ -45197,7 +45199,7 @@ loc_230B4:
 ; ===========================================================================
 
 loc_230C2:
-	_move.b	#ObjID_LavaBubble,id(a1) ; load Obj_LavaBubble
+	_move.l	#Obj_LavaBubble,id(a1) ; load Obj_LavaBubble
 	move.b	#8,routine(a1)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
@@ -45590,6 +45592,7 @@ breakableblock_mainchar_anim =	objoff_32
 breakableblock_sidekick_anim =	objoff_33
 ; Sprite_2351A:
 Obj_BreakableBlock:
+Obj_BreakableRock:
 	moveq	#0,d0
 	move.b	routine(a0),d0
 	move.w	Obj_BreakableBlock_Index(pc,d0.w),d1
@@ -45728,7 +45731,7 @@ Obj_BreakableBlock_VelArray2:
 SmashableObject_LoadPoints:
 	jsrto	(SingleObjLoad).l, JmpTo3_SingleObjLoad
 	bne.s	+++	; rts
-	_move.b	#ObjID_Points,id(a1) ; load Obj_Points
+	_move.l	#Obj_Points,id(a1) ; load Obj_Points
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.w	(Chain_Bonus_counter).w,d2
@@ -46006,7 +46009,7 @@ Obj_OOZPoppingPlatform_Init:
 +
 	jsrto	(SingleObjLoad2).l, JmpTo7_SingleObjLoad2
 	bne.s	Obj_OOZPoppingPlatform_Main
-	_move.b	id(a0),id(a1) ; load Obj_OOZPoppingPlatform
+	_move.l	id(a0),id(a1) ; load Obj_OOZPoppingPlatform
 	move.b	#4,routine(a1)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
@@ -46290,7 +46293,7 @@ Obj_SlidingSpike_Init:
 loc_23E84:
 	jsrto	(SingleObjLoad2).l, JmpTo8_SingleObjLoad2
 	bne.s	loc_23ED4
-	_move.b	id(a0),id(a1) ; load Obj_SlidingSpike
+	_move.l	id(a0),id(a1) ; load Obj_SlidingSpike
 	move.b	#4,routine(a1)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
@@ -46966,7 +46969,7 @@ Obj_OOZBall_Init:
 ; Obj_OOZBall_InitPressureSpring:	; loads the spring under the ball
 	jsrto	(SingleObjLoad).l, JmpTo4_SingleObjLoad
 	bne.s	+
-	_move.b	#ObjID_OOZBall,id(a1) ; load Obj_OOZBall
+	_move.l	#Obj_OOZBall,id(a1) ; load Obj_OOZBall
 	addq.b	#6,routine(a1)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
@@ -47884,7 +47887,7 @@ Obj_ArrowShooter_DetectPlayer:
 Obj_ArrowShooter_ShootArrow:
 	jsrto	(SingleObjLoad).l, JmpTo5_SingleObjLoad
 	bne.s	+
-	_move.b	id(a0),id(a1) ; load Obj_ArrowShooter
+	_move.l	id(a0),id(a1) ; load Obj_ArrowShooter
 	addq.b	#6,routine(a1)
 	move.l	mappings(a0),mappings(a1)
 	move.w	art_tile(a0),art_tile(a1)
@@ -48004,7 +48007,7 @@ Obj_FallingPillar_Init:
 	move.w	#prio(4),priority(a0)
 	jsrto	(SingleObjLoad2).l, JmpTo10_SingleObjLoad2
 	bne.s	Obj_FallingPillar_Main
-	_move.b	id(a0),id(a1) ; load Obj_FallingPillar
+	_move.l	id(a0),id(a1) ; load Obj_FallingPillar
 	addq.b	#2,routine(a1)
 	addq.b	#2,routine_secondary(a1)
 	move.l	mappings(a0),mappings(a1)
@@ -48291,7 +48294,7 @@ loc_25BF6:
 	move.w	(a3)+,d1
 	subq.w	#1,d1
 	bset	#5,render_flags(a0)
-	_move.b	id(a0),d4
+	_move.l	id(a0),d4
 	move.b	render_flags(a0),d5
 	movea.l	a0,a1
 	bra.s	loc_25C24
@@ -48304,7 +48307,7 @@ loc_25C1C:
 
 loc_25C24:
 	move.b	#4,routine(a1)
-	_move.b	d4,id(a1) ; load Obj_RisingPillar?
+	_move.l	d4,id(a1) ; load Obj_RisingPillar?
 	move.l	a3,mappings(a1)
 	move.b	d5,render_flags(a1)
 	move.w	x_pos(a0),x_pos(a1)
@@ -48455,7 +48458,7 @@ loc_261E4:
 loc_261EC:
 	jsrto	(SingleObjLoad).l, JmpTo6_SingleObjLoad
 	bne.w	loc_26278
-	_move.b	#ObjID_LeavesGenerator,id(a1) ; load Obj_LeavesGenerator
+	_move.l	#Obj_LeavesGenerator,id(a1) ; load Obj_LeavesGenerator
 	move.b	#4,routine(a1)
 	move.w	x_pos(a2),x_pos(a1)
 	move.w	y_pos(a2),y_pos(a1)
@@ -48908,7 +48911,7 @@ BranchTo_JmpTo18_MarkObjGone
 loc_2674C:
 	jsrto	(SingleObjLoad).l, JmpTo7_SingleObjLoad
 	bne.s	+
-	_move.b	id(a0),id(a1) ; load Obj_SteamSpring
+	_move.l	id(a0),id(a1) ; load Obj_SteamSpring
 	addq.b	#4,routine(a1)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	objoff_34(a0),y_pos(a1)
@@ -49248,7 +49251,7 @@ loc_26B6E:
 +
 	jsrto	(SingleObjLoad2).l, JmpTo11_SingleObjLoad2
 	bne.s	loc_26C04
-	_move.b	id(a0),id(a1) ; load Obj_MTZLongPlatform
+	_move.l	id(a0),id(a1) ; load Obj_MTZLongPlatform
 	addq.b	#4,routine(a1)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
@@ -50093,7 +50096,7 @@ Obj_SpikyBlock_Init:
 	move.w	#prio(4),priority(a0)
 	jsrto	(SingleObjLoad2).l, JmpTo12_SingleObjLoad2
 	bne.s	+
-	_move.b	id(a0),id(a1) ; load Obj_SpikyBlock
+	_move.l	id(a0),id(a1) ; load Obj_SpikyBlock
 	addq.b	#4,routine(a1)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
@@ -50536,6 +50539,7 @@ JmpTo13_ObjectMove
 ; ----------------------------------------------------------------------------
 ; Sprite_27AB0:
 Obj_MTZMovingPlatforms:
+Obj_MCZRotPlatforms:
 	moveq	#0,d0
 	move.b	routine(a0),d0
 	move.w	Obj_MTZMovingPlatforms_Index(pc,d0.w),d1
@@ -50597,7 +50601,7 @@ Obj_MTZMovingPlatforms_Init:
 ; ===========================================================================
 ; loc_27B9E:
 Obj_MTZMovingPlatforms_InitSubObject:
-	_move.b	id(a0),id(a1) ; load Obj_MTZMovingPlatforms
+	_move.l	id(a0),id(a1) ; load Obj_MTZMovingPlatforms
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.w	x_pos(a0),objoff_32(a1)
@@ -50752,6 +50756,7 @@ JmpTo3_MarkObjGone2
 ; ----------------------------------------------------------------------------
 ; Sprite_27D6C:
 Obj_CPZSquarePlatform:
+Obj_MTZPlatform:
 	moveq	#0,d0
 	move.b	routine(a0),d0
 	move.w	Obj_CPZSquarePlatform_Index(pc,d0.w),d1
@@ -51166,7 +51171,7 @@ Obj_Conveyor_SubObjectsLoop:
 	bne.s	+
 ; loc_28136:
 Obj_Conveyor_LoadSubObject:
-	_move.b	#ObjID_Conveyor,id(a1) ; load Obj_Conveyor
+	_move.l	#Obj_Conveyor,id(a1) ; load Obj_Conveyor
 	move.w	(a2)+,d0
 	add.w	d2,d0
 	move.w	d0,x_pos(a1)
@@ -51538,7 +51543,7 @@ Obj_Cog_SubObjectLoop:
 	bne.s	+
 ; loc_285F4:
 Obj_Cog_LoadSubObject:
-	_move.b	id(a0),id(a1) ; load Obj_Cog
+	_move.l	id(a0),id(a1) ; load Obj_Cog
 	addq.b	#2,routine(a1)
 	move.l	#Obj_Cog_MapUnc_28786,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_MtzWheel,3,0),art_tile(a1)
@@ -51848,7 +51853,7 @@ Obj_RotatingRings_LoadSubObject:
 	andi.w	#$7F,d5
 	move.b	d5,(a2)+
 	move.b	#4,routine(a1)
-	_move.b	id(a0),id(a1) ; load Obj_RotatingRings
+	_move.l	id(a0),id(a1) ; load Obj_RotatingRings
 	move.l	mappings(a0),mappings(a1)
 	move.w	art_tile(a0),art_tile(a1)
 	move.b	render_flags(a0),render_flags(a1)
@@ -52037,7 +52042,7 @@ Obj_MCZBrick_Init:
 	move.b	#$9A,collision_flags(a0)
 	jsrto	(SingleObjLoad2).l, JmpTo15_SingleObjLoad2
 	bne.s	Obj_MCZBrick_Main
-	_move.b	id(a0),id(a1) ; load Obj_MCZBrick
+	_move.l	id(a0),id(a1) ; load Obj_MCZBrick
 	move.l	mappings(a0),mappings(a1)
 	move.w	art_tile(a0),art_tile(a1)
 	move.b	#4,render_flags(a1)
@@ -52473,7 +52478,7 @@ Obj_CPZStaircase_SubObjectLoop:
 	move.b	#4,routine(a1)
 ; loc_29214:
 Obj_CPZStaircase_LoadSubObject:
-	_move.b	id(a0),id(a1) ; load Obj_CPZStaircase
+	_move.l	id(a0),id(a1) ; load Obj_CPZStaircase
 	move.l	#Obj_CPZSquarePlatform_MapUnc_2800E,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_CPZStairBlock,3,0),art_tile(a1)
 	jsrto	(Adjust2PArtPointer2).l, JmpTo5_Adjust2PArtPointer2
@@ -52712,7 +52717,7 @@ Obj_SidewaysPlatform_Init:
 Obj_SidewaysPlatform_SubObjectLoop:
 	jsrto	(SingleObjLoad2).l, JmpTo17_SingleObjLoad2
 	bne.s	Obj_SidewaysPlatform_SubObjectLoop_End
-	_move.b	id(a0),id(a1) ; load Obj_SidewaysPlatform
+	_move.l	id(a0),id(a1) ; load Obj_SidewaysPlatform
 	move.b	#4,routine(a1)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
@@ -53524,7 +53529,7 @@ Obj_MCZDrawbridge_Init:
 	move.w	d1,objoff_34(a0)
 	jsrto	(SingleObjLoad2).l, JmpTo18_SingleObjLoad2
 	bne.s	Obj_MCZDrawbridge_BridgeUp
-	_move.b	id(a0),id(a1) ; load Obj_MCZDrawbridge
+	_move.l	id(a0),id(a1) ; load Obj_MCZDrawbridge
 	move.l	mappings(a0),mappings(a1)
 	move.w	art_tile(a0),art_tile(a1)
 	move.b	#4,render_flags(a1)
@@ -54023,7 +54028,7 @@ Obj_ARZRotPlatforms_Init:
 	jsrto	(SingleObjLoad2).l, JmpTo19_SingleObjLoad2
 	bne.s	.noRAMforChildObjects
 
-	_move.b	id(a0),id(a1) ; load Obj_ARZRotPlatforms
+	_move.l	id(a0),id(a1) ; load Obj_ARZRotPlatforms
 	move.l	mappings(a0),mappings(a1)
 	move.w	art_tile(a0),art_tile(a1)
 	move.b	#4,render_flags(a1)
@@ -54058,7 +54063,7 @@ Obj_ARZRotPlatforms_LoadSubObject:
 	jsrto	(SingleObjLoad2).l, JmpTo19_SingleObjLoad2
 	bne.s	.noRAMforChildObject	; rts
 	addq.b	#4,routine(a1)
-	_move.b	id(a0),id(a1) ; load obj
+	_move.l	id(a0),id(a1) ; load obj
 	move.l	mappings(a0),mappings(a1)
 	move.w	art_tile(a0),art_tile(a1)
 	move.b	#4,render_flags(a1)
@@ -55795,7 +55800,7 @@ loc_2BC86:
 	bhs.w	loc_2BD48
 	jsrto	(SingleObjLoad).l, JmpTo10_SingleObjLoad
 	bne.w	loc_2BD48
-	_move.b	#ObjID_BombPrize,id(a1) ; load Obj_BombPrize
+	_move.l	#Obj_BombPrize,id(a1) ; load Obj_BombPrize
 	move.l	#Obj_BombPrize_MapUnc_2B8D4,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_CNZBonusSpike,0,0),art_tile(a1)
 	jsrto	(Adjust2PArtPointer2).l, JmpTo6_Adjust2PArtPointer2
@@ -55839,7 +55844,7 @@ loc_2BD4E:
 	bhs.w	return_2BDF6
 	jsrto	(SingleObjLoad).l, JmpTo10_SingleObjLoad
 	bne.w	return_2BDF6
-	_move.b	#ObjID_RingPrize,id(a1) ; load Obj_RingPrize
+	_move.l	#Obj_RingPrize,id(a1) ; load Obj_RingPrize
 	move.l	#Obj_Ring_MapUnc_12382,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_Ring,1,0),art_tile(a1)
 	jsrto	(Adjust2PArtPointer2).l, JmpTo6_Adjust2PArtPointer2
@@ -55917,7 +55922,7 @@ loc_2BE5E:
 	jsr	(AddPoints2).l
 	jsrto	(SingleObjLoad).l, JmpTo10_SingleObjLoad
 	bne.s	+	; rts
-	_move.b	#ObjID_Points,id(a1) ; load Obj_Points
+	_move.l	#Obj_Points,id(a1) ; load Obj_Points
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.b	#0,mapping_frame(a1)
@@ -56899,7 +56904,7 @@ loc_2C85C:
 	jsr	(AddPoints2).l
 	jsrto	(SingleObjLoad).l, JmpTo11_SingleObjLoad
 	bne.s	loc_2C87E
-	_move.b	#ObjID_Points,id(a1) ; load Obj_Points
+	_move.l	#Obj_Points,id(a1) ; load Obj_Points
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.b	d3,mapping_frame(a1)
@@ -57218,7 +57223,7 @@ Obj_Octus_FireBullet:
 	; This object would have used Obj_Octus_Angry.
 	jsr	(SingleObjLoad).l
 	bne.s	+	; rts
-	_move.b	#ObjID_Octus,id(a1) ; load Obj_Octus
+	_move.l	#Obj_Octus,id(a1) ; load Obj_Octus
 	move.b	#6,routine(a1)
 	move.l	#Obj_Octus_MapUnc_2CBFE,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_Octus,1,0),art_tile(a1)
@@ -57346,7 +57351,7 @@ Obj_Aquis_Init:
 	jsrto	(SingleObjLoad).l, JmpTo12_SingleObjLoad
 	bne.s	Obj_Aquis_Main
 
-	_move.b	#ObjID_Aquis,id(a1) ; load Obj_Aquis
+	_move.l	#Obj_Aquis,id(a1) ; load Obj_Aquis
 	move.b	#4,routine(a1)	; => Obj_Aquis_Wing
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
@@ -57382,9 +57387,9 @@ Obj_Aquis_Main_Index: offsetTable
 ; loc_2CDCA:
 Obj_Aquis_Wing:
 	movea.l	Obj_Aquis_parent(a0),a1 ; a1=object
-	tst.b	id(a1)		; is parent object's slot empty?
+	tst.l	id(a1)		; is parent object's slot empty?
 	beq.w	JmpTo48_DeleteObject	; if yes, branch
-	cmpi.b	#ObjID_Aquis,(a1)	; is parent object ObjID_Aquis?
+	cmpi.l	#Obj_Aquis,(a1)	; is parent object Obj_Aquis?
 	bne.w	JmpTo48_DeleteObject	; if not, branch
 	btst	#7,status(a1)		; is parent object marked as destroyed?
 	bne.w	JmpTo48_DeleteObject	; if yes, branch
@@ -57435,7 +57440,7 @@ Obj_Aquis_ChkIfShoot:
 	; shoot bullet
 	jsrto	(SingleObjLoad).l, JmpTo12_SingleObjLoad
 	bne.s	return_2CEAC
-	_move.b	#ObjID_Aquis,id(a1) ; load Obj_Aquis
+	_move.l	#Obj_Aquis,id(a1) ; load Obj_Aquis
 	move.b	#6,routine(a1)	; => Obj_Aquis_Bullet
 	move.w	x_pos(a0),x_pos(a1)	; align with parent object
 	move.w	y_pos(a0),y_pos(a1)
@@ -57630,7 +57635,7 @@ Obj_Buzzer_Projectile:
 ; loc_2D090:
 Obj_Buzzer_Flame:
 	movea.l	Obj_Buzzer_parent(a0),a1 ; a1=object
-	tst.b	id(a1)
+	tst.l	id(a1)
 	beq.w	JmpTo49_DeleteObject	; branch, if object slot is empty. This check is incomplete and very unreliable; check Obj_Aquis_Wing to see how it should be done
 	tst.w	Obj_Buzzer_turn_delay(a1)
 	bmi.s	+		; branch, if parent isn't currently turning around
@@ -57663,7 +57668,7 @@ Obj_Buzzer_Init:
 	jsrto	(SingleObjLoad2).l, JmpTo20_SingleObjLoad2
 	bne.s	+	; rts
 
-	_move.b	#ObjID_Buzzer,id(a1) ; load Obj_Buzzer
+	_move.l	#Obj_Buzzer,id(a1) ; load Obj_Buzzer
 	move.b	#4,routine(a1)	; => Obj_Buzzer_Flame
 	move.l	#Obj_Buzzer_MapUnc_2D2EA,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_Buzzer,0,0),art_tile(a1)
@@ -57788,7 +57793,7 @@ Obj_Buzzer_ShootProjectile:
 	jsr	(SingleObjLoad2).l	; Find next open object space
 	bne.s	+
 
-	_move.b	#ObjID_Buzzer,id(a1) ; load Obj_Buzzer
+	_move.l	#Obj_Buzzer,id(a1) ; load Obj_Buzzer
 	move.b	#6,routine(a1)	; => Obj_Buzzer_Projectile
 	move.l	#Obj_Buzzer_MapUnc_2D2EA,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_Buzzer,0,0),art_tile(a1)
@@ -58201,7 +58206,7 @@ Boss_LoadExplosion:
 	bne.s	+	; rts
 	jsr	(SingleObjLoad).l
 	bne.s	+	; rts
-	_move.b	#ObjID_BossExplosion,id(a1) ; load Obj_BossExplosion
+	_move.l	#Obj_BossExplosion,id(a1) ; load Obj_BossExplosion
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	jsr	(RandomNumber).l
@@ -58304,7 +58309,7 @@ Obj_CPZBoss_Init:
 	; robotnik sitting in his eggmobile
 	jsr	(SingleObjLoad2).l
 	bne.w	loc_2D8AC
-	_move.b	#ObjID_CPZBoss,id(a1) ; load Obj_CPZBoss
+	_move.l	#Obj_CPZBoss,id(a1) ; load Obj_CPZBoss
 	move.l	a0,Obj_CPZBoss_parent(a1)
 	move.l	a1,Obj_CPZBoss_parent(a0)
 	move.l	#Obj_CPZBoss_MapUnc_2ED8C,mappings(a1)
@@ -58324,7 +58329,7 @@ Obj_CPZBoss_Init:
 	; eggmobile's exhaust flame
 	jsr	(SingleObjLoad2).l
 	bne.w	loc_2D8AC
-	_move.b	#ObjID_CPZBoss,id(a1) ; load Obj_CPZBoss
+	_move.l	#Obj_CPZBoss,id(a1) ; load Obj_CPZBoss
 	move.l	a0,Obj_CPZBoss_parent(a1)
 	move.l	#Obj_CPZBoss_MapUnc_2EE88,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_EggpodJets_1,0,0),art_tile(a1)
@@ -58341,7 +58346,7 @@ Obj_CPZBoss_Init:
 	; large pump mechanism on top of eggmobile
 	jsr	(SingleObjLoad2).l
 	bne.s	loc_2D8AC
-	_move.b	#ObjID_CPZBoss,id(a1) ; load Obj_CPZBoss
+	_move.l	#Obj_CPZBoss,id(a1) ; load Obj_CPZBoss
 	move.l	a0,Obj_CPZBoss_parent(a1)
 	move.l	#Obj_CPZBoss_MapUnc_2EADC,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_CPZBoss,1,0),art_tile(a1)
@@ -58356,7 +58361,7 @@ loc_2D8AC:
 	; glass container that dumps mega mack on player
 	jsr	(SingleObjLoad2).l
 	bne.s	loc_2D908
-	_move.b	#ObjID_CPZBoss,id(a1) ; load Obj_CPZBoss
+	_move.l	#Obj_CPZBoss,id(a1) ; load Obj_CPZBoss
 	move.l	a0,Obj_CPZBoss_parent(a1)
 	move.l	#Obj_CPZBoss_MapUnc_2EADC,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_CPZBoss,1,0),art_tile(a1)
@@ -58375,7 +58380,7 @@ loc_2D908:
 	; pipe used to suck mega mack from tube below
 	jsr	(SingleObjLoad2).l
 	bne.s	return_2D94C
-	_move.b	#ObjID_CPZBoss,id(a1) ; load Obj_CPZBoss
+	_move.l	#Obj_CPZBoss,id(a1) ; load Obj_CPZBoss
 	move.l	a0,Obj_CPZBoss_parent(a1)
 	move.l	#Obj_CPZBoss_MapUnc_2EADC,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_CPZBoss,1,0),art_tile(a1)
@@ -58589,7 +58594,7 @@ Obj_CPZBoss_Main_Explode:
 	bne.s	+	; rts
 	jsr	(SingleObjLoad).l
 	bne.s	+	; rts
-	_move.b	#ObjID_BossExplosion,id(a1) ; load Obj_BossExplosion
+	_move.l	#Obj_BossExplosion,id(a1) ; load Obj_BossExplosion
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	jsr	(RandomNumber).l
@@ -58611,7 +58616,7 @@ Obj_CPZBoss_Main_Explode:
 Obj_CPZBoss_Main_Explode2:
 	jsr	(SingleObjLoad).l
 	bne.s	+	; rts
-	_move.b	#ObjID_BossExplosion,id(a1) ; load Obj_BossExplosion
+	_move.l	#Obj_BossExplosion,id(a1) ; load Obj_BossExplosion
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 +
@@ -58753,7 +58758,7 @@ Obj_CPZBoss_Pump:
 -
 	jsr	(SingleObjLoad).l
 	bne.w	JmpTo51_DeleteObject
-	_move.b	#ObjID_CPZBoss,id(a1) ; load Obj_CPZBoss
+	_move.l	#Obj_CPZBoss,id(a1) ; load Obj_CPZBoss
 	move.l	#Obj_CPZBoss_MapUnc_2EADC,mappings(a1)
 	move.b	d3,mapping_frame(a1)
 	move.b	#$14,routine(a1)	; => Obj_CPZBoss_FallingParts
@@ -58824,7 +58829,7 @@ Obj_CPZBoss_Pipe_2_Load_Part2:
 	subq.w  #1,Obj_CPZBoss_pipe_segments(a0)	; is pipe fully extended?
 	blt.s   Obj_CPZBoss_Pipe_2_Load_End		; if yes, branch
 
-	_move.b #ObjID_CPZBoss,id(a1)	; load Obj_CPZBoss
+	_move.l #Obj_CPZBoss,id(a1)	; load Obj_CPZBoss
 	move.l	#Obj_CPZBoss_MapUnc_2EADC,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_CPZBoss,1,0),art_tile(a1)
 	move.b	#4,render_flags(a1)
@@ -58874,7 +58879,7 @@ Obj_CPZBoss_Pipe_Pump_0:
 	move.b	#$E,routine(a0)	; => Obj_CPZBoss_PipeSegment	; temporarily turn control object into a pipe segment
 	move.b	#6,routine(a1)
 	move.b	#2,routine_secondary(a1)	; => Obj_CPZBoss_Pipe_Pump_2
-	_move.b	#ObjID_CPZBoss,id(a1) ; load Obj_CPZBoss
+	_move.l	#Obj_CPZBoss,id(a1) ; load Obj_CPZBoss
 	move.l	#Obj_CPZBoss_MapUnc_2EADC,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_CPZBoss,1,0),art_tile(a1)
 	move.b	#4,render_flags(a1)
@@ -58893,7 +58898,7 @@ Obj_CPZBoss_Pipe_Pump_0:
 	move.b	#$12,Obj_CPZBoss_timer(a1)
 	jsr	(SingleObjLoad2).l
 	bne.s	BranchTo_Obj_CPZBoss_PipeSegment
-	_move.b	#ObjID_CPZBoss,id(a1) ; load Obj_CPZBoss
+	_move.l	#Obj_CPZBoss,id(a1) ; load Obj_CPZBoss
 	move.b	#$A,routine(a1)	; => Obj_CPZBoss_Dripper
 	move.l	Obj_CPZBoss_parent(a0),Obj_CPZBoss_parent(a1)
 
@@ -58985,8 +58990,8 @@ loc_2DFD8:
 
 Obj_CPZBoss_Pipe_Retract_ChkID:
 	moveq	#0,d7
-	move.b	#ObjID_CPZBoss,d7
-	cmp.b	id(a1),d7	; is object a subtype of the CPZ Boss?
+	move.l	#Obj_CPZBoss,d7
+	cmp.l	id(a1),d7	; is object a subtype of the CPZ Boss?
 	beq.s	loc_2DFF0	; if yes, branch
 	dbf	d1,Obj_CPZBoss_Pipe_Retract_Loop
 	bra.s	Obj_CPZBoss_PipeSegment
@@ -59055,7 +59060,7 @@ Obj_CPZBoss_Dripper_States:	offsetTable
 
 Obj_CPZBoss_Dripper_0:
 	addq.b	#2,routine_secondary(a0)	; => Obj_CPZBoss_Dripper_2
-	_move.b	#ObjID_CPZBoss,id(a0) ; load 0bj5D
+	_move.l	#Obj_CPZBoss,id(a0) ; load 0bj5D
 	move.l	#Obj_CPZBoss_MapUnc_2EADC,mappings(a0)
 	move.w	#make_art_tile(ArtTile_ArtNem_CPZBoss,3,0),art_tile(a0)
 	move.b	#4,render_flags(a0)
@@ -59136,7 +59141,7 @@ Obj_CPZBoss_Container_Init:
 	bset	#7,Obj_CPZBoss_status2(a1)
 	jsr	(SingleObjLoad2).l
 	bne.s	+
-	_move.b	#ObjID_CPZBoss,id(a1) ; load Obj_CPZBoss
+	_move.l	#Obj_CPZBoss,id(a1) ; load Obj_CPZBoss
 	move.l	a0,Obj_CPZBoss_parent(a1)
 	move.l	#Obj_CPZBoss_MapUnc_2EADC,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_CPZBoss,1,0),art_tile(a1)
@@ -59151,7 +59156,7 @@ Obj_CPZBoss_Container_Init:
 +
 	jsr	(SingleObjLoad2).l
 	bne.s	+
-	_move.b	#ObjID_CPZBoss,id(a1) ; load Obj_CPZBoss
+	_move.l	#Obj_CPZBoss,id(a1) ; load Obj_CPZBoss
 	move.l	a0,Obj_CPZBoss_parent(a1)
 	move.l	#Obj_CPZBoss_MapUnc_2EADC,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_CPZBoss,3,0),art_tile(a1)
@@ -59250,7 +59255,7 @@ loc_2E356:
 loc_2E35C:
 	jsr	(SingleObjLoad).l
 	bne.w	JmpTo51_DeleteObject
-	_move.b	#ObjID_CPZBoss,id(a1) ; load Obj_CPZBoss
+	_move.l	#Obj_CPZBoss,id(a1) ; load Obj_CPZBoss
 	move.l	#Obj_CPZBoss_MapUnc_2EADC,mappings(a1)
 	move.b	#$21,mapping_frame(a1)
 	move.b	#$14,routine(a1)
@@ -59335,7 +59340,7 @@ loc_2E464:
 	move.w	#$12,Obj_CPZBoss_timer2(a0)
 	jsr	(SingleObjLoad2).l
 	bne.s	return_2E4CC
-	_move.b	#ObjID_CPZBoss,id(a1) ; load Obj_CPZBoss
+	_move.l	#Obj_CPZBoss,id(a1) ; load Obj_CPZBoss
 	move.l	a0,Obj_CPZBoss_parent(a1)
 	move.b	#$10,routine(a1)
 	move.b	#8,routine_secondary(a1)
@@ -59368,7 +59373,7 @@ loc_2E4CE:
 	movea.l	a1,a2
 	jsr	(SingleObjLoad2).l
 	bne.s	return_2E550
-	_move.b	#ObjID_CPZBoss,id(a1) ; load Obj_CPZBoss
+	_move.l	#Obj_CPZBoss,id(a1) ; load Obj_CPZBoss
 	move.l	Obj_CPZBoss_parent(a0),Obj_CPZBoss_parent(a1)
 	move.l	#Obj_CPZBoss_MapUnc_2EADC,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_CPZBoss,1,0),art_tile(a1)
@@ -59618,7 +59623,7 @@ Obj_CPZBoss_Gunk_Droplets:
 Obj_CPZBoss_Gunk_Droplets_Loop:
 	jsr	(SingleObjLoad2).l
 	bne.w	BranchTo_JmpTo34_DisplaySprite
-	_move.b	#ObjID_CPZBoss,id(a1) ; load Obj_CPZBoss
+	_move.l	#Obj_CPZBoss,id(a1) ; load Obj_CPZBoss
 	move.l	a0,Obj_CPZBoss_parent(a1)
 	move.l	#Obj_CPZBoss_MapUnc_2EADC,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_CPZBoss,3,0),art_tile(a1)
@@ -59759,7 +59764,7 @@ Obj_CPZBoss_1A:
 	bne.w	BranchTo2_JmpTo34_DisplaySprite
 	move.b	#0,mapping_frame(a0)
 	movea.l	Obj_CPZBoss_parent(a0),a1 ; a1=object
-	move.b	id(a1),d0
+	move.l	id(a1),d0
 	beq.w	JmpTo51_DeleteObject	; branch, if parent object is gone
 	move.w	x_pos(a1),x_pos(a0)
 	move.w	y_pos(a1),y_pos(a0)
@@ -59978,7 +59983,7 @@ Obj_EHZBoss_Init:
 	jsr	(SingleObjLoad2).l	; vehicle with ability to fly, top part
 	bne.w	+
 
-	_move.b	#ObjID_EHZBoss,id(a1) ; load Obj_EHZBoss
+	_move.l	#Obj_EHZBoss,id(a1) ; load Obj_EHZBoss
 	move.l	a0,objoff_34(a1)	; link top and bottom to each other
 	move.l	a1,objoff_34(a0)	; i.e. addresses for cross references
 	move.l	#Obj_EHZBoss_MapUnc_2FAF8,mappings(a1)
@@ -59995,7 +60000,7 @@ Obj_EHZBoss_Init:
 	jsr	(SingleObjLoad2).l	; Vehicle on ground
 	bne.s	+
 
-	_move.b	#ObjID_EHZBoss,id(a1) ; load Obj_EHZBoss
+	_move.l	#Obj_EHZBoss,id(a1) ; load Obj_EHZBoss
 	move.l	a0,objoff_34(a1)	; linked to main object
 	move.l	#Obj_EHZBoss_MapUnc_2FA58,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_EHZBoss,0,0),art_tile(a1)
@@ -60015,7 +60020,7 @@ Obj_EHZBoss_Init:
 	jsr	(SingleObjLoad2).l	; propeller normal
 	bne.s	+	; rts
 
-	_move.b	#ObjID_EHZBoss,id(a1) ; load Obj_EHZBoss
+	_move.l	#Obj_EHZBoss,id(a1) ; load Obj_EHZBoss
 	move.l	a0,objoff_34(a1)	; linked to main object
 	move.l	#Obj_EHZBoss_MapUnc_2F970,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_EggChoppers,1,0),art_tile(a1)
@@ -60035,7 +60040,7 @@ loc_2F098:
 	jsr	(SingleObjLoad2).l	; first foreground wheel
 	bne.s	+
 
-	_move.b	#ObjID_EHZBoss,id(a1) ; load Obj_EHZBoss
+	_move.l	#Obj_EHZBoss,id(a1) ; load Obj_EHZBoss
 	move.l	a0,objoff_34(a1)	; linked to main object
 	move.l	#Obj_EHZBoss_MapUnc_2FA58,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_EHZBoss,1,0),art_tile(a1)
@@ -60058,7 +60063,7 @@ loc_2F098:
 	jsr	(SingleObjLoad2).l	; second foreground wheel
 	bne.s	+
 
-	_move.b	#ObjID_EHZBoss,id(a1) ; load Obj_EHZBoss
+	_move.l	#Obj_EHZBoss,id(a1) ; load Obj_EHZBoss
 	move.l	a0,objoff_34(a1)	; linked to main object
 	move.l	#Obj_EHZBoss_MapUnc_2FA58,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_EHZBoss,1,0),art_tile(a1)
@@ -60081,7 +60086,7 @@ loc_2F098:
 	jsr	(SingleObjLoad2).l	; background wheel
 	bne.s	+
 
-	_move.b	#ObjID_EHZBoss,id(a1) ; load Obj_EHZBoss
+	_move.l	#Obj_EHZBoss,id(a1) ; load Obj_EHZBoss
 	move.l	a0,objoff_34(a1)	; linked to main object
 	move.l	#Obj_EHZBoss_MapUnc_2FA58,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_EHZBoss,1,0),art_tile(a1)
@@ -60104,7 +60109,7 @@ loc_2F098:
 	jsr	(SingleObjLoad2).l	; Spike
 	bne.s	+
 
-	_move.b	#ObjID_EHZBoss,id(a1) ; load Obj_EHZBoss
+	_move.l	#Obj_EHZBoss,id(a1) ; load Obj_EHZBoss
 	move.l	a0,objoff_34(a1)	; linked to main object
 	move.l	#Obj_EHZBoss_MapUnc_2FA58,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_EHZBoss,1,0),art_tile(a1)
@@ -60252,7 +60257,7 @@ loc_2F3A2:	; Obj_EHZBoss_VehicleMain_SubA_0:
 	jsrto	(SingleObjLoad2).l, JmpTo21_SingleObjLoad2	; reload propeller after defeat
 	bne.w	+	; rts
 
-	_move.b	#ObjID_EHZBoss,id(a1) ; load Obj_EHZBoss
+	_move.l	#Obj_EHZBoss,id(a1) ; load Obj_EHZBoss
 	move.l	a0,objoff_34(a1)	; linked to main object
 	move.l	#Obj_EHZBoss_MapUnc_2F970,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_EggChoppers,1,0),art_tile(a1)
@@ -60404,7 +60409,7 @@ off_2F55C:	offsetTable
 
 loc_2F560:	; Obj_EHZBoss_Propeller_Sub0
 	movea.l	objoff_34(a0),a1 ; parent address (vehicle)
-	cmpi.b	#ObjID_EHZBoss,id(a1)
+	cmpi.l	#Obj_EHZBoss,id(a1)
 	bne.w	JmpTo52_DeleteObject	; if boss non-existant
 	btst	#0,objoff_2D(a1)	; is robotnik on ground?
 	beq.s	loc_2F58E	; if not, branch
@@ -60555,7 +60560,7 @@ loc_2F706:
 
 loc_2F714:	; Obj_EHZBoss_Wheel_Sub2:
 	movea.l	objoff_34(a0),a1 ; parent address (vehicle)
-	cmpi.b	#ObjID_EHZBoss,id(a1)
+	cmpi.l	#Obj_EHZBoss,id(a1)
 	bne.w	JmpTo52_DeleteObject	; if boss non-existant
 	btst	#1,objoff_2D(a1)
 	beq.w	JmpTo35_DisplaySprite	; boss not moving yet (inactive)
@@ -60572,7 +60577,7 @@ BranchTo_JmpTo35_DisplaySprite
 
 loc_2F746:	; Obj_EHZBoss_Wheel_Sub4:
 	movea.l	objoff_34(a0),a1 ; parent address (vehicle)
-	cmpi.b	#ObjID_EHZBoss,id(a1)
+	cmpi.l	#Obj_EHZBoss,id(a1)
 	bne.w	JmpTo52_DeleteObject	; if boss non-existant
 	move.b	status(a1),status(a0)
 	move.b	render_flags(a1),render_flags(a0)
@@ -60648,7 +60653,7 @@ loc_2F816:
 
 loc_2F824:	; Obj_EHZBoss_Spike_Sub2:
 	movea.l	objoff_34(a0),a1 ; parent address (vehicle)
-	cmpi.b	#ObjID_EHZBoss,id(a1)
+	cmpi.l	#Obj_EHZBoss,id(a1)
 	bne.w	JmpTo52_DeleteObject	; if boss non-existant
 	btst	#3,objoff_2D(a1)
 	bne.s	loc_2F88A	; spike separated from vehicle
@@ -60971,7 +60976,7 @@ Obj_HTZBoss_Mobile_Flamethrower:
 	bne.s	Obj_HTZBoss_Mobile_Hover
 	jsrto	(SingleObjLoad).l, JmpTo13_SingleObjLoad
 	bne.s	loc_2FDAA
-	_move.b	#ObjID_HTZBoss,id(a1) ; load Obj_HTZBoss
+	_move.l	#Obj_HTZBoss,id(a1) ; load Obj_HTZBoss
 	move.b	#4,boss_subtype(a1)
 	move.b	render_flags(a0),render_flags(a1)
 	andi.b	#1,render_flags(a1)
@@ -61033,7 +61038,7 @@ Obj_HTZBoss_CreateLavaBall:
 	st	objoff_38(a0)
 	jsrto	(SingleObjLoad).l, JmpTo13_SingleObjLoad
 	bne.s	loc_2FE58
-	move.b	#ObjID_HTZBoss,id(a1) ; load Obj_HTZBoss
+	move.l	#Obj_HTZBoss,id(a1) ; load Obj_HTZBoss
 	move.b	#6,boss_subtype(a1)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
@@ -61164,7 +61169,7 @@ loc_2FF80:
 	move.w	y_pos(a0),y_pos(a1)
 
 loc_2FF94:
-	move.b	#ObjID_HTZBoss,id(a1) ; load Obj_HTZBoss
+	move.l	#Obj_HTZBoss,id(a1) ; load Obj_HTZBoss
 	move.b	#6,boss_subtype(a1)
 	move.l	#Obj_HTZBoss_MapUnc_302BC,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_HTZBoss,0,0),art_tile(a1)
@@ -61203,7 +61208,7 @@ loc_30008:
 	tst.w	d1
 	bpl.s	loc_30064
 	add.w	d1,y_pos(a0)
-	move.b	#ObjID_LavaBubble,id(a0) ; load 0bj20
+	move.l	#Obj_LavaBubble,id(a0) ; load 0bj20
 	move.b	#$A,routine(a0)
 	move.b	#2,anim(a0)
 	move.b	#4,mapping_frame(a0)
@@ -61361,7 +61366,7 @@ JmpTo53_DeleteObject
 Obj_HTZBoss_CreateSmoke
 	jsrto	(SingleObjLoad).l, JmpTo13_SingleObjLoad
 	bne.s	return_3020E
-	move.b	#ObjID_HTZBoss,id(a1) ; load Obj_HTZBoss
+	move.l	#Obj_HTZBoss,id(a1) ; load Obj_HTZBoss
 	move.b	#8,boss_subtype(a1)
 	move.l	#Obj_HTZBoss_MapUnc_30258,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_BossSmoke_2,0,0),art_tile(a1)
@@ -61568,7 +61573,7 @@ Obj_ARZBoss_Init_RaisePillars:
 	; load first pillar object
 	jsrto	(SingleObjLoad).l, JmpTo14_SingleObjLoad
 	bne.w	Obj_ARZBoss_Init_Standard
-	move.b	#ObjID_ARZBoss,id(a1) ; load Obj_ARZBoss
+	move.l	#Obj_ARZBoss,id(a1) ; load Obj_ARZBoss
 	move.l	#Obj_ARZBoss_MapUnc_30D68,mappings(a1)
 	ori.b	#4,render_flags(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_ARZBoss,0,0),art_tile(a1)
@@ -62066,7 +62071,7 @@ Obj_ARZBoss_Pillar_ShakeOffsets:
 Obj_ARZBoss_Pillar_Shoot:
 	jsrto	(SingleObjLoad).l, JmpTo14_SingleObjLoad
 	bne.w	return_30B40
-	_move.b	#ObjID_ARZBoss,id(a1) ; load Obj_ARZBoss
+	_move.l	#Obj_ARZBoss,id(a1) ; load Obj_ARZBoss
 	move.w	#prio(0),priority(a1)
 	move.b	#4,boss_subtype(a1)
 	move.b	#8,routine_secondary(a1)	; => Obj_ARZBoss_Pillar_BulgingEyes
@@ -62090,7 +62095,7 @@ Obj_ARZBoss_Pillar_Shoot:
 	movea.l	a1,a2
 	jsrto	(SingleObjLoad).l, JmpTo14_SingleObjLoad
 	bne.s	return_30B40
-	_move.b	#ObjID_ARZBoss,id(a1) ; load Obj_ARZBoss
+	_move.l	#Obj_ARZBoss,id(a1) ; load Obj_ARZBoss
 	move.b	#4,boss_subtype(a1)
 	move.b	#6,routine_secondary(a1)	; => Obj_ARZBoss_Arrow
 	move.l	a2,Obj_ARZBoss_arrow_parent2(a1)
@@ -62698,7 +62703,7 @@ Obj_MCZBoss_LoadStoneSpike:
 	bgt.s	Obj_MCZBoss_LoadStoneSpike
 	jsrto	(SingleObjLoad).l, JmpTo15_SingleObjLoad
 	bne.s	return_31438
-	move.b	#ObjID_MCZBoss,id(a1)	; load Obj_MCZBoss
+	move.l	#Obj_MCZBoss,id(a1)	; load Obj_MCZBoss
 	move.b	#4,boss_subtype(a1)
 	move.w	d1,x_pos(a1)
 	move.w	#$5F0,y_pos(a1)
@@ -63186,7 +63191,7 @@ loc_31BC6:
 loc_31BF2:
 	jsrto	(SingleObjLoad).l, JmpTo16_SingleObjLoad
 	bne.s	return_31C06
-	move.b	#ObjID_CNZBoss,id(a1) ; load Obj_CNZBoss
+	move.l	#Obj_CNZBoss,id(a1) ; load Obj_CNZBoss
 	move.b	#4,boss_subtype(a1)
 	move.l	a0,objoff_34(a1)
 
@@ -63711,7 +63716,7 @@ Obj_MTZBoss_Init:
 	move.b	#0,sub3_mapframe(a0)
 	jsrto	(SingleObjLoad).l, JmpTo17_SingleObjLoad
 	bne.s	+
-	move.b	#ObjID_MTZBoss,id(a1) ; load Obj_MTZBoss
+	move.l	#Obj_MTZBoss,id(a1) ; load Obj_MTZBoss
 	move.b	#6,boss_subtype(a1)		; => Obj_MTZBoss_LaserShooter
 	move.b	#$13,mapping_frame(a1)
 	move.l	#Obj_MTZBoss_MapUnc_32DC6,mappings(a1)
@@ -63724,7 +63729,7 @@ Obj_MTZBoss_Init:
 	move.b	#$20,width_pixels(a1)
 	jsrto	(SingleObjLoad).l, JmpTo17_SingleObjLoad
 	bne.s	+
-	move.b	#ObjID_MTZBossOrb,id(a1) ; load Obj_HTZBossOrb
+	move.l	#Obj_MTZBossOrb,id(a1) ; load Obj_MTZBossOrb
 	move.l	a0,objoff_34(a1)
 +
 	lea	(Boss_AnimationArray).w,a2
@@ -63774,7 +63779,7 @@ Obj_MTZBoss_MainSub0:
 	bset	#0,render_flags(a0)
 +
 	bsr.w	Obj_MTZBoss_AnimateFace
-	lea	(Ani_Obj_HTZBossOrb).l,a1
+	lea	(Ani_Obj_MTZBossOrb).l,a1
 	bsr.w	AnimateBoss
 	bsr.w	Obj_MTZBoss_AlignSprites
 	jmpto	(DisplaySprite).l, JmpTo40_DisplaySprite
@@ -63822,7 +63827,7 @@ Obj_MTZBoss_MoveAndShow:
 ;loc_324C6
 Obj_MTZBoss_Display:
 	bsr.w	Obj_MTZBoss_AnimateFace
-	lea	(Ani_Obj_HTZBossOrb).l,a1
+	lea	(Ani_Obj_MTZBossOrb).l,a1
 	bsr.w	AnimateBoss
 	bsr.w	Obj_MTZBoss_AlignSprites
 	jmpto	(DisplaySprite).l, JmpTo40_DisplaySprite
@@ -64053,7 +64058,7 @@ Obj_MTZBoss_FireLaser:
 	subq.b	#1,objoff_2D(a0)
 	jsrto	(SingleObjLoad).l, JmpTo17_SingleObjLoad
 	bne.s	+		; rts
-	move.b	#ObjID_MTZBoss,id(a1) ; load Obj_MTZBoss
+	move.l	#Obj_MTZBoss,id(a1) ; load Obj_MTZBoss
 	move.b	#4,boss_subtype(a1)		; => Obj_MTZBoss_Laser
 	move.l	a0,objoff_34(a1)
 	move.w	#$1E,(Boss_Countdown).w
@@ -64129,7 +64134,7 @@ Obj_MTZBoss_MainSub10:
 +
 	move.w	(Boss_Y_pos).w,y_pos(a0)
 	move.w	(Boss_X_pos).w,x_pos(a0)
-	lea	(Ani_Obj_HTZBossOrb).l,a1
+	lea	(Ani_Obj_MTZBossOrb).l,a1
 	bsr.w	AnimateBoss
 	bsr.w	Obj_MTZBoss_AlignSprites
 	jmpto	(DisplaySprite).l, JmpTo40_DisplaySprite
@@ -64156,7 +64161,7 @@ Obj_MTZBoss_MainSub12:
 	bsr.w	loc_328C0
 	move.w	(Boss_Y_pos).w,y_pos(a0)
 	move.w	(Boss_X_pos).w,x_pos(a0)
-	lea	(Ani_Obj_HTZBossOrb).l,a1
+	lea	(Ani_Obj_MTZBossOrb).l,a1
 	bsr.w	AnimateBoss
 	bsr.w	Obj_MTZBoss_AlignSprites
 	jmpto	(DisplaySprite).l, JmpTo40_DisplaySprite
@@ -64215,22 +64220,22 @@ Obj_MTZBoss_Defeated:
 ; Object 53 - Shield orbs that surround MTZ boss
 ; ----------------------------------------------------------------------------
 ; Sprite_32940:
-Obj_HTZBossOrb:
+Obj_MTZBossOrb:
 	moveq	#0,d0
 	move.b	routine(a0),d0
-	move.w	Obj_HTZBossOrb_Index(pc,d0.w),d1
-	jmp	Obj_HTZBossOrb_Index(pc,d1.w)
+	move.w	Obj_MTZBossOrb_Index(pc,d0.w),d1
+	jmp	Obj_MTZBossOrb_Index(pc,d1.w)
 ; ===========================================================================
 ; off_3294E:
-Obj_HTZBossOrb_Index:	offsetTable
-		offsetTableEntry.w Obj_HTZBossOrb_Init	; 0
-		offsetTableEntry.w Obj_HTZBossOrb_Main	; 2
-		offsetTableEntry.w Obj_HTZBossOrb_BreakAway	; 4
-		offsetTableEntry.w Obj_HTZBossOrb_BounceAround	; 6
-		offsetTableEntry.w Obj_HTZBossOrb_Burst	; 8
+Obj_MTZBossOrb_Index:	offsetTable
+		offsetTableEntry.w Obj_MTZBossOrb_Init	; 0
+		offsetTableEntry.w Obj_MTZBossOrb_Main	; 2
+		offsetTableEntry.w Obj_MTZBossOrb_BreakAway	; 4
+		offsetTableEntry.w Obj_MTZBossOrb_BounceAround	; 6
+		offsetTableEntry.w Obj_MTZBossOrb_Burst	; 8
 ; ===========================================================================
 ; loc_32958:
-Obj_HTZBossOrb_Init:
+Obj_MTZBossOrb_Init:
 	movea.l	a0,a1
 	moveq	#6,d3
 	moveq	#0,d2
@@ -64241,12 +64246,12 @@ Obj_HTZBossOrb_Init:
 +
 	move.b	#$20,width_pixels(a1)
 	move.l	objoff_34(a0),objoff_34(a1)
-	move.b	#ObjID_MTZBossOrb,id(a1) ; load Obj_HTZBossOrb
+	move.l	#Obj_MTZBossOrb,id(a1) ; load Obj_MTZBossOrb
 	move.l	#Obj_MTZBoss_MapUnc_32DC6,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_MTZBoss,0,0),art_tile(a1)
 	ori.b	#4,render_flags(a1)
 	move.w	#prio(3),priority(a1)
-	addq.b	#2,routine(a1)		; => Obj_HTZBossOrb_Main
+	addq.b	#2,routine(a1)		; => Obj_MTZBossOrb_Main
 	move.b	#5,mapping_frame(a1)
 	move.b	byte_329CC(pc,d2.w),objoff_28(a1)
 	move.b	byte_329CC(pc,d2.w),objoff_3B(a1)
@@ -64280,16 +64285,16 @@ byte_329D3:
 	even
 ; ===========================================================================
 ;loc_329DA
-Obj_HTZBossOrb_Main:
+Obj_MTZBossOrb_Main:
 	movea.l	objoff_34(a0),a1 ; a1=object
 	move.w	y_pos(a1),objoff_2A(a0)
 	subi_.w	#4,objoff_2A(a0)
 	move.w	x_pos(a1),objoff_38(a0)
 	tst.b	objoff_38(a1)
-	beq.s	Obj_HTZBossOrb_ClearBossCollision
+	beq.s	Obj_MTZBossOrb_ClearBossCollision
 	move.b	#0,objoff_38(a1)
 	addi_.b	#1,objoff_2C(a1)
-	addq.b	#2,routine(a0)		; => Obj_HTZBossOrb_BreakAway
+	addq.b	#2,routine(a0)		; => Obj_MTZBossOrb_BreakAway
 	move.b	#$3C,objoff_32(a0)
 	move.b	#2,anim(a0)
 	move.w	#-$400,y_vel(a0)
@@ -64316,17 +64321,17 @@ Obj_HTZBossOrb_Main:
 	bra.s	+
 ; ===========================================================================
 ;loc_32A56
-Obj_HTZBossOrb_ClearBossCollision:
+Obj_MTZBossOrb_ClearBossCollision:
 	cmpi.b	#2,collision_property(a0)
 	beq.s	+
 	move.b	#0,collision_flags(a1)
 +
-	bsr.w	Obj_HTZBossOrb_OrbitBoss
-	bsr.w	Obj_HTZBossOrb_SetAnimPriority
+	bsr.w	Obj_MTZBossOrb_OrbitBoss
+	bsr.w	Obj_MTZBossOrb_SetAnimPriority
 	jmpto	(DisplaySprite).l, JmpTo40_DisplaySprite
 ; ===========================================================================
 ;loc_32A70
-Obj_HTZBossOrb_OrbitBoss:
+Obj_MTZBossOrb_OrbitBoss:
 	move.b	objoff_29(a0),d0
 	jsr	(CalcSine).l
 	move.w	d0,d3
@@ -64389,7 +64394,7 @@ return_32B18:
 	rts
 ; ===========================================================================
 ;loc_32B1A
-Obj_HTZBossOrb_SetAnimPriority:
+Obj_MTZBossOrb_SetAnimPriority:
 	move.w	objoff_30(a0),d0
 	bmi.s	++
 	cmpi.w	#$C,d0
@@ -64416,7 +64421,7 @@ Obj_HTZBossOrb_SetAnimPriority:
 	rts
 ; ===========================================================================
 ;loc_32B64
-Obj_HTZBossOrb_BreakAway:
+Obj_MTZBossOrb_BreakAway:
 	tst.b	objoff_32(a0)
 	bmi.s	+
 	subq.b	#1,objoff_32(a0)
@@ -64430,16 +64435,16 @@ Obj_HTZBossOrb_BreakAway:
 	move.w	#$180,y_vel(a0)
 +
 	cmpi.w	#$4AC,y_pos(a0)
-	blo.s	Obj_HTZBossOrb_Animate
+	blo.s	Obj_MTZBossOrb_Animate
 	move.w	#$4AC,y_pos(a0)
 	move.w	#$4AC,objoff_2E(a0)
 	move.b	#1,objoff_2C(a0)
 	addq.b	#2,routine(a0)
-	bsr.w	Obj_HTZBossOrb_FaceLeader
+	bsr.w	Obj_MTZBossOrb_FaceLeader
 ;loc_32BB0
-Obj_HTZBossOrb_Animate:
+Obj_MTZBossOrb_Animate:
 	bsr.w	+
-	lea	(Ani_Obj_HTZBossOrb).l,a1
+	lea	(Ani_Obj_MTZBossOrb).l,a1
 	jsrto	(AnimateSprite).l, JmpTo21_AnimateSprite
 	jmpto	(DisplaySprite).l, JmpTo40_DisplaySprite
 ; ===========================================================================
@@ -64453,16 +64458,16 @@ Obj_HTZBossOrb_Animate:
 	rts
 ; ===========================================================================
 ;loc_32BDC
-Obj_HTZBossOrb_BounceAround:
+Obj_MTZBossOrb_BounceAround:
 	tst.b	objoff_32(a0)
 	bmi.s	+
 	subq.b	#1,objoff_32(a0)
 	bpl.s	+
 	move.b	#$DA,collision_flags(a0)
 +
-	bsr.w	Obj_HTZBossOrb_CheckPlayerHit
+	bsr.w	Obj_MTZBossOrb_CheckPlayerHit
 	cmpi.b	#$B,mapping_frame(a0)
-	bne.s	Obj_HTZBossOrb_Animate
+	bne.s	Obj_MTZBossOrb_Animate
 	move.b	objoff_2C(a0),d0
 	jsr	(CalcSine).l
 	neg.w	d0
@@ -64484,12 +64489,12 @@ Obj_HTZBossOrb_BounceAround:
 ; ===========================================================================
 +
 	move.w	#$4AC,y_pos(a0)
-	bsr.w	Obj_HTZBossOrb_FaceLeader
+	bsr.w	Obj_MTZBossOrb_FaceLeader
 	move.b	#1,objoff_2C(a0)
 	jmpto	(DisplaySprite).l, JmpTo40_DisplaySprite
 ; ===========================================================================
 ;loc_32C4C
-Obj_HTZBossOrb_FaceLeader:
+Obj_MTZBossOrb_FaceLeader:
 	move.w	(MainCharacter+x_pos).w,d0
 	sub.w	x_pos(a0),d0
 	bpl.s	+
@@ -64501,7 +64506,7 @@ Obj_HTZBossOrb_FaceLeader:
 	rts
 ; ===========================================================================
 ;loc_32C66
-Obj_HTZBossOrb_CheckPlayerHit:
+Obj_MTZBossOrb_CheckPlayerHit:
 	cmpi.b	#4,(MainCharacter+routine).w
 	beq.s	+
 	cmpi.b	#4,(Sidekick+routine).w
@@ -64518,7 +64523,7 @@ Obj_HTZBossOrb_CheckPlayerHit:
 	rts
 ; ===========================================================================
 ;loc_32C98
-Obj_HTZBossOrb_Burst:
+Obj_MTZBossOrb_Burst:
 	sfx	sfx_Explode
 	movea.l	objoff_34(a0),a1 ; a1=object
 	subi_.b	#1,objoff_2C(a1)
@@ -64576,7 +64581,7 @@ Obj_MTZBoss_Laser_Main:
 ;loc_32D48
 Obj_MTZBoss_LaserShooter:
 	movea.l	objoff_34(a0),a1 ; a1=object
-	cmpi.b	#ObjID_MTZBoss,id(a1)
+	cmpi.l	#Obj_MTZBoss,id(a1)
 	bne.w	JmpTo61_DeleteObject
 	move.w	x_pos(a1),x_pos(a0)
 	move.w	y_pos(a1),y_pos(a0)
@@ -64593,7 +64598,7 @@ JmpTo40_DisplaySprite
 ; ===========================================================================
 ; animation script
 ; off_32D7A:
-Ani_Obj_HTZBossOrb:	offsetTable
+Ani_Obj_MTZBossOrb:	offsetTable
 		offsetTableEntry.w byte_32D8A	; 0
 		offsetTableEntry.w byte_32D8D	; 1
 		offsetTableEntry.w byte_32D91	; 2
@@ -65011,7 +65016,7 @@ Obj_OOZBoss_LaserShooter_Fire:
 	move.b	#6,mainspr_mapframe(a0)	; use firing frame
 	jsrto	(SingleObjLoad).l, JmpTo18_SingleObjLoad
 	bne.w	Obj_OOZBoss_LaserShooter_End
-	move.b	#ObjID_OOZBoss,id(a1) ; load Obj_OOZBoss
+	move.l	#Obj_OOZBoss,id(a1) ; load Obj_OOZBoss
 	move.b	#8,boss_subtype(a1)	; => Obj_OOZBoss_Laser
 	move.l	a0,Obj_OOZBoss_Wave_parent(a1)
 	sfx	sfx_Lazer
@@ -65299,7 +65304,7 @@ return_3363E:
 Obj_OOZBoss_Laser_CreateWave:
 	jsrto	(SingleObjLoad).l, JmpTo18_SingleObjLoad
 	bne.s	return_336B0
-	move.b	#ObjID_OOZBoss,id(a1) ; load Obj_OOZBoss
+	move.l	#Obj_OOZBoss,id(a1) ; load Obj_OOZBoss
 	move.b	#8,boss_subtype(a1)
 	move.b	#4,routine_secondary(a1)	; => Obj_OOZBoss_Wave
 	move.b	#$8B,collision_flags(a1)
@@ -65487,7 +65492,7 @@ Obj_SonicSS_Init:
 	clr.b	collision_property(a0)
 	clr.b	ss_dplc_timer(a0)
 	movea.l	#SpecialStageShadow_Sonic,a1
-	move.b	#ObjID_SSShadow,id(a1) ; load Obj_SSShadow (shadow) at $FFFFB140
+	move.l	#Obj_SSShadow,id(a1) ; load Obj_SSShadow (shadow) at $FFFFB140
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	addi.w	#$18,y_pos(a1)
@@ -65558,7 +65563,7 @@ SSHurt_Animation:
 	jsrto	(SSSingleObjLoad).l, JmpTo_SSSingleObjLoad
 	bne.s	return_33A90
 	move.l	a0,ss_parent(a1)
-	move.b	#ObjID_SSRingSpill,id(a1) ; load Obj_SSRingSpill
+	move.l	#Obj_SSRingSpill,id(a1) ; load Obj_SSRingSpill
 
 return_33A90:
 	rts
@@ -66379,7 +66384,7 @@ loc_34864:
 	clr.b	ss_dplc_timer(a0)
 	bsr.w	LoadSSTailsDynPLC
 	movea.l	#SpecialStageShadow_Tails,a1
-	move.b	#ObjID_SSShadow,id(a1) ; load Obj_SSShadow (shadow) at $FFFFB180
+	move.l	#Obj_SSShadow,id(a1) ; load Obj_SSShadow (shadow) at $FFFFB180
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	addi.w	#$18,y_pos(a1)
@@ -66389,7 +66394,7 @@ loc_34864:
 	move.w	#prio(4),priority(a1)
 	move.l	a0,ss_parent(a1)
 	movea.l	#SpecialStageTails_Tails,a1
-	move.b	#ObjID_SSTailsTails,id(a1) ; load Obj_SSTailsTails
+	move.l	#Obj_SSTailsTails,id(a1) ; load Obj_SSTailsTails
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.l	#Obj_SSTailsTails_MapUnc_34DA8,mappings(a1)
@@ -67282,7 +67287,7 @@ loc_35440:
 loc_35458:
 	lea_	byte_353EA,a2
 loc_3545C:
-	cmpi.b	#ObjID_SonicSS,(a3)
+	cmpi.l	#Obj_SonicSS,(a3)
 	bne.s	loc_35468
 	sub.w	d1,(Ring_count).w
 	bra.s	loc_3546C
@@ -67304,7 +67309,7 @@ loc_35478:
 	bne.s	loc_354DE
 
 loc_3547E:
-	move.b	#ObjID_SSRingSpill,id(a1) ; load Obj_SSRingSpill
+	move.l	#Obj_SSRingSpill,id(a1) ; load Obj_SSRingSpill
 	move.b	#2,routine(a1)
 	move.l	#Obj5A_Obj5B_Obj60_MapUnc_3632A,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_SpecialRings,3,0),art_tile(a1)
@@ -67406,7 +67411,7 @@ Obj_SSMessage_Init:
 -
 	jsrto	(SSSingleObjLoad).l, JmpTo2_SSSingleObjLoad
 	bne.s	+
-	move.b	#ObjID_SSMessage,id(a1) ; load Obj_SSMessage
+	move.l	#Obj_SSMessage,id(a1) ; load Obj_SSMessage
 	move.b	#2,routine(a1)	; => Obj_SSMessage_CheckpointRainbow
 	move.l	#Obj5A_Obj5B_Obj60_MapUnc_3632A,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_SpecialRings,3,0),art_tile(a1)
@@ -67471,7 +67476,7 @@ Obj_SSMessage_CreateRingsToGoText:
 	bne.w	return_356E4
 	move.l	#Obj_EndingController_MapUnc_72D2,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_SpecialHUD,2,0),art_tile(a1)
-	move.b	#ObjID_SSMessage,id(a1) ; load Obj_SSMessage
+	move.l	#Obj_SSMessage,id(a1) ; load Obj_SSMessage
 	move.b	#4,render_flags(a1)
 	move.w	#prio(1),priority(a1)
 	bset	#6,render_flags(a1)
@@ -67533,7 +67538,7 @@ return_356E4:
 ; ===========================================================================
 ;loc_356E6
 Init_Obj_SSMessage:
-	move.b	#ObjID_SSMessage,id(a1) ; load Obj_SSMessage
+	move.l	#Obj_SSMessage,id(a1) ; load Obj_SSMessage
 	move.l	#Obj_SSMessage_MapUnc_35E1E,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_SpecialMessages,2,0),art_tile(a1)
 	move.b	#4,render_flags(a1)
@@ -67921,7 +67926,7 @@ Obj_SSMessage_CreateCheckpointWingedHand:
 +
 	jsrto	(SSSingleObjLoad).l, JmpTo2_SSSingleObjLoad
 	bne.w	+		; rts
-	move.b	#ObjID_SSMessage,id(a1) ; load Obj_SSMessage
+	move.l	#Obj_SSMessage,id(a1) ; load Obj_SSMessage
 	move.b	#6,routine(a1)	; => Obj_SSMessage_Handshake
 	move.l	#Obj_SSMessage_MapUnc_35E1E,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_SpecialMessages,1,0),art_tile(a1)
@@ -67934,7 +67939,7 @@ Obj_SSMessage_CreateCheckpointWingedHand:
 	movea.l	a1,a2
 	jsrto	(SSSingleObjLoad).l, JmpTo2_SSSingleObjLoad
 	bne.s	+		; rts
-	move.b	#ObjID_SSMessage,id(a1) ; load Obj_SSMessage
+	move.l	#Obj_SSMessage,id(a1) ; load Obj_SSMessage
 	move.b	#6,routine(a1)	; => Obj_SSMessage_Handshake
 	move.l	#Obj_SSMessage_MapUnc_35E1E,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_SpecialMessages,1,0),art_tile(a1)
@@ -67995,7 +68000,7 @@ Obj_SSMessage_PrintNumber:
 	move.b	d0,mapping_frame(a1)
 	move.l	#Obj_EndingController_MapUnc_72D2,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_SpecialHUD,2,0),art_tile(a1)
-	move.b	#ObjID_SSMessage,id(a1) ; load Obj_SSMessage
+	move.l	#Obj_SSMessage,id(a1) ; load Obj_SSMessage
 	move.b	#4,routine(a1)			; Obj_SSMessage_TextFlyoutInit
 	move.b	#4,render_flags(a1)
 	move.w	#prio(1),priority(a1)
@@ -68021,7 +68026,7 @@ Obj_SSMessage_PrintWord:
 	move.b	d0,mapping_frame(a1)
 	move.l	#Obj_SSMessage_MapUnc_35E1E,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_SpecialMessages,2,0),art_tile(a1)
-	move.b	#ObjID_SSMessage,id(a1) ; load Obj_SSMessage
+	move.l	#Obj_SSMessage,id(a1) ; load Obj_SSMessage
 	move.b	#4,routine(a1)			; Obj_SSMessage_TextFlyoutInit
 	move.b	#4,render_flags(a1)
 	move.w	#prio(1),priority(a1)
@@ -68725,10 +68730,10 @@ SubObjData_Index: offsetTable
 	offsetTableEntry.w Obj_Coconuts_SubObjData	; $1E
 	offsetTableEntry.w Obj_Coconuts_SubObjData2	; $20
 	offsetTableEntry.w Obj_CrawlTon_SubObjData	; $22
-	offsetTableEntry.w Obj_Skullcracker_SubObjData	; $24
-	offsetTableEntry.w Obj_SkullcrackerClaw_SubObjData	; $26
+	offsetTableEntry.w Obj_Shellcracker_SubObjData	; $24
+	offsetTableEntry.w Obj_ShellcrackerClaw_SubObjData	; $26
 	offsetTableEntry.w Obj_Slicer_SubObjData	; $28
-	offsetTableEntry.w Obj_SlicerPinchers_SubObjData	; $2A
+	offsetTableEntry.w Obj_SlicerPincers_SubObjData	; $2A
 	offsetTableEntry.w Obj_Flasher_SubObjData	; $2C
 	offsetTableEntry.w Obj_Asteron_SubObjData	; $2E
 	offsetTableEntry.w Obj_Asteron_SubObjData2	; $30
@@ -68986,8 +68991,8 @@ LoadChildObject:
 	bne.s	+	; rts
 	move.w	(a2)+,d0
 	move.w	a1,(a0,d0.w) ; store pointer to child in parent's SST
-	_move.b	(a2)+,id(a1) ; load obj
-	move.b	(a2)+,subtype(a1)
+	move.b	(a2),subtype(a1)
+	_move.l	(a2)+,id(a1) ; load obj
 	move.w	a0,objoff_2C(a1) ; store pointer to parent in child's SST
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
@@ -69033,7 +69038,7 @@ Obj_CreateProjectiles:
 -
 	jsr	(SingleObjLoad2).l
 	bne.s	return_3686E
-	_move.b	#ObjID_Projectile,id(a1) ; load Obj_Projectile
+	_move.l	#Obj_Projectile,id(a1) ; load Obj_Projectile
 	move.b	d2,subtype(a1)	; used for object initialization
 	move.w	x_pos(a0),x_pos(a1)	; align objects
 	move.w	y_pos(a0),y_pos(a1)
@@ -69324,8 +69329,8 @@ Obj_GrounderInWall_Init:
 	add.w	d1,y_pos(a0)
 	move.w	#0,y_vel(a0)
 +
-	_move.b	id(a0),d0
-	subi.b	#ObjID_GrounderInWall,d0
+	_move.l	id(a0),d0
+	cmp.l	#Obj_GrounderInWall,d0
 	beq.w	loc_36C64
 	move.b	#6,routine(a0)
 	rts
@@ -69507,7 +69512,7 @@ loc_36C2C:
 ; ===========================================================================
 
 loc_36C40:
-	_move.b	#ObjID_GrounderRocks,id(a1) ; load Obj_GrounderRocks
+	_move.l	#Obj_GrounderRocks,id(a1) ; load Obj_GrounderRocks
 	move.b	#6,subtype(a1) ; <== Obj_GrounderRocks_SubObjData2
 	move.w	a0,objoff_2C(a1)
 	move.w	d1,objoff_2E(a1)
@@ -69530,7 +69535,7 @@ loc_36C64:
 ; ===========================================================================
 
 loc_36C78:
-	_move.b	#ObjID_GrounderWall,id(a1) ; load Obj_GrounderWall
+	_move.l	#Obj_GrounderWall,id(a1) ; load Obj_GrounderWall
 	move.b	#4,subtype(a1) ; <== Obj_GrounderRocks_SubObjData
 	move.w	a0,objoff_2C(a1)
 	move.w	d1,objoff_2E(a1)
@@ -69742,7 +69747,7 @@ Obj_ChopChop_MakeBubble:
 	move.w	#$50,Obj_ChopChop_bubble_timer(a0)	; reset timer
 	jsrto	(SingleObjLoad).l, JmpTo19_SingleObjLoad
 	bne.s	return_36EB0
-	_move.b	#ObjID_SmallBubbles,id(a1) ; load obj
+	_move.l	#Obj_SmallBubbles,id(a1) ; load obj
 	move.b	#6,subtype(a1) ; <== Obj_GrounderRocks_SubObjData2
 	move.w	x_pos(a0),x_pos(a1)	; align objects horizontally
 	moveq	#$14,d0			; load x-offset
@@ -69885,7 +69890,7 @@ loc_36FA4:
 	jsrto	(SingleObjLoad2).l, JmpTo25_SingleObjLoad2
 	bne.s	loc_36FDC
 	st	objoff_2B(a0)
-	_move.b	#ObjID_SpikerDrill,id(a1) ; load Obj_SpikerDrill
+	_move.l	#Obj_SpikerDrill,id(a1) ; load Obj_SpikerDrill
 	move.b	subtype(a0),subtype(a1)
 	move.w	a0,objoff_2C(a1)
 	move.w	x_pos(a0),x_pos(a1)
@@ -70028,7 +70033,7 @@ Obj_Sol_NextFireball:
     endif
 	andi.w	#$7F,d5
 	move.b	d5,(a2)+
-	_move.b	id(a0),id(a1) ; load Obj_Sol
+	_move.l	id(a0),id(a1) ; load Obj_Sol
 	move.b	#6,routine(a1)
 	move.l	mappings(a0),mappings(a1)
 	move.w	art_tile(a0),art_tile(a1)
@@ -70104,7 +70109,7 @@ Obj_Sol_FireballUpdate:
 	lea	(Ani_Obj_Sol_b).l,a1
 	jsrto	(AnimateSprite).l, JmpTo25_AnimateSprite
 	movea.l	objoff_3C(a0),a1 ; a1=object
-	_cmpi.b	#ObjID_Sol,id(a1) ; check if parent object is still alive
+	_cmpi.l	#Obj_Sol,id(a1) ; check if parent object is still alive
 	bne.w	JmpTo65_DeleteObject
 	cmpi.b	#2,mapping_frame(a1)
 	bne.s	Obj_Sol_FireballOrbit
@@ -70410,7 +70415,7 @@ Obj_RexonHead_DeathDrop:
 ; loc_3750C:
 Obj_RexonHead_CheckHeadIsAlive:
 	movea.w	objoff_32(a0),a1 ; a1=object
-	cmpi.b	#ObjID_RexonHead,(a1)
+	cmpi.l	#Obj_RexonHead,(a1)
 	beq.s	+	; rts
 	move.b	#8,routine(a0)
 	move.w	objoff_2E(a0),d0
@@ -70431,7 +70436,7 @@ Obj_RexonHead_FireProjectile:
 	move.b	#$7F,objoff_2A(a0)
 	jsrto	(SingleObjLoad2).l, JmpTo25_SingleObjLoad2
 	bne.s	++	; rts
-	_move.b	#ObjID_Projectile,id(a1) ; load Obj_Projectile
+	_move.l	#Obj_Projectile,id(a1) ; load Obj_Projectile
 	move.b	#3,mapping_frame(a1)
 	move.b	#$10,subtype(a1) ; <== Obj_Rexon_SubObjData2
 	move.w	x_pos(a0),x_pos(a1)
@@ -70485,7 +70490,7 @@ Obj_Rexon_CreateHead:
 loc_375CE:
 	jsrto	(SingleObjLoad).l, JmpTo19_SingleObjLoad
 	bne.s	+	; rts
-	_move.b	#ObjID_RexonHead,id(a1) ; load Obj_RexonHead
+	_move.l	#Obj_RexonHead,id(a1) ; load Obj_RexonHead
 	move.b	render_flags(a0),render_flags(a1)
 	move.b	subtype(a0),subtype(a1)
 	move.w	a0,objoff_2C(a1)
@@ -70781,7 +70786,7 @@ loc_37850:
 	st	objoff_2A(a0)
 	jsrto	(SingleObjLoad2).l, JmpTo25_SingleObjLoad2
 	bne.s	return_37886
-	_move.b	#ObjID_Projectile,id(a1) ; load Obj_Projectile
+	_move.l	#Obj_Projectile,id(a1) ; load Obj_Projectile
 	move.b	#4,mapping_frame(a1)
 	move.b	#$14,subtype(a1) ; <== Obj_Nebula_SubObjData
 	move.w	x_pos(a0),x_pos(a1)
@@ -70942,7 +70947,7 @@ return_37A48:
 loc_37A4A:
 	jsrto	(SingleObjLoad2).l, JmpTo25_SingleObjLoad2
 	bne.s	return_37A80
-	_move.b	#ObjID_TurtloidRider,id(a1) ; load Obj_TurtLoidRider
+	_move.l	#Obj_TurtloidRider,id(a1) ; load Obj_TurtLoidRider
 	move.b	#2,mapping_frame(a1)
 	move.b	#$18,subtype(a1) ; <== Obj_TurtLoidRider_SubObjData
 	move.w	a0,objoff_2C(a1)
@@ -70990,7 +70995,7 @@ Obj_BalkiryJet_Main:
 loc_37ABE:
 	jsrto	(SingleObjLoad2).l, JmpTo25_SingleObjLoad2
 	bne.s	+	; rts
-	_move.b	#ObjID_BalkiryJet,id(a1) ; load Obj_BalkiryJet
+	_move.l	#Obj_BalkiryJet,id(a1) ; load Obj_BalkiryJet
 	move.b	#6,mapping_frame(a1)
 	move.b	#$1A,subtype(a1) ; <== Obj_BalkiryJet_SubObjData
 	move.w	a0,objoff_2C(a1)
@@ -71007,7 +71012,7 @@ loc_37ABE:
 loc_37AF2:
 	jsrto	(SingleObjLoad).l, JmpTo19_SingleObjLoad
 	bne.s	+	; rts
-	_move.b	#ObjID_Projectile,id(a1) ; load Obj_Projectile
+	_move.l	#Obj_Projectile,id(a1) ; load Obj_Projectile
 	move.b	#6,mapping_frame(a1)
 	move.b	#$1C,subtype(a1) ; <== Obj_TurtLoid_SubObjData2
 	move.w	x_pos(a0),x_pos(a1)
@@ -71198,7 +71203,7 @@ Obj_Coconuts_ThrowingHandLowered:
 Obj_Coconuts_CreateCoconut:
 	jsrto	(SingleObjLoad).l, JmpTo19_SingleObjLoad
 	bne.s	return_37D74		; branch, if no free slots
-	_move.b	#ObjID_Projectile,id(a1) ; load Obj_Projectile
+	_move.l	#Obj_Projectile,id(a1) ; load Obj_Projectile
 	move.b	#3,mapping_frame(a1)
 	move.b	#$20,subtype(a1) ; <== Obj_Coconuts_SubObjData2
 	move.w	x_pos(a0),x_pos(a1)	; align with parent object
@@ -71345,7 +71350,7 @@ loc_37ED4:
 
 loc_37EFC:
 	movea.w	parent(a0),a1 ; a1=object
-	cmpi.b	#ObjID_Crawlton,id(a1)
+	cmpi.l	#Obj_Crawlton,id(a1)
 	bne.w	JmpTo65_DeleteObject
 	bclr	#0,render_flags(a0)
 	btst	#0,render_flags(a1)
@@ -71388,7 +71393,7 @@ loc_37F6C:
 loc_37F74:
 	jsrto	(SingleObjLoad).l, JmpTo19_SingleObjLoad
 	bne.s	+	; rts
-	_move.b	#ObjID_Crawlton,id(a1) ; load Obj_CrawlTon
+	_move.l	#Obj_Crawlton,id(a1) ; load Obj_CrawlTon
 	move.b	render_flags(a0),render_flags(a1)
 	bset	#6,render_flags(a1)
 	move.l	mappings(a0),mappings(a1)
@@ -71431,21 +71436,21 @@ Obj_CrawlTon_MapUnc_37FF2:	BINCLUDE "mappings/sprite/Obj_CrawlTon.bin"
 ; Object 9F - Shellcraker (crab badnik) from MTZ
 ; ----------------------------------------------------------------------------
 ; Sprite_3800C:
-Obj_Skullcracker:
+Obj_Shellcracker:
 	moveq	#0,d0
 	move.b	routine(a0),d0
-	move.w	Obj_Skullcracker_Index(pc,d0.w),d1
-	jmp	Obj_Skullcracker_Index(pc,d1.w)
+	move.w	Obj_Shellcracker_Index(pc,d0.w),d1
+	jmp	Obj_Shellcracker_Index(pc,d1.w)
 ; ===========================================================================
 ; off_3801A:
-Obj_Skullcracker_Index:	offsetTable
-		offsetTableEntry.w Obj_Skullcracker_Init	; 0
+Obj_Shellcracker_Index:	offsetTable
+		offsetTableEntry.w Obj_Shellcracker_Init	; 0
 		offsetTableEntry.w loc_3804E	; 2
 		offsetTableEntry.w loc_380C4	; 4
 		offsetTableEntry.w loc_380FC	; 6
 ; ===========================================================================
 ; loc_38022:
-Obj_Skullcracker_Init:
+Obj_Shellcracker_Init:
 	bsr.w	LoadSubObject
 	btst	#0,render_flags(a0)
 	beq.s	+
@@ -71480,7 +71485,7 @@ loc_38068:
 	add.w	d1,y_pos(a0)
 	subq.w	#1,objoff_2A(a0)
 	bmi.s	loc_3809A
-	lea	(Ani_Obj_Skullcracker).l,a1
+	lea	(Ani_Obj_Shellcracker).l,a1
 	jsrto	(AnimateSprite).l, JmpTo25_AnimateSprite
 	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
 ; ===========================================================================
@@ -71582,20 +71587,20 @@ loc_38146:
 ; Object A0 - Shellcracker's claw from MTZ
 ; ----------------------------------------------------------------------------
 ; Sprite_3815C:
-Obj_SkullcrackerClaw:
+Obj_ShellcrackerClaw:
 	moveq	#0,d0
 	move.b	routine(a0),d0
-	move.w	Obj_SkullcrackerClaw_Index(pc,d0.w),d1
-	jmp	Obj_SkullcrackerClaw_Index(pc,d1.w)
+	move.w	Obj_ShellcrackerClaw_Index(pc,d0.w),d1
+	jmp	Obj_ShellcrackerClaw_Index(pc,d1.w)
 ; ===========================================================================
 ; off_3816A:
-Obj_SkullcrackerClaw_Index:	offsetTable
-		offsetTableEntry.w Obj_SkullcrackerClaw_Init	; 0
+Obj_ShellcrackerClaw_Index:	offsetTable
+		offsetTableEntry.w Obj_ShellcrackerClaw_Init	; 0
 		offsetTableEntry.w loc_381AC	; 2
 		offsetTableEntry.w loc_38280	; 4
 ; ===========================================================================
 ; loc_38170:
-Obj_SkullcrackerClaw_Init:
+Obj_ShellcrackerClaw_Init:
 	bsr.w	LoadSubObject
 	movea.w	objoff_2C(a0),a1 ; a1=object
 	move.b	render_flags(a1),d0
@@ -71625,7 +71630,7 @@ byte_381A4:
 
 loc_381AC:
 	movea.w	objoff_2C(a0),a1 ; a1=object
-	cmpi.b	#ObjID_Shellcracker,id(a1)
+	cmpi.l	#Obj_Shellcracker,id(a1)
 	bne.s	loc_381D0
 	moveq	#0,d0
 	move.b	routine_secondary(a0),d0
@@ -71748,8 +71753,8 @@ loc_38292:
 loc_38296:
 	jsrto	(SingleObjLoad2).l, JmpTo25_SingleObjLoad2
 	bne.s	return_382EE
-	_move.b	#ObjID_ShellcrackerClaw,id(a1) ; load Obj_SkullcrackerClaw
-	move.b	#$26,subtype(a1) ; <== Obj_SkullcrackerClaw_SubObjData
+	_move.l	#Obj_ShellcrackerClaw,id(a1) ; load Obj_ShellcrackerClaw
+	move.b	#$26,subtype(a1) ; <== Obj_ShellcrackerClaw_SubObjData
 	move.b	#5,mapping_frame(a1)
 	move.w	#prio(4),priority(a1)
 	move.w	a0,objoff_2C(a1)
@@ -71774,14 +71779,14 @@ return_382EE:
 	rts
 ; ===========================================================================
 ; off_382F0:
-Obj_Skullcracker_SubObjData:
-	SubObjData Obj_Skullcracker_MapUnc_38314,make_art_tile(ArtTile_ArtNem_Shellcracker,0,0),4,5,$18,$A
+Obj_Shellcracker_SubObjData:
+	SubObjData Obj_Shellcracker_MapUnc_38314,make_art_tile(ArtTile_ArtNem_Shellcracker,0,0),4,5,$18,$A
 ; off_382FA:
-Obj_SkullcrackerClaw_SubObjData:
-	SubObjData Obj_Skullcracker_MapUnc_38314,make_art_tile(ArtTile_ArtNem_Shellcracker,0,0),4,4,$C,$9A
+Obj_ShellcrackerClaw_SubObjData:
+	SubObjData Obj_Shellcracker_MapUnc_38314,make_art_tile(ArtTile_ArtNem_Shellcracker,0,0),4,4,$C,$9A
 ; animation script
 ; off_38304:
-Ani_Obj_Skullcracker:	offsetTable
+Ani_Obj_Shellcracker:	offsetTable
 		offsetTableEntry.w byte_38308	; 0
 		offsetTableEntry.w byte_3830E	; 1
 byte_38308:	dc.b  $E,  0,  1,  2,$FF,  0
@@ -71790,7 +71795,7 @@ byte_3830E:	dc.b  $E,  0,  2,  1,$FF
 ; ----------------------------------------------------------------------------
 ; sprite mappings
 ; ----------------------------------------------------------------------------
-Obj_Skullcracker_MapUnc_38314:	BINCLUDE "mappings/sprite/Obj_SkullcrackerClaw.bin"
+Obj_Shellcracker_MapUnc_38314:	BINCLUDE "mappings/sprite/Obj_ShellcrackerClaw.bin"
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object A1 - Slicer (praying mantis dude) from MTZ
@@ -71902,38 +71907,38 @@ BranchTo5_JmpTo39_MarkObjGone
 ; Object A2 - Slicer's pincers from MTZ
 ; ----------------------------------------------------------------------------
 ; Sprite_384A2:
-Obj_SlicerPinchers:
+Obj_SlicerPincers:
 	moveq	#0,d0
 	move.b	routine(a0),d0
-	move.w	Obj_SlicerPinchers_Index(pc,d0.w),d1
-	jmp	Obj_SlicerPinchers_Index(pc,d1.w)
+	move.w	Obj_SlicerPincers_Index(pc,d0.w),d1
+	jmp	Obj_SlicerPincers_Index(pc,d1.w)
 ; ===========================================================================
 ; off_384B0:
-Obj_SlicerPinchers_Index:	offsetTable
-		offsetTableEntry.w Obj_SlicerPinchers_Init	; 0
-		offsetTableEntry.w Obj_SlicerPinchers_Main	; 2
-		offsetTableEntry.w Obj_SlicerPinchers_Main2	; 4
+Obj_SlicerPincers_Index:	offsetTable
+		offsetTableEntry.w Obj_SlicerPincers_Init	; 0
+		offsetTableEntry.w Obj_SlicerPincers_Main	; 2
+		offsetTableEntry.w Obj_SlicerPincers_Main2	; 4
 ; ===========================================================================
 ; loc_384B6:
-Obj_SlicerPinchers_Init:
+Obj_SlicerPincers_Init:
 	bsr.w	LoadSubObject
 	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
 ; ===========================================================================
 
-Obj_SlicerPinchers_Main:
+Obj_SlicerPincers_Main:
 	tst.b	render_flags(a0)
 	bpl.w	JmpTo65_DeleteObject
 	subq.w	#1,objoff_2A(a0)
 	bmi.s	loc_3851A
 	movea.w	objoff_2C(a0),a1 ; a1=object
-	cmpi.b	#ObjID_Slicer,(a1)
+	cmpi.l	#Obj_Slicer,(a1)
 	bne.s	loc_3851A
 	moveq	#0,d0
 	move.b	routine_secondary(a0),d0
 	move.w	off_384F6(pc,d0.w),d1
 	jsr	off_384F6(pc,d1.w)
 	jsrto	(ObjectMove).l, JmpTo26_ObjectMove
-	lea	(Ani_Obj_SlicerPinchers).l,a1
+	lea	(Ani_Obj_SlicerPincers).l,a1
 	jsrto	(AnimateSprite).l, JmpTo25_AnimateSprite
 	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
 ; ===========================================================================
@@ -71942,26 +71947,26 @@ off_384F6:	offsetTable
 ; ===========================================================================
 +
 	bsr.w	Obj_GetOrientationToPlayer
-	move.w	Obj_SlicerPinchers_acceleration(pc,d0.w),d2
+	move.w	Obj_SlicerPincers_acceleration(pc,d0.w),d2
 	add.w	d2,x_vel(a0)
-	move.w	Obj_SlicerPinchers_acceleration(pc,d1.w),d2
+	move.w	Obj_SlicerPincers_acceleration(pc,d1.w),d2
 	add.w	d2,y_vel(a0)
 	move.w	#$200,d0
 	move.w	d0,d1
 	bra.w	Obj_CapSpeed
 ; ===========================================================================
-Obj_SlicerPinchers_acceleration:	dc.w -$10, $10
+Obj_SlicerPincers_acceleration:	dc.w -$10, $10
 ; ===========================================================================
 
 loc_3851A:
 	addq.b	#2,routine(a0)
 	move.w	#$60,objoff_2A(a0)
 
-Obj_SlicerPinchers_Main2:
+Obj_SlicerPincers_Main2:
 	subq.w	#1,objoff_2A(a0)
 	bmi.w	JmpTo65_DeleteObject
 	jsrto	(ObjectMoveAndFall).l, JmpTo8_ObjectMoveAndFall
-	lea	(Ani_Obj_SlicerPinchers).l,a1
+	lea	(Ani_Obj_SlicerPincers).l,a1
 	jsrto	(AnimateSprite).l, JmpTo25_AnimateSprite
 	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
 ; ===========================================================================
@@ -71974,8 +71979,8 @@ Obj_Slicer_LoadPincers:
 loc_38546:
 	jsrto	(SingleObjLoad2).l, JmpTo25_SingleObjLoad2
 	bne.s	return_385BA
-	_move.b	#ObjID_SlicerPincers,id(a1) ; load Obj_SlicerPinchers
-	move.b	#$2A,subtype(a1) ; <== Obj_SlicerPinchers_SubObjData
+	_move.l	#Obj_SlicerPincers,id(a1) ; load Obj_SlicerPincers
+	move.b	#$2A,subtype(a1) ; <== Obj_SlicerPincers_SubObjData
 	move.b	render_flags(a0),render_flags(a1)
 	move.b	#5,mapping_frame(a1)
 	move.w	#prio(4),priority(a1)
@@ -72017,7 +72022,7 @@ Obj_Slicer_Pincer_Offsets:
 Obj_Slicer_SubObjData:
 	SubObjData Obj_Slicer_MapUnc_385E2,make_art_tile(ArtTile_ArtNem_MtzMantis,1,0),4,5,$10,6
 ; off_385CA:
-Obj_SlicerPinchers_SubObjData:
+Obj_SlicerPincers_SubObjData:
 	SubObjData Obj_Slicer_MapUnc_385E2,make_art_tile(ArtTile_ArtNem_MtzMantis,1,0),4,4,$10,$9A
 ; animation script
 ; off_385D4:
@@ -72027,14 +72032,14 @@ Ani_Obj_Slicer:	offsetTable
 		even
 ; animation script
 ; off_385DA:
-Ani_Obj_SlicerPinchers:	offsetTable
+Ani_Obj_SlicerPincers:	offsetTable
 		offsetTableEntry.w +	; 0
 +		dc.b   3,  5,  6,  7,  8,$FF
 		even
 ; ----------------------------------------------------------------------------
 ; sprite mappings
 ; ----------------------------------------------------------------------------
-Obj_Slicer_MapUnc_385E2:	BINCLUDE "mappings/sprite/Obj_SlicerPinchers.bin"
+Obj_Slicer_MapUnc_385E2:	BINCLUDE "mappings/sprite/Obj_SlicerPincers.bin"
 
 
 
@@ -72317,7 +72322,7 @@ loc_38A2C:
 ; ===========================================================================
 
 loc_38A44:
-	_move.b	#ObjID_Explosion,id(a0) ; load 0bj27
+	_move.l	#Obj_Explosion,id(a0) ; load 0bj27
 	move.b	#2,routine(a0)
 	bsr.w	loc_38A58
 	jmpto	(MarkObjGone).l, JmpTo39_MarkObjGone
@@ -72510,7 +72515,7 @@ loc_38C14:
 loc_38C22:
 	jsrto	(SingleObjLoad2).l, JmpTo25_SingleObjLoad2
 	bne.s	++	; rts
-	_move.b	#ObjID_Projectile,id(a1) ; load Obj_Projectile
+	_move.l	#Obj_Projectile,id(a1) ; load Obj_Projectile
 	move.b	#6,mapping_frame(a1)
 	move.b	#$34,subtype(a1) ; <== Obj_SpinyOnWall_SubObjData
 	move.w	x_pos(a0),x_pos(a1)
@@ -72533,7 +72538,7 @@ loc_38C22:
 loc_38C6E:
 	jsrto	(SingleObjLoad2).l, JmpTo25_SingleObjLoad2
 	bne.s	++	; rts
-	_move.b	#ObjID_Projectile,id(a1) ; load Obj_Projectile
+	_move.l	#Obj_Projectile,id(a1) ; load Obj_Projectile
 	move.b	#6,mapping_frame(a1)
 	move.b	#$34,subtype(a1) ; <== Obj_SpinyOnWall_SubObjData
 	move.w	x_pos(a0),x_pos(a1)
@@ -72771,7 +72776,7 @@ Obj_GrabberLegs_Init:
 
 loc_38F88:
 	movea.w	objoff_2C(a0),a1 ; a1=object
-	cmpi.b	#ObjID_Grabber,id(a1)
+	cmpi.l	#Obj_Grabber,id(a1)
 	bne.w	JmpTo65_DeleteObject
 	bsr.w	InheritParentXYFlip
 	movea.w	objoff_2C(a0),a1 ; a1=object
@@ -72808,7 +72813,7 @@ loc_38FE8:
 	move.w	objoff_32(a1),d0
 	beq.s	loc_3901A
 	movea.w	d0,a2 ; a2=object
-	cmpi.b	#ObjID_Grabber,id(a1)
+	cmpi.l	#Obj_Grabber,id(a1)
 	bne.s	loc_3900A
 	move.w	x_pos(a0),x_pos(a2)
 	move.w	y_pos(a0),y_pos(a2)
@@ -72828,7 +72833,7 @@ loc_3901A:
 
 loc_39022:
 	movea.w	objoff_2C(a0),a1 ; a1=object
-	cmpi.b	#ObjID_Grabber,id(a1) ; compare to Obj_Grabber
+	cmpi.l	#Obj_Grabber,id(a1) ; compare to Obj_Grabber
 	bne.w	JmpTo65_DeleteObject
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -72857,7 +72862,7 @@ Obj_GrabberBox_Init:
 ; loc_39056:
 Obj_GrabberBox_Main:
 	movea.w	objoff_2C(a0),a1 ; a1=object
-	cmpi.b	#ObjID_Grabber,id(a1) ; compare to Obj_Grabber (grabber badnik)
+	cmpi.l	#Obj_Grabber,id(a1) ; compare to Obj_Grabber (grabber badnik)
 	bne.w	JmpTo65_DeleteObject
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -72885,7 +72890,7 @@ Obj_GrabberString_Init:
 ; loc_39082:
 Obj_GrabberString_Main:
 	movea.w	objoff_2C(a0),a1 ; a1=object
-	cmpi.b	#ObjID_Grabber,id(a1) ; compare to Obj_Grabber (grabber badnik)
+	cmpi.l	#Obj_Grabber,id(a1) ; compare to Obj_Grabber (grabber badnik)
 	bne.w	JmpTo65_DeleteObject
 	move.w	y_pos(a1),d0
 	sub.w	y_pos(a0),d0
@@ -72992,7 +72997,7 @@ Obj_Grabber_CheckExplode:
 ; ---------------------------------------------------------------------------
 ; loc_39154:
 Obj_Grabber_Poof:
-	_move.b	#ObjID_Explosion,id(a0) ; load 0bj27 (transform into explosion)
+	_move.l	#Obj_Explosion,id(a0) ; load 0bj27 (transform into explosion)
 	move.b	#2,routine(a0)
 	bset	#palette_bit_0,art_tile(a0)
 	move.w	objoff_32(a0),d0
@@ -73047,16 +73052,13 @@ loc_39182:
 ; ===========================================================================
 word_391E0:
 	dc.w objoff_3E
-	dc.b ObjID_GrabberBox
-	dc.b $3A
+	dc.l ($3A<<24)|Obj_GrabberBox
 word_391E4:
 	dc.w objoff_3C
-	dc.b ObjID_GrabberLegs
-	dc.b $38
+	dc.l ($38<<24)|Obj_GrabberLegs
 word_391E8:
 	dc.w objoff_3A
-	dc.b ObjID_GrabberString
-	dc.b $3C
+	dc.l ($3C<<24)|Obj_GrabberString
 ; off_391EC:
 Obj_Grabber_SubObjData:
 	SubObjData Obj_Grabber_Obj_GrabberLegs_Obj_GrabberBox_Obj_Projectile_MapUnc_3921A,make_art_tile(ArtTile_ArtNem_Grabber,1,1),4,4,$10,$B
@@ -73348,7 +73350,7 @@ loc_39516:
 loc_39526:
 	jsrto	(SingleObjLoad2).l, JmpTo25_SingleObjLoad2
 	bne.s	++	; rts
-	_move.b	#ObjID_Projectile,id(a1) ; load Obj_Projectile
+	_move.l	#Obj_Projectile,id(a1) ; load Obj_Projectile
 	move.b	#$D,mapping_frame(a1)
 	move.b	#$46,subtype(a1) ; <==  Obj_CluckerBase_SubObjData3
 	move.w	x_pos(a0),x_pos(a1)
@@ -74067,16 +74069,13 @@ byte_39D92:
 	dc.b   2,  2,$14,  0,$18,  0,  3,  0,$15,  0,$10,$F0,  2,$FE,$16,  0; 32
 word_39DC2:
 	dc.w objoff_3E
-	dc.b ObjID_MechaSonic
-	dc.b $48
+	dc.l ($48<<24)|Obj_MechaSonic
 word_39DC6:
 	dc.w objoff_3C
-	dc.b ObjID_MechaSonic
-	dc.b $48
+	dc.l ($48<<24)|Obj_MechaSonic
 word_39DCA:
 	dc.w objoff_3A
-	dc.b ObjID_MechaSonic
-	dc.b $A4
+	dc.l ($A4<<24)|Obj_MechaSonic
 ; off_39DCE:
 Obj_MechaSonic_SubObjData2:
 	SubObjData Obj_MechaSonic_Obj_Projectile_MapUnc_39E68,make_art_tile(ArtTile_ArtNem_SilverSonic,1,0),4,4,$10,$1A
@@ -75392,7 +75391,7 @@ return_3AF32:
 Obj_Tornado_Main_WFZ_Start_load_smoke:
 	jsrto	(SingleObjLoad2).l, JmpTo25_SingleObjLoad2
 	bne.s	+
-	_move.b	#ObjID_TornadoSmoke2,id(a1) ; load Obj_TornadoSmoke
+	_move.l	#Obj_TornadoSmoke,id(a1) ; load Obj_TornadoSmoke
 	move.b	#$90,subtype(a1) ; <== Obj_TornadoSmoke_SubObjData
 	move.w	a0,objoff_2C(a1)
 	move.w	x_pos(a0),x_pos(a1)
@@ -75468,20 +75467,16 @@ Tails_pilot_frames_end:
 
 word_3AFB8:
 	dc.w objoff_3E
-	dc.b ObjID_Tornado
-	dc.b $58
+	dc.l ($58<<24)|Obj_Tornado
 word_3AFBC:
 	dc.w objoff_3C
-	dc.b ObjID_Tornado
-	dc.b $56
+	dc.l ($56<<24)|Obj_Tornado
 word_3AFC0:
 	dc.w objoff_3A
-	dc.b ObjID_Tornado
-	dc.b $5C
+	dc.l ($5C<<24)|Obj_Tornado
 ; seems unused
 	dc.w objoff_3E
-	dc.b ObjID_Tornado
-	dc.b $5A
+	dc.l ($5A<<24)|Obj_Tornado
 ; off_3AFC8:
 Obj_Tornado_SubObjData:
 	SubObjData Obj_Tornado_MapUnc_3AFF2,make_art_tile(ArtTile_ArtNem_Tornado,0,1),4,4,$60,0
@@ -75995,7 +75990,7 @@ return_3B7F6:
 loc_3B7F8:
 	jsrto	(SingleObjLoad2).l, JmpTo25_SingleObjLoad2
 	bne.s	+
-	_move.b	#ObjID_VerticalLaser,id(a1) ; load Obj_VerticalLaser (huge unused vertical laser!)
+	_move.l	#Obj_VerticalLaser,id(a1) ; load Obj_VerticalLaser (huge unused vertical laser!)
 	move.b	#$72,subtype(a1) ; <== Obj_VerticalLaser_SubObjData
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
@@ -76126,7 +76121,7 @@ loc_3B9C0:
 loc_3B9D8:
 	jsrto	(SingleObjLoad2).l, JmpTo25_SingleObjLoad2
 	bne.s	+	; rts
-	_move.b	#ObjID_Projectile,id(a1) ; load Obj_Projectile
+	_move.l	#Obj_Projectile,id(a1) ; load Obj_Projectile
 	move.b	#3,mapping_frame(a1)
 	move.b	#$8E,subtype(a1) ; <== Obj_WallTurret_SubObjData2
 	move.w	x_pos(a0),x_pos(a1)
@@ -76440,7 +76435,7 @@ loc_3BCDE:
 loc_3BCF8:
 	jsrto	(SingleObjLoad2).l, JmpTo25_SingleObjLoad2
 	bne.s	+	; rts
-	_move.b	#ObjID_SmallMetalPform,id(a1) ; load Obj_SmallMetalPlatform
+	_move.l	#Obj_SmallMetalPlatform,id(a1) ; load Obj_SmallMetalPlatform
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.b	#4,routine(a1)
@@ -76923,7 +76918,7 @@ loc_3C208:
 
 loc_3C20E:
 	move.b	#4,routine(a1)
-	_move.b	id(a0),id(a1) ; load obj
+	_move.l	id(a0),id(a1) ; load obj
 	move.l	mappings(a0),mappings(a1)
 	move.w	art_tile(a0),art_tile(a1)
 	move.b	#$84,render_flags(a1)
@@ -76993,7 +76988,7 @@ Obj_Rivet_Bust:
 	bne.s	+
 	move.w	#$2880,(Camera_Min_X_pos).w
 	bclr	#p1_standing_bit,status(a0)
-	_move.b	#ObjID_Explosion,id(a0) ; load 0bj27 (transform into explosion)
+	_move.l	#Obj_Explosion,id(a0) ; load 0bj27 (transform into explosion)
 	move.b	#2,routine(a0)
 	bset	#1,(MainCharacter+status).w
 	bclr	#3,(MainCharacter+status).w
@@ -77521,7 +77516,7 @@ Obj_WFZBoss_PlatformReleaserDestroyP: 	; P=Platforms
 
 Obj_WFZBoss_PlatformReleaserDelete:
 	movea.w	objoff_2C(a0),a1 ; a1=object
-	cmpi.b	#ObjID_WFZBoss,id(a1)
+	cmpi.l	#Obj_WFZBoss,id(a1)
 	bne.w	JmpTo65_DeleteObject
 	jsrto	(Boss_LoadExplosion).l, JmpTo_Boss_LoadExplosion
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
@@ -77606,7 +77601,7 @@ Obj_WFZBoss_PlatformCheckExplode:	; checks to see if platforms should explode
 
 Obj_WFZBoss_PlatformExplode:
 	bsr.w	loc_3B7BC
-	move.b	#ObjID_BossExplosion,id(a0) ; load 0bj58 (explosion)
+	move.l	#Obj_BossExplosion,id(a0) ; load 0bj58 (explosion)
 	clr.b	routine(a0)
 	movea.w	objoff_3C(a0),a1 ; a1=object (invisible hurting thing)
 	jsrto	(DeleteObject2).l, JmpTo6_DeleteObject2
@@ -77899,36 +77894,28 @@ Obj_WFZBoss_NoHitPointsLeft:	; when the boss is defeated this tells it what to d
 ; ===========================================================================
 Obj_WFZBoss_LaserWallData:
 	dc.w objoff_2A
-	dc.b ObjID_WFZBoss
-	dc.b $94
+	dc.l ($94<<24)|Obj_WFZBoss
 Obj_WFZBoss_PlatformData:
 	dc.w objoff_3E
-	dc.b ObjID_WFZBoss
-	dc.b $98
+	dc.l ($98<<24)|Obj_WFZBoss
 Obj_WFZBoss_PlatformHurtData:
 	dc.w objoff_3C
-	dc.b ObjID_WFZBoss
-	dc.b $9A
+	dc.l ($9A<<24)|Obj_WFZBoss
 Obj_WFZBoss_LaserShooterData:
 	dc.w objoff_3C
-	dc.b ObjID_WFZBoss
-	dc.b $9C
+	dc.l ($9C<<24)|Obj_WFZBoss
 Obj_WFZBoss_PlatformReleaserData:
 	dc.w objoff_3A
-	dc.b ObjID_WFZBoss
-	dc.b $96
+	dc.l ($96<<24)|Obj_WFZBoss
 Obj_WFZBoss_LaserData:
 	dc.w objoff_3E
-	dc.b ObjID_WFZBoss
-	dc.b $9E
+	dc.l ($9E<<24)|Obj_WFZBoss
 Obj_WFZBoss_RobotnikData:
 	dc.w objoff_38
-	dc.b ObjID_WFZBoss
-	dc.b $A0
+	dc.l ($A0<<24)|Obj_WFZBoss
 Obj_WFZBoss_RobotnikPlatformData:
 	dc.w objoff_3E
-	dc.b ObjID_WFZBoss
-	dc.b $A2
+	dc.l ($A2<<24)|Obj_WFZBoss
 
 ; off_3CC80:
 Obj_WFZBoss_SubObjData:		; Laser Case
@@ -78171,12 +78158,10 @@ Obj_Eggman_SubObjData:
 	SubObjData Obj_Eggman_MapUnc_3D0EE,make_art_tile(ArtTile_ArtKos_LevelArt,0,0),4,5,4,0
 word_3D0D0:
 	dc.w objoff_3E
-	dc.b ObjID_Eggman
-	dc.b $A8
+	dc.l ($A8<<24)|Obj_Eggman
 word_3D0D4:
 	dc.w objoff_3C
-	dc.b ObjID_Eggman
-	dc.b $AA
+	dc.l ($AA<<24)|Obj_Eggman
 ; animation script
 ; off_3D0D8:
 Ani_Obj_WFZBoss_Obj_Eggman:offsetTable
@@ -79584,7 +79569,7 @@ Obj_Eggrobo_FallingPieces:
 loc_3DFBA:
 	jsr	(SingleObjLoad).l
 	bne.s	+	; rts
-	_move.b	#ObjID_BossExplosion,id(a1) ; load obj
+	_move.l	#Obj_BossExplosion,id(a1) ; load obj
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	jsr	(RandomNumber).l
@@ -80265,68 +80250,55 @@ byte_3E544_End
 ;word_3E55C
 ChildObj_Eggrobo_Shoulder:
 	dc.w objoff_2C
-	dc.b ObjID_Eggrobo
-	dc.b   4
+	dc.l ($04<<24)|Obj_Eggrobo
 ;word_3E560
 ChildObj_Eggrobo_FrontLowerLeg:
 	dc.w objoff_2E
-	dc.b ObjID_Eggrobo
-	dc.b   6
+	dc.l ($06<<24)|Obj_Eggrobo
 ;word_3E564
 ChildObj_Eggrobo_FrontForearm:
 	dc.w objoff_30
-	dc.b ObjID_Eggrobo
-	dc.b   8
+	dc.l ($08<<24)|Obj_Eggrobo
 ;word_3E568
 ChildObj_Eggrobo_Arm:
 	dc.w objoff_32
-	dc.b ObjID_Eggrobo
-	dc.b  $A
+	dc.l ($0A<<24)|Obj_Eggrobo
 ;word_3E56C
 ChildObj_Eggrobo_FrontThigh:
 	dc.w objoff_34
-	dc.b ObjID_Eggrobo
-	dc.b  $C
+	dc.l ($0C<<24)|Obj_Eggrobo
 ;word_3E570
 ChildObj_Eggrobo_Head:
 	dc.w objoff_36
-	dc.b ObjID_Eggrobo
-	dc.b  $E
+	dc.l ($0E<<24)|Obj_Eggrobo
 ;word_3E574
 ChildObj_Eggrobo_Jet:
 	dc.w objoff_38
-	dc.b ObjID_Eggrobo
-	dc.b $10
+	dc.l ($10<<24)|Obj_Eggrobo
 ;word_3E578
 ChildObj_Eggrobo_BackLowerLeg:
 	dc.w objoff_3A
-	dc.b ObjID_Eggrobo
-	dc.b $12
+	dc.l ($12<<24)|Obj_Eggrobo
 ;word_3E57C
 ChildObj_Eggrobo_BackForearm:
 	dc.w objoff_3C
-	dc.b ObjID_Eggrobo
-	dc.b $14
+	dc.l ($14<<24)|Obj_Eggrobo
 ;word_3E580
 ChildObj_Eggrobo_BackThigh:
 	dc.w objoff_3E
-	dc.b ObjID_Eggrobo
-	dc.b $16
+	dc.l ($16<<24)|Obj_Eggrobo
 ;word_3E584
 ChildObj_Eggrobo_TargettingSensor:
 	dc.w objoff_10
-	dc.b ObjID_Eggrobo
-	dc.b $18
+	dc.l ($18<<24)|Obj_Eggrobo
 ;word_3E588
 ChildObj_Eggrobo_TargettingLock:
 	dc.w objoff_10
-	dc.b ObjID_Eggrobo
-	dc.b $1A
+	dc.l ($1A<<24)|Obj_Eggrobo
 ;word_3E58C
 ChildObj_Eggrobo_EggmanBomb:
 	dc.w objoff_10
-	dc.b ObjID_Eggrobo
-	dc.b $1C
+	dc.l ($1C<<24)|Obj_Eggrobo
 ;off_3E590
 Obj_Eggrobo_SubObjData:
 	SubObjData Obj_Eggrobo_MapUnc_3E5F8,make_art_tile(ArtTile_ArtNem_DEZBoss,0,0),4,4,$38,$00
@@ -80778,7 +80750,7 @@ loc_3F220:
 	move.w	a1,(a3)+
 
 loc_3F228:
-	_move.b	id(a0),id(a1) ; load obj
+	_move.l	id(a0),id(a1) ; load obj
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.w	y_pos(a0),objoff_30(a1)
@@ -80826,7 +80798,7 @@ loc_3F2B4:
 	movea.w	objoff_3A(a0),a2 ; a2=object
 	jsr	(SingleObjLoad).l
 	bne.s	+
-	_move.b	#ObjID_Explosion,id(a1) ; load obj
+	_move.l	#Obj_Explosion,id(a1) ; load obj
 	addq.b	#2,routine(a1)
 	move.w	x_pos(a2),x_pos(a1)
 	move.w	y_pos(a2),y_pos(a1)
@@ -80850,7 +80822,7 @@ loc_3F2FC:
 
 -	jsr	(SingleObjLoad).l
 	bne.s	+
-	_move.b	#ObjID_Animal,id(a1) ; load obj
+	_move.l	#Obj_Animal,id(a1) ; load obj
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	add.w	d4,x_pos(a1)
@@ -80909,7 +80881,7 @@ loc_3F3A8:
 	bne.s	loc_3F3F4
 	jsr	(SingleObjLoad).l
 	bne.s	loc_3F3F4
-	_move.b	#ObjID_Animal,id(a1) ; load obj
+	_move.l	#Obj_Animal,id(a1) ; load obj
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	jsr	(RandomNumber).l
@@ -80935,10 +80907,10 @@ return_3F404:
 
 loc_3F406:
 	moveq	#(Dynamic_Object_RAM_End-Dynamic_Object_RAM)/object_size-1,d0
-	moveq	#ObjID_Animal,d1
+	move.l	#Obj_Animal,d1
 	lea	(Dynamic_Object_RAM).w,a1
 
--	cmp.b	id(a1),d1
+-	cmp.l	id(a1),d1
 	beq.s	+	; rts
 	lea	next_object(a1),a1 ; a1=object
 	dbf	d0,-
@@ -81303,7 +81275,7 @@ loc_3F802:
 loc_3F81C:
 	movea.w	a0,a3
 	bsr.w	AddPoints2
-	_move.b	#ObjID_Explosion,id(a1) ; load obj
+	_move.l	#Obj_Explosion,id(a1) ; load obj
 	move.b	#0,routine(a1)
 	tst.w	y_vel(a0)
 	bmi.s	loc_3F844
@@ -81378,7 +81350,7 @@ loc_3F88C:
 	beq.w	KillCharacter
 	jsr	(SingleObjLoad).l
 	bne.s	Hurt_Shield
-	_move.b	#ObjID_LostRings,id(a1) ; load obj
+	_move.l	#Obj_LostRings,id(a1) ; load obj
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.w	a0,parent(a1)
@@ -81412,7 +81384,7 @@ Hurt_ChkSpikes:
 	move.b	#AniIDSonAni_Hurt2,anim(a0)
 	move.w	#$78,invulnerable_time(a0)
 	moveq	#sfx_Death,d0		; load normal damage sound
-	cmpi.b	#ObjID_Spikes,(a2)	; was damage caused by spikes?
+	cmpi.l	#Obj_Spikes,(a2)	; was damage caused by spikes?
 	bne.s	Hurt_Sound		; if not, branch
 	moveq	#sfx_SpikeHit,d0	; load spikes damage sound
 
@@ -81443,7 +81415,7 @@ KillCharacter:
 	move.b	#AniIDSonAni_Death,anim(a0)
 	bset	#high_priority_bit,art_tile(a0)
 	moveq	#sfx_Death,d0
-	cmpi.b	#ObjID_Spikes,id(a2)
+	cmpi.l	#Obj_Spikes,id(a2)
 	bne.s	+
 	moveq	#sfx_SpikeHit,d0
 +
@@ -84519,14 +84491,15 @@ Debug_SpawnObject:
 	bne.s	Debug_ExitDebugMode
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
-	_move.b	mappings(a0),id(a1) ; load obj
 	move.b	render_flags(a0),render_flags(a1)
 	move.b	render_flags(a0),status(a1)
+
 	andi.b	#$7F,status(a1)
 	moveq	#0,d0
 	move.b	(Debug_object).w,d0
 	lsl.w	#3,d0
-	move.b	4(a2,d0.w),subtype(a1)
+	move.b	8(a2,d0.w),subtype(a1)
+	move.l	4(a2,d0.w),id(a1)
 	rts
 ; ===========================================================================
 ; loc_41C56:
@@ -84590,9 +84563,9 @@ LoadDebugObjectSprite:
 	moveq	#0,d0
 	move.b	(Debug_object).w,d0
 	lsl.w	#3,d0
-	move.l	(a2,d0.w),mappings(a0)
-	move.w	6(a2,d0.w),art_tile(a0)
-	move.b	5(a2,d0.w),mapping_frame(a0)
+	move.l	4(a2,d0.w),mappings(a0)
+	move.w	$A(a2,d0.w),art_tile(a0)
+	move.b	9(a2,d0.w),mapping_frame(a0)
 	jsrto	(Adjust2PArtPointer).l, JmpTo66_Adjust2PArtPointer
 	rts
 ; End of function LoadDebugObjectSprite
@@ -84633,312 +84606,313 @@ __LABEL__ label *
 
 ; macro to define debug list object data
 dbglistobj macro   obj, mapaddr, subtype, frame, vram
-	dc.l obj<<24|mapaddr
+	dc.l obj
+	dc.l mapaddr
 	dc.b subtype,frame
 	dc.w vram
     endm
 
 DbgObjList_Def: dbglistheader
-	dbglistobj ObjID_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0) ; Obj_Ring = ring
-	dbglistobj ObjID_Monitor,	Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0) ; Obj_Monitor = monitor
+	dbglistobj Obj_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0) ; Obj_Ring = ring
+	dbglistobj Obj_Monitor,		Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0) ; Obj_Monitor = monitor
 DbgObjList_Def_End
 
 DbgObjList_EHZ: dbglistheader
-	dbglistobj ObjID_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_Monitor,	Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
-	dbglistobj ObjID_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
-	dbglistobj ObjID_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,   9,   1, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_EHZWaterfall,	Obj_EHZWaterfall_MapUnc_20C50,   0,   0, make_art_tile(ArtTile_ArtNem_Waterfall,1,0)
-	dbglistobj ObjID_EHZWaterfall,	Obj_EHZWaterfall_MapUnc_20C50,   2,   3, make_art_tile(ArtTile_ArtNem_Waterfall,1,0)
-	dbglistobj ObjID_EHZWaterfall,	Obj_EHZWaterfall_MapUnc_20C50,   4,   5, make_art_tile(ArtTile_ArtNem_Waterfall,1,0)
-	dbglistobj ObjID_EHZPlatform,	Obj_FloatingPlatform_MapUnc_107F6,   1,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
-	dbglistobj ObjID_EHZPlatform,	Obj_FloatingPlatform_MapUnc_107F6, $9A,   1, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
-	dbglistobj ObjID_Spikes,	Obj_Spikes_MapUnc_15B68,   0,   0, make_art_tile(ArtTile_ArtNem_Spikes,1,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $81,   0, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $90,   3, make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $A0,   6, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $30,   7, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $40,  $A, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
-	dbglistobj ObjID_Buzzer,	Obj_Buzzer_MapUnc_2D2EA,   0,   0, make_art_tile(ArtTile_ArtNem_Buzzer,0,0)
-	dbglistobj ObjID_Masher,	Obj_Masher_MapUnc_2D442,   0,   0, make_art_tile(ArtTile_ArtNem_Masher,0,0)
-	dbglistobj ObjID_Coconuts,	Obj_Coconuts_Obj_Projectile_MapUnc_37D96, $1E,   0, make_art_tile(ArtTile_ArtNem_Coconuts,0,0)
-	dbglistobj ObjID_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
+	dbglistobj Obj_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_Monitor,		Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
+	dbglistobj Obj_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
+	dbglistobj Obj_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,   9,   1, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_EHZWaterfall,	Obj_EHZWaterfall_MapUnc_20C50,   0,   0, make_art_tile(ArtTile_ArtNem_Waterfall,1,0)
+	dbglistobj Obj_EHZWaterfall,	Obj_EHZWaterfall_MapUnc_20C50,   2,   3, make_art_tile(ArtTile_ArtNem_Waterfall,1,0)
+	dbglistobj Obj_EHZWaterfall,	Obj_EHZWaterfall_MapUnc_20C50,   4,   5, make_art_tile(ArtTile_ArtNem_Waterfall,1,0)
+	dbglistobj Obj_EHZPlatform,	Obj_FloatingPlatform_MapUnc_107F6,   1,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
+	dbglistobj Obj_EHZPlatform,	Obj_FloatingPlatform_MapUnc_107F6, $9A,   1, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
+	dbglistobj Obj_Spikes,		Obj_Spikes_MapUnc_15B68,   0,   0, make_art_tile(ArtTile_ArtNem_Spikes,1,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $81,   0, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $90,   3, make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $A0,   6, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $30,   7, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $40,  $A, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
+	dbglistobj Obj_Buzzer,		Obj_Buzzer_MapUnc_2D2EA,   0,   0, make_art_tile(ArtTile_ArtNem_Buzzer,0,0)
+	dbglistobj Obj_Masher,		Obj_Masher_MapUnc_2D442,   0,   0, make_art_tile(ArtTile_ArtNem_Masher,0,0)
+	dbglistobj Obj_Coconuts,	Obj_Coconuts_Obj_Projectile_MapUnc_37D96, $1E,   0, make_art_tile(ArtTile_ArtNem_Coconuts,0,0)
+	dbglistobj Obj_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
 DbgObjList_EHZ_End
 
 DbgObjList_MTZ: dbglistheader
-	dbglistobj ObjID_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_Monitor,	Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
-	dbglistobj ObjID_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
-	dbglistobj ObjID_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,   9,   1, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_SteamSpring,	Obj_SteamSpring_MapUnc_2686C,   1,   7, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
-	dbglistobj ObjID_MTZTwinStompers, Obj_MTZTwinStompers_MapUnc_26A5C,   1,   0, make_art_tile(ArtTile_ArtKos_LevelArt,1,0)
-	dbglistobj ObjID_MTZTwinStompers, Obj_MTZTwinStompers_MapUnc_26A5C, $11,   1, make_art_tile(ArtTile_ArtKos_LevelArt,1,0)
-	dbglistobj ObjID_MTZLongPlatform, Obj_MTZLongPlatform_Obj_MTZMovingPlatforms_Obj_CPZSquarePlatform_MapUnc_26EC8, $80,   0, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
-	dbglistobj ObjID_MTZLongPlatform, Obj_MTZLongPlatform_Obj_MTZMovingPlatforms_Obj_CPZSquarePlatform_MapUnc_26EC8, $13,   1, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
-	dbglistobj ObjID_Button,	Obj_Button_MapUnc_24D96,   0,   2, make_art_tile(ArtTile_ArtNem_Button,0,0)
-	dbglistobj ObjID_Barrier,	Obj_Barrier_MapUnc_11822,   1,   1, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
-	dbglistobj ObjID_MTZSpringWall,	Obj_MTZSpringWall_MapUnc_27120,   1,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
-	dbglistobj ObjID_MTZSpringWall,	Obj_MTZSpringWall_MapUnc_27120, $11,   1, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
-	dbglistobj ObjID_SpikyBlock,	Obj_SpikyBlock_Obj_FloorSpike_MapUnc_27750,   0,   4, make_art_tile(ArtTile_ArtNem_MtzSpikeBlock,3,0)
-	dbglistobj ObjID_Nut,		Obj_Nut_MapUnc_27A26,   4,   0, make_art_tile(ArtTile_ArtNem_MtzAsstBlocks,1,0)
-	dbglistobj ObjID_MTZMovingPforms, Obj_MTZLongPlatform_Obj_MTZMovingPlatforms_Obj_CPZSquarePlatform_MapUnc_26EC8,   0,   1, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
-	dbglistobj ObjID_MTZPlatform,	Obj_MTZLongPlatform_Obj_MTZMovingPlatforms_Obj_CPZSquarePlatform_MapUnc_26EC8,   7,   1, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
-	dbglistobj ObjID_FloorSpike,	Obj_SpikyBlock_Obj_FloorSpike_MapUnc_27750,   0,   0, make_art_tile(ArtTile_ArtNem_MtzSpike,1,0)
-	dbglistobj ObjID_LargeRotPform,	Obj_LargeRotPlatform_MapUnc_2852C,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
-	dbglistobj ObjID_LargeRotPform,	Obj_LargeRotPlatform_MapUnc_2852C, $10,   1, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
-	dbglistobj ObjID_LargeRotPform,	Obj_LargeRotPlatform_MapUnc_2852C, $20,   2, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
-	dbglistobj ObjID_Cog,		Obj_Cog_MapUnc_28786, $10,   0, make_art_tile(ArtTile_ArtNem_MtzWheel,3,1)
-	dbglistobj ObjID_MTZLavaBubble,	Obj_Scenery2_MapUnc_11576, $22,   5, make_art_tile(ArtTile_ArtNem_MtzLavaBubble,2,0)
-	dbglistobj ObjID_Scenery,	Obj_Scenery_MapUnc_11552,   0,   0, make_art_tile(ArtTile_ArtNem_BoltEnd_Rope,2,0)
-	dbglistobj ObjID_Scenery,	Obj_Scenery_MapUnc_11552,   1,   1, make_art_tile(ArtTile_ArtNem_BoltEnd_Rope,2,0)
-	dbglistobj ObjID_Scenery,	Obj_Scenery_MapUnc_11552,   3,   2, make_art_tile(ArtTile_ArtNem_BoltEnd_Rope,1,0)
-	dbglistobj ObjID_MTZLongPlatform, Obj_MTZLongPlatform_Obj_MTZMovingPlatforms_Obj_CPZSquarePlatform_MapUnc_26EC8, $B0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
-	dbglistobj ObjID_Shellcracker,	Obj_Skullcracker_MapUnc_38314, $24,   0, make_art_tile(ArtTile_ArtNem_Shellcracker,0,0)
-	dbglistobj ObjID_Asteron,	Obj_Asteron_Obj_Projectile_MapUnc_38A96, $2E,   0, make_art_tile(ArtTile_ArtNem_MtzSupernova,0,1)
-	dbglistobj ObjID_Slicer,	Obj_Slicer_MapUnc_385E2, $28,   0, make_art_tile(ArtTile_ArtNem_MtzMantis,1,0)
-	dbglistobj ObjID_LavaMarker,	Obj_LavaMarker_MapUnc_20E74,   0,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
-	dbglistobj ObjID_LavaMarker,	Obj_LavaMarker_MapUnc_20E74,   1,   1, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
-	dbglistobj ObjID_LavaMarker,	Obj_LavaMarker_MapUnc_20E74,   2,   2, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
-	dbglistobj ObjID_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
+	dbglistobj Obj_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_Monitor,		Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
+	dbglistobj Obj_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
+	dbglistobj Obj_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,   9,   1, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_SteamSpring,	Obj_SteamSpring_MapUnc_2686C,   1,   7, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
+	dbglistobj Obj_MTZTwinStompers, Obj_MTZTwinStompers_MapUnc_26A5C,   1,   0, make_art_tile(ArtTile_ArtKos_LevelArt,1,0)
+	dbglistobj Obj_MTZTwinStompers, Obj_MTZTwinStompers_MapUnc_26A5C, $11,   1, make_art_tile(ArtTile_ArtKos_LevelArt,1,0)
+	dbglistobj Obj_MTZLongPlatform, Obj_MTZLongPlatform_Obj_MTZMovingPlatforms_Obj_CPZSquarePlatform_MapUnc_26EC8, $80,   0, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
+	dbglistobj Obj_MTZLongPlatform, Obj_MTZLongPlatform_Obj_MTZMovingPlatforms_Obj_CPZSquarePlatform_MapUnc_26EC8, $13,   1, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
+	dbglistobj Obj_Button,		Obj_Button_MapUnc_24D96,   0,   2, make_art_tile(ArtTile_ArtNem_Button,0,0)
+	dbglistobj Obj_Barrier,		Obj_Barrier_MapUnc_11822,   1,   1, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
+	dbglistobj Obj_MTZSpringWall,	Obj_MTZSpringWall_MapUnc_27120,   1,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
+	dbglistobj Obj_MTZSpringWall,	Obj_MTZSpringWall_MapUnc_27120, $11,   1, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
+	dbglistobj Obj_SpikyBlock,	Obj_SpikyBlock_Obj_FloorSpike_MapUnc_27750,   0,   4, make_art_tile(ArtTile_ArtNem_MtzSpikeBlock,3,0)
+	dbglistobj Obj_Nut,		Obj_Nut_MapUnc_27A26,   4,   0, make_art_tile(ArtTile_ArtNem_MtzAsstBlocks,1,0)
+	dbglistobj Obj_MTZMovingPlatforms,Obj_MTZLongPlatform_Obj_MTZMovingPlatforms_Obj_CPZSquarePlatform_MapUnc_26EC8,   0,   1, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
+	dbglistobj Obj_MTZPlatform,	Obj_MTZLongPlatform_Obj_MTZMovingPlatforms_Obj_CPZSquarePlatform_MapUnc_26EC8,   7,   1, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
+	dbglistobj Obj_FloorSpike,	Obj_SpikyBlock_Obj_FloorSpike_MapUnc_27750,   0,   0, make_art_tile(ArtTile_ArtNem_MtzSpike,1,0)
+	dbglistobj Obj_LargeRotPlatform,Obj_LargeRotPlatform_MapUnc_2852C,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
+	dbglistobj Obj_LargeRotPlatform,Obj_LargeRotPlatform_MapUnc_2852C, $10,   1, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
+	dbglistobj Obj_LargeRotPlatform,Obj_LargeRotPlatform_MapUnc_2852C, $20,   2, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
+	dbglistobj Obj_Cog,		Obj_Cog_MapUnc_28786, $10,   0, make_art_tile(ArtTile_ArtNem_MtzWheel,3,1)
+	dbglistobj Obj_MTZLavaBubble,	Obj_Scenery2_MapUnc_11576, $22,   5, make_art_tile(ArtTile_ArtNem_MtzLavaBubble,2,0)
+	dbglistobj Obj_Scenery,		Obj_Scenery_MapUnc_11552,   0,   0, make_art_tile(ArtTile_ArtNem_BoltEnd_Rope,2,0)
+	dbglistobj Obj_Scenery,		Obj_Scenery_MapUnc_11552,   1,   1, make_art_tile(ArtTile_ArtNem_BoltEnd_Rope,2,0)
+	dbglistobj Obj_Scenery,		Obj_Scenery_MapUnc_11552,   3,   2, make_art_tile(ArtTile_ArtNem_BoltEnd_Rope,1,0)
+	dbglistobj Obj_MTZLongPlatform, Obj_MTZLongPlatform_Obj_MTZMovingPlatforms_Obj_CPZSquarePlatform_MapUnc_26EC8, $B0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,3,0)
+	dbglistobj Obj_Shellcracker,	Obj_Shellcracker_MapUnc_38314, $24,   0, make_art_tile(ArtTile_ArtNem_Shellcracker,0,0)
+	dbglistobj Obj_Asteron,		Obj_Asteron_Obj_Projectile_MapUnc_38A96, $2E,   0, make_art_tile(ArtTile_ArtNem_MtzSupernova,0,1)
+	dbglistobj Obj_Slicer,		Obj_Slicer_MapUnc_385E2, $28,   0, make_art_tile(ArtTile_ArtNem_MtzMantis,1,0)
+	dbglistobj Obj_LavaMarker,	Obj_LavaMarker_MapUnc_20E74,   0,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
+	dbglistobj Obj_LavaMarker,	Obj_LavaMarker_MapUnc_20E74,   1,   1, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
+	dbglistobj Obj_LavaMarker,	Obj_LavaMarker_MapUnc_20E74,   2,   2, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
+	dbglistobj Obj_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
 DbgObjList_MTZ_End
 
 DbgObjList_WFZ: dbglistheader
-	dbglistobj ObjID_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_Monitor,	Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
-	dbglistobj ObjID_WFZPalSwitcher, Obj_PlaneSwitcher_MapUnc_1FFB8,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,0,0)
-	dbglistobj ObjID_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
-	dbglistobj ObjID_Cloud,		Obj_Cloud_MapUnc_3B32C, $5E,   0, make_art_tile(ArtTile_ArtNem_Clouds,2,0)
-	dbglistobj ObjID_Cloud,		Obj_Cloud_MapUnc_3B32C, $60,   1, make_art_tile(ArtTile_ArtNem_Clouds,2,0)
-	dbglistobj ObjID_Cloud,		Obj_Cloud_MapUnc_3B32C, $62,   2, make_art_tile(ArtTile_ArtNem_Clouds,2,0)
-	dbglistobj ObjID_VPropeller,	Obj_VPropeller_MapUnc_3B3BE, $64,   0, make_art_tile(ArtTile_ArtNem_WfzVrtclPrpllr,1,1)
-	dbglistobj ObjID_HPropeller,	Obj_HPropeller_MapUnc_3B548, $66,   0, make_art_tile(ArtTile_ArtNem_WfzHrzntlPrpllr,1,1)
-	dbglistobj ObjID_HPropeller,	Obj_HPropeller_MapUnc_3B548, $68,   0, make_art_tile(ArtTile_ArtNem_WfzHrzntlPrpllr,1,1)
-	dbglistobj ObjID_CluckerBase,	Obj_CluckerBase_Obj_Projectile_MapUnc_395B4, $42,  $C, make_art_tile(ArtTile_ArtNem_WfzScratch,0,0)
-	dbglistobj ObjID_Clucker,	Obj_CluckerBase_Obj_Projectile_MapUnc_395B4, $44,  $B, make_art_tile(ArtTile_ArtNem_WfzScratch,0,0)
-	dbglistobj ObjID_TiltingPlatform, Obj_TiltingPlatform_MapUnc_3B856, $6A,   0, make_art_tile(ArtTile_ArtNem_WfzTiltPlatforms,1,1)
-	dbglistobj ObjID_TiltingPlatform, Obj_TiltingPlatform_MapUnc_3B856, $6C,   0, make_art_tile(ArtTile_ArtNem_WfzTiltPlatforms,1,1)
-	dbglistobj ObjID_TiltingPlatform, Obj_TiltingPlatform_MapUnc_3B856, $6E,   0, make_art_tile(ArtTile_ArtNem_WfzTiltPlatforms,1,1)
-	dbglistobj ObjID_TiltingPlatform, Obj_TiltingPlatform_MapUnc_3B856, $70,   0, make_art_tile(ArtTile_ArtNem_WfzTiltPlatforms,1,1)
-	dbglistobj ObjID_VerticalLaser,	Obj_VerticalLaser_MapUnc_3B8E4, $72,   0, make_art_tile(ArtTile_ArtNem_WfzVrtclLazer,2,1)
-	dbglistobj ObjID_WallTurret,	Obj_WallTurret_Obj_Projectile_MapUnc_3BA46, $74,   0, make_art_tile(ArtTile_ArtNem_WfzWallTurret,0,0)
-	dbglistobj ObjID_Laser,		Obj_Laser_MapUnc_3BB18, $76,   0, make_art_tile(ArtTile_ArtNem_WfzHrzntlLazer,2,1)
-	dbglistobj ObjID_WFZWheel,	Obj_WFZWheel_MapUnc_3BB70, $78,   0, make_art_tile(ArtTile_ArtNem_WfzConveyorBeltWheel,2,1)
-	dbglistobj ObjID_WFZShipFire,	Obj_WFZShipFire_MapUnc_3BC08, $7C,   0, make_art_tile(ArtTile_ArtNem_WfzThrust,2,0)
-	dbglistobj ObjID_SmallMetalPform, Obj_SmallMetalPlatform_MapUnc_3BD3E, $7E,   0, make_art_tile(ArtTile_ArtNem_WfzBeltPlatform,3,1)
-	dbglistobj ObjID_SmallMetalPform, Obj_SmallMetalPlatform_MapUnc_3BD3E, $80,   0, make_art_tile(ArtTile_ArtNem_WfzBeltPlatform,3,1)
-	dbglistobj ObjID_LateralCannon,	Obj_LateralCannon_MapUnc_3BE46, $82,   0, make_art_tile(ArtTile_ArtNem_WfzGunPlatform,3,1)
-	dbglistobj ObjID_WFZStick,	Obj_WFZStick_MapUnc_3BEE0, $84,   0, make_art_tile(ArtTile_ArtNem_WfzUnusedBadnik,3,1)
-	dbglistobj ObjID_SpeedLauncher,	Obj_SpeedLauncher_MapUnc_3C098,   8,   0, make_art_tile(ArtTile_ArtNem_WfzLaunchCatapult,1,0)
-	dbglistobj ObjID_BreakablePlating, Obj_BreakablePlating_MapUnc_3C280, $88,   0, make_art_tile(ArtTile_ArtNem_BreakPanels,3,1)
-	dbglistobj ObjID_Rivet,		Obj_Rivet_MapUnc_3C3C2, $8A,   0, make_art_tile(ArtTile_ArtNem_WfzSwitch,1,1)
-	dbglistobj ObjID_WFZPlatform,	Obj_FloatingPlatform2_MapUnc_2222A, $38,   3, make_art_tile(ArtTile_ArtNem_WfzFloatingPlatform,1,1)
-	dbglistobj ObjID_Grab,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_MovingVine,	Obj_MovingVine_MapUnc_29DD0,   0,   0, make_art_tile(ArtTile_ArtNem_WfzHook_Fudge,1,0)
-	dbglistobj ObjID_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
+	dbglistobj Obj_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_Monitor,		Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
+	dbglistobj Obj_WFZPalSwitcher, Obj_PlaneSwitcher_MapUnc_1FFB8,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,0,0)
+	dbglistobj Obj_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
+	dbglistobj Obj_Cloud,		Obj_Cloud_MapUnc_3B32C, $5E,   0, make_art_tile(ArtTile_ArtNem_Clouds,2,0)
+	dbglistobj Obj_Cloud,		Obj_Cloud_MapUnc_3B32C, $60,   1, make_art_tile(ArtTile_ArtNem_Clouds,2,0)
+	dbglistobj Obj_Cloud,		Obj_Cloud_MapUnc_3B32C, $62,   2, make_art_tile(ArtTile_ArtNem_Clouds,2,0)
+	dbglistobj Obj_VPropeller,	Obj_VPropeller_MapUnc_3B3BE, $64,   0, make_art_tile(ArtTile_ArtNem_WfzVrtclPrpllr,1,1)
+	dbglistobj Obj_HPropeller,	Obj_HPropeller_MapUnc_3B548, $66,   0, make_art_tile(ArtTile_ArtNem_WfzHrzntlPrpllr,1,1)
+	dbglistobj Obj_HPropeller,	Obj_HPropeller_MapUnc_3B548, $68,   0, make_art_tile(ArtTile_ArtNem_WfzHrzntlPrpllr,1,1)
+	dbglistobj Obj_CluckerBase,	Obj_CluckerBase_Obj_Projectile_MapUnc_395B4, $42,  $C, make_art_tile(ArtTile_ArtNem_WfzScratch,0,0)
+	dbglistobj Obj_Clucker,		Obj_CluckerBase_Obj_Projectile_MapUnc_395B4, $44,  $B, make_art_tile(ArtTile_ArtNem_WfzScratch,0,0)
+	dbglistobj Obj_TiltingPlatform, Obj_TiltingPlatform_MapUnc_3B856, $6A,   0, make_art_tile(ArtTile_ArtNem_WfzTiltPlatforms,1,1)
+	dbglistobj Obj_TiltingPlatform, Obj_TiltingPlatform_MapUnc_3B856, $6C,   0, make_art_tile(ArtTile_ArtNem_WfzTiltPlatforms,1,1)
+	dbglistobj Obj_TiltingPlatform, Obj_TiltingPlatform_MapUnc_3B856, $6E,   0, make_art_tile(ArtTile_ArtNem_WfzTiltPlatforms,1,1)
+	dbglistobj Obj_TiltingPlatform, Obj_TiltingPlatform_MapUnc_3B856, $70,   0, make_art_tile(ArtTile_ArtNem_WfzTiltPlatforms,1,1)
+	dbglistobj Obj_VerticalLaser,	Obj_VerticalLaser_MapUnc_3B8E4, $72,   0, make_art_tile(ArtTile_ArtNem_WfzVrtclLazer,2,1)
+	dbglistobj Obj_WallTurret,	Obj_WallTurret_Obj_Projectile_MapUnc_3BA46, $74,   0, make_art_tile(ArtTile_ArtNem_WfzWallTurret,0,0)
+	dbglistobj Obj_Laser,		Obj_Laser_MapUnc_3BB18, $76,   0, make_art_tile(ArtTile_ArtNem_WfzHrzntlLazer,2,1)
+	dbglistobj Obj_WFZWheel,	Obj_WFZWheel_MapUnc_3BB70, $78,   0, make_art_tile(ArtTile_ArtNem_WfzConveyorBeltWheel,2,1)
+	dbglistobj Obj_WFZShipFire,	Obj_WFZShipFire_MapUnc_3BC08, $7C,   0, make_art_tile(ArtTile_ArtNem_WfzThrust,2,0)
+	dbglistobj Obj_SmallMetalPlatform, Obj_SmallMetalPlatform_MapUnc_3BD3E, $7E,   0, make_art_tile(ArtTile_ArtNem_WfzBeltPlatform,3,1)
+	dbglistobj Obj_SmallMetalPlatform, Obj_SmallMetalPlatform_MapUnc_3BD3E, $80,   0, make_art_tile(ArtTile_ArtNem_WfzBeltPlatform,3,1)
+	dbglistobj Obj_LateralCannon,	Obj_LateralCannon_MapUnc_3BE46, $82,   0, make_art_tile(ArtTile_ArtNem_WfzGunPlatform,3,1)
+	dbglistobj Obj_WFZStick,	Obj_WFZStick_MapUnc_3BEE0, $84,   0, make_art_tile(ArtTile_ArtNem_WfzUnusedBadnik,3,1)
+	dbglistobj Obj_SpeedLauncher,	Obj_SpeedLauncher_MapUnc_3C098,   8,   0, make_art_tile(ArtTile_ArtNem_WfzLaunchCatapult,1,0)
+	dbglistobj Obj_BreakablePlating,Obj_BreakablePlating_MapUnc_3C280, $88,   0, make_art_tile(ArtTile_ArtNem_BreakPanels,3,1)
+	dbglistobj Obj_Rivet,		Obj_Rivet_MapUnc_3C3C2, $8A,   0, make_art_tile(ArtTile_ArtNem_WfzSwitch,1,1)
+	dbglistobj Obj_WFZPlatform,	Obj_FloatingPlatform2_MapUnc_2222A, $38,   3, make_art_tile(ArtTile_ArtNem_WfzFloatingPlatform,1,1)
+	dbglistobj Obj_Grab,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_MovingVine,	Obj_MovingVine_MapUnc_29DD0,   0,   0, make_art_tile(ArtTile_ArtNem_WfzHook_Fudge,1,0)
+	dbglistobj Obj_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
 DbgObjList_WFZ_End
 
 DbgObjList_HTZ: dbglistheader
-	dbglistobj ObjID_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_Monitor,	Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
-	dbglistobj ObjID_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
-	dbglistobj ObjID_ForcedSpin,	Obj_PlaneSwitcher_MapUnc_1FFB8,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,0,0)
-	dbglistobj ObjID_ForcedSpin,	Obj_PlaneSwitcher_MapUnc_1FFB8,   4,   4, make_art_tile(ArtTile_ArtNem_Ring,0,0)
-	dbglistobj ObjID_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,   9,   1, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_EHZPlatform,	Obj_FloatingPlatform_MapUnc_107F6,   1,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
-	dbglistobj ObjID_EHZPlatform,	Obj_FloatingPlatform_MapUnc_107F6, $9A,   1, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
-	dbglistobj ObjID_Spikes,	Obj_Spikes_MapUnc_15B68,   0,   0, make_art_tile(ArtTile_ArtNem_Spikes,1,0)
-	dbglistobj ObjID_Seesaw,	Obj_Seesaw_MapUnc_21CF0,   0,   0, make_art_tile(ArtTile_ArtNem_HtzSeeSaw,0,0)
-	dbglistobj ObjID_Barrier,	Obj_Barrier_MapUnc_11822,   0,   0, make_art_tile(ArtTile_ArtNem_HtzValveBarrier,1,0)
-	dbglistobj ObjID_SmashableGround, Obj_SmashableGround_MapUnc_236FA,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,1)
-	dbglistobj ObjID_LavaBubble,	Obj_LavaBubble_MapUnc_23254, $44,   2, make_art_tile(ArtTile_ArtNem_HtzFireball2,0,1)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $81,   0, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $90,   3, make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $A0,   6, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $30,   7, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $40,  $A, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
-	dbglistobj ObjID_HTZLift,	Obj_HTZLift_MapUnc_21F14,   0,   0, make_art_tile(ArtTile_ArtNem_HtzZipline,2,0)
-	dbglistobj ObjID_BridgeStake,	Obj_HTZLift_MapUnc_21F14,   4,   3, make_art_tile(ArtTile_ArtNem_HtzZipline,2,0)
-	dbglistobj ObjID_BridgeStake,	Obj_HTZLift_MapUnc_21F14,   5,   4, make_art_tile(ArtTile_ArtNem_HtzZipline,2,0)
-	dbglistobj ObjID_Scenery,	Obj_Scenery_MapUnc_113D6,   7,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
-	dbglistobj ObjID_Scenery,	Obj_Scenery_MapUnc_113D6,   8,   1, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
-	dbglistobj ObjID_BreakableRock,	Obj_BreakableBlock_MapUnc_23852,   0,   0, make_art_tile(ArtTile_ArtNem_HtzRock,2,0)
-	dbglistobj ObjID_LavaMarker,	Obj_LavaMarker_MapUnc_20E74,   0,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
-	dbglistobj ObjID_LavaMarker,	Obj_LavaMarker_MapUnc_20E74,   1,   1, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
-	dbglistobj ObjID_LavaMarker,	Obj_LavaMarker_MapUnc_20E74,   2,   2, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
-	dbglistobj ObjID_Rexon2,	Obj_Rexon_Obj_Projectile_MapUnc_37678,  $E,   2, make_art_tile(ArtTile_ArtNem_Rexon,3,0)
-	dbglistobj ObjID_Spiker,	Obj_Spiker_Obj_SpikerDrill_MapUnc_37092,  $A,   0, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
-	dbglistobj ObjID_Sol,		Obj_Sol_MapUnc_372E6,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
-	dbglistobj ObjID_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
+	dbglistobj Obj_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_Monitor,		Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
+	dbglistobj Obj_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
+	dbglistobj Obj_ForcedSpin,	Obj_PlaneSwitcher_MapUnc_1FFB8,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,0,0)
+	dbglistobj Obj_ForcedSpin,	Obj_PlaneSwitcher_MapUnc_1FFB8,   4,   4, make_art_tile(ArtTile_ArtNem_Ring,0,0)
+	dbglistobj Obj_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,   9,   1, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_EHZPlatform,	Obj_FloatingPlatform_MapUnc_107F6,   1,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
+	dbglistobj Obj_EHZPlatform,	Obj_FloatingPlatform_MapUnc_107F6, $9A,   1, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
+	dbglistobj Obj_Spikes,		Obj_Spikes_MapUnc_15B68,   0,   0, make_art_tile(ArtTile_ArtNem_Spikes,1,0)
+	dbglistobj Obj_Seesaw,		Obj_Seesaw_MapUnc_21CF0,   0,   0, make_art_tile(ArtTile_ArtNem_HtzSeeSaw,0,0)
+	dbglistobj Obj_Barrier,		Obj_Barrier_MapUnc_11822,   0,   0, make_art_tile(ArtTile_ArtNem_HtzValveBarrier,1,0)
+	dbglistobj Obj_SmashableGround, Obj_SmashableGround_MapUnc_236FA,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,1)
+	dbglistobj Obj_LavaBubble,	Obj_LavaBubble_MapUnc_23254, $44,   2, make_art_tile(ArtTile_ArtNem_HtzFireball2,0,1)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $81,   0, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $90,   3, make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $A0,   6, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $30,   7, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $40,  $A, make_art_tile(ArtTile_ArtNem_DignlSprng,0,0)
+	dbglistobj Obj_HTZLift,		Obj_HTZLift_MapUnc_21F14,   0,   0, make_art_tile(ArtTile_ArtNem_HtzZipline,2,0)
+	dbglistobj Obj_BridgeStake,	Obj_HTZLift_MapUnc_21F14,   4,   3, make_art_tile(ArtTile_ArtNem_HtzZipline,2,0)
+	dbglistobj Obj_BridgeStake,	Obj_HTZLift_MapUnc_21F14,   5,   4, make_art_tile(ArtTile_ArtNem_HtzZipline,2,0)
+	dbglistobj Obj_Scenery,		Obj_Scenery_MapUnc_113D6,   7,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
+	dbglistobj Obj_Scenery,		Obj_Scenery_MapUnc_113D6,   8,   1, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
+	dbglistobj Obj_BreakableRock,	Obj_BreakableBlock_MapUnc_23852,   0,   0, make_art_tile(ArtTile_ArtNem_HtzRock,2,0)
+	dbglistobj Obj_LavaMarker,	Obj_LavaMarker_MapUnc_20E74,   0,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
+	dbglistobj Obj_LavaMarker,	Obj_LavaMarker_MapUnc_20E74,   1,   1, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
+	dbglistobj Obj_LavaMarker,	Obj_LavaMarker_MapUnc_20E74,   2,   2, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
+	dbglistobj Obj_Rexon,		Obj_Rexon_Obj_Projectile_MapUnc_37678,  $E,   2, make_art_tile(ArtTile_ArtNem_Rexon,3,0)
+	dbglistobj Obj_Spiker,		Obj_Spiker_Obj_SpikerDrill_MapUnc_37092,  $A,   0, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
+	dbglistobj Obj_Sol,		Obj_Sol_MapUnc_372E6,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
+	dbglistobj Obj_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
 DbgObjList_HTZ_End
 
 DbgObjList_HPZ:; dbglistheader
-;	dbglistobj ObjID_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-;	dbglistobj ObjID_Monitor,	Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
+;	dbglistobj Obj_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+;	dbglistobj Obj_Monitor,		Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
 ;DbgObjList_HPZ_End
 
 DbgObjList_OOZ: dbglistheader
-	dbglistobj ObjID_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_Monitor,	Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
-	dbglistobj ObjID_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
-	dbglistobj ObjID_OOZPoppingPform, Obj_OOZPoppingPlatform_MapUnc_23DDC,   1,   0, make_art_tile(ArtTile_ArtNem_BurnerLid,3,0)
-	dbglistobj ObjID_SlidingSpike,	Obj_SlidingSpike_MapUnc_23FE0,   0,   0, make_art_tile(ArtTile_ArtNem_SpikyThing,2,1)
-	dbglistobj ObjID_OOZMovingPform, Obj_FloatingPlatform2_MapUnc_2222A, $23,   2, make_art_tile(ArtTile_ArtNem_OOZElevator,3,0)
-	dbglistobj ObjID_OOZSpring,	Obj_OOZSpring_MapUnc_2451A,   2,   0, make_art_tile(ArtTile_ArtNem_PushSpring,2,0)
-	dbglistobj ObjID_OOZSpring,	Obj_OOZSpring_MapUnc_2451A, $12,  $A, make_art_tile(ArtTile_ArtNem_PushSpring,2,0)
-	dbglistobj ObjID_OOZBall,	Obj_OOZBall_MapUnc_24C52,   0,   1, make_art_tile(ArtTile_ArtNem_BallThing,3,0)
-	dbglistobj ObjID_Button,	Obj_Button_MapUnc_24D96,   0,   2, make_art_tile(ArtTile_ArtNem_Button,0,0)
-	dbglistobj ObjID_SwingingPlatform, Obj_SwingingPlatform_MapUnc_101E8, $88,   1, make_art_tile(ArtTile_ArtNem_OOZSwingPlat,2,0)
-	dbglistobj ObjID_OOZLauncher,	Obj_OOZLauncher_MapUnc_250BA,   0,   0, make_art_tile(ArtTile_ArtNem_StripedBlocksVert,3,0)
-	dbglistobj ObjID_LauncherBall,	Obj_LauncherBall_MapUnc_254FE, $80,   0, make_art_tile(ArtTile_ArtNem_LaunchBall,3,0)
-	dbglistobj ObjID_LauncherBall,	Obj_LauncherBall_MapUnc_254FE, $81,   1, make_art_tile(ArtTile_ArtNem_LaunchBall,3,0)
-	dbglistobj ObjID_LauncherBall,	Obj_LauncherBall_MapUnc_254FE, $82,   2, make_art_tile(ArtTile_ArtNem_LaunchBall,3,0)
-	dbglistobj ObjID_LauncherBall,	Obj_LauncherBall_MapUnc_254FE, $83,   3, make_art_tile(ArtTile_ArtNem_LaunchBall,3,0)
-	dbglistobj ObjID_CollapsPform,	Obj_CollapsingPlatform_MapUnc_110C6,   0,   0, make_art_tile(ArtTile_ArtNem_OOZPlatform,3,0)
-	dbglistobj ObjID_Fan,		Obj_Fan_MapUnc_2AA12,   0,   0, make_art_tile(ArtTile_ArtNem_OOZFanHoriz,3,0)
-	dbglistobj ObjID_Fan,		Obj_Fan_MapUnc_2AAC4, $80,   0, make_art_tile(ArtTile_ArtNem_OOZFanHoriz,3,0)
-	dbglistobj ObjID_Aquis,		Obj_Aquis_MapUnc_2CF94,   0,   0, make_art_tile(ArtTile_ArtNem_Aquis,1,0)
-	dbglistobj ObjID_Octus,		Obj_Octus_MapUnc_2CBFE,   0,   0, make_art_tile(ArtTile_ArtNem_Octus,1,0)
-	dbglistobj ObjID_FallingOil,	Obj_Scenery_MapUnc_11406,  $A,   0, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
-	dbglistobj ObjID_FallingOil,	Obj_Scenery_MapUnc_11406,  $B,   1, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
-	dbglistobj ObjID_FallingOil,	Obj_Scenery_MapUnc_11406,  $C,   2, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
-	dbglistobj ObjID_FallingOil,	Obj_Scenery_MapUnc_11406,  $D,   3, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
-	dbglistobj ObjID_FallingOil,	Obj_Scenery_MapUnc_11406,  $E,   4, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
-	dbglistobj ObjID_FallingOil,	Obj_Scenery_MapUnc_11406,  $F,   5, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
-	dbglistobj ObjID_FallingOil,	Obj_Scenery_MapUnc_114AE, $10,   0, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
-	dbglistobj ObjID_FallingOil,	Obj_Scenery_MapUnc_114AE, $11,   1, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
-	dbglistobj ObjID_FallingOil,	Obj_Scenery_MapUnc_114AE, $12,   2, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
-	dbglistobj ObjID_FallingOil,	Obj_Scenery_MapUnc_114AE, $13,   3, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
-	dbglistobj ObjID_FallingOil,	Obj_Scenery_MapUnc_114AE, $14,   4, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
-	dbglistobj ObjID_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
+	dbglistobj Obj_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_Monitor,		Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
+	dbglistobj Obj_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
+	dbglistobj Obj_OOZPoppingPlatform,Obj_OOZPoppingPlatform_MapUnc_23DDC,   1,   0, make_art_tile(ArtTile_ArtNem_BurnerLid,3,0)
+	dbglistobj Obj_SlidingSpike,	Obj_SlidingSpike_MapUnc_23FE0,   0,   0, make_art_tile(ArtTile_ArtNem_SpikyThing,2,1)
+	dbglistobj Obj_OOZMovingPlatform,Obj_FloatingPlatform2_MapUnc_2222A, $23,   2, make_art_tile(ArtTile_ArtNem_OOZElevator,3,0)
+	dbglistobj Obj_OOZSpring,	Obj_OOZSpring_MapUnc_2451A,   2,   0, make_art_tile(ArtTile_ArtNem_PushSpring,2,0)
+	dbglistobj Obj_OOZSpring,	Obj_OOZSpring_MapUnc_2451A, $12,  $A, make_art_tile(ArtTile_ArtNem_PushSpring,2,0)
+	dbglistobj Obj_OOZBall,		Obj_OOZBall_MapUnc_24C52,   0,   1, make_art_tile(ArtTile_ArtNem_BallThing,3,0)
+	dbglistobj Obj_Button,		Obj_Button_MapUnc_24D96,   0,   2, make_art_tile(ArtTile_ArtNem_Button,0,0)
+	dbglistobj Obj_SwingingPlatform,Obj_SwingingPlatform_MapUnc_101E8, $88,   1, make_art_tile(ArtTile_ArtNem_OOZSwingPlat,2,0)
+	dbglistobj Obj_OOZLauncher,	Obj_OOZLauncher_MapUnc_250BA,   0,   0, make_art_tile(ArtTile_ArtNem_StripedBlocksVert,3,0)
+	dbglistobj Obj_LauncherBall,	Obj_LauncherBall_MapUnc_254FE, $80,   0, make_art_tile(ArtTile_ArtNem_LaunchBall,3,0)
+	dbglistobj Obj_LauncherBall,	Obj_LauncherBall_MapUnc_254FE, $81,   1, make_art_tile(ArtTile_ArtNem_LaunchBall,3,0)
+	dbglistobj Obj_LauncherBall,	Obj_LauncherBall_MapUnc_254FE, $82,   2, make_art_tile(ArtTile_ArtNem_LaunchBall,3,0)
+	dbglistobj Obj_LauncherBall,	Obj_LauncherBall_MapUnc_254FE, $83,   3, make_art_tile(ArtTile_ArtNem_LaunchBall,3,0)
+	dbglistobj Obj_CollapsingPlatform,Obj_CollapsingPlatform_MapUnc_110C6,   0,   0, make_art_tile(ArtTile_ArtNem_OOZPlatform,3,0)
+	dbglistobj Obj_Fan,		Obj_Fan_MapUnc_2AA12,   0,   0, make_art_tile(ArtTile_ArtNem_OOZFanHoriz,3,0)
+	dbglistobj Obj_Fan,		Obj_Fan_MapUnc_2AAC4, $80,   0, make_art_tile(ArtTile_ArtNem_OOZFanHoriz,3,0)
+	dbglistobj Obj_Aquis,		Obj_Aquis_MapUnc_2CF94,   0,   0, make_art_tile(ArtTile_ArtNem_Aquis,1,0)
+	dbglistobj Obj_Octus,		Obj_Octus_MapUnc_2CBFE,   0,   0, make_art_tile(ArtTile_ArtNem_Octus,1,0)
+	dbglistobj Obj_FallingOil,	Obj_Scenery_MapUnc_11406,  $A,   0, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
+	dbglistobj Obj_FallingOil,	Obj_Scenery_MapUnc_11406,  $B,   1, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
+	dbglistobj Obj_FallingOil,	Obj_Scenery_MapUnc_11406,  $C,   2, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
+	dbglistobj Obj_FallingOil,	Obj_Scenery_MapUnc_11406,  $D,   3, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
+	dbglistobj Obj_FallingOil,	Obj_Scenery_MapUnc_11406,  $E,   4, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
+	dbglistobj Obj_FallingOil,	Obj_Scenery_MapUnc_11406,  $F,   5, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
+	dbglistobj Obj_FallingOil,	Obj_Scenery_MapUnc_114AE, $10,   0, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
+	dbglistobj Obj_FallingOil,	Obj_Scenery_MapUnc_114AE, $11,   1, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
+	dbglistobj Obj_FallingOil,	Obj_Scenery_MapUnc_114AE, $12,   2, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
+	dbglistobj Obj_FallingOil,	Obj_Scenery_MapUnc_114AE, $13,   3, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
+	dbglistobj Obj_FallingOil,	Obj_Scenery_MapUnc_114AE, $14,   4, make_art_tile(ArtTile_ArtNem_Oilfall2,2,0)
+	dbglistobj Obj_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
 DbgObjList_OOZ_End
 
 DbgObjList_MCZ: dbglistheader
-	dbglistobj ObjID_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_Monitor,	Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
-	dbglistobj ObjID_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
-	dbglistobj ObjID_SwingingPlatform, Obj_SwingingPlatform_Obj_SidewaysPlatform_MapUnc_10256, $48,   2, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
-	dbglistobj ObjID_CollapsPform,	Obj_CollapsingPlatform_MapUnc_11106,   0,   0, make_art_tile(ArtTile_ArtNem_MCZCollapsePlat,3,0)
-	dbglistobj ObjID_RotatingRings,	Obj_RotatingRings_MapUnc_28B9C, $F5,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_MCZRotPforms,	Obj_MTZMovingPlatforms_MapUnc_27D30, $18,   0, make_art_tile(ArtTile_ArtNem_Crate,3,0)
-	dbglistobj ObjID_Stomper,	Obj_Stomper_MapUnc_11666,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
-	dbglistobj ObjID_Spikes,	Obj_Spikes_MapUnc_15B68,   0,   0, make_art_tile(ArtTile_ArtNem_Spikes,1,0)
-	dbglistobj ObjID_Spikes,	Obj_Spikes_MapUnc_15B68, $40,   4, make_art_tile(ArtTile_ArtNem_HorizSpike,1,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $81,   0, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $90,   3, make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0)
-	dbglistobj ObjID_Springboard,	Obj_SpringBoard_MapUnc_265F4,   1,   0, make_art_tile(ArtTile_ArtNem_LeverSpring,0,0)
-	dbglistobj ObjID_InvisibleBlock, Obj_InvisibleBlock_MapUnc_20F66, $11,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
-	dbglistobj ObjID_MCZBrick,	Obj_MCZBrick_MapUnc_28D8A, $18,   2, make_art_tile(ArtTile_ArtKos_LevelArt,1,0)
-	dbglistobj ObjID_SlidingSpikes,	Obj_MCZSlidingSpike_MapUnc_28F3A,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
-	dbglistobj ObjID_MCZBridge,	Obj_MCZBridge_MapUnc_29064,   1,   0, make_art_tile(ArtTile_ArtNem_MCZGateLog,3,0)
-	dbglistobj ObjID_VineSwitch,	Obj_VineSwitch_MapUnc_29938,   0,   0, make_art_tile(ArtTile_ArtNem_VineSwitch,3,0)
-	dbglistobj ObjID_MovingVine,	Obj_MovingVine_MapUnc_29C64,   0,   0, make_art_tile(ArtTile_ArtNem_VinePulley,3,0)
-	dbglistobj ObjID_MCZDrawbridge,	Obj_MCZDrawbridge_MapUnc_2A24E,   0,   1, make_art_tile(ArtTile_ArtNem_MCZGateLog,3,0)
-	dbglistobj ObjID_SidewaysPform,	Obj_SwingingPlatform_Obj_SidewaysPlatform_MapUnc_10256, $12,   0, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
-	dbglistobj ObjID_Flasher,	Obj_Flasher_MapUnc_388F0, $2C,   0, make_art_tile(ArtTile_ArtNem_Flasher,0,1)
-	dbglistobj ObjID_Crawlton,	Obj_CrawlTon_MapUnc_37FF2, $22,   0, make_art_tile(ArtTile_ArtNem_Crawlton,1,0)
-	dbglistobj ObjID_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
+	dbglistobj Obj_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_Monitor,		Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
+	dbglistobj Obj_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
+	dbglistobj Obj_SwingingPlatform, Obj_SwingingPlatform_Obj_SidewaysPlatform_MapUnc_10256, $48,   2, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
+	dbglistobj Obj_CollapsingPlatform,Obj_CollapsingPlatform_MapUnc_11106,   0,   0, make_art_tile(ArtTile_ArtNem_MCZCollapsePlat,3,0)
+	dbglistobj Obj_RotatingRings,	Obj_RotatingRings_MapUnc_28B9C, $F5,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_MCZRotPlatforms,	Obj_MTZMovingPlatforms_MapUnc_27D30, $18,   0, make_art_tile(ArtTile_ArtNem_Crate,3,0)
+	dbglistobj Obj_Stomper,		Obj_Stomper_MapUnc_11666,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
+	dbglistobj Obj_Spikes,		Obj_Spikes_MapUnc_15B68,   0,   0, make_art_tile(ArtTile_ArtNem_Spikes,1,0)
+	dbglistobj Obj_Spikes,		Obj_Spikes_MapUnc_15B68, $40,   4, make_art_tile(ArtTile_ArtNem_HorizSpike,1,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $81,   0, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $90,   3, make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0)
+	dbglistobj Obj_Springboard,	Obj_SpringBoard_MapUnc_265F4,   1,   0, make_art_tile(ArtTile_ArtNem_LeverSpring,0,0)
+	dbglistobj Obj_InvisibleBlock,	Obj_InvisibleBlock_MapUnc_20F66, $11,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
+	dbglistobj Obj_MCZBrick,	Obj_MCZBrick_MapUnc_28D8A, $18,   2, make_art_tile(ArtTile_ArtKos_LevelArt,1,0)
+	dbglistobj Obj_SlidingSpike,	Obj_MCZSlidingSpike_MapUnc_28F3A,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
+	dbglistobj Obj_MCZBridge,	Obj_MCZBridge_MapUnc_29064,   1,   0, make_art_tile(ArtTile_ArtNem_MCZGateLog,3,0)
+	dbglistobj Obj_VineSwitch,	Obj_VineSwitch_MapUnc_29938,   0,   0, make_art_tile(ArtTile_ArtNem_VineSwitch,3,0)
+	dbglistobj Obj_MovingVine,	Obj_MovingVine_MapUnc_29C64,   0,   0, make_art_tile(ArtTile_ArtNem_VinePulley,3,0)
+	dbglistobj Obj_MCZDrawbridge,	Obj_MCZDrawbridge_MapUnc_2A24E,   0,   1, make_art_tile(ArtTile_ArtNem_MCZGateLog,3,0)
+	dbglistobj Obj_SidewaysPlatform,Obj_SwingingPlatform_Obj_SidewaysPlatform_MapUnc_10256, $12,   0, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
+	dbglistobj Obj_Flasher,		Obj_Flasher_MapUnc_388F0, $2C,   0, make_art_tile(ArtTile_ArtNem_Flasher,0,1)
+	dbglistobj Obj_Crawlton,	Obj_CrawlTon_MapUnc_37FF2, $22,   0, make_art_tile(ArtTile_ArtNem_Crawlton,1,0)
+	dbglistobj Obj_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
 DbgObjList_MCZ_End
 
 DbgObjList_CNZ: dbglistheader
-	dbglistobj ObjID_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_Monitor,	Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
-	dbglistobj ObjID_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
-	dbglistobj ObjID_PinballMode,	Obj_PlaneSwitcher_MapUnc_1FFB8,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,0,0)
-	dbglistobj ObjID_PinballMode,	Obj_PlaneSwitcher_MapUnc_1FFB8,   4,   4, make_art_tile(ArtTile_ArtNem_Ring,0,0)
-	dbglistobj ObjID_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,   9,   1, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,  $D,   5, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_RoundBumper,	Obj_RoundBumper_MapUnc_1F85A,   0,   0, make_art_tile(ArtTile_ArtNem_CNZRoundBumper,2,0)
-	dbglistobj ObjID_LauncherSpring, Obj_LauncherSpring_MapUnc_2B07E,   0,   0, make_art_tile(ArtTile_ArtNem_CNZVertPlunger,0,0)
-	dbglistobj ObjID_LauncherSpring, Obj_LauncherSpring_MapUnc_2B0EC, $81,   0, make_art_tile(ArtTile_ArtNem_CNZDiagPlunger,0,0)
-	dbglistobj ObjID_Flipper,	Obj_Flipper_MapUnc_2B45A,   0,   0, make_art_tile(ArtTile_ArtNem_CNZFlipper,2,0)
-	dbglistobj ObjID_Flipper,	Obj_Flipper_MapUnc_2B45A,   1,   4, make_art_tile(ArtTile_ArtNem_CNZFlipper,2,0)
-	dbglistobj ObjID_CNZRectBlocks,	Obj_CNZRectangularBlocks_MapUnc_2B694,   1,   0, make_art_tile(ArtTile_ArtNem_CNZSnake,2,0)
-	dbglistobj ObjID_BombPrize,	Obj_BombPrize_MapUnc_2B8D4,   0,   0, make_art_tile(ArtTile_ArtNem_CNZBonusSpike,0,0)
-	dbglistobj ObjID_CNZBigBlock,	Obj_CNZBigBlock_MapUnc_2B9CA,   0,   0, make_art_tile(ArtTile_ArtNem_BigMovingBlock,2,0)
-	dbglistobj ObjID_CNZBigBlock,	Obj_CNZBigBlock_MapUnc_2B9CA,   2,   0, make_art_tile(ArtTile_ArtNem_BigMovingBlock,2,0)
-	dbglistobj ObjID_Elevator,	Obj_Elevator_MapUnc_2BB40, $18,   0, make_art_tile(ArtTile_ArtNem_CNZElevator,2,0)
-	dbglistobj ObjID_PointPokey,	Obj_PointPokey_MapUnc_2BEBC,   1,   0, make_art_tile(ArtTile_ArtNem_CNZCage,0,0)
-	dbglistobj ObjID_Bumper,	Obj_Bumper_MapUnc_2C626,   0,   0, make_art_tile(ArtTile_ArtNem_CNZHexBumper,2,0)
-	dbglistobj ObjID_BonusBlock,	Obj_BonusBlock_MapUnc_2C8C4,   0,   0, make_art_tile(ArtTile_ArtNem_CNZMiniBumper,2,0)
-	dbglistobj ObjID_BonusBlock,	Obj_BonusBlock_MapUnc_2C8C4, $40,   1, make_art_tile(ArtTile_ArtNem_CNZMiniBumper,2,0)
-	dbglistobj ObjID_BonusBlock,	Obj_BonusBlock_MapUnc_2C8C4, $80,   2, make_art_tile(ArtTile_ArtNem_CNZMiniBumper,2,0)
-	dbglistobj ObjID_Crawl,		Obj_Crawl_MapUnc_3D450, $AC,   0, make_art_tile(ArtTile_ArtNem_Crawl,0,1)
-	dbglistobj ObjID_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
+	dbglistobj Obj_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_Monitor,		Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
+	dbglistobj Obj_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
+	dbglistobj Obj_PinballMode,	Obj_PlaneSwitcher_MapUnc_1FFB8,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,0,0)
+	dbglistobj Obj_PinballMode,	Obj_PlaneSwitcher_MapUnc_1FFB8,   4,   4, make_art_tile(ArtTile_ArtNem_Ring,0,0)
+	dbglistobj Obj_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,   9,   1, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,  $D,   5, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_RoundBumper,	Obj_RoundBumper_MapUnc_1F85A,   0,   0, make_art_tile(ArtTile_ArtNem_CNZRoundBumper,2,0)
+	dbglistobj Obj_LauncherSpring,	Obj_LauncherSpring_MapUnc_2B07E,   0,   0, make_art_tile(ArtTile_ArtNem_CNZVertPlunger,0,0)
+	dbglistobj Obj_LauncherSpring,	Obj_LauncherSpring_MapUnc_2B0EC, $81,   0, make_art_tile(ArtTile_ArtNem_CNZDiagPlunger,0,0)
+	dbglistobj Obj_Flipper,		Obj_Flipper_MapUnc_2B45A,   0,   0, make_art_tile(ArtTile_ArtNem_CNZFlipper,2,0)
+	dbglistobj Obj_Flipper,		Obj_Flipper_MapUnc_2B45A,   1,   4, make_art_tile(ArtTile_ArtNem_CNZFlipper,2,0)
+	dbglistobj Obj_CNZRectangularBlocks,Obj_CNZRectangularBlocks_MapUnc_2B694,   1,   0, make_art_tile(ArtTile_ArtNem_CNZSnake,2,0)
+	dbglistobj Obj_BombPrize,	Obj_BombPrize_MapUnc_2B8D4,   0,   0, make_art_tile(ArtTile_ArtNem_CNZBonusSpike,0,0)
+	dbglistobj Obj_CNZBigBlock,	Obj_CNZBigBlock_MapUnc_2B9CA,   0,   0, make_art_tile(ArtTile_ArtNem_BigMovingBlock,2,0)
+	dbglistobj Obj_CNZBigBlock,	Obj_CNZBigBlock_MapUnc_2B9CA,   2,   0, make_art_tile(ArtTile_ArtNem_BigMovingBlock,2,0)
+	dbglistobj Obj_Elevator,	Obj_Elevator_MapUnc_2BB40, $18,   0, make_art_tile(ArtTile_ArtNem_CNZElevator,2,0)
+	dbglistobj Obj_PointPokey,	Obj_PointPokey_MapUnc_2BEBC,   1,   0, make_art_tile(ArtTile_ArtNem_CNZCage,0,0)
+	dbglistobj Obj_Bumper,		Obj_Bumper_MapUnc_2C626,   0,   0, make_art_tile(ArtTile_ArtNem_CNZHexBumper,2,0)
+	dbglistobj Obj_BonusBlock,	Obj_BonusBlock_MapUnc_2C8C4,   0,   0, make_art_tile(ArtTile_ArtNem_CNZMiniBumper,2,0)
+	dbglistobj Obj_BonusBlock,	Obj_BonusBlock_MapUnc_2C8C4, $40,   1, make_art_tile(ArtTile_ArtNem_CNZMiniBumper,2,0)
+	dbglistobj Obj_BonusBlock,	Obj_BonusBlock_MapUnc_2C8C4, $80,   2, make_art_tile(ArtTile_ArtNem_CNZMiniBumper,2,0)
+	dbglistobj Obj_Crawl,		Obj_Crawl_MapUnc_3D450, $AC,   0, make_art_tile(ArtTile_ArtNem_Crawl,0,1)
+	dbglistobj Obj_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
 DbgObjList_CNZ_End
 
 DbgObjList_CPZ: dbglistheader
-	dbglistobj ObjID_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_Monitor,	Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
-	dbglistobj ObjID_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
-	dbglistobj ObjID_TippingFloor,	Obj_TippingFloor_MapUnc_201A0, $70,   0, make_art_tile(ArtTile_ArtNem_CPZAnimatedBits,3,1)
-	dbglistobj ObjID_SpeedBooster,	Obj_SpeedBooster_MapUnc_223E2,   0,   0, make_art_tile(ArtTile_ArtNem_CPZBooster,3,1)
-	dbglistobj ObjID_BlueBalls,	Obj_BlueBalls_MapUnc_22576,   5,   0, make_art_tile(ArtTile_ArtNem_CPZDroplet,3,1)
-	dbglistobj ObjID_CPZPlatform,	Obj_FloatingPlatform2_MapUnc_2222A,   6,   0, make_art_tile(ArtTile_ArtNem_CPZElevator,3,0)
-	dbglistobj ObjID_Barrier,	Obj_Barrier_MapUnc_11822,   2,   2, make_art_tile(ArtTile_ArtNem_ConstructionStripes_2,1,0)
-	dbglistobj ObjID_BreakableBlock, Obj_BreakableBlock_MapUnc_23886,   0,   0, make_art_tile(ArtTile_ArtNem_CPZMetalBlock,3,0)
-	dbglistobj ObjID_CPZSquarePform, Obj_CPZSquarePlatform_MapUnc_2800E, $10,   0, make_art_tile(ArtTile_ArtNem_CPZStairBlock,3,0)
-	dbglistobj ObjID_CPZStaircase,	Obj_CPZSquarePlatform_MapUnc_2800E,   0,   0, make_art_tile(ArtTile_ArtNem_CPZStairBlock,3,0)
-	dbglistobj ObjID_SidewaysPform,	Obj_SidewaysPlatform_MapUnc_29564,   0,   0, make_art_tile(ArtTile_ArtNem_CPZStairBlock,3,1)
-	dbglistobj ObjID_PipeExitSpring, Obj_PipeExitSpring_MapUnc_29780,   2,   0, make_art_tile(ArtTile_ArtNem_CPZTubeSpring,0,0)
-	dbglistobj ObjID_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,   9,   1, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,  $D,   5, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_Spikes,	Obj_Spikes_MapUnc_15B68,   0,   0, make_art_tile(ArtTile_ArtNem_Spikes,1,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $81,   0, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $90,   3, make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $A0,   6, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
-	dbglistobj ObjID_Springboard,	Obj_SpringBoard_MapUnc_265F4,   1,   0, make_art_tile(ArtTile_ArtNem_LeverSpring,0,0)
-	dbglistobj ObjID_Spiny,		Obj_Spiny_Obj_SpinyOnWall_Obj_Projectile_MapUnc_38CCA, $32,   0, make_art_tile(ArtTile_ArtNem_Spiny,1,0)
-	dbglistobj ObjID_SpinyOnWall,	Obj_Spiny_Obj_SpinyOnWall_Obj_Projectile_MapUnc_38CCA, $32,   3, make_art_tile(ArtTile_ArtNem_Spiny,1,0)
-	dbglistobj ObjID_Grabber,	Obj_Grabber_Obj_GrabberLegs_Obj_GrabberBox_Obj_Projectile_MapUnc_3921A, $36,   0, make_art_tile(ArtTile_ArtNem_Grabber,1,1)
-	dbglistobj ObjID_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
+	dbglistobj Obj_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_Monitor,		Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
+	dbglistobj Obj_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
+	dbglistobj Obj_TippingFloor,	Obj_TippingFloor_MapUnc_201A0, $70,   0, make_art_tile(ArtTile_ArtNem_CPZAnimatedBits,3,1)
+	dbglistobj Obj_SpeedBooster,	Obj_SpeedBooster_MapUnc_223E2,   0,   0, make_art_tile(ArtTile_ArtNem_CPZBooster,3,1)
+	dbglistobj Obj_BlueBalls,	Obj_BlueBalls_MapUnc_22576,   5,   0, make_art_tile(ArtTile_ArtNem_CPZDroplet,3,1)
+	dbglistobj Obj_CPZPlatform,	Obj_FloatingPlatform2_MapUnc_2222A,   6,   0, make_art_tile(ArtTile_ArtNem_CPZElevator,3,0)
+	dbglistobj Obj_Barrier,		Obj_Barrier_MapUnc_11822,   2,   2, make_art_tile(ArtTile_ArtNem_ConstructionStripes_2,1,0)
+	dbglistobj Obj_BreakableBlock,	Obj_BreakableBlock_MapUnc_23886,   0,   0, make_art_tile(ArtTile_ArtNem_CPZMetalBlock,3,0)
+	dbglistobj Obj_CPZSquarePlatform,Obj_CPZSquarePlatform_MapUnc_2800E, $10,   0, make_art_tile(ArtTile_ArtNem_CPZStairBlock,3,0)
+	dbglistobj Obj_CPZStaircase,	Obj_CPZSquarePlatform_MapUnc_2800E,   0,   0, make_art_tile(ArtTile_ArtNem_CPZStairBlock,3,0)
+	dbglistobj Obj_SidewaysPlatform,Obj_SidewaysPlatform_MapUnc_29564,   0,   0, make_art_tile(ArtTile_ArtNem_CPZStairBlock,3,1)
+	dbglistobj Obj_PipeExitSpring,	Obj_PipeExitSpring_MapUnc_29780,   2,   0, make_art_tile(ArtTile_ArtNem_CPZTubeSpring,0,0)
+	dbglistobj Obj_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,   9,   1, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,  $D,   5, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_Spikes,		Obj_Spikes_MapUnc_15B68,   0,   0, make_art_tile(ArtTile_ArtNem_Spikes,1,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $81,   0, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $90,   3, make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $A0,   6, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
+	dbglistobj Obj_Springboard,	Obj_SpringBoard_MapUnc_265F4,   1,   0, make_art_tile(ArtTile_ArtNem_LeverSpring,0,0)
+	dbglistobj Obj_Spiny,		Obj_Spiny_Obj_SpinyOnWall_Obj_Projectile_MapUnc_38CCA, $32,   0, make_art_tile(ArtTile_ArtNem_Spiny,1,0)
+	dbglistobj Obj_SpinyOnWall,	Obj_Spiny_Obj_SpinyOnWall_Obj_Projectile_MapUnc_38CCA, $32,   3, make_art_tile(ArtTile_ArtNem_Spiny,1,0)
+	dbglistobj Obj_Grabber,		Obj_Grabber_Obj_GrabberLegs_Obj_GrabberBox_Obj_Projectile_MapUnc_3921A, $36,   0, make_art_tile(ArtTile_ArtNem_Grabber,1,1)
+	dbglistobj Obj_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
 DbgObjList_CPZ_End
 
 DbgObjList_ARZ: dbglistheader
-	dbglistobj ObjID_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_Monitor,	Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
-	dbglistobj ObjID_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
-	dbglistobj ObjID_SwingingPlatform, Obj_SwingingPlatform_Obj_ARZRotPlatforms_MapUnc_1021E, $88,   2, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
-	dbglistobj ObjID_ARZPlatform,	Obj_FloatingPlatform_MapUnc_1084E,   1,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
-	dbglistobj ObjID_ARZPlatform,	Obj_FloatingPlatform_MapUnc_1084E, $9A,   1, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
-	dbglistobj ObjID_ArrowShooter,	Obj_ArrowShooter_MapUnc_25804,   0,   1, make_art_tile(ArtTile_ArtNem_ArrowAndShooter,0,0)
-	dbglistobj ObjID_FallingPillar,	Obj_FallingPillar_MapUnc_259E6,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,1,0)
-	dbglistobj ObjID_RisingPillar,	Obj_RisingPillar_MapUnc_25C6E,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,1,0)
-	dbglistobj ObjID_LeavesGenerator, Obj_LavaMarker_MapUnc_20E74,   0,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
-	dbglistobj ObjID_LeavesGenerator, Obj_LavaMarker_MapUnc_20E74,   1,   1, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
-	dbglistobj ObjID_LeavesGenerator, Obj_LavaMarker_MapUnc_20E74,   2,   2, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
-	dbglistobj ObjID_Springboard,	Obj_SpringBoard_MapUnc_265F4,   1,   0, make_art_tile(ArtTile_ArtNem_LeverSpring,0,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $81,   0, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $90,   3, make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0)
-	dbglistobj ObjID_Spring,	Obj_Spring_MapUnc_1901C, $A0,   6, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
-	dbglistobj ObjID_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,   9,   1, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_Spikes,	Obj_Spikes_MapUnc_15B68,   0,   0, make_art_tile(ArtTile_ArtNem_Spikes,1,0)
-	dbglistobj ObjID_Barrier,	Obj_Barrier_MapUnc_11822,   3,   3, make_art_tile(ArtTile_ArtNem_ARZBarrierThing,1,0)
-	dbglistobj ObjID_CollapsPform,	Obj_CollapsingPlatform_MapUnc_1115E,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
-	dbglistobj ObjID_SwingingPform,	Obj_SwingingPlatforms_MapUnc_2A476,   3,   0, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
-	dbglistobj ObjID_SwingingPform,	Obj_SwingingPlatforms_MapUnc_2A476, $11,   1, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
-	dbglistobj ObjID_ARZRotPforms,	Obj_SwingingPlatform_Obj_ARZRotPlatforms_MapUnc_1021E, $10,   1, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
-	dbglistobj ObjID_ARZBubbles,	Obj_ARZBubbles_MapUnc_1FBF6, $81,  $E, make_art_tile(ArtTile_ArtNem_BigBubbles,0,1)
-	dbglistobj ObjID_ChopChop,	Obj_ChopChop_MapUnc_36EF6,   8,   0, make_art_tile(ArtTile_ArtNem_ChopChop,1,0)
-	dbglistobj ObjID_Whisp,		Obj_Whisp_MapUnc_36A4E,   0,   0, make_art_tile(ArtTile_ArtNem_Whisp,1,1)
-	dbglistobj ObjID_GrounderInWall, Obj_GrounderInWall_MapUnc_36CF0,   2,   0, make_art_tile(ArtTile_ArtNem_Grounder,1,1)
-	dbglistobj ObjID_GrounderInWall2, Obj_GrounderInWall_MapUnc_36CF0,   2,   0, make_art_tile(ArtTile_ArtNem_Grounder,1,1)
-	dbglistobj ObjID_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
+	dbglistobj Obj_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_Monitor,		Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
+	dbglistobj Obj_Starpost,	Obj_Starpost_MapUnc_1F424,   1,   0, make_art_tile(ArtTile_ArtNem_Checkpoint,0,0)
+	dbglistobj Obj_SwingingPlatform,Obj_SwingingPlatform_Obj_ARZRotPlatforms_MapUnc_1021E, $88,   2, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
+	dbglistobj Obj_ARZPlatform,	Obj_FloatingPlatform_MapUnc_1084E,   1,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
+	dbglistobj Obj_ARZPlatform,	Obj_FloatingPlatform_MapUnc_1084E, $9A,   1, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
+	dbglistobj Obj_ArrowShooter,	Obj_ArrowShooter_MapUnc_25804,   0,   1, make_art_tile(ArtTile_ArtNem_ArrowAndShooter,0,0)
+	dbglistobj Obj_FallingPillar,	Obj_FallingPillar_MapUnc_259E6,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,1,0)
+	dbglistobj Obj_RisingPillar,	Obj_RisingPillar_MapUnc_25C6E,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,1,0)
+	dbglistobj Obj_LeavesGenerator, Obj_LavaMarker_MapUnc_20E74,   0,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
+	dbglistobj Obj_LeavesGenerator, Obj_LavaMarker_MapUnc_20E74,   1,   1, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
+	dbglistobj Obj_LeavesGenerator, Obj_LavaMarker_MapUnc_20E74,   2,   2, make_art_tile(ArtTile_ArtNem_Powerups,0,1)
+	dbglistobj Obj_Springboard,	Obj_SpringBoard_MapUnc_265F4,   1,   0, make_art_tile(ArtTile_ArtNem_LeverSpring,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $81,   0, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $90,   3, make_art_tile(ArtTile_ArtNem_HrzntlSprng,0,0)
+	dbglistobj Obj_Spring,		Obj_Spring_MapUnc_1901C, $A0,   6, make_art_tile(ArtTile_ArtNem_VrtclSprng,0,0)
+	dbglistobj Obj_PlaneSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,   9,   1, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_Spikes,		Obj_Spikes_MapUnc_15B68,   0,   0, make_art_tile(ArtTile_ArtNem_Spikes,1,0)
+	dbglistobj Obj_Barrier,		Obj_Barrier_MapUnc_11822,   3,   3, make_art_tile(ArtTile_ArtNem_ARZBarrierThing,1,0)
+	dbglistobj Obj_CollapsingPlatform,Obj_CollapsingPlatform_MapUnc_1115E,   0,   0, make_art_tile(ArtTile_ArtKos_LevelArt,2,0)
+	dbglistobj Obj_SwingingPlatforms,Obj_SwingingPlatforms_MapUnc_2A476,   3,   0, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
+	dbglistobj Obj_SwingingPlatforms,Obj_SwingingPlatforms_MapUnc_2A476, $11,   1, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
+	dbglistobj Obj_ARZRotPlatforms,	Obj_SwingingPlatform_Obj_ARZRotPlatforms_MapUnc_1021E, $10,   1, make_art_tile(ArtTile_ArtKos_LevelArt,0,0)
+	dbglistobj Obj_ARZBubbles,	Obj_ARZBubbles_MapUnc_1FBF6, $81,  $E, make_art_tile(ArtTile_ArtNem_BigBubbles,0,1)
+	dbglistobj Obj_ChopChop,	Obj_ChopChop_MapUnc_36EF6,   8,   0, make_art_tile(ArtTile_ArtNem_ChopChop,1,0)
+	dbglistobj Obj_Whisp,		Obj_Whisp_MapUnc_36A4E,   0,   0, make_art_tile(ArtTile_ArtNem_Whisp,1,1)
+	dbglistobj Obj_GrounderInWall,	Obj_GrounderInWall_MapUnc_36CF0,   2,   0, make_art_tile(ArtTile_ArtNem_Grounder,1,1)
+	dbglistobj Obj_GrounderInWall,	Obj_GrounderInWall_MapUnc_36CF0,   2,   0, make_art_tile(ArtTile_ArtNem_Grounder,1,1)
+	dbglistobj Obj_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
 DbgObjList_ARZ_End
 
 DbgObjList_SCZ: dbglistheader
-	dbglistobj ObjID_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
-	dbglistobj ObjID_Monitor,	Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
-	dbglistobj ObjID_WFZPalSwitcher, Obj_PlaneSwitcher_MapUnc_1FFB8,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,0,0)
-	dbglistobj ObjID_Cloud,		Obj_Cloud_MapUnc_3B32C, $5E,   0, make_art_tile(ArtTile_ArtNem_Clouds,2,0)
-	dbglistobj ObjID_Cloud,		Obj_Cloud_MapUnc_3B32C, $60,   1, make_art_tile(ArtTile_ArtNem_Clouds,2,0)
-	dbglistobj ObjID_Cloud,		Obj_Cloud_MapUnc_3B32C, $62,   2, make_art_tile(ArtTile_ArtNem_Clouds,2,0)
-	dbglistobj ObjID_VPropeller,	Obj_VPropeller_MapUnc_3B3BE, $64,   0, make_art_tile(ArtTile_ArtNem_WfzVrtclPrpllr,1,1)
-	dbglistobj ObjID_HPropeller,	Obj_HPropeller_MapUnc_3B548, $66,   0, make_art_tile(ArtTile_ArtNem_WfzHrzntlPrpllr,1,1)
-	dbglistobj ObjID_HPropeller,	Obj_HPropeller_MapUnc_3B548, $68,   0, make_art_tile(ArtTile_ArtNem_WfzHrzntlPrpllr,1,1)
-	dbglistobj ObjID_Turtloid,	Obj_TurtLoid_Obj_Projectile_MapUnc_37B62, $16,   0, make_art_tile(ArtTile_ArtNem_Turtloid,0,0)
-	dbglistobj ObjID_Balkiry,	Obj_Balkiry_MapUnc_393CC, $40,   0, make_art_tile(ArtTile_ArtNem_Balkrie,0,0)
-	dbglistobj ObjID_Nebula,	Obj_Nebula_Obj_Projectile_MapUnc_3789A, $12,   0, make_art_tile(ArtTile_ArtNem_Nebula,1,1)
-	dbglistobj ObjID_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
+	dbglistobj Obj_Ring,		Obj_Ring_MapUnc_12382,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,1,0)
+	dbglistobj Obj_Monitor,		Obj_Monitor_MapUnc_12D36,   8,   0, make_art_tile(ArtTile_ArtNem_Powerups,0,0)
+	dbglistobj Obj_WFZPalSwitcher,	Obj_PlaneSwitcher_MapUnc_1FFB8,   0,   0, make_art_tile(ArtTile_ArtNem_Ring,0,0)
+	dbglistobj Obj_Cloud,		Obj_Cloud_MapUnc_3B32C, $5E,   0, make_art_tile(ArtTile_ArtNem_Clouds,2,0)
+	dbglistobj Obj_Cloud,		Obj_Cloud_MapUnc_3B32C, $60,   1, make_art_tile(ArtTile_ArtNem_Clouds,2,0)
+	dbglistobj Obj_Cloud,		Obj_Cloud_MapUnc_3B32C, $62,   2, make_art_tile(ArtTile_ArtNem_Clouds,2,0)
+	dbglistobj Obj_VPropeller,	Obj_VPropeller_MapUnc_3B3BE, $64,   0, make_art_tile(ArtTile_ArtNem_WfzVrtclPrpllr,1,1)
+	dbglistobj Obj_HPropeller,	Obj_HPropeller_MapUnc_3B548, $66,   0, make_art_tile(ArtTile_ArtNem_WfzHrzntlPrpllr,1,1)
+	dbglistobj Obj_HPropeller,	Obj_HPropeller_MapUnc_3B548, $68,   0, make_art_tile(ArtTile_ArtNem_WfzHrzntlPrpllr,1,1)
+	dbglistobj Obj_Turtloid,	Obj_TurtLoid_Obj_Projectile_MapUnc_37B62, $16,   0, make_art_tile(ArtTile_ArtNem_Turtloid,0,0)
+	dbglistobj Obj_Balkiry,		Obj_Balkiry_MapUnc_393CC, $40,   0, make_art_tile(ArtTile_ArtNem_Balkrie,0,0)
+	dbglistobj Obj_Nebula,		Obj_Nebula_Obj_Projectile_MapUnc_3789A, $12,   0, make_art_tile(ArtTile_ArtNem_Nebula,1,1)
+	dbglistobj Obj_EggPrison,	Obj_EggPrison_MapUnc_3F436,   0,   0, make_art_tile(ArtTile_ArtNem_Capsule,1,0)
 DbgObjList_SCZ_End
 
     if ~~removeJmpTos
@@ -84947,9 +84921,6 @@ JmpTo66_Adjust2PArtPointer
 
 	align 4
     endif
-
-
-
 
 ; ---------------------------------------------------------------------------
 ; "MAIN LEVEL LOAD BLOCK" (after Nemesis)
