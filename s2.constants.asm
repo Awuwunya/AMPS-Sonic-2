@@ -5,7 +5,7 @@
 ; size variables - you'll get an informational error if you need to change these...
 ; they are all in units of bytes
 Size_of_Snd_driver_guess =	$7FC	; approximate post-compressed size of the Z80 sound driver
-Debug_Lagometer =	1		; set to 1 to enable on-screen lagometer. Seems to have an odd habit of breaking Special Stages....
+Debug_Lagometer =	0		; set to 1 to enable on-screen lagometer. Seems to have an odd habit of breaking Special Stages....
 
 ; ---------------------------------------------------------------------------
 ; Object Status Table offsets (for everything between Object_RAM and Primary_Collision)
@@ -678,9 +678,9 @@ WaterSurface2:			; Second water surface
 Reserved_Object_RAM_End:
 
 Dynamic_Object_RAM:		; Dynamic object RAM
-				ds.b $26*object_size
+				ds.b $23*object_size
 Dynamic_Object_RAM_2P_End:	; SingleObjLoad stops searching here in 2P mode
-				ds.b $45*object_size
+				ds.b $48*object_size
 Dynamic_Object_RAM_End:
 
 LevelOnly_Object_RAM:

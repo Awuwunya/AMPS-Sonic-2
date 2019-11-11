@@ -9472,7 +9472,7 @@ ContinueScreen:
 	move.w	#$8700,(a6)		; Background palette/color: 0/0
 	bsr.w	ClearScreen
 
-	clearRAM ContScr_Object_RAM,ContScr_Object_RAM_End
+	clearRAM Object_RAM,Object_RAM_End
 
 	bsr.w	ContinueScreen_LoadLetters
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtNem_ContinueTails),VRAM,WRITE),(VDP_control_port).l
@@ -9850,7 +9850,7 @@ TwoPlayerResults:
 	move.w	#$9001,(a6)		; Scroll table size: 64x32
 
 	clearRAM Sprite_Table_Input,Sprite_Table_Input_End
-	clearRAM VSRslts_Object_RAM,VSRslts_Object_RAM_End
+	clearRAM Object_RAM,Object_RAM_End
 
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtNem_FontStuff),VRAM,WRITE),(VDP_control_port).l
 	lea	(ArtNem_FontStuff).l,a0
@@ -10874,7 +10874,7 @@ MenuScreen:
 	move.w	#$9001,(a6)		; Scroll table size: 64x32
 
 	clearRAM Sprite_Table_Input,Sprite_Table_Input_End
-;	clearRAM Menus_Object_RAM,Menus_Object_RAM_End
+	clearRAM Object_RAM,Object_RAM_End
 
 	; load background + graphics of font/LevSelPics
 	clr.w	(VDP_Command_Buffer).w
@@ -12066,7 +12066,7 @@ JmpTo2_Dynamic_Normal
 ; ===========================================================================
 ; loc_9C7C:
 EndingSequence:
-	clearRAM EndSeq_Object_RAM,EndSeq_Object_RAM_End
+	clearRAM Object_RAM,Object_RAM_End
 	clearRAM Misc_Variables,Misc_Variables_End
 	clearRAM Camera_RAM,Camera_RAM_End
 
@@ -12220,7 +12220,7 @@ EndgameCredits:
 	jsrto	(ClearScreen).l, JmpTo_ClearScreen
 
 	clearRAM Sprite_Table_Input,Sprite_Table_Input_End
-	clearRAM EndSeq_Object_RAM,EndSeq_Object_RAM_End
+	clearRAM Object_RAM,Object_RAM_End
 	clearRAM Misc_Variables,Misc_Variables_End
 	clearRAM Camera_RAM,Camera_RAM_End
 
@@ -22741,21 +22741,6 @@ JmpTo2_PlaySoundStereo
 ; ----------------------------------------------------------------------------
 ; Sprite_12078:
 Obj_LostRings:
-	moveq	#0,d0
-	move.b	routine(a0),d0
-	move.w	Obj_LostRings_Index(pc,d0.w),d1
-	jmp	Obj_LostRings_Index(pc,d1.w)
-; ===========================================================================
-; Obj_37_subtbl:
-Obj_LostRings_Index:	offsetTable
-		offsetTableEntry.w Obj_LostRings_Init		; 0
-		offsetTableEntry.w Obj_LostRings_Main		; 2
-		offsetTableEntry.w Obj_LostRings_Collect	; 4
-		offsetTableEntry.w Obj_LostRings_Sparkle	; 6
-		offsetTableEntry.w Obj_LostRings_Delete		; 8
-; ===========================================================================
-; Obj_37_sub_0:
-Obj_LostRings_Init:
 	movea.l	a0,a1
 	moveq	#0,d5
 	move.w	(Ring_count).w,d5
@@ -22776,20 +22761,20 @@ Obj_LostRings_Init:
 -	bsr.w	SingleObjLoad
 	bne.w	+++
 +
-	_move.l	#Obj_LostRings,id(a1) ; load Obj_LostRings
-	addq.b	#2,routine(a1)
-	move.b	#8,y_radius(a1)
-	move.b	#8,x_radius(a1)
-	move.w	x_pos(a0),x_pos(a1)
-	move.w	y_pos(a0),y_pos(a1)
+	_move.l	#Obj_LostRings_Main,id(a1) ; load Obj_LostRings
 	move.l	#Obj_Ring_MapUnc_12382,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_Ring,1,0),art_tile(a1)
+	move.w	x_pos(a0),x_pos(a1)
+	move.w	y_pos(a0),y_pos(a1)
 	bsr.w	Adjust2PArtPointer2
+
+	move.w	#$808,y_radius(a1)
 	move.b	#$84,render_flags(a1)
 	move.w	#prio(3),priority(a1)
 	move.b	#$47,collision_flags(a1)
 	move.b	#8,width_pixels(a1)
-	move.b	#-1,(Ring_spill_anim_counter).w
+	st	(Ring_spill_anim_counter).w
+
 	tst.w	d4
 	bmi.s	+
 	move.w	d4,d0
@@ -22812,22 +22797,21 @@ Obj_LostRings_Init:
 	neg.w	d4
 	dbf	d5,-
 +
-
 	tst.b	render_flags(a0)
 	bpl.s	.no
 	sfx	sfx_RingLoss
 
 .no	tst.b	parent+1(a0)
 	bne.s	+
-	move.w	#0,(Ring_count).w
+	clr.w	(Ring_count).w
 	move.b	#$80,(Update_HUD_rings).w
-	move.b	#0,(Extra_life_flags).w
+	clr.b	(Extra_life_flags).w
 	bra.s	Obj_LostRings_Main
 ; ===========================================================================
 +
-	move.w	#0,(Ring_count_2P).w
+	clr.w	(Ring_count_2P).w
 	move.b	#$80,(Update_HUD_rings_2P).w
-	move.b	#0,(Extra_life_flags_2P).w
+	clr.b	(Extra_life_flags_2P).w
 ; Obj_37_sub_2:
 Obj_LostRings_Main:
 	move.b	(Ring_spill_anim_frame).w,mapping_frame(a0)
@@ -22861,6 +22845,8 @@ Obj_LostRings_Main:
 	neg.w	y_vel(a0)
 
 loc_121B8:
+	tst.b	routine(a0)			; NAT: Check if collected
+	bne.s	Obj_LostRings_Collect		; if so, branch
 	tst.b	(Ring_spill_anim_counter).w
 	beq.s	Obj_LostRings_Delete
 	move.w	(Camera_Max_Y_pos_now).w,d0
@@ -22886,15 +22872,27 @@ loc_121D0:
 ; ===========================================================================
 ; Obj_37_sub_4:
 Obj_LostRings_Collect:
-	addq.b	#2,routine(a0)
-	move.b	#0,collision_flags(a0)
+	move.l	#Obj_LostRings_Sparkle,id(a0)
+	clr.b	collision_flags(a0)
+	clr.b	routine(a0)
 	move.w	#prio(1),priority(a0)
 	bsr.w	CollectRing
 ; Obj_37_sub_6:
 Obj_LostRings_Sparkle:
+	tst.b	routine(a0)			; NAT: Check if done
+	bne.s	Obj_LostRings_Delete		; if so, branch
 	lea	(Ani_Ring).l,a1
 	bsr.w	AnimateSprite
-	bra.w	DisplaySprite
+
+	move.w	priority(a0),a1		; NAT: Priority is now the direct address
+	cmpi.w	#$7E,(a1)
+	bhs.s	.rts
+	addq.w	#2,(a1)
+	adda.w	(a1),a1
+	move.w	a0,(a1)
+
+.rts
+	rts
 ; ===========================================================================
 ; BranchTo5_DeleteObject
 Obj_LostRings_Delete:
@@ -27287,10 +27285,6 @@ DeleteObject2:
 
 ; sub_164F4:
 DisplaySprite:
-	; temp
-;	tst.w	priority(a0)
-;	bpl.s	*
-
 	move.w	priority(a0),a1		; NAT: Priority is now the direct address
 
 DisplaySprite3:
@@ -27310,10 +27304,6 @@ return_16510:
 
 ; sub_16512:
 DisplaySprite2:
-	; temp
-;	tst.w	priority(a1)
-;	bpl.s	*
-
 	move.w	priority(a1),a2		; NAT: Priority is now the direct address
 	cmpi.w	#$7E,(a2)
 	bhs.s	return_1652E
@@ -27539,15 +27529,6 @@ BuildSprites_NextLevel:
 	move.b	#0,-5(a2)	; set link field to 0
 	rts
 ; ===========================================================================
-    if gameRevision=0
-BuildSprites_Unknown:
-	; In the Simon Wai beta, this was a simple BranchTo, but later builds have this mystery line.
-	; This may have possibly been a debugging function, for helping the devs detect when an object
-	; tried to display with a blank ID or mappings pointer.
-	; The latter was actually an issue that plagued Sonic 1, but is (almost) completely absent in this game.
-	move.w	(1).w,d0	; causes a crash on hardware because of the word operation at an odd address
-	bra.s	BuildSprites_NextObj
-    endif
 ; loc_1671C:
 BuildSprites_MultiDraw:
 	move.l	a4,-(sp)
@@ -30055,14 +30036,14 @@ ObjectsManager_2P_UnkSub3:
 ;	nop
 ;	nop
 +
-	move.b	#-1,-(a1)
+	st	-(a1)
 	movem.l	a1/a3,-(sp)
 	moveq	#0,d1		; used later to delete objects
 	moveq	#$C-1,d2
 
 ;loc_17F0A:
 ObjMan2P_UnkSub3_DeleteBlockLoop:
-	tst.b	(a3)
+	tst.l	(a3)
 	beq.s	ObjMan2P_UnkSub3_DeleteBlock_SkipObj	; branch if slot is empty
 	movea.l	a3,a1
 	move.w	respawn_index(a1),a2	; does object remember its state?
@@ -65931,7 +65912,7 @@ SSPlayerSwapPositions:
 	tst.w	(Player_mode).w
 	bne.s	return_33E8E
 	move.w	ss_z_pos(a0),d0
-	cmpa.l	#MainCharacter,a0
+	cmpa.w	#MainCharacter,a0
 	bne.s	loc_33E5E
 	tst.b	(SS_Swap_Positions_Flag).w
 	beq.s	loc_33E6E
@@ -66807,7 +66788,7 @@ loc_35036:
 	move.w	#$A,d6
 	bsr.w	loc_350A0
 	bcc.s	return_3509E
-	cmpa.l	#MainCharacter,a1
+	cmpa.w	#MainCharacter,a1
 	bne.s	loc_3504E
 	addq.w	#1,(Ring_count).w
 	bra.s	loc_35052
@@ -66849,15 +66830,15 @@ loc_350A0:
 	bne.s	loc_350DC
 	tst.b	collision_flags(a0)
 	beq.s	loc_350DC
-	lea	(MainCharacter).w,a2 ; a2=object (special stage sonic)
-	lea	(Sidekick).w,a3 ; a3=object (special stage tails)
+	lea	(MainCharacter).w,a2	; a2=object (special stage sonic)
+	lea	(Sidekick).w,a3		; a3=object (special stage tails)
 	move.w	objoff_34(a2),d0
 	cmp.w	objoff_34(a3),d0
 	blo.s	loc_350CE
-	movea.l	a3,a1
+	movea.w	a3,a1
 	bsr.w	loc_350E2
 	bcs.s	return_350E0
-	movea.l	a2,a1
+	movea.w	a2,a1
 	bra.w	loc_350E2
 ; ===========================================================================
 
@@ -66877,7 +66858,7 @@ return_350E0:
 ; ===========================================================================
 
 loc_350E2:
-	tst.b	(a1)
+	tst.l	(a1)
 	beq.s	loc_3511A
 	cmpi.b	#2,routine(a1)
 	bne.s	loc_3511A
