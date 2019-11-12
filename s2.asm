@@ -3541,8 +3541,7 @@ SegaScreen:
 	bsr.w	Pal_FadeToBlack
 
 	clearRAM Misc_Variables,Misc_Variables_End
-
-	clearRAM SegaScr_Object_RAM,SegaScr_Object_RAM_End ; fill object RAM with 0
+	clearRAM Object_RAM,Object_RAM_End	; fill object RAM with 0
 
 	lea	(VDP_control_port).l,a6
 	move.w	#$8004,(a6)		; H-INT disabled
@@ -3688,9 +3687,9 @@ TitleScreen:
 	bsr.w	ClearScreen
 
 	clearRAM Sprite_Table_Input,Sprite_Table_Input_End ; fill $AC00-$AFFF with $0
-	clearRAM TtlScr_Object_RAM,TtlScr_Object_RAM_End ; fill object RAM ($B000-$D5FF) with $0
-	clearRAM Misc_Variables,Misc_Variables_End ; clear CPU player RAM and following variables
-	clearRAM Camera_RAM,Camera_RAM_End ; clear camera RAM and following variables
+	clearRAM Object_RAM,Object_RAM_End		; fill object RAM with 0
+	clearRAM Misc_Variables,Misc_Variables_End	; clear CPU player RAM and following variables
+	clearRAM Camera_RAM,Camera_RAM_End		; clear camera RAM and following variables
 
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtNem_CreditText),VRAM,WRITE),(VDP_control_port).l
 	lea	(ArtNem_CreditText).l,a0
@@ -30339,7 +30338,7 @@ ObjPtr_ARZBoss:		dc.l Obj_ARZBoss		; $89 ; ARZ boss
 ObjPtr_WFZPalSwitcher:	dc.l Obj_WFZPalSwitcher		; $8B ; Cycling palette switcher from Wing Fortress Zone
 ObjPtr_Whisp:		dc.l Obj_Whisp			; $8C ; Whisp (blowfly badnik) from ARZ
 ObjPtr_GrounderInWall:	dc.l Obj_GrounderInWall		; $8D ; Grounder in wall, from ARZ
-ObjPtr_GrounderInWall2:	dc.l Obj_GrounderInWall		; $8E ; Obj8E = Obj_GrounderInWall
+ObjPtr_GrounderInWall2:	dc.l Obj_GrounderInWall2	; $8E ; grounder that is not in a wall.
 ObjPtr_GrounderWall:	dc.l Obj_GrounderWall		; $8F ; Wall behind which Grounder hides, from ARZ
 ObjPtr_GrounderRocks:	dc.l Obj_GrounderRocks		; $90 ; Rocks thrown by Grounder behind wall, from ARZ
 ObjPtr_ChopChop:	dc.l Obj_ChopChop		; $91 ; Chop Chop (piranha/shark badnik) from ARZ
@@ -33780,7 +33779,8 @@ Sonic_Boundary_CheckBottom:
 	blt.s	Sonic_Boundary_Bottom	; if yes, branch
 	rts
 ; ---------------------------------------------------------------------------
-Sonic_Boundary_Bottom: ;;
+Sonic_Boundary_Bottom:
+	lea	0.w,a2			; NAT: Make the code below wont crash
 	jmpto	(KillCharacter).l, JmpTo_KillCharacter
 ; ===========================================================================
 
@@ -36050,8 +36050,7 @@ Obj_Tails_MdAir:
 	subi.w	#$28,y_vel(a0)	; reduce gravity by $28 ($38-$28=$10)
 +
 	bsr.w	Tails_JumpAngle
-	bsr.w	Tails_DoLevelCollision
-	rts
+	bra.w	Tails_DoLevelCollision
 ; End of subroutine Obj_Tails_MdAir
 ; ===========================================================================
 ; Start of subroutine Obj_Tails_MdRoll
@@ -36672,7 +36671,8 @@ Tails_Boundary_CheckBottom:
 	blt.s	Tails_Boundary_Bottom	; if yes, branch
 	rts
 ; ---------------------------------------------------------------------------
-Tails_Boundary_Bottom: ;;
+Tails_Boundary_Bottom:
+	lea	0.w,a2			; NAT: Make the code below wont crash
 	jmpto	(KillCharacter).l, JmpTo2_KillCharacter
 ; ===========================================================================
 
@@ -58970,10 +58970,8 @@ loc_2DFD8:
 ; ===========================================================================
 
 Obj_CPZBoss_Pipe_Retract_ChkID:
-	moveq	#0,d7
-	move.l	#Obj_CPZBoss,d7
-	cmp.l	id(a1),d7	; is object a subtype of the CPZ Boss?
-	beq.s	loc_2DFF0	; if yes, branch
+	cmp.l	#Obj_CPZBoss,id(a1)	; is object a subtype of the CPZ Boss?
+	beq.s	loc_2DFF0		; if yes, branch
 	dbf	d1,Obj_CPZBoss_Pipe_Retract_Loop
 	bra.s	Obj_CPZBoss_PipeSegment
 ; ===========================================================================
@@ -67057,9 +67055,9 @@ loc_35282:
 
 loc_3529C:
 	jsrto	(SSSingleObjLoad2).l, JmpTo_SSSingleObjLoad2
-	bne.w	return_3532C
+	bne.s	.rts
 	move.l	a0,objoff_34(a1)
-	move.b	(a0),(a1)
+	move.l	id(a0),id(a1)
 	move.b	#4,routine(a1)
 	move.l	#Obj_SSShadow_MapUnc_34492,mappings(a1)
 	move.w	#make_art_tile(ArtTile_ArtNem_SpecialFlatShadow,3,0),art_tile(a1)
@@ -67071,6 +67069,8 @@ loc_3529C:
 	bset	#0,render_flags(a1)
 	move.b	#2,objoff_2B(a1)
 	move.l	a1,objoff_34(a0)
+
+.rts
 	rts
 ; ===========================================================================
 
@@ -69279,6 +69279,13 @@ Obj_Whisp_MapUnc_36A4E:	BINCLUDE "mappings/sprite/Obj_Whisp.bin"
 ; Object 8D - Grounder in wall, from ARZ
 ; ----------------------------------------------------------------------------
 ; Sprite_36A76:
+Obj_GrounderInWall2:
+	moveq	#0,d0
+	move.b	routine(a0),d0
+	move.w	Obj_GrounderInWall_Index(pc,d0.w),d1
+	jmp	Obj_GrounderInWall_Index(pc,d1.w)
+
+; Sprite_36A76:
 Obj_GrounderInWall:
 	moveq	#0,d0
 	move.b	routine(a0),d0
@@ -70963,8 +70970,8 @@ Obj_BalkiryJet_Init:
 ; loc_37A98:
 Obj_BalkiryJet_Main:
 	movea.w	objoff_2C(a0),a1 ; a1=object
-	move.b	objoff_32(a0),d0
-	cmp.b	(a1),d0
+	move.l	objoff_32(a0),d0
+	cmp.l	(a1),d0
 	bne.w	JmpTo65_DeleteObject
 	move.l	x_pos(a1),x_pos(a0)
 	move.l	y_pos(a1),y_pos(a0)
@@ -70983,7 +70990,7 @@ loc_37ABE:
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.l	objoff_2E(a0),objoff_2E(a1)
-	move.b	(a0),objoff_32(a1)
+	move.l	(a0),objoff_32(a1)
 +
 	rts
 
@@ -79923,27 +79930,13 @@ Obj_Eggrobo_PositionChildren:
 ;byte_3E2E0
 Obj_Eggrobo_ChildDeltas:
 	dc.b   6
-	dc.b $2E	; 1
-	dc.b $FC	; 2
-	dc.b $3C	; 3
-	dc.b $30	; 4
-	dc.b $F4	; 5
-	dc.b   8	; 6
-	dc.b $32	; 7
-	dc.b  $C	; 8
-	dc.b $F8	; 9
-	dc.b $34	; 10
-	dc.b   4	; 11
-	dc.b $24	; 12
-	dc.b $3A	; 13
-	dc.b $FC	; 14
-	dc.b $3C	; 15
-	dc.b $3C	; 16
-	dc.b $F4	; 17
-	dc.b   8	; 18
-	dc.b $3E	; 19
-	dc.b   4	; 20
-	dc.b $24	; 21
+	dc.b objoff_2E, $FC, $3C	; 1
+	dc.b objoff_30, $F4,   8	; 2
+	dc.b objoff_32,  $C, $F8	; 3
+	dc.b objoff_34,   4, $24	; 4
+	dc.b objoff_3A, $FC, $3C	; 5
+	dc.b objoff_3C, $F4,   8	; 6
+	dc.b objoff_3E,   4, $24	; 7
 off_3E2F6:
 	dc.l Obj_Eggrobo_GroupAni_3E318
 	dc.b 0, 1, 2, 3, $FF, 0
@@ -80227,7 +80220,6 @@ byte_3E544:	c7anilistheader $10
 	c7ani objoff_34, $00, $08
 byte_3E544_End
 	even
-
 ;word_3E55C
 ChildObj_Eggrobo_Shoulder:
 	dc.w objoff_2C
@@ -84478,9 +84470,9 @@ Debug_SpawnObject:
 	andi.b	#$7F,status(a1)
 	moveq	#0,d0
 	move.b	(Debug_object).w,d0
-	lsl.w	#3,d0
+	lsl.w	#4,d0
 	move.b	8(a2,d0.w),subtype(a1)
-	move.l	4(a2,d0.w),id(a1)
+	move.l	(a2,d0.w),id(a1)
 	rts
 ; ===========================================================================
 ; loc_41C56:
@@ -84543,7 +84535,7 @@ Debug_ResetPlayerStats:
 LoadDebugObjectSprite:
 	moveq	#0,d0
 	move.b	(Debug_object).w,d0
-	lsl.w	#3,d0
+	lsl.w	#4,d0
 	move.l	4(a2,d0.w),mappings(a0)
 	move.w	$A(a2,d0.w),art_tile(a0)
 	move.b	9(a2,d0.w),mapping_frame(a0)
@@ -84582,7 +84574,7 @@ JmpTbl_DbgObjLists: zoneOrderedOffsetTable 2,1
 ; must be on the same line as a label that has a corresponding _End label later
 dbglistheader macro {INTLABEL}
 __LABEL__ label *
-	dc.w ((__LABEL___End - __LABEL__ - 2) >> 3)
+	dc.w ((__LABEL___End - __LABEL__ - 2) / 16)
     endm
 
 ; macro to define debug list object data
@@ -84591,6 +84583,7 @@ dbglistobj macro   obj, mapaddr, subtype, frame, vram
 	dc.l mapaddr
 	dc.b subtype,frame
 	dc.w vram
+	dc.l -1
     endm
 
 DbgObjList_Def: dbglistheader

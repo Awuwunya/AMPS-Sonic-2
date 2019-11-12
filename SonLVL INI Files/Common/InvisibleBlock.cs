@@ -12,7 +12,7 @@ namespace S2ObjectDefinitions.Common
 		public override void Init(ObjectData data)
 		{
 			byte[] artfile = ObjectHelper.OpenArtFile("../art/nemesis/Monitor and contents.bin", CompressionType.Nemesis);
-			byte[] mapfile = System.IO.File.ReadAllBytes("../mappings/sprite/obj74.bin");
+			byte[] mapfile = System.IO.File.ReadAllBytes("../mappings/sprite/Obj_InvisibleBlock.bin");
 			img = ObjectHelper.MapToBmp(artfile, mapfile, 0, 0);
 		}
 
