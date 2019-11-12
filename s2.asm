@@ -32239,6 +32239,7 @@ loc_19B28:
 	blo.w	loc_19A6A
 	move.l	a0,-(sp)
 	movea.l	a1,a0
+	move.w	a0,a2
 	jsr	(KillCharacter).l
 	movea.l	(sp)+,a0 ; load 0bj address
 	move.w	d6,d4
@@ -34636,6 +34637,7 @@ Obj_Sonic_Hurt_Normal:
 ; ===========================================================================
 ; loc_1B184:
 Sonic_HurtStop:
+	lea	0.w,a2
 	move.w	(Camera_Max_Y_pos_now).w,d0
 	addi.w	#$E0,d0
 	cmp.w	y_pos(a0),d0
@@ -37395,6 +37397,7 @@ Obj_Tails_Hurt:
 ; ===========================================================================
 ; loc_1CC08:
 Tails_HurtStop:
+	lea	0.w,a2
 	move.w	(Tails_Max_Y_pos).w,d0
 	addi.w	#$E0,d0
 	cmp.w	y_pos(a0),d0
@@ -62359,10 +62362,10 @@ JmpTo26_SolidObject
 ; Object 57 - MCZ boss
 ; ----------------------------------------------------------------------------
 ; OST: first $10 bytes for main sprite, 6 bytes for childsprites (5th byte unused)
-Obj_MCZBoss_sub5_y_vel	= $2E	; word - y_vel of second digger when falling down
-Obj_MCZBoss_sub2_y_vel	= $30	; word - y_vel of first digger when falling down
-Obj_MCZBoss_sub2_y_pos2	= $34	; longword - y_pos of first digger when falling down
-Obj_MCZBoss_sub5_y_pos2	= $3A	; longword - y_pos of second digger when falling down
+Obj_MCZBoss_sub5_y_vel	= objoff_2E	; word - y_vel of second digger when falling down
+Obj_MCZBoss_sub2_y_vel	= objoff_30	; word - y_vel of first digger when falling down
+Obj_MCZBoss_sub2_y_pos2	= objoff_34	; longword - y_pos of first digger when falling down
+Obj_MCZBoss_sub5_y_pos2	= objoff_3A	; longword - y_pos of second digger when falling down
 ; ----------------------------------------------------------------------------
 ; Sprite_30FA4:
 Obj_MCZBoss:
@@ -78538,10 +78541,7 @@ loc_3D640:
 	rts
 ; ===========================================================================
 byte_3D680:
-	dc.b   2
-	dc.b   0	; 1
-	dc.b   2	; 2
-	dc.b   4	; 3
+	dc.b 2, 0, 2, 4
 ; ===========================================================================
 
 loc_3D684:
@@ -78940,7 +78940,7 @@ Obj_Eggrobo_Shoulder:
 	jsr	off_3DA34(pc,d1.w)
 	lea	byte_3DA38(pc),a1
 	bsr.w	loc_3E282
-	tst.b	(a0)
+	tst.l	(a0)
 	beq.w	return_37A48
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -78970,7 +78970,7 @@ Obj_Eggrobo_FrontLowerLeg:
 	move.b	routine_secondary(a0),d0
 	move.w	off_3DA62(pc,d0.w),d1
 	jsr	off_3DA62(pc,d1.w)
-	tst.b	(a0)
+	tst.l	(a0)
 	beq.w	return_37A48
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -78982,7 +78982,6 @@ off_3DA62:	offsetTable
 loc_3DA66:
 	addq.b	#2,routine_secondary(a0)
 	move.b	#$B,mapping_frame(a0)
-	rts
 ; ===========================================================================
 
 return_3DA72:
@@ -78994,10 +78993,10 @@ Obj_Eggrobo_FrontForearm:
 	move.b	routine_secondary(a0),d0
 	move.w	off_3DA96(pc,d0.w),d1
 	jsr	off_3DA96(pc,d1.w)
-	tst.b	(a0)
-	beq.w	return_37A48
+	tst.l	(a0)
+	beq.s	return_3DA72
 	btst	#6,status(a0)
-	bne.w	return_37A48
+	bne.s	return_3DA72
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DA96:	offsetTable
@@ -79100,8 +79099,8 @@ Obj_Eggrobo_Arm:
 	move.b	routine_secondary(a0),d0
 	move.w	off_3DB8C(pc,d0.w),d1
 	jsr	off_3DB8C(pc,d1.w)
-	tst.b	(a0)
-	beq.w	return_37A48
+	tst.l	(a0)
+	beq.s	return_3DB9C
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 off_3DB8C:	offsetTable
@@ -79112,7 +79111,6 @@ off_3DB8C:	offsetTable
 loc_3DB90:
 	addq.b	#2,routine_secondary(a0)
 	move.b	#5,mapping_frame(a0)
-	rts
 ; ===========================================================================
 
 return_3DB9C:
@@ -79124,7 +79122,7 @@ Obj_Eggrobo_FrontThigh:
 	move.b	routine_secondary(a0),d0
 	move.w	off_3DBB6(pc,d0.w),d1
 	jsr	off_3DBB6(pc,d1.w)
-	tst.b	(a0)
+	tst.l	(a0)
 	beq.w	return_37A48
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -79150,7 +79148,7 @@ Obj_Eggrobo_Head:
 	jsr	off_3DBE8(pc,d1.w)
 	lea	byte_3DBF2(pc),a1
 	bsr.w	loc_3E282
-	tst.b	(a0)
+	tst.l	(a0)
 	beq.w	return_37A48
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -79256,7 +79254,7 @@ Obj_Eggrobo_BackLowerLeg:
 	move.b	routine_secondary(a0),d0
 	move.w	off_3DCB4(pc,d0.w),d1
 	jsr	off_3DCB4(pc,d1.w)
-	tst.b	(a0)
+	tst.l	(a0)
 	beq.w	return_37A48
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -79281,7 +79279,7 @@ Obj_Eggrobo_BackForearm:
 	move.b	routine_secondary(a0),d0
 	move.w	off_3DCE4(pc,d0.w),d1
 	jsr	off_3DCE4(pc,d1.w)
-	tst.b	(a0)
+	tst.l	(a0)
 	beq.w	return_37A48
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -79318,7 +79316,7 @@ Obj_Eggrobo_BackThigh:
 	move.b	routine_secondary(a0),d0
 	move.w	off_3DD38(pc,d0.w),d1
 	jsr	off_3DD38(pc,d1.w)
-	tst.b	(a0)
+	tst.l	(a0)
 	beq.w	return_37A48
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -79735,6 +79733,8 @@ CreateEggmanBombs:
 	move.w	d0,x_vel(a1)
 	move.w	(a3)+,y_vel(a1)
 	dbf	d6,-
+
+locret_CreateEggmanBombs:
 	rts
 ; ===========================================================================
 ;word_3E160
@@ -79750,7 +79750,8 @@ loc_3E168:
 	lea	byte_3E19E(pc),a1
 
 -	move.b	(a1)+,d1
-	beq.w	return_37A48
+	beq.s	locret_CreateEggmanBombs
+
 	movea.w	(a0,d1.w),a2 ; a2=object
 	move.b	render_flags(a2),d2
 	andi.b	#$FE,d2
@@ -79763,18 +79764,10 @@ loc_3E168:
 	bra.s	-
 ; ===========================================================================
 byte_3E19E:
-	dc.b $2C
-	dc.b $2E	; 1
-	dc.b $30	; 2
-	dc.b $32	; 3
-	dc.b $34	; 4
-	dc.b $36	; 5
-	dc.b $38	; 6
-	dc.b $3A	; 7
-	dc.b $3C	; 8
-	dc.b $3E	; 9
-	dc.b   0	; 10
-	dc.b   0	; 11
+	dc.b objoff_2C, objoff_2E, objoff_30, objoff_32
+	dc.b objoff_34, objoff_36, objoff_38, objoff_3A
+	dc.b objoff_3C, objoff_3E,   0
+	even
 ; ===========================================================================
 
 loc_3E1AA:
