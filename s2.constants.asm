@@ -915,7 +915,7 @@ Ending_PalCycle_flag:		ds.b 1
 SegaScr_VInt_Subrout:
 Ending_VInt_Subrout:
 WFZ_BG_Y_Speed:			ds.w 1
-				ds.w 1		; $FFFFF664-$FFFFF665 ; seems unused
+SegaSonicVelocity:		ds.w 1		; $FFFFF664-$FFFFF665 ; seems unused
 PalCycle_Timer2:		ds.w 1
 PalCycle_Timer3:		ds.w 1
 
