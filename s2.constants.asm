@@ -905,6 +905,7 @@ Palette_frame:			ds.w 1
 Palette_timer:			ds.b 1		; was "Palette_frame_count"
 Super_Sonic_palette:		ds.b 1
 
+Title_TextBanner:
 DEZ_Eggman:					; Word
 DEZ_Shake_Timer:				; Word
 WFZ_LevEvent_Subrout:				; Word
@@ -912,6 +913,7 @@ SegaScr_PalDone_Flag:				; Byte (cleared once as a word)
 Credits_Trigger:		ds.b 1		; cleared as a word a couple times
 Ending_PalCycle_flag:		ds.b 1
 
+Title_EnableTextBanner:
 SegaScr_VInt_Subrout:
 Ending_VInt_Subrout:
 WFZ_BG_Y_Speed:			ds.w 1
@@ -1324,7 +1326,7 @@ SegaScr_Object_RAM_End:
 ; RAM variables - Title screen
 	phase	Object_RAM	; Move back to the object RAM
 TtlScr_Object_RAM:
-				; Unused slot
+IntroTextBanner:
 				ds.b object_size
 IntroSonic:			; stars on the title screen
 				ds.b object_size

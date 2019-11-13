@@ -17,6 +17,9 @@
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ; ASSEMBLY OPTIONS:
 ;
+; special options for various AMPS related additions
+customAMPS =	1		; set to 1 to enable features
+
     ifndef gameRevision
 gameRevision = 1
     endif
@@ -23859,10 +23862,12 @@ Obj_IntroStars_Index:	offsetTable
 		offsetTableEntry.w Obj_IntroStars_SmallStar	;  $C
 		offsetTableEntry.w Obj_IntroStars_SkyPiece	;  $E
 		offsetTableEntry.w Obj_IntroStars_TailsHand	; $10
+	if customAMPS
+		offsetTableEntry.w Obj_IntroStars_TextBanner	; $12
+	endif
 ; ===========================================================================
 ; loc_12E38:
 Obj_IntroStars_Init:
-	addq.b	#2,routine(a0)	; useless, because it's overwritten with the subtype below
 	move.l	#Obj_IntroStars_MapUnc_136A8,mappings(a0)
 	move.w	#make_art_tile(ArtTile_ArtNem_TitleSprites,0,0),art_tile(a0)
 	move.w	#prio(4),priority(a0)
@@ -23898,13 +23903,19 @@ Obj_IntroStars_Sonic_Init:
 	addq.b	#2,routine_secondary(a0)
 	move.b	#5,mapping_frame(a0)
 	move.w	#$110,x_pixel(a0)
-	move.w	#$E0,y_pixel(a0)
+	move.w	#$E0,objoff_2A(a0)
 	lea	(IntroLargeStar).w,a1
-	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro stars) at $FFFFB0C0
-	move.b	#8,subtype(a1)				; large star
+	move.l	#Obj_IntroStars,id(a1)		; load Obj_IntroStars (flashing intro stars) at $FFFFB0C0
+	move.b	#8,subtype(a1)			; large star
 	lea	(IntroEmblemTop).w,a1
-	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro stars) at $FFFFD140
-	move.b	#6,subtype(a1)				; logo top
+	move.l	#Obj_IntroStars,id(a1)		; load Obj_IntroStars (flashing intro stars) at $FFFFD140
+	move.b	#6,subtype(a1)			; logo top
+
+	if customAMPS
+		lea	(IntroTextBanner).w,a1
+		move.l	#Obj_IntroStars,id(a1)	; load Obj_IntroStars (flashing intro stars) at $FFFFD480
+		move.b	#$12,subtype(a1)	; AMPS IN text
+	endif
 	sfx	sfx_Sparkle
 	rts
 ; ===========================================================================
@@ -23955,9 +23966,9 @@ loc_12F18:
 	lea	(word_13046).l,a1
 
 loc_12F20:
-	move.w	objoff_2A(a0),d0
+	move.w	objoff_40(a0),d0
 	addq.w	#1,d0
-	move.w	d0,objoff_2A(a0)
+	move.w	d0,objoff_40(a0)
 	andi.w	#3,d0
 	bne.s	+
 	move.w	objoff_2C(a0),d1
@@ -23966,16 +23977,22 @@ loc_12F20:
 	bhs.w	loc_1310A
 	move.w	d1,objoff_2C(a0)
 	move.l	-4(a1,d1.w),d0
-	move.w	d0,y_pixel(a0)
+	move.w	d0,objoff_2A(a0)
 	swap	d0
 	move.w	d0,x_pixel(a0)
 +
+	if customAMPS
+		bsr.w	sub_31017E
+	endif
 	bra.w	DisplaySprite
 ; ===========================================================================
 
 loc_12F52:
 	lea	(Ani_Obj_IntroStars).l,a1
 	bsr.w	AnimateSprite
+	if customAMPS
+		bsr.w	sub_31017E
+	endif
 	bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -23985,6 +24002,9 @@ Obj_IntroStars_Sonic_LastFrame:
 	lea	(IntroSonicHand).w,a1
 	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro star) at $FFFFB1C0
 	move.b	#$A,subtype(a1)				; Sonic's hand
+	if customAMPS
+		bsr.w	sub_31017E
+	endif
 	bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -23996,6 +24016,9 @@ loc_12F7C:
 	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro star) at $FFFFB080
 	move.b	#4,subtype(a1)				; Tails
 +
+	if customAMPS
+		bsr.w	sub_31017E
+	endif
 	bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -24017,6 +24040,9 @@ loc_12F9A:
 	move.b	#2,subtype(a1)
 	move.l	#Obj_TitleMenu,(TitleScreenMenu+id).w ; load Obj_TitleMenu (title screen menu) at $FFFFB400
 +
+	if customAMPS
+		bsr.w	sub_31017E
+	endif
 	bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -24039,6 +24065,9 @@ loc_12FD6:
 	addq.b	#2,routine_secondary(a0)
 	lea	(IntroSmallStar1).w,a1
 	bsr.w	DeleteObject2 ; delete object at $FFFFB180
+	if customAMPS
+		bsr.w	sub_31017E
+	endif
 	bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -24055,6 +24084,9 @@ loc_13014:
 	move.w	d0,objoff_2C(a0)
 	move.w	CyclingPal_TitleStar(pc,d0.w),(Normal_palette_line3+$A).w
 +
+	if customAMPS
+		bsr.w	sub_31017E
+	endif
 	bra.w	DisplaySprite
 ; ===========================================================================
 ; word_1303A:
@@ -24091,7 +24123,7 @@ off_13074:	offsetTable
 Obj_IntroStars_Tails_Init:
 	addq.b	#2,routine_secondary(a0)
 	move.w	#$D8,x_pixel(a0)
-	move.w	#$D8,y_pixel(a0)
+	move.w	#$D8,objoff_2A(a0)
 	move.b	#1,anim(a0)
 	rts
 ; ===========================================================================
@@ -24107,8 +24139,14 @@ loc_130A2:
 	lea	(IntroTailsHand).w,a1
 	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro star) at $FFFFB200
 	move.b	#$10,subtype(a1)			; Tails' hand
+	if customAMPS
+		st	Title_EnableTextBanner.w
+	endif
 
 BranchTo10_DisplaySprite
+	if customAMPS
+		bsr.s	sub_31017E
+	endif
 	bra.w	DisplaySprite
 ; ===========================================================================
 word_130B8:
@@ -24141,13 +24179,27 @@ Obj_IntroStars_LogoTop_Init:
 +
 	move.w	#prio(2),priority(a0)
 	move.w	#$120,x_pixel(a0)
-	move.w	#$E8,y_pixel(a0)
+	move.w	#$E8,objoff_2A(a0)
 
 loc_1310A:
 	addq.b	#2,routine_secondary(a0)
 
 BranchTo11_DisplaySprite
-	bra.w	DisplaySprite
+	if customAMPS == 0
+		bra.w	DisplaySprite
+	else
+		pea	DisplaySprite(pc)
+
+	sub_31017E:
+		move.w	Title_TextBanner.w,d0
+		neg.w	d0
+		move.w	objoff_2A(a0),d1
+		add.w	d0,d1
+		move.w	d1,y_pixel(a0)
+
+	return_310194:
+		rts
+	endif
 ; ===========================================================================
 
 Obj_IntroStars_SkyPiece:
@@ -24167,9 +24219,12 @@ Obj_IntroStars_SkyPiece_Init:
 	move.b	#$11,mapping_frame(a0)
 	move.w	#prio(2),priority(a0)
 	move.w	#$100,x_pixel(a0)
-	move.w	#$F0,y_pixel(a0)
+	move.w	#$F0,objoff_2A(a0)
 
 BranchTo12_DisplaySprite
+	if customAMPS
+		bsr.w	sub_31017E
+	endif
 	bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -24256,9 +24311,12 @@ Obj_IntroStars_SonicHand_Init:
 	move.b	#9,mapping_frame(a0)
 	move.w	#prio(3),priority(a0)
 	move.w	#$145,x_pixel(a0)
-	move.w	#$BF,y_pixel(a0)
+	move.w	#$BF,objoff_2A(a0)
 
 BranchTo13_DisplaySprite
+	if customAMPS
+		bsr.w	sub_31017E
+	endif
 	bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -24291,9 +24349,12 @@ Obj_IntroStars_TailsHand_Init:
 	move.b	#$13,mapping_frame(a0)
 	move.w	#prio(3),priority(a0)
 	move.w	#$10F,x_pixel(a0)
-	move.w	#$D5,y_pixel(a0)
+	move.w	#$D5,objoff_2A(a0)
 
 BranchTo14_DisplaySprite
+	if customAMPS
+		bsr.w	sub_31017E
+	endif
 	bra.w	DisplaySprite
 ; ===========================================================================
 
@@ -24338,6 +24399,57 @@ loc_132D2:
 	lea	(Ani_Obj_IntroStars).l,a1
 	bsr.w	AnimateSprite
 	bra.w	DisplaySprite
+; ===========================================================================
+
+	if customAMPS
+Obj_IntroStars_TextBanner:
+	moveq	#0,d0
+	move.b	routine_secondary(a0),d0
+	move.w	+(pc,d0.w),d1
+	jmp	+(pc,d1.w)
+; ===========================================================================
++		offsetTable
+		offsetTableEntry.w .rt0		; 0
+		offsetTableEntry.w .rt1		; 2
+		offsetTableEntry.w .rt2		; 4
+; ===========================================================================
+
+.rt0
+	addq.b	#2,routine_secondary(a0)
+	move.b	#$C,mapping_frame(a0)
+	move.w	#prio(1),priority(a0)
+	move.w	#$160,x_pixel(a0)
+	move.w	#$148,y_pixel(a0)
+
+
+.rt1
+	tst.b	Title_EnableTextBanner.w
+	beq.s	.rt2
+	subq.w	#1,objoff_2A(a0)
+	bpl.s	.rt2
+	move.w	#1,objoff_2A(a0)
+
+	move.w	angle(a0),d0
+	move.w	.positions(pc,d0.w),d1
+	move.w	d1,Vscroll_Factor_FG.w
+	move.w	d1,Title_TextBanner.w
+
+	addq.w	#2,d0
+	move.w	d0,angle(a0)
+	cmp.w	#$2A,d0
+	bcs.s	.rt2
+	addq.b	#2,routine_secondary(a0)
+
+.rt2
+	rts
+	bra.w	DisplaySprite
+
+; ---------------------------------------------------------------------------
+.positions	dc.w    0,    -1,    -3,    -6,   -$A,  -$10,	 -$18; 0 ; ...
+		dc.w -$14,  -$12,   -$E,   -$D,   -$C,   -$D,	  -$E; 7
+		dc.w -$10,  -$14,  -$18,  -$16,  -$15,  -$16,	 -$18; 14
+; ---------------------------------------------------------------------------
+	endif
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object C9 - "Palette changing handler" from title screen
@@ -24619,7 +24731,7 @@ Obj_TitleMenu_Init:
 	move.w	#$14C,y_pixel(a0)
 	move.w	#prio(0),priority(a0)
 	move.l	#Obj_TitleMenu_MapUnc_13B70,mappings(a0)
-	move.w	#make_art_tile(ArtTile_ArtKos_LevelArt,0,0),art_tile(a0)
+	move.w	#make_art_tile(ArtTile_ArtKos_LevelArt,0,1),art_tile(a0)
 	bsr.w	Adjust2PArtPointer
 	andi.b	#1,(Title_screen_option).w
 	move.b	(Title_screen_option).w,mapping_frame(a0)
