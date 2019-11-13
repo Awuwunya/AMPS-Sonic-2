@@ -17,8 +17,12 @@
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ; ASSEMBLY OPTIONS:
 ;
+<<<<<<< HEAD
 ; special options for various AMPS related additions
 customAMPS =	1		; set to 1 to enable features
+=======
+customAMPS =		1
+>>>>>>> 9061e12cfad7be7f8d100e42bd77ce630101b3e5
 
     ifndef gameRevision
 gameRevision = 1
@@ -383,6 +387,9 @@ GameClrRAM:
 	bsr.w	JoypadInit
 	move.b	#GameModeID_SegaScreen,(Game_Mode).w; set Game Mode to Sega Screen
 	move.w	#MusOff,Sound_test_sound.w	; init sound test ID
+	if customAMPS
+		jsr	OptionsMenu(pc)
+	endif
 
 ; loc_394:
 MainGameLoop:
@@ -3533,9 +3540,6 @@ Angle_Data:	BINCLUDE	"misc/angles.bin"
 	nop
     endif
 
-
-
-
 ; loc_37B8:
 SegaScreen:
 	command	Mus_Stop 			; stop music
@@ -3544,7 +3548,8 @@ SegaScreen:
 	bsr.w	Pal_FadeToBlack
 
 	clearRAM Misc_Variables,Misc_Variables_End
-	clearRAM Object_RAM,Object_RAM_End	; fill object RAM with 0
+	clearRAM Object_RAM,Object_RAM_End		; fill object RAM with 0
+	clearRAM Camera_RAM,Camera_RAM_End		; clear camera RAM and following variables
 
 	lea	(VDP_control_port).l,a6
 	move.w	#$8004,(a6)		; H-INT disabled
@@ -3611,10 +3616,19 @@ Sega_WaitPalette:
 	jsr	(BuildSprites).l
 	tst.b	(SegaScr_PalDone_Flag).w
 	beq.s	Sega_WaitPalette
-	music	Mus_SEGA			; play "SEGA" sound
+
+	if customAMPS == 0
+		music	mus_SEGA
+	endif
+
 	move.b	#VintID_SEGA,(Vint_routine).w
 	bsr.w	WaitForVint
-	move.w	#3*60,(Demo_Time_left).w	; 3 seconds
+
+	if customAMPS
+		move.w	#30,(Demo_Time_left).w	; 3 seconds
+	else
+		move.w	#3*60,(Demo_Time_left).w	; 3 seconds
+	endif
 ; loc_3940:
 Sega_WaitEnd:
 	move.b	#VintID_PCM,(Vint_routine).w
@@ -4230,7 +4244,7 @@ Level_TtlCard:
 +
 	moveq	#PalID_BGND,d0
 	bsr.w	PalLoad_ForFade	; load Sonic's palette line
-	bsr.w	LevelSizeLoad
+	jsr	LevelSizeLoad
 	jsrto	(DeformBgLayer).l, JmpTo_DeformBgLayer
 	clr.w	(Vscroll_Factor_FG).w
 	move.w	#-$E0,(Vscroll_Factor_P2_FG).w
@@ -10900,6 +10914,11 @@ MenuScreen:
 	moveq	#$1B,d2
 	jsrto	(PlaneMapToVRAM_H40).l, JmpTo_PlaneMapToVRAM_H40	; fullscreen background
 
+	if customAMPS
+		tst.b	(Game_Mode).w		; info screen?
+		beq.w	MenuScreen_Info
+	endif
+
 	cmpi.b	#GameModeID_OptionsMenu,(Game_Mode).w	; options menu?
 	beq.w	MenuScreen_Options	; if yes, branch
 
@@ -11501,6 +11520,62 @@ off_92EA:
 off_92F2:
 	dc.l TextOptScr_0
 ; ===========================================================================
+
+	if customAMPS
+MenuScreen_Info:
+	; Load foreground
+	lea	(Chunk_Table).l,a1
+	lea	(MapEng_InfoScreen).l,a0	; 2 bytes per 8x8 tile, compressed
+	move.w	#make_art_tile(ArtTile_VRAM_Start,0,0),d0
+	bsr.w	EniDec
+
+	lea	(Chunk_Table).l,a1
+	move.l	#vdpComm(VRAM_Plane_A_Name_Table,VRAM,WRITE),d0
+	moveq	#$27,d1
+	moveq	#$1B,d2	; 40x28 = whole screen
+	jsrto	(PlaneMapToVRAM_H40).l, JmpTo_PlaneMapToVRAM_H40	; display patterns
+
+	; Animate background (loaded back in MenuScreen)
+	lea	(Anim_SonicMilesBG).l,a2
+	jsrto	(Dynamic_Normal).l, JmpTo2_Dynamic_Normal	; background
+
+	moveq	#PalID_Menu,d0
+	bsr.w	PalLoad_ForFade
+
+	lea	(Normal_palette_line3).w,a1
+	lea	(Target_palette_line3).w,a2
+
+	moveq	#bytesToLcnt(palette_line_size),d1
+-	move.l	(a1),(a2)+
+	clr.l	(a1)+
+	dbf	d1,-
+
+	move.w	#(30*60)-1,(Demo_Time_left).w	; 30 seconds
+	clr.l	(Camera_X_pos).w
+	clr.l	(Camera_Y_pos).w
+	move.b	#VintID_Menu,(Vint_routine).w
+	bsr.w	WaitForVint
+	music	mus_Options
+	command	Mus_Reset
+
+	move.w	(VDP_Reg1_val).w,d0
+	ori.b	#$40,d0
+	move.w	d0,(VDP_control_port).l
+	bsr.w	Pal_FadeFromBlack
+
+.loop
+	move.b	#VintID_Menu,(Vint_routine).w
+	bsr.w	WaitForVint
+	lea	(Anim_SonicMilesBG).l,a2
+	jsrto	(Dynamic_Normal).l, JmpTo2_Dynamic_Normal
+
+	move.b	(Ctrl_1_Press).w,d0
+	or.b	(Ctrl_2_Press).w,d0
+	andi.b	#button_start_mask,d0	; start pressed?
+	beq.s	.loop			; no
+	bra.w	LevelSelect_Return	; yes
+	endif
+; ===========================================================================
 ; loc_92F6:
 MenuScreen_LevelSelect:
 	; Load foreground (sans zone icon)
@@ -12051,6 +12126,11 @@ MapEng_LevSel:	BINCLUDE "mappings/misc/Level Select.bin"
 	even
 MapEng_LevSelIcon:	BINCLUDE "mappings/misc/Level Select Icons.bin"
 	even
+
+	if customAMPS
+MapEng_InfoScreen:	BINCLUDE "mappings/misc/info screen.bin"
+		even
+	endif
 
     if ~~removeJmpTos
 ; loc_9C70: JmpTo_PlaneMapToVRAM
@@ -74258,7 +74338,23 @@ Obj_SonicOnSegaScreen:
 	moveq	#0,d0
 	move.b	routine(a0),d0
 	move.w	Obj_SonicOnSegaScreen_Index(pc,d0.w),d1
-	jmp	Obj_SonicOnSegaScreen_Index(pc,d1.w)
+
+	if customAMPS == 0
+		jmp	Obj_SonicOnSegaScreen_Index(pc,d1.w)
+	else
+		jsr	Obj_SonicOnSegaScreen_Index(pc,d1.w)
+
+	; animate player
+		move.w	SegaSonicVelocity.w,d0		; get velocity to d0
+		add.w	d0,anim(a0)			; add to counter
+
+		moveq	#0,d0
+		move.b	anim(a0),d0			; get only upper byte to d0
+		lsr.w	#5,d0				; divide by 32 ($20 pixels per frame)
+		and.b	#3,d0				; keep in range
+		move.b	d0,mapping_frame(a0)		; set as mappings frame
+		bra.s	Obj_SOSS_Speed
+	endif
 ; ===========================================================================
 ; off_3A1EA:
 Obj_SonicOnSegaScreen_Index:	offsetTable
@@ -74270,25 +74366,82 @@ Obj_SonicOnSegaScreen_Index:	offsetTable
 		offsetTableEntry.w return_3A3F6		; $A
 ; ===========================================================================
 
+	if customAMPS
+Obj_SOSS_Speed:
+.index =	objoff_30
+.framec =	objoff_32
+.vel =		objoff_34
+
+	subq.w	#1,.framec(a0)				; check frame counter
+	bne.s	.animate				; if not 0, branch
+
+; read next entry from table
+	move.w	.index(a0),d0				; load index to data table
+	add.w	#6,.index(a0)				; increment index already
+	lea	.data(pc,d0.w),a1			; load final data table address
+
+	move.w	(a1)+,d0				; load frame counter
+	move.w	d0,.framec(a0)				; save frame counter
+	move.w	(a1)+,d1				; load initial velocity
+	move.w	(a1)+,d2				; load final velocity
+	move.w	d1,SegaSonicVelocity.w			; save initial velocity
+
+	; calculate the speed increment
+	sub.w	d1,d2					; sub the initial vel from final
+	ext.l	d2					; extend to long
+	divs	d0,d2					; divide by num of frames
+	move.w	d2,.vel(a0)				; save velocity offset
+
+.animate
+	move.w	.vel(a0),d0				; load velocity to d0
+	add.w	d0,SegaSonicVelocity.w			; change screen velocity
+
+	move.w	SegaSonicVelocity.w,d0			; get velocity to d0
+	asr.w	#5,d0					; convert $2000 to $100
+	move.w	d0,mDAC1+cFreq.w			; save as the note frequency
+
+.rts
+	rts
+; ----------------------------------------------------------------------------
+
+.data
+	dc.w 29, $2000, $2000				; length, start speed, end speed
+	dc.w 43, $2000, $0000				; length, start speed, end speed
+	dc.w 20, $0000, $0000				; length, start speed, end speed
+	dc.w 60, $0000, -$800				; length, start speed, end speed
+	dc.w 100,-$800, $4000				; length, start speed, end speed
+	dc.w -1, 0, 0					; do nothing
+	endif
+; ===========================================================================
+
 Obj_SonicOnSegaScreen_Init:
+	if customAMPS
+		addq.w	#1,objoff_32(a0)
+	endif
 	bsr.w	LoadSubObject
-	move.w	#$1E8,x_pixel(a0)
-	move.w	#$F0,y_pixel(a0)
+	move.b	#$40,width_pixels(a0)
+	move.w	#$1E8,x_pos(a0)
+	move.w	#$70,y_pos(a0)
 	move.w	#$B,objoff_2A(a0)
 	move.w	#2,(SegaScr_VInt_Subrout).w
-	bset	#0,render_flags(a0)
+	move.b	#5,render_flags(a0)
 	bset	#0,status(a0)
+
+	if customAMPS
+		music	mus_SEGA
+	else
 
 	; Initialize streak horizontal offsets for Sonic going left.
 	; 9 full lines (8 pixels) + 6 pixels, 2-byte interleaved entries for PNT A and PNT B
-	lea	(Horiz_Scroll_Buf + 2 * 2 * (9 * 8 + 6)).w,a1
-	lea	Streak_Horizontal_offsets(pc),a2
-	moveq	#0,d0
-	moveq	#$22,d6	; Number of streaks-1
--	move.b	(a2)+,d0
-	add.w	d0,(a1)
-	addq.w	#2 * 2 * 2,a1	; Advance to next streak 2 pixels down
-	dbf	d6,-
+		lea	(Horiz_Scroll_Buf + 2 * 2 * (9 * 8 + 6)).w,a1
+		lea	Streak_Horizontal_offsets(pc),a2
+		moveq	#0,d0
+		moveq	#$22,d6	; Number of streaks-1
+-		move.b	(a2)+,d0
+		add.w	d0,(a1)
+		addq.w	#2 * 2 * 2,a1	; Advance to next streak 2 pixels down
+		dbf	d6,-
+	endif
 
 	lea	off_3A294(pc),a1 ; pointers to mapping DPLC data
 	lea	(ArtUnc_Sonic).l,a3
@@ -74301,25 +74454,18 @@ Obj_SonicOnSegaScreen_Init:
 -	movea.l	(a1)+,a2
 	move.w	(a2)+,d6 ; get the number of pieces in this mapping frame
 	subq.w	#1,d6
--	move.w	(a2)+,d0
+
+-	moveq	#0,d0
+	move.w	(a2)+,d0
 	move.w	d0,d1
-	; Depending on the exact location (and size) of the art being used,
-	; you may encounter an overflow in the original code which garbles
-	; the enlarged Sonic. The following code fixes this:
-    if 1==0
-	andi.l	#$FFF,d0
-	lsl.l	#5,d0
-	lea	(a3,d0.l),a4 ; source ROM address of tiles to copy
-    else
 	andi.w	#$FFF,d0
 	lsl.w	#5,d0
 	lea	(a3,d0.w),a4 ; source ROM address of tiles to copy
-    endif
+
 	andi.w	#$F000,d1 ; abcd000000000000
-	rol.w	#4,d1	  ; (this calculation can be done smaller and faster
-	addq.w	#1,d1	  ; by doing rol.w #7,d1 addq.w #7,d1
-	lsl.w	#3,d1	  ; instead of these 4 lines)
-	subq.w	#1,d1	  ; 000000000abcd111 ; number of dwords to copy minus 1
+	rol.w	#7,d1
+	addq.w	#7,d1
+
 -	move.l	(a4)+,(a5)+
 	dbf	d1,- ; copy all of the pixels in this piece into the temp buffer
 	dbf	d6,-- ; loop per piece in the frame
@@ -74332,14 +74478,15 @@ Obj_SonicOnSegaScreen_Init:
 	moveq	#0,d1
 	lea	SonicRunningSpriteScaleData(pc),a6
 	moveq	#4*2-1,d7 ; there are 4 sprite mapping frames with 2 pieces each
+
 -	movea.l	(a6)+,a1 ; source in RAM of tile graphics to enlarge
 	movea.l	(a6)+,a2 ; destination in RAM of enlarged graphics
 	move.b	(a6)+,d0 ; width of the sprite piece to enlarge (minus 1)
 	move.b	(a6)+,d1 ; height of the sprite piece to enlarge (minus 1)
 	bsr.w	Scale_2x
+
 	dbf	d7,- ; loop over each piece
 	move.w	(sp)+,d7
-
 	rts
 ; ===========================================================================
 	; These next four things are pointers to Sonic's dereferenced
@@ -74366,11 +74513,12 @@ SonicRunningSpriteScaleData:
 copysrc := Chunk_Table
 copydst := Chunk_Table + $B00
 SegaScreenScaledSpriteDataStart = copydst
+
 	rept 4 ; repeat 4 times since there are 4 frames to scale up
-	; piece 1 of each frame (the smaller top piece):
-	map_piece 3,2
-	; piece 2 of each frame (the larger bottom piece):
-	map_piece 4,4
+		; piece 1 of each frame (the smaller top piece):
+		map_piece 3,2
+		; piece 2 of each frame (the larger bottom piece):
+		map_piece 4,4
 	endm
 SegaScreenScaledSpriteDataEnd = copydst
 	if copysrc > SegaScreenScaledSpriteDataStart
@@ -74379,12 +74527,25 @@ SegaScreenScaledSpriteDataEnd = copydst
 ; ===========================================================================
 
 Obj_SonicOnSegaScreen_RunLeft:
-	subi.w	#$20,x_pos(a0)
-	subq.w	#1,objoff_2A(a0)
-	bmi.s	loc_3A312
+	if customAMPS
+		move.w	SegaSonicVelocity.w,d0
+		ext.l	d0
+		asl.l	#8,d0
+		sub.l	d0,x_pos(a0)
+
+		cmp.w	#$10,x_pos(a0)
+		ble.s	loc_3A312
+	else
+		subi.w	#$20,x_pos(a0)
+		subq.w	#1,objoff_2A(a0)
+		bmi.s	loc_3A312
+	endif
+
 	bsr.w	Obj_SonicOnSegaScreen_Move_Streaks_Left
-	lea	(Ani_Obj_SonicOnSegaScreen).l,a1
-	jsrto	(AnimateSprite).l, JmpTo25_AnimateSprite
+	if customAMPS == 0
+		lea	(Ani_Obj_SonicOnSegaScreen).l,a1
+		jsrto	(AnimateSprite).l, JmpTo25_AnimateSprite
+	endif
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -74392,21 +74553,39 @@ loc_3A312:
 	addq.b	#2,routine(a0)
 	move.w	#$C,objoff_2A(a0)
 	move.b	#1,objoff_2C(a0)
-	move.b	#-1,objoff_2D(a0)
+	st	objoff_2D(a0)
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 
 Obj_SonicOnSegaScreen_MidWipe:
-	tst.w	objoff_2A(a0)
-	beq.s	loc_3A33A
-	subq.w	#1,objoff_2A(a0)
+	if customAMPS
+		move.w	SegaSonicVelocity.w,d0
+		ext.l	d0
+		asl.l	#8,d0
+		sub.l	d0,x_pos(a0)
+
+		cmp.w	#-$1A0,x_pos(a0)
+		ble.s	loc_3A33A
+	else
+		tst.w	objoff_2A(a0)
+		beq.s	loc_3A33A
+		subq.w	#1,objoff_2A(a0)
+	endif
 	bsr.w	Obj_SonicOnSegaScreen_Move_Streaks_Left
 
 loc_3A33A:
+	if customAMPS
+		moveq	#$10,d0			; use $10 as a base offset
+		moveq	#-$20,d2		; use -$20 as frame size
+	endif
 	lea	word_3A49E(pc),a1
 	bsr.w	loc_3A44E
 	bne.s	loc_3A346
-	rts
+	if customAMPS
+		jmp	(DisplaySprite).l
+	else
+		rts
+	endif
 ; ===========================================================================
 
 loc_3A346:
@@ -74414,36 +74593,51 @@ loc_3A346:
 	bchg	#0,render_flags(a0)
 	move.w	#$B,objoff_2A(a0)
 	move.w	#4,(SegaScr_VInt_Subrout).w
-	subi.w	#$28,x_pos(a0)
-	bchg	#0,render_flags(a0)
-	bchg	#0,status(a0)
+	if customAMPS
+		move.w	#-$20,x_pos(a0)
+	else
+		subi.w	#$28,x_pos(a0)
+	endif
 
-	; This clears a lot more than the horizontal scroll buffer, which is $400 bytes.
-	; This is because the loop counter is erroneously set to $400, instead of ($400/4)-1.
-	clearRAM Horiz_Scroll_Buf,Horiz_Scroll_Buf_End+$C04	; Bug: That '+$C04' shouldn't be there; accidentally clears an additional $C04 bytes
+	clearRAM Horiz_Scroll_Buf,Horiz_Scroll_Buf_End
 
 	; Initialize streak horizontal offsets for Sonic going right.
 	; 9 full lines (8 pixels) + 7 pixels, 2-byte interleaved entries for PNT A and PNT B
-	lea	(Horiz_Scroll_Buf + 2 * 2 * (9 * 8 + 7)).w,a1
-	lea	Streak_Horizontal_offsets(pc),a2
-	moveq	#0,d0
-	moveq	#$22,d6	; Number of streaks-1
+	if customAMPS == 0
+		lea	(Horiz_Scroll_Buf + 2 * 2 * (9 * 8 + 7)).w,a1
+		lea	Streak_Horizontal_offsets(pc),a2
+		moveq	#0,d0
+		moveq	#$22,d6	; Number of streaks-1
 
 loc_3A38A:
-	move.b	(a2)+,d0
-	sub.w	d0,(a1)
-	addq.w	#2 * 2 * 2,a1	; Advance to next streak 2 pixels down
-	dbf	d6,loc_3A38A
+		move.b	(a2)+,d0
+		sub.w	d0,(a1)
+		addq.w	#2 * 2 * 2,a1	; Advance to next streak 2 pixels down
+		dbf	d6,loc_3A38A
+	endif
 	rts
 ; ===========================================================================
 
 Obj_SonicOnSegaScreen_RunRight:
-	subq.w	#1,objoff_2A(a0)
-	bmi.s	loc_3A3B4
-	addi.w	#$20,x_pos(a0)
+	if customAMPS
+		cmp.w	#$130,x_pos(a0)
+		bgt.w	loc_3A312
+
+		move.w	SegaSonicVelocity.w,d0
+		ext.l	d0
+		asl.l	#8,d0
+		add.l	d0,x_pos(a0)
+	else
+		subq.w	#1,objoff_2A(a0)
+		bmi.s	loc_3A312
+		addi.w	#$20,x_pos(a0)
+	endif
+
 	bsr.w	Obj_SonicOnSegaScreen_Move_Streaks_Right
-	lea	(Ani_Obj_SonicOnSegaScreen).l,a1
-	jsrto	(AnimateSprite).l, JmpTo25_AnimateSprite
+	if customAMPS == 0
+		lea	(Ani_Obj_SonicOnSegaScreen).l,a1
+		jsrto	(AnimateSprite).l, JmpTo25_AnimateSprite
+	endif
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 
@@ -74451,27 +74645,44 @@ loc_3A3B4:
 	addq.b	#2,routine(a0)
 	move.w	#$C,objoff_2A(a0)
 	move.b	#1,objoff_2C(a0)
-	move.b	#-1,objoff_2D(a0)
+	st	objoff_2D(a0)
 	rts
 ; ===========================================================================
 
 Obj_SonicOnSegaScreen_EndWipe:
-	tst.w	objoff_2A(a0)
-	beq.s	loc_3A3DA
-	subq.w	#1,objoff_2A(a0)
+	if customAMPS
+		move.w	SegaSonicVelocity.w,d0
+		ext.l	d0
+		asl.l	#8,d0
+		add.l	d0,x_pos(a0)
+
+		cmp.w	#$2D0,x_pos(a0)
+		bge.s	loc_3A3DA
+	else
+		tst.w	objoff_2A(a0)
+		beq.s	loc_3A33A
+		subq.w	#1,objoff_2A(a0)
+	endif
 	bsr.w	Obj_SonicOnSegaScreen_Move_Streaks_Right
 
 loc_3A3DA:
+	if customAMPS
+		move.w	#$130,d0		; use $180 as a base offset
+		moveq	#$20,d2			; use $20 as frame size
+	endif
 	lea	word_3A514(pc),a1
 	bsr.w	loc_3A44E
 	bne.s	loc_3A3E6
-	rts
+	if customAMPS
+		jmp	(DisplaySprite).l
+	else
+		rts
+	endif
 ; ===========================================================================
 
 loc_3A3E6:
 	addq.b	#2,routine(a0)
 	st	(SegaScr_PalDone_Flag).w
-	music	mus_SEGA
 
 return_3A3F6:
 	rts
@@ -74505,57 +74716,113 @@ Obj_SegaHideTM_Main:
 ; ===========================================================================
 
 Obj_SonicOnSegaScreen_Move_Streaks_Left:
-	; 9 full lines (8 pixels) + 6 pixels, 2-byte interleaved entries for PNT A and PNT B
-	lea	(Horiz_Scroll_Buf + 2 * 2 * (9 * 8 + 6)).w,a1
+	if customAMPS
+		lea	(Horiz_Scroll_Buf + 2 * 2 * (9 * 8 + 6)).w,a1
+		lea	Streak_Horizontal_offsets(pc),a2
+		moveq	#$22,d6	; Number of streaks-1
 
-	move.w	#$22,d6	; Number of streaks-1
--	subi.w	#$20,(a1)
-	addq.w	#2 * 2 * 2,a1	; Advance to next streak 2 pixels down
-	dbf	d6,-
+-		moveq	#0,d0
+		move.b	(a2)+,d0
+		add.w	x_pos(a0),d0	; offset by x-pos
+		sub.w	#$160,d0
+		move.w	d0,(a1)
+		addq.w	#2 * 2 * 2,a1	; Advance to next streak 2 pixels down
+		dbf	d6,-
+	else
+		; 9 full lines (8 pixels) + 6 pixels, 2-byte interleaved entries for PNT A and PNT B
+		lea	(Horiz_Scroll_Buf + 2 * 2 * (9 * 8 + 6)).w,a1
+
+		move.w	#$22,d6	; Number of streaks-1
+-		subi.w	#$20,(a1)
+		addq.w	#2 * 2 * 2,a1	; Advance to next streak 2 pixels down
+		dbf	d6,-
+	endif
 	rts
 ; ===========================================================================
 
 Obj_SonicOnSegaScreen_Move_Streaks_Right:
-	; 9 full lines (8 pixels) + 7 pixels, 2-byte interleaved entries for PNT A and PNT B
-	lea	(Horiz_Scroll_Buf + 2 * 2 * (9 * 8 + 7)).w,a1
+	if customAMPS
+		lea	(Horiz_Scroll_Buf + 2 * 2 * (9 * 8 + 7)).w,a1
+		lea	Streak_Horizontal_offsets(pc),a2
+		moveq	#$22,d6	; Number of streaks-1
 
-	move.w	#$22,d6	; Number of streaks-1
--	addi.w	#$20,(a1)
-	addq.w	#2 * 2 * 2,a1	; Advance to next streak 2 pixels down
-	dbf	d6,-
+-		moveq	#0,d0
+		move.b	(a2)+,d0
+		neg.w	d0
+		add.w	x_pos(a0),d0	; offset by x-pos
+		add.w	#$20,d0
+		move.w	d0,(a1)
+		addq.w	#2 * 2 * 2,a1	; Advance to next streak 2 pixels down
+		dbf	d6,-
+	else
+		; 9 full lines (8 pixels) + 6 pixels, 2-byte interleaved entries for PNT A and PNT B
+		lea	(Horiz_Scroll_Buf + 2 * 2 * (9 * 8 + 7)).w,a1
+
+		move.w	#$22,d6	; Number of streaks-1
+-		addi.w	#$20,(a1)
+		addq.w	#2 * 2 * 2,a1	; Advance to next streak 2 pixels down
+	endif
 	rts
 ; ===========================================================================
 
 loc_3A44E:
-	subq.b	#1,objoff_2C(a0)
-	bne.s	loc_3A496
-	moveq	#0,d0
-	move.b	objoff_2D(a0),d0
-	addq.b	#1,d0
-	cmp.b	1(a1),d0
-	blo.s	loc_3A468
-	tst.b	3(a1)
-	bne.s	loc_3A49A
+	if customAMPS
+		move.w	x_pos(a0),d1		; NAT: load x-pos of object to d1
+		sub.w	d0,d1			; sub base offset from d1
+		ext.l	d1			; extend to long (for div)
+		divs	d2,d1			; divide by segment size to get segment offset
 
-loc_3A468:
-	move.b	d0,objoff_2D(a0)
-	_move.b	0(a1),objoff_2C(a0)
-	lea	6(a1),a2		; This loads a palette: Sega Screen 2.bin or Sega Screen 3.bin
-	moveq	#0,d1
-	move.b	2(a1),d1
-	move.w	d1,d2
-	tst.w	d0
-	beq.s	loc_3A48C
+		moveq	#0,d0
+		move.b	(a1),d0			; get size of each segment
+		and.l	#$FFFF,d1		; get rid of quotient
+		divu	d0,d1			; divide segment offset by segment count
 
-loc_3A482:
-	subq.b	#1,d0
-	beq.s	loc_3A48A
-	add.w	d2,d1
-	bra.s	loc_3A482
+		cmp.b	objoff_2D(a0),d1	; check if we crossed a segment boundary
+		beq.s	loc_3A496		; if not, do not load
+		move.b	d1,objoff_2D(a0)	; save new segment offset
+
+		cmp.b	1(a1),d1		; check if this is the last segment
+		bhs.s	loc_3A49A		; if so, mark as completed
+
+		moveq	#0,d2
+		move.b	2(a1),d2		; get num of colors per segment
+		and.l	#$FFFF,d1		; get rid of quotient
+		mulu	d2,d1			; multiply segument by num of colors
+
+		lea	6(a1),a2		; get color palettes offset to a2
+		add.w	d1,a2			; advance to the correct position
+
+	else
+		subq.b	#1,objoff_2C(a0)
+		bne.s	loc_3A496
+		moveq	#0,d0
+		move.b	objoff_2D(a0),d0
+		addq.b	#1,d0
+		cmp.b	1(a1),d0
+		blo.s	loc_3A468
+		tst.b	3(a1)
+		bne.s	loc_3A49A
+
+	loc_3A468:
+		move.b	d0,objoff_2D(a0)
+		_move.b	0(a1),objoff_2C(a0)
+		lea	6(a1),a2		; This loads a palette: Sega Screen 2.bin or Sega Screen 3.bin
+		moveq	#0,d1
+		move.b	2(a1),d1
+		move.w	d1,d2
+		tst.w	d0
+		beq.s	loc_3A48C
+
+	loc_3A482:
+		subq.b	#1,d0
+		beq.s	loc_3A48A
+		add.w	d2,d1
+		bra.s	loc_3A482
 ; ===========================================================================
 
-loc_3A48A:
-	adda.w	d1,a2
+	loc_3A48A:
+		adda.w	d1,a2
+	endif
 
 loc_3A48C:
 	movea.w	4(a1),a3
@@ -74740,9 +75007,6 @@ Streak_Horizontal_offsets:
 	dc.b $10	; 33
 	dc.b $16	; 34
 	dc.b   0	; 35
-
-
-
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
