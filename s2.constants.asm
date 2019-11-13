@@ -1509,7 +1509,8 @@ VSRslts_Object_RAM_End:
 
 ; RAM variables - Menu screens
 	phase	Object_RAM	; Move back to the object RAM
-Menus_Object_RAM:		; No objects are loaded in the menu screens
+Menus_Object_RAM:
+Menu_AMPS:			ds.b object_size
 Menus_Object_RAM_End:
 
 

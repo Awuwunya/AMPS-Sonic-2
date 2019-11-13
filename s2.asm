@@ -17,12 +17,8 @@
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ; ASSEMBLY OPTIONS:
 ;
-<<<<<<< HEAD
 ; special options for various AMPS related additions
 customAMPS =	1		; set to 1 to enable features
-=======
-customAMPS =		1
->>>>>>> 9061e12cfad7be7f8d100e42bd77ce630101b3e5
 
     ifndef gameRevision
 gameRevision = 1
@@ -950,9 +946,20 @@ Vint_Menu:
 	bsr.w	ReadJoypads
 
 	dma68kToVDP Normal_palette,$0000,palette_line_size*4,CRAM
-	dma68kToVDP Sprite_Table,VRAM_Sprite_Attribute_Table,VRAM_Sprite_Attribute_Table_Size,VRAM
-	dma68kToVDP Horiz_Scroll_Buf,VRAM_Horiz_Scroll_Table,VRAM_Horiz_Scroll_Table_Size,VRAM
 
+	if customAMPS
+		tst.b	Game_Mode.w	; check if in info screen
+		bne.s	+		; if not, skip
+		dma68kToVDP Horiz_Scroll_Buf,$B800,VRAM_Horiz_Scroll_Table_Size,VRAM
+		dma68kToVDP Sprite_Table,$B000,VRAM_Sprite_Attribute_Table_Size,VRAM
+		bra.s	++
+
++
+	endif
+	dma68kToVDP Horiz_Scroll_Buf,VRAM_Horiz_Scroll_Table,VRAM_Horiz_Scroll_Table_Size,VRAM
+	dma68kToVDP Sprite_Table,VRAM_Sprite_Attribute_Table,VRAM_Sprite_Attribute_Table_Size,VRAM
+
++
 	bsr.w	ProcessDMAQueue
 	bsr.w	ProcessDPLC
 	tst.w	(Demo_Time_left).w
@@ -3614,6 +3621,11 @@ Sega_WaitPalette:
 	bsr.w	WaitForVint
 	jsrto	(RunObjects).l, JmpTo_RunObjects
 	jsr	(BuildSprites).l
+
+	move.b	(Ctrl_1_Press).w,d0	; is Start button pressed?
+	or.b	(Ctrl_2_Press).w,d0	; (either player)
+	andi.b	#button_start_mask,d0
+	bne.s	Sega_GotoTitle		; if yes, branch
 	tst.b	(SegaScr_PalDone_Flag).w
 	beq.s	Sega_WaitPalette
 
@@ -3734,6 +3746,13 @@ TitleScreen:
 	move.l	#vdpComm(tiles_to_bytes(ArtTile_ArtNem_FontStuff_TtlScr),VRAM,WRITE),(VDP_control_port).l
 	lea	(ArtNem_FontStuff).l,a0
 	bsr.w	NemDec
+
+	if customAMPS
+		move.l	#vdpComm(tiles_to_bytes($410),VRAM,WRITE),(VDP_control_port).l
+		lea	ArtNem_AMPS,a0
+		bsr.w	NemDec
+	endif
+
 	move.b	#0,(Last_star_pole_hit).w
 	move.b	#0,(Last_star_pole_hit_2P).w
 	move.w	#0,(Debug_placement_mode).w
@@ -11523,6 +11542,13 @@ off_92F2:
 
 	if customAMPS
 MenuScreen_Info:
+	move	#$2700,sr
+	lea	(Chunk_Table).l,a1
+	move.l	#vdpComm(VRAM_Plane_B_Name_Table,VRAM,WRITE),d0
+	moveq	#$27,d1
+	moveq	#$1B,d2
+	jsrto	PlaneMapToVRAM_H80_SpecialStage	; fullscreen background
+
 	; Load foreground
 	lea	(Chunk_Table).l,a1
 	lea	(MapEng_InfoScreen).l,a0	; 2 bytes per 8x8 tile, compressed
@@ -11533,7 +11559,11 @@ MenuScreen_Info:
 	move.l	#vdpComm(VRAM_Plane_A_Name_Table,VRAM,WRITE),d0
 	moveq	#$27,d1
 	moveq	#$1B,d2	; 40x28 = whole screen
-	jsrto	(PlaneMapToVRAM_H40).l, JmpTo_PlaneMapToVRAM_H40	; display patterns
+	jsr	PlaneMapToVRAM_H80_SpecialStage	; display patterns
+
+	move.l	#vdpComm(tiles_to_bytes($140),VRAM,WRITE),(VDP_control_port).l
+	lea	(ArtNem_LogoAMPS).l,a0
+	bsr.w	NemDec
 
 	; Animate background (loaded back in MenuScreen)
 	lea	(Anim_SonicMilesBG).l,a2
@@ -11550,9 +11580,11 @@ MenuScreen_Info:
 	clr.l	(a1)+
 	dbf	d1,-
 
-	move.w	#(30*60)-1,(Demo_Time_left).w	; 30 seconds
 	clr.l	(Camera_X_pos).w
 	clr.l	(Camera_Y_pos).w
+	move.l	#Obj_LogoAMPS,Menu_AMPS.w	; load AMPS logo
+	jsr	RunObjects
+
 	move.b	#VintID_Menu,(Vint_routine).w
 	bsr.w	WaitForVint
 	music	mus_Options
@@ -11561,11 +11593,38 @@ MenuScreen_Info:
 	move.w	(VDP_Reg1_val).w,d0
 	ori.b	#$40,d0
 	move.w	d0,(VDP_control_port).l
-	bsr.w	Pal_FadeFromBlack
+	move.l	#$90038D00|($B800/$400),(VDP_control_port).l
+	move.w	#$8500|($B000/$200),(VDP_control_port).l
+
+	move.w	#$3F,(Palette_fade_range).w
+	moveq	#0,d0
+	lea	(Normal_palette).w,a0
+	move.b	(Palette_fade_start).w,d0
+	adda.w	d0,a0
+	moveq	#0,d1
+	move.b	(Palette_fade_length).w,d0
+
+.palettewrite
+	move.w	d1,(a0)+
+	dbf	d0,.palettewrite	; fill palette with $000 (black)
+
+	move.w	#$15,d4
+.nextframe
+	move.b	#VintID_Menu,(Vint_routine).w
+	bsr.w	WaitForVint
+	jsr	Pal_FadeFromBlack.UpdateAllColours
+
+	jsr	RunObjects
+	jsr	BuildSprites
+	lea	(Anim_SonicMilesBG).l,a2
+	jsrto	(Dynamic_Normal).l, JmpTo2_Dynamic_Normal
+	dbf	d4,.nextframe
 
 .loop
 	move.b	#VintID_Menu,(Vint_routine).w
 	bsr.w	WaitForVint
+	jsr	RunObjects
+	jsr	BuildSprites
 	lea	(Anim_SonicMilesBG).l,a2
 	jsrto	(Dynamic_Normal).l, JmpTo2_Dynamic_Normal
 
@@ -11573,11 +11632,52 @@ MenuScreen_Info:
 	or.b	(Ctrl_2_Press).w,d0
 	andi.b	#button_start_mask,d0	; start pressed?
 	beq.s	.loop			; no
+	move.w	#$8D00|(VRAM_Horiz_Scroll_Table/$400),(VDP_control_port).l
+	move.w	#$8500|(VRAM_Sprite_Attribute_Table/$200),(VDP_control_port).l
 	bra.w	LevelSelect_Return	; yes
+; ===========================================================================
+
+Obj_LogoAMPS:
+	move.l	#.main,(a0)
+	move.l	#.map,mappings(a0)
+	move.w	#$3C,y_pos(a0)
+	move.w	#$8140,art_tile(a0)
+	move.b	#$40,width_pixels(a0)
+	move.w	#prio(1),priority(a0)
+	move.b	#4,render_flags(a0)
+
+	move.w	#-$C4,x_pos(a0)
+	move.w	#$540,x_vel(a0)
+
+.main
+	jsr	ObjectMove
+	sub.w	#$A,x_vel(a0)
+	bpl.s	.move
+	clr.w	x_vel(a0)
+	bra.s	.disp
+
+.move
+	lea	Horiz_Scroll_Buf.w,a1
+	move.w	#(Horiz_Scroll_Buf_End-Horiz_Scroll_Buf)/4-1,d1
+
+	moveq	#0,d0
+	move.w	x_pos(a0),d0
+	sub.w	#$A0,d0
+	swap	d0
+
+.copy
+	move.l	d0,(a1)+
+	dbf	d1,.copy
+
+.disp
+	jmp	DisplaySprite
+
+.map	include "art/logo.asm"
 	endif
 ; ===========================================================================
 ; loc_92F6:
 MenuScreen_LevelSelect:
+
 	; Load foreground (sans zone icon)
 	lea	(Chunk_Table).l,a1
 	lea	(MapEng_LevSel).l,a0	; 2 bytes per 8x8 tile, compressed
@@ -11588,7 +11688,7 @@ MenuScreen_LevelSelect:
 	move.l	#vdpComm(VRAM_Plane_A_Name_Table,VRAM,WRITE),d0
 	moveq	#$27,d1
 	moveq	#$1B,d2	; 40x28 = whole screen
-	jsrto	(PlaneMapToVRAM_H40).l, JmpTo_PlaneMapToVRAM_H40	; display patterns
+	jsr	PlaneMapToVRAM_H40	; display patterns
 
 	; Draw sound test number
 	moveq	#palette_line_0,d3
@@ -12247,7 +12347,7 @@ EndingSequence:
 	move.w	d0,(Credits_Trigger).w
 
 	; Bug: The '+4' shouldn't be here; clearRAM accidentally clears an additional 4 bytes
-	clearRAM Horiz_Scroll_Buf,Horiz_Scroll_Buf_End+4
+	clearRAM Horiz_Scroll_Buf,Horiz_Scroll_Buf_End
 
 	move.w	#$7FFF,(PalCycle_Timer).w
 	lea	(CutScene).w,a1
@@ -12323,7 +12423,7 @@ EndgameCredits:
 	move.w	d0,(Credits_Trigger).w
 
 	; Bug: The '+4' shouldn't be here; clearRAM accidentally clears an additional 4 bytes
-	clearRAM Horiz_Scroll_Buf,Horiz_Scroll_Buf_End+4
+	clearRAM Horiz_Scroll_Buf,Horiz_Scroll_Buf_End
 
 	music	mus_Credits
 	clr.w	(Target_palette).w
@@ -12336,7 +12436,7 @@ EndgameCredits:
 -
 	jsrto	(ClearScreen).l, JmpTo_ClearScreen
 	bsr.w	ShowCreditsScreen
-	bsr.w	Pal_FadeFromBlack
+	jsr	Pal_FadeFromBlack
 
 	; Here's how to calculate new duration values for the below instructions.
 	; Each slide of the credits is displayed for $18E frames at 60 FPS, or $144 frames at 50 FPS.
@@ -24131,11 +24231,17 @@ loc_12FD6:
 	beq.s	+
 	cmpi.w	#$190,objoff_34(a0)
 	beq.s	++
+	if customAMPS
+		bsr.w	sub_31017E
+	endif
 	bra.w	DisplaySprite
 ; ===========================================================================
 +
 	cmpi.w	#$1D0,objoff_34(a0)
 	beq.s	+
+	if customAMPS
+		bsr.w	sub_31017E
+	endif
 	bra.w	DisplaySprite
 ; ===========================================================================
 +
@@ -24328,13 +24434,13 @@ Obj_IntroStars_LargeStar_Init:
 	move.b	#2,anim(a0)
 	move.w	#prio(1),priority(a0)
 	move.w	#$100,x_pixel(a0)
-	move.w	#$A8,y_pixel(a0)
-	move.w	#4,objoff_2A(a0)
+	move.w	#$A8,objoff_2A(a0)
+	move.w	#4,objoff_2E(a0)
 	rts
 ; ===========================================================================
 
 loc_13190:
-	subq.w	#1,objoff_2A(a0)
+	subq.w	#1,objoff_2E(a0)
 	bmi.s	+
 	rts
 ; ===========================================================================
@@ -24347,7 +24453,7 @@ loc_1319E:
 	move.b	#2,routine_secondary(a0)
 	move.b	#0,anim_frame(a0)
 	move.b	#0,anim_frame_duration(a0)
-	move.w	#6,objoff_2A(a0)
+	move.w	#6,objoff_2E(a0)
 	move.w	objoff_2C(a0),d0
 	addq.w	#4,d0
 	cmpi.w	#word_131DC_end-word_131DC+4,d0
@@ -24492,21 +24598,24 @@ Obj_IntroStars_TextBanner:
 		offsetTableEntry.w .rt0		; 0
 		offsetTableEntry.w .rt1		; 2
 		offsetTableEntry.w .rt2		; 4
+		offsetTableEntry.w .rt3		; 6
 ; ===========================================================================
 
 .rt0
 	addq.b	#2,routine_secondary(a0)
-	move.b	#$C,mapping_frame(a0)
+	clr.b	mapping_frame(a0)
 	move.w	#prio(1),priority(a0)
-	move.w	#$160,x_pixel(a0)
-	move.w	#$148,y_pixel(a0)
-
+	move.w	#$E410,art_tile(a0)
+	move.w	#$A0,x_pos(a0)
+	move.w	#-$30,y_pos(a0)
+	move.b	#4,render_flags(a0)
+	move.l	#.map,mappings(a0)
 
 .rt1
 	tst.b	Title_EnableTextBanner.w
-	beq.s	.rt2
+	beq.s	.rts
 	subq.w	#1,objoff_2A(a0)
-	bpl.s	.rt2
+	bpl.s	.rts
 	move.w	#1,objoff_2A(a0)
 
 	move.w	angle(a0),d0
@@ -24517,18 +24626,43 @@ Obj_IntroStars_TextBanner:
 	addq.w	#2,d0
 	move.w	d0,angle(a0)
 	cmp.w	#$2A,d0
-	bcs.s	.rt2
+	bcs.s	.rts
 	addq.b	#2,routine_secondary(a0)
+	move.w	#40,objoff_2A(a0)		; initialize extra delay
+
+.rts
+	rts
+; ---------------------------------------------------------------------------
 
 .rt2
-	rts
+	subq.w	#1,objoff_2A(a0)		; are we ready to drop the object
+	bpl.s	.rts				; if not, just wait
+	jsr	ObjectMoveAndFall
+	move.w	y_vel(a0),d0
+	bmi.s	.rt3
+
+	move.w	#$24,d1
+	cmp.w	y_pos(a0),d1
+	bgt.s	.rt3
+	move.w	d1,y_pixel(a0)
+
+	asr.w	#2,d0
+	neg.w	d0
+	move.w	d0,y_vel(a0)
+
+	cmp.w	#$FF00,d0
+	blt.s	.rt3
+	addq.b	#2,routine_secondary(a0)
+
+.rt3
 	bra.w	DisplaySprite
 
 ; ---------------------------------------------------------------------------
-.positions	dc.w    0,    -1,    -3,    -6,   -$A,  -$10,	 -$18; 0 ; ...
+.positions	dc.w    0,    -1,    -3,    -6,   -$A,  -$10,	 -$18; 0
 		dc.w -$14,  -$12,   -$E,   -$D,   -$C,   -$D,	  -$E; 7
 		dc.w -$10,  -$14,  -$18,  -$16,  -$15,  -$16,	 -$18; 14
 ; ---------------------------------------------------------------------------
+.map	include "art/AMPS.asm"
 	endif
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -24707,11 +24841,18 @@ TitleScreen_SetFinalState:
 	andi.b	#button_up_mask|button_down_mask|button_left_mask|button_right_mask|button_B_mask|button_C_mask|button_A_mask,(Ctrl_2_Press).w
 	andi.b	#button_start_mask,d0
 	beq.w	+	; rts
+
+.dest := y_pixel
+	if customAMPS
+.dest :=	objoff_2A
+	endif
+
 	st.b	objoff_2F(a0)
 	move.b	#$10,routine_secondary(a0)
 	move.b	#$12,mapping_frame(a0)
 	move.w	#$108,x_pixel(a0)
-	move.w	#$98,y_pixel(a0)
+	move.w	#$98,.dest(a0)
+
 	lea	(IntroSonicHand).w,a1
 	bsr.w	TitleScreen_InitSprite
 	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars (flashing intro star) at $FFFFB1C0
@@ -24720,7 +24861,8 @@ TitleScreen_SetFinalState:
 	move.b	#9,mapping_frame(a1)
 	move.b	#4,routine_secondary(a1)
 	move.w	#$141,x_pixel(a1)
-	move.w	#$C1,y_pixel(a1)
+	move.w	#$C1,.dest(a1)
+
 	lea	(IntroTails).w,a1
 	bsr.w	TitleScreen_InitSprite
 	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars
@@ -24729,7 +24871,8 @@ TitleScreen_SetFinalState:
 	move.b	#6,routine_secondary(a1)
 	move.w	#prio(3),priority(a1)
 	move.w	#$C8,x_pixel(a1)
-	move.w	#$A0,y_pixel(a1)
+	move.w	#$A0,.dest(a1)
+
 	lea	(IntroTailsHand).w,a1
 	bsr.w	TitleScreen_InitSprite
 	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars
@@ -24738,12 +24881,26 @@ TitleScreen_SetFinalState:
 	move.b	#$13,mapping_frame(a1)
 	move.b	#4,routine_secondary(a1)
 	move.w	#$10D,x_pixel(a1)
-	move.w	#$D1,y_pixel(a1)
+	move.w	#$D1,.dest(a1)
+
 	lea	(IntroEmblemTop).w,a1
 	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars
 	move.b	#6,subtype(a1)				; logo top
 	bsr.w	sub_12F08
+
 	move.l	#Obj_TitleMenu,(TitleScreenMenu+id).w ; load Obj_TitleMenu (title screen menu) at $FFFFB400
+	if customAMPS
+		moveq	#-$18,d1
+		move.w	d1,Vscroll_Factor_FG.w
+		move.w	d1,Title_TextBanner.w
+
+		lea	(IntroTextBanner).w,a1
+		move.l	#Obj_IntroStars,id(a1)	; load Obj_IntroStars (flashing intro stars) at $FFFFD480
+		move.b	#$12,subtype(a1)	; AMPS IN text
+		move.b	#4,routine_secondary(a1); skip the drop phase
+		clr.w	objoff_2A(a1)		; start immediately
+	endif
+
 	lea	(TitleScreenPaletteChanger).w,a1
 	bsr.w	DeleteObject2
 	lea_	Pal_1342C,a1
@@ -74405,17 +74562,21 @@ Obj_SOSS_Speed:
 ; ----------------------------------------------------------------------------
 
 .data
-	dc.w 29, $2000, $2000				; length, start speed, end speed
+	dc.w 15, $2000, $2000				; length, start speed, end speed
+	dc.w 14, $2000, $2000				; length, start speed, end speed
 	dc.w 43, $2000, $0000				; length, start speed, end speed
 	dc.w 20, $0000, $0000				; length, start speed, end speed
-	dc.w 60, $0000, -$800				; length, start speed, end speed
-	dc.w 100,-$800, $4000				; length, start speed, end speed
-	dc.w -1, 0, 0					; do nothing
+	dc.w 20, $0000,-$1000				; length, start speed, end speed
+	dc.w 20,-$1000,-$1000				; length, start speed, end speed
+	dc.w 20,-$1000, $0000				; length, start speed, end speed
+	dc.w 80, $0000, $2000				; length, start speed, end speed
+	dc.w -1, $2000, $2000				; do nothing
 	endif
 ; ===========================================================================
 
 Obj_SonicOnSegaScreen_Init:
 	if customAMPS
+		music	mus_SEGA			; play SEGA chant
 		addq.w	#1,objoff_32(a0)
 	endif
 	bsr.w	LoadSubObject
@@ -74427,12 +74588,9 @@ Obj_SonicOnSegaScreen_Init:
 	move.b	#5,render_flags(a0)
 	bset	#0,status(a0)
 
-	if customAMPS
-		music	mus_SEGA
-	else
-
 	; Initialize streak horizontal offsets for Sonic going left.
 	; 9 full lines (8 pixels) + 6 pixels, 2-byte interleaved entries for PNT A and PNT B
+	if customAMPS == 0
 		lea	(Horiz_Scroll_Buf + 2 * 2 * (9 * 8 + 6)).w,a1
 		lea	Streak_Horizontal_offsets(pc),a2
 		moveq	#0,d0
@@ -74557,6 +74715,13 @@ loc_3A312:
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
 
+Obj_SSOS_Back1:
+	if customAMPS
+		subq.b	#2,routine(a0)
+		move.w	#-$370,x_pos(a0)		; line x-pos up
+		bchg	#0,render_flags(a0)		; flip the right way round
+	endif
+
 Obj_SonicOnSegaScreen_MidWipe:
 	if customAMPS
 		move.w	SegaSonicVelocity.w,d0
@@ -74578,9 +74743,11 @@ loc_3A33A:
 		moveq	#$10,d0			; use $10 as a base offset
 		moveq	#-$20,d2		; use -$20 as frame size
 	endif
+
 	lea	word_3A49E(pc),a1
 	bsr.w	loc_3A44E
 	bne.s	loc_3A346
+
 	if customAMPS
 		jmp	(DisplaySprite).l
 	else
@@ -74593,6 +74760,7 @@ loc_3A346:
 	bchg	#0,render_flags(a0)
 	move.w	#$B,objoff_2A(a0)
 	move.w	#4,(SegaScr_VInt_Subrout).w
+
 	if customAMPS
 		move.w	#-$20,x_pos(a0)
 	else
@@ -74622,6 +74790,8 @@ Obj_SonicOnSegaScreen_RunRight:
 	if customAMPS
 		cmp.w	#$130,x_pos(a0)
 		bgt.w	loc_3A312
+		cmp.w	#-$20,x_pos(a0)
+		blt.w	Obj_SSOS_Back1
 
 		move.w	SegaSonicVelocity.w,d0
 		ext.l	d0
@@ -86893,6 +87063,14 @@ ArtNem_MiniTails:	BINCLUDE	"art/nemesis/Tails continue.bin"
 ; Standard font		; ArtNem_7C43A:
 	even
 ArtNem_FontStuff:	BINCLUDE	"art/nemesis/Standard font.bin"
+;---------------------------------------------------------------------------------------
+	if customAMPS
+ArtNem_AMPS:		BINCLUDE	"art/AMPS.nem"
+	even
+;---------------------------------------------------------------------------------------
+ArtNem_LogoAMPS:	BINCLUDE	"art/logo.nem"
+	even
+	endif
 ;---------------------------------------------------------------------------------------
 ; Nemesis compressed art (38 blocks)
 ; 1P/2P wins text from 2P mode		; ArtNem_7C9AE:
