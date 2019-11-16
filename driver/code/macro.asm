@@ -275,6 +275,7 @@ Mus_ToWater	ds.b 1		; enable underwater mode
 Mus_OutWater	ds.b 1		; disable underwater mode
 Mus_Pause	ds.b 1		; pause the music
 Mus_Unpause	ds.b 1		; unpause the music
+Mus_StopSFX	ds.b 1		; stop all sfx
 MusOff =	*		; first music ID
 ; ===========================================================================
 ; ---------------------------------------------------------------------------

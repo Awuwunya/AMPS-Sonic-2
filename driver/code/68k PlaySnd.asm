@@ -665,6 +665,7 @@ dSoundCommands:
 		bra.w	dPlaySnd_OutWater	; 07 - Disable underwater mode
 		bra.w	dPlaySnd_Pause		; 08 - Pause the sound driver
 		bra.w	dPlaySnd_Unpause	; 09 - Unpause the sound driver
+		bra.w	dPlaySnd_StopSFX	; 0A - Stop all sfx
 dSoundCommands_End:
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -679,6 +680,25 @@ dFadeCommands:
 .resv		bra.w	dResetVolume		; 88 - Reset volume and update
 		bsr.s	.resv			; 8C - Stop music playing and reset volume
 		bra.s	.stop
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Stop SFX from playing and restore interrupted channels correctly
+; ---------------------------------------------------------------------------
+
+dPlaySnd_StopSFX:
+		moveq	#SFX_Ch,d7		; load num of SFX channels to d7
+		lea	mSFXDAC1.w,a5		; start from SFX DAC 1
+
+.loop
+		tst.b	(a5)			; check if this channel is running a tracker
+		bpl.s	.notrack		; if not, skip
+		jsr	dcStop(pc)		; run the tracker stop command
+		nop				; required because the address may be modified by dcStop
+
+.notrack
+		add.w	#cSizeSFX,a5		; go to next channel
+		dbf	d7,.loop		; repeat for each channel
+		rts
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Stop music and SFX from playing (This code clears SFX RAM also)

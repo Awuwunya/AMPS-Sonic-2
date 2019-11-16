@@ -324,16 +324,15 @@ PSGInitValues_End:
 ; ===========================================================================
 
 	even
-; loc_300:
 GameProgram:
-	tst.w	(VDP_control_port).l
-; loc_306:
+	move	#$2700,sr
+	lea	System_Stack,sp
+
 CheckSumCheck:
-    if gameRevision>0
 	move.w	(VDP_control_port).l,d1
 	btst	#1,d1
 	bne.s	CheckSumCheck	; wait until DMA is completed
-    endif
+
 	btst	#6,(HW_Expansion_Control).l
 	beq.s	ChecksumTest
 	cmpi.l	#'init',(Checksum_fourcc).w ; has checksum routine already run?
@@ -369,7 +368,7 @@ ChecksumLoop:
 	move.l	#'init',(Checksum_fourcc).w ; set flag so checksum won't be run again
 ; loc_370:
 GameInit:
-	lea	(RAM_Start&$FFFFFF).l,a6
+	lea	RAM_Start,a6
 	moveq	#0,d7
 	move.w	#bytesToLcnt(System_Stack&$FFFF),d6
 ; loc_37C:
@@ -377,13 +376,13 @@ GameClrRAM:
 	move.l	d7,(a6)+
 	dbf	d6,GameClrRAM			; clear RAM ($0000-$FDFF)
 
-	lea	System_Stack,sp
 	bsr.w	VDPSetupGame
 	jsr	LoadDualPCM			; load Dual PCM
 	bsr.w	JoypadInit
 	move.b	#GameModeID_SegaScreen,(Game_Mode).w; set Game Mode to Sega Screen
 	move.w	#MusOff,Sound_test_sound.w	; init sound test ID
 	if customAMPS
+		clr.w	Two_player_mode.w	; disable 2-p mode (SEGA screen clears this, but we dont because we go there later)
 		jsr	OptionsMenu(pc)
 	endif
 
@@ -5884,15 +5883,18 @@ SpecialStage:
 	move.l	#0,(Camera_Y_pos).w
 	move.l	#0,(Camera_X_pos_copy).w
 	move.l	#0,(Camera_Y_pos_copy).w
+
 	cmpi.w	#1,(Player_mode).w	; is this a Tails alone game?
 	bgt.s	+			; if yes, branch
 	move.l	#Obj_SonicSS,(MainCharacter+id).w ; load Obj_SonicSS (special stage Sonic)
 	tst.w	(Player_mode).w		; is this a Sonic and Tails game?
 	bne.s	++			; if not, branch
 +	move.l	#Obj_TailsSS,(Sidekick+id).w ; load Obj_TailsSS (special stage Tails)
+
 +	move.l	#Obj_SSHUD,(SpecialStageHUD+id).w ; load Obj_SSHUD (special stage HUD)
 	move.l	#Obj_StartBanner,(SpecialStageStartBanner+id).w ; load Obj_EndingController (special stage banner)
 	move.l	#Obj_SSNumberOfRings,(SpecialStageNumberOfRings+id).w ; load Obj_SSNumberOfRings (special stage ring count)
+
 	move.w	#$80,(SS_Offset_X).w
 	move.w	#$36,(SS_Offset_Y).w
 	bsr.w	SSPlaneB_Background
@@ -9308,21 +9310,11 @@ SSStartNewAct:
 	cmpi.w	#100,d1
 	blt.s	+
 	addq.w	#1,d2
-  ; The following code does a more complete binary coded decimal conversion:
-    if 1==0
+
 -	addi.w	#$100,d0
 	subi.w	#100,d1
 	cmpi.w	#100,d1
 	bge.s	-
-    else
-	; This code (the original) is limited to 299 rings:
-	subi.w	#100,d1
-	move.w	#$100,d0
-	cmpi.w	#100,d1
-	blt.s	+
-	subi.w	#100,d1
-	addi.w	#$100,d0
-    endif
 +
 	divu.w	#10,d1
 	lsl.w	#4,d1
@@ -11568,9 +11560,11 @@ MenuScreen_Info:
 	; Animate background (loaded back in MenuScreen)
 	lea	(Anim_SonicMilesBG).l,a2
 	jsrto	(Dynamic_Normal).l, JmpTo2_Dynamic_Normal	; background
-
 	moveq	#PalID_Menu,d0
 	bsr.w	PalLoad_ForFade
+
+	move.l	#$0AAA0888,Target_palette_line4+$0E.w		; load some extra palette entries
+	move.l	#$04440666,Target_palette_line4+$12.w		; used for AMPS logo
 
 	lea	(Normal_palette_line3).w,a1
 	lea	(Target_palette_line3).w,a2
@@ -11610,6 +11604,7 @@ MenuScreen_Info:
 
 	move.w	#$15,d4
 .nextframe
+	move.w	d4,-(sp)
 	move.b	#VintID_Menu,(Vint_routine).w
 	bsr.w	WaitForVint
 	jsr	Pal_FadeFromBlack.UpdateAllColours
@@ -11618,6 +11613,7 @@ MenuScreen_Info:
 	jsr	BuildSprites
 	lea	(Anim_SonicMilesBG).l,a2
 	jsrto	(Dynamic_Normal).l, JmpTo2_Dynamic_Normal
+	move.w	(sp)+,d4
 	dbf	d4,.nextframe
 
 .loop
@@ -11632,6 +11628,7 @@ MenuScreen_Info:
 	or.b	(Ctrl_2_Press).w,d0
 	andi.b	#button_start_mask,d0	; start pressed?
 	beq.s	.loop			; no
+
 	move.w	#$8D00|(VRAM_Horiz_Scroll_Table/$400),(VDP_control_port).l
 	move.w	#$8500|(VRAM_Sprite_Attribute_Table/$200),(VDP_control_port).l
 	bra.w	LevelSelect_Return	; yes
@@ -11641,7 +11638,7 @@ Obj_LogoAMPS:
 	move.l	#.main,(a0)
 	move.l	#.map,mappings(a0)
 	move.w	#$3C,y_pos(a0)
-	move.w	#$8140,art_tile(a0)
+	move.w	#$E140,art_tile(a0)
 	move.b	#$40,width_pixels(a0)
 	move.w	#prio(1),priority(a0)
 	move.b	#4,render_flags(a0)
@@ -11677,7 +11674,6 @@ Obj_LogoAMPS:
 ; ===========================================================================
 ; loc_92F6:
 MenuScreen_LevelSelect:
-
 	; Load foreground (sans zone icon)
 	lea	(Chunk_Table).l,a1
 	lea	(MapEng_LevSel).l,a0	; 2 bytes per 8x8 tile, compressed
@@ -18801,7 +18797,7 @@ LevEvents_HTZ_Routine2_Continue:
 	move.l	d0,(Camera_BG_X_offset).w
 	move.b	d0,(HTZ_Terrain_Direction).w
 	subq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_HTZ_Routine1
-;	command	Mus_StopSFX
+	command	Mus_StopSFX
 	rts
 ; ---------------------------------------------------------------------------
 .exit_right:
@@ -18811,7 +18807,7 @@ LevEvents_HTZ_Routine2_Continue:
 	move.l	d0,(Camera_BG_X_offset).w
 	move.b	d0,(HTZ_Terrain_Direction).w
 	addq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_HTZ_Routine3
-;	command	Mus_StopSFX
+	command	Mus_StopSFX
 	rts
 
 ; ===========================================================================
@@ -19041,7 +19037,7 @@ LevEvents_HTZ2_Routine2_Continue:
 	move.l	d0,(Camera_BG_X_offset).w
 	move.b	d0,(HTZ_Terrain_Direction).w
 	subq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_HTZ2_Routine1
-;	command	Mus_StopSFX
+	command	Mus_StopSFX
 	rts
 ; ---------------------------------------------------------------------------
 .exit_right:
@@ -19051,7 +19047,7 @@ LevEvents_HTZ2_Routine2_Continue:
 	move.l	d0,(Camera_BG_X_offset).w
 	move.b	d0,(HTZ_Terrain_Direction).w
 	addq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_HTZ2_Routine3
-;	command	Mus_StopSFX
+	command	Mus_StopSFX
 	rts
 ; ===========================================================================
 ; loc_ED96:
@@ -19145,7 +19141,7 @@ LevEvents_HTZ2_Routine4_Continue:
 	move.l	d0,(Camera_BG_X_offset).w
 	move.b	d0,(HTZ_Terrain_Direction).w
 	subq.b	#6,(Dynamic_Resize_Routine).w ; => LevEvents_HTZ2_Routine1
-;	command	Mus_StopSFX
+	command	Mus_StopSFX
 	rts
 ; ===========================================================================
 .exit_right:
@@ -19155,7 +19151,7 @@ LevEvents_HTZ2_Routine4_Continue:
 	move.l	d0,(Camera_BG_X_offset).w
 	move.b	d0,(HTZ_Terrain_Direction).w
 	addq.b	#2,(Dynamic_Resize_Routine).w ; => LevEvents_HTZ2_Routine5
-;	command	Mus_StopSFX
+	command	Mus_StopSFX
 	rts
 ; ===========================================================================
 ; loc_EEF8:
@@ -23319,9 +23315,6 @@ JmpTo4_CalcSine
 	align 4
     endif
 
-
-
-
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 26 - Monitor
@@ -23329,7 +23322,7 @@ JmpTo4_CalcSine
 ; The power-ups themselves are handled by the next object. This just does the
 ; monitor collision and graphics.
 ; ----------------------------------------------------------------------------
-; Obj_Monitor:
+
 Obj_Monitor:
 	moveq	#0,d0
 	move.b	routine(a0),d0
@@ -23357,7 +23350,6 @@ Obj_Monitor_Init:
 	move.b	#$F,width_pixels(a0)
 
 	move.w	respawn_index(a0),a2
-	bclr	#7,(a2)
 	btst	#0,(a2)		; if this bit is set it means the monitor is already broken
 	beq.s	+
 	move.b	#8,routine(a0)	; set monitor to 'broken' state
@@ -23642,18 +23634,6 @@ tails_1up:
 super_ring:
 	addq.w	#1,(a2)
 
-    if gameRevision=0
-	lea	(Ring_count).w,a2
-	lea	(Update_HUD_rings).w,a3
-	lea	(Extra_life_flags).w,a4
-	cmpa.w	#MainCharacter,a1
-	beq.s	+
-	lea	(Ring_count_2P).w,a2
-	lea	(Update_HUD_rings_2P).w,a3
-	lea	(Extra_life_flags_2P).w,a4
-+	; give player 10 rings
-	addi.w	#10,(a2)
-    else
 	lea	(Ring_count).w,a2
 	lea	(Update_HUD_rings).w,a3
 	lea	(Extra_life_flags).w,a4
@@ -23675,7 +23655,6 @@ super_ring:
 	cmpi.w	#999,(a2)
 	blo.s	+
 	move.w	#999,(a2)
-    endif
 
 +
 	ori.b	#1,(a3)
@@ -30836,7 +30815,7 @@ SOLtbl:
 	dc.b -1
 ; decide whether Special Stage has more RAM slots than normal levels. Use the one that is the highest
 .ss :=	(LevelOnly_Object_RAM-Reserved_Object_RAM_End)/object_size
-.nm :=	(SS_Dynamic_Object_RAM_End-SS_Dynamic_Object_RAM)/object_size
+.nm :=	(SS_Dynamic_Object_RAM_End-SS_Object_RAM)/object_size
 
 	if .ss > .nm
 .nm :=		.ss
@@ -33297,7 +33276,7 @@ Obj_Sonic_InWater:
 	command	Mus_ToWater
 	move.l	#Obj_SmallBubbles,(Sonic_BreathingBubbles+id).w ; load Obj_SmallBubbles (sonic's breathing bubbles) at $FFFFD080
 	move.b	#$81,(Sonic_BreathingBubbles+subtype).w
-	move.l	a0,(Sonic_BreathingBubbles+$3C).w
+	move.l	a0,(Sonic_BreathingBubbles+objoff_3C).w
 	move.w	#$300,(Sonic_top_speed).w
 	move.w	#6,(Sonic_acceleration).w
 	move.w	#$40,(Sonic_deceleration).w
@@ -36324,7 +36303,7 @@ Obj_Tails_InWater:
 +
 	move.l	#Obj_SmallBubbles,(Tails_BreathingBubbles+id).w ; load Obj_SmallBubbles (tail's breathing bubbles) at $FFFFD0C0
 	move.b	#$81,(Tails_BreathingBubbles+subtype).w
-	move.l	a0,(Tails_BreathingBubbles+$3C).w ; set its parent to be this (Obj_SmallBubbles uses $3C instead of $3E for some reason)
+	move.l	a0,(Tails_BreathingBubbles+objoff_3C).w ; set its parent to be this (Obj_SmallBubbles uses $3C instead of $3E for some reason)
 	move.w	#$300,(Tails_top_speed).w
 	move.w	#6,(Tails_acceleration).w
 	move.w	#$40,(Tails_deceleration).w
@@ -41085,7 +41064,6 @@ Obj_Starpost_Init:
 	move.w	#prio(5),priority(a0)
 
 	move.w	respawn_index(a0),a2
-	bclr	#7,(a2)
 	btst	#0,(a2)
 	bne.s	loc_1F120
 
@@ -41095,9 +41073,9 @@ Obj_Starpost_Init:
 	andi.b	#$7F,d2
 	cmp.b	d2,d1
 	blo.s	Obj_Starpost_Main
+	bset	#0,(a2)
 
 loc_1F120:
-	bset	#0,2(a2,d0.w)
 	move.b	#2,anim(a0)
 
 ; loc_1F12C:
@@ -58901,8 +58879,6 @@ Obj_CPZBoss_Defeated:
 	moveq	#PLCID_Capsule,d0
 	jmpto	(LoadPLC).l, JmpTo5_LoadPLC
 ; ===========================================================================
-	rts
-; ===========================================================================
 
 Obj_CPZBoss_Main_Move:
 	move.l	Obj_CPZBoss_x_pos_next(a0),d2
@@ -60714,8 +60690,6 @@ loc_2F4EE:	;	boss defeated
 	moveq	#PLCID_Capsule,d0
 	jmpto	(LoadPLC).l, JmpTo6_LoadPLC	; load egg prison
 ; ===========================================================================
-	rts
-; ===========================================================================
 
 loc_2F52A:	; Obj_EHZBoss_PropellerReloaded:	; Propeller after defeat
 	subi_.w	#1,y_pos(a0)	; move up
@@ -60747,7 +60721,7 @@ loc_2F560:	; Obj_EHZBoss_Propeller_Sub0
 	move.b	#1,anim(a0)
 	move.w	#$18,objoff_2A(a0)	; timer until deletion
 	addq.b	#2,routine_secondary(a0)
-;	command	mus_StopSFX
+	command	mus_StopSFX
 	bra.s	loc_2F5A0
 ; ---------------------------------------------------------------------------
 
@@ -67917,18 +67891,11 @@ Obj_SSMessage_RingsNeeded:
 	moveq	#0,d0
 	cmpi.w	#100,d1
 	blt.s	+
-  ; The following code does a more complete binary coded decimal conversion:
-    if 1==0
+
 -	addi.w	#$100,d0
 	subi.w	#100,d1
 	cmpi.w	#100,d1
 	bge.s	-
-    else
-	; This code (the original) breaks when 101+ rings are needed:
--	addi.w	#$100,d0
-	subi.w	#100,d1
-	bgt.s	-
-    endif
 +
 	divu.w	#10,d1
 	lsl.w	#4,d1
@@ -74569,8 +74536,8 @@ Obj_SOSS_Speed:
 	dc.w 20, $0000,-$1000				; length, start speed, end speed
 	dc.w 20,-$1000,-$1000				; length, start speed, end speed
 	dc.w 20,-$1000, $0000				; length, start speed, end speed
-	dc.w 80, $0000, $2000				; length, start speed, end speed
-	dc.w -1, $2000, $2000				; do nothing
+	dc.w 80, $0000, $2400				; length, start speed, end speed
+	dc.w -1, $2400, $2400				; do nothing
 	endif
 ; ===========================================================================
 
@@ -79913,7 +79880,7 @@ loc_3DDA6:
 	subq.w	#1,objoff_2A(a0)
 	bmi.s	loc_3DE0A
 	lea	objoff_3F+1(a0),a1		; NAT: Who TF codes like this
-	movea.l	a1,a2
+	movea.l	a1,a2				; ohwait Naka would
 	move.w	-(a1),y_vel(a0)
 	move.w	-(a1),x_vel(a0)
 
@@ -79937,8 +79904,8 @@ loc_3DDA6:
 	jsrto	(AnimateSprite).l, JmpTo25_AnimateSprite
 	subq.b	#1,angle(a0)
 	bpl.s	+
-	subq.b	#1,objoff_41(a0)
-	move.b	objoff_41(a0),angle(a0)
+	subq.b	#1,angle+1(a0)
+	move.b	angle+1(a0),angle(a0)
 	sfx	sfx_Beep
 
 +
