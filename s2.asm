@@ -18,36 +18,36 @@
 ; ASSEMBLY OPTIONS:
 ;
 ; special options for various AMPS related additions
-customAMPS =	1		; set to 1 to enable features
+customAMPS =		1		; set to 1 to enable features
 
     ifndef gameRevision
-gameRevision = 1
+gameRevision =		1
     endif
 ;	| If 0, a REV00 ROM is built
 ;	| If 1, a REV01 ROM is built, which contains some fixes
 ;	| If 2, a (probable) REV02 ROM is built, which contains even more fixes
-padToPowerOfTwo = 0
+padToPowerOfTwo =	0
 ;	| If 1, pads the end of the ROM to the next power of two bytes (for real hardware)
 ;
-allOptimizations = 1
+allOptimizations =	1
 ;	| If 1, enables all optimizations
 ;
-skipChecksumCheck = 1
+skipChecksumCheck =	1
 ;	| If 1, disables the unnecessary (and slow) bootup checksum calculation
 ;
 zeroOffsetOptimization = 1
 ;	| If 1, makes a handful of zero-offset instructions smaller
 ;
-removeJmpTos = 1
+removeJmpTos =		1
 ;	| If 1, many unnecessary JmpTos are removed, improving performance
 ;
-addsubOptimize = 1
+addsubOptimize =	1
 ;	| If 1, some add/sub instructions are optimized to addq/subq
 ;
-relativeLea = 1
+relativeLea =		1
 ;	| If 1, makes some instructions use pc-relative addressing, instead of absolute long
 ;
-useFullWaterTables = 0
+useFullWaterTables =	0
 ;	| If 1, zone offset tables for water levels cover all level slots instead of only slots 8-$F
 ;	| Set to 1 if you've shifted level IDs around or you want water in levels with a level slot below 8
 
@@ -2741,13 +2741,18 @@ Pal_FadeFromBlack:
 	move.w	d1,(a0)+
 	dbf	d0,.palettewrite	; fill palette with $000 (black)
 
-	move.w	#$15,d4
+	moveq	#$0E,d4
+	moveq	#0,d0
 .nextframe:
 	move.b	#VintID_Fade,(Vint_routine).w
 	bsr.w	WaitForVint
-	bsr.s	.UpdateAllColours
 	bsr.w	RunPLC_RAM
-	dbf	d4,.nextframe
+
+	bchg	#$00,d6					; MJ: change delay counter
+	beq.s	.nextframe				; MJ: if null, delay a frame
+	bsr.s	.UpdateAllColours
+	subq.b	#2,d4					; MJ: decrease colour check
+	bne.s	.nextframe				; MJ: if it has not reached null, branch
 
 	rts
 ; End of function Pal_FadeFromBlack
@@ -2793,37 +2798,30 @@ Pal_FadeFromBlack:
 ; ---------------------------------------------------------------------------
 ; sub_243E: Pal_AddColor:
 .UpdateColour:
-	move.w	(a1)+,d2
-	move.w	(a0),d3
-	cmp.w	d2,d3
-	beq.s	.updatenone
-;.updateblue:
-	move.w	d3,d1
-	addi.w	#$200,d1	; increase blue value
-	cmp.w	d2,d1		; has blue reached threshold level?
-	bhi.s	.updategreen	; if yes, branch
-	move.w	d1,(a0)+	; update palette
-	rts
+	move.b	(a1),d5					; MJ: load blue
+	move.w	(a1)+,d1				; MJ: load green and red
+	move.b	d1,d2					; MJ: load red
+	lsr.b	#$04,d1					; MJ: get only green
+	andi.b	#$0E,d2					; MJ: get only red
 
-; loc_2454: Pal_AddGreen:
-.updategreen:
-	move.w	d3,d1
-	addi.w	#$20,d1		; increase green value
-	cmp.w	d2,d1
-	bhi.s	.updatered
-	move.w	d1,(a0)+	; update palette
-	rts
+	move.w	(a0),d3					; MJ: load current colour in buffer
+	cmp.b	d5,d4					; MJ: is it time for blue to fade?
+	bhi.s	FCI_NoBlue				; MJ: if not, branch
+	addi.w	#$0200,d3				; MJ: increase blue
 
-; loc_2462: Pal_AddRed:
-.updatered:
-	addq.w	#2,(a0)+	; increase red value
-	rts
+FCI_NoBlue:
+	cmp.b	d1,d4					; MJ: is it time for green to fade?
+	bhi.s	FCI_NoGreen				; MJ: if not, branch
+	addi.b	#$20,d3					; MJ: increase green
 
-; loc_2466: Pal_AddNone:
-.updatenone:
-	addq.w	#2,a0
-	rts
+FCI_NoGreen:
+	cmp.b	d2,d4					; MJ: is it time for red to fade?
+	bhi.s	FCI_NoRed				; MJ: if not, branch
+	addq.b	#$02,d3					; MJ: increase red
 
+FCI_NoRed:
+	move.w	d3,(a0)+				; MJ: save colour
+	rts						; MJ: return
 
 ; ---------------------------------------------------------------------------
 ; Subroutine to fade out to black
@@ -2835,12 +2833,16 @@ Pal_FadeFromBlack:
 Pal_FadeToBlack:
 	move.w	#$3F,(Palette_fade_range).w
 
-	move.w	#$15,d4
+	moveq	#$08-1,d4
+	moveq	#0,d0
 .nextframe:
 	move.b	#VintID_Fade,(Vint_routine).w
 	bsr.w	WaitForVint
-	bsr.s	.UpdateAllColours
 	bsr.w	RunPLC_RAM
+
+	bchg	#$00,d6					; MJ: change delay counter
+	beq.s	.nextframe				; MJ: if null, delay a frame
+	bsr.s	.UpdateAllColours
 	dbf	d4,.nextframe
 
 	rts
@@ -2883,37 +2885,28 @@ Pal_FadeToBlack:
 ; ---------------------------------------------------------------------------
 ; sub_24B8: Pal_DecColor:
 .UpdateColour:
-	move.w	(a0),d2
-	beq.s	.updatenone
-;.updatered:
-	move.w	d2,d1
-	andi.w	#$E,d1
-	beq.s	.updategreen
-	subq.w	#2,(a0)+	; decrease red value
-	rts
+	move.w	(a0),d5					; MJ: load colour
+	move.w	d5,d1					; MJ: copy to d1
+	move.b	d1,d2					; MJ: load green and red
+	move.b	d1,d3					; MJ: load red
 
-; loc_24C8: Pal_DecGreen:
-.updategreen:
-	move.w	d2,d1
-	andi.w	#$E0,d1
-	beq.s	.updateblue
-	subi.w	#$20,(a0)+	; decrease green value
-	rts
+	andi.w	#$0E00,d1				; MJ: get only blue
+	beq.s	FCO_NoBlue				; MJ: if blue is finished, branch
+	subi.w	#$0200,d5				; MJ: decrease blue
 
-; loc_24D6: Pal_DecBlue:
-.updateblue:
-	move.w	d2,d1
-	andi.w	#$E00,d1
-	beq.s	.updatenone
-	subi.w	#$200,(a0)+	; decrease blue value
-	rts
+FCO_NoBlue:
+	andi.b	#$E0,d2					; MJ: get only green
+	beq.s	FCO_NoGreen				; MJ: if green is finished, branch
+	subi.b	#$20,d5					; MJ: decrease green
 
-; loc_24E4: Pal_DecNone:
-.updatenone:
-	addq.w	#2,a0
-	rts
+FCO_NoGreen:
+	andi.b	#$0E,d3					; MJ: get only red
+	beq.s	FCO_NoRed				; MJ: if red is finished, branch
+	subq.b	#$02,d5					; MJ: decrease red
 
-
+FCO_NoRed:
+	move.w	d5,(a0)+				; MJ: save new colour
+	rts						; MJ: return
 ; ---------------------------------------------------------------------------
 ; Subroutine to fade in from white
 ; ---------------------------------------------------------------------------
@@ -2934,13 +2927,18 @@ Pal_FadeFromWhite:
 	move.w	d1,(a0)+
 	dbf	d0,.palettewrite
 
-	move.w	#$15,d4
+	moveq	#$0E,d4
+	moveq	#0,d0
 .nextframe:
 	move.b	#VintID_Fade,(Vint_routine).w
 	bsr.w	WaitForVint
-	bsr.s	.UpdateAllColours
 	bsr.w	RunPLC_RAM
-	dbf	d4,.nextframe
+
+	bchg	#$00,d6					; MJ: change delay counter
+	beq.s	.nextframe				; MJ: if null, delay a frame
+	bsr.s	.UpdateAllColours
+	subq.b	#2,d4					; MJ: decrease colour check
+	bne.s	.nextframe				; MJ: if it has not reached null, branch
 
 	rts
 ; End of function Pal_FadeFromWhite
@@ -2986,40 +2984,30 @@ Pal_FadeFromWhite:
 ; ---------------------------------------------------------------------------
 ; sub_2562: Pal_DecColor2:
 .UpdateColour:
-	move.w	(a1)+,d2
-	move.w	(a0),d3
-	cmp.w	d2,d3
-	beq.s	.updatenone
-;.updateblue:
-	move.w	d3,d1
-	subi.w	#$200,d1	; decrease blue value
-	bcs.s	.updategreen
-	cmp.w	d2,d1
-	blo.s	.updategreen
-	move.w	d1,(a0)+
-	rts
+	move.b	(a1),d5					; MJ: load blue
+	move.w	(a1)+,d1				; MJ: load green and red
+	move.b	d1,d2					; MJ: load red
+	lsr.b	#$04,d1					; MJ: get only green
+	andi.b	#$0E,d2					; MJ: get only red
 
-; loc_257A: Pal_DecGreen2:
-.updategreen:
-	move.w	d3,d1
-	subi.w	#$20,d1	; decrease green value
-	bcs.s	.updatered
-	cmp.w	d2,d1
-	blo.s	.updatered
-	move.w	d1,(a0)+
-	rts
+	move.w	(a0),d3					; MJ: load current colour in buffer
+	cmp.b	d5,d4					; MJ: is it time for blue to fade?
+	blo.s	FC4_NoBlue				; MJ: if not, branch
+	sub.w	#$0200,d3				; MJ: increase blue
 
-; loc_258A: Pal_DecRed2:
-.updatered:
-	subq.w	#2,(a0)+	; decrease red value
-	rts
+FC4_NoBlue:
+	cmp.b	d1,d4					; MJ: is it time for green to fade?
+	blo.s	FC4_NoGreen				; MJ: if not, branch
+	sub.b	#$20,d3					; MJ: increase green
 
-; loc_258E: Pal_DecNone2:
-.updatenone:
-	addq.w	#2,a0
-	rts
+FC4_NoGreen:
+	cmp.b	d2,d4					; MJ: is it time for red to fade?
+	blo.s	FC4_NoRed				; MJ: if not, branch
+	subq.b	#$02,d3					; MJ: increase red
 
-
+FC4_NoRed:
+	move.w	d3,(a0)+				; MJ: save colour
+	rts						; MJ: return
 ; ---------------------------------------------------------------------------
 ; Subroutine to fade out to white (used when you enter a special stage)
 ; ---------------------------------------------------------------------------
@@ -3030,12 +3018,16 @@ Pal_FadeFromWhite:
 Pal_FadeToWhite:
 	move.w	#$3F,(Palette_fade_range).w
 
-	move.w	#$15,d4
+	moveq	#$08-1,d4
+	moveq	#0,d0
 .nextframe:
 	move.b	#VintID_Fade,(Vint_routine).w
 	bsr.w	WaitForVint
-	bsr.s	.UpdateAllColours
 	bsr.w	RunPLC_RAM
+
+	bchg	#$00,d6					; MJ: change delay counter
+	beq.s	.nextframe				; MJ: if null, delay a frame
+	bsr.s	.UpdateAllColours
 	dbf	d4,.nextframe
 
 	rts
@@ -3078,147 +3070,31 @@ Pal_FadeToWhite:
 ; ---------------------------------------------------------------------------
 ; sub_25E0: Pal_AddColor2:
 .UpdateColour:
-	move.w	(a0),d2
-	cmpi.w	#$EEE,d2
-	beq.s	.updatenone
-;.updatered:
-	move.w	d2,d1
-	andi.w	#$E,d1
-	cmpi.w	#$E,d1
-	beq.s	.updategreen
-	addq.w	#2,(a0)+	; increase red value
-	rts
+	move.w	(a0),d5					; MJ: load colour
+	move.w	d5,d1					; MJ: copy to d1
+	move.b	d1,d2					; MJ: load green and red
+	move.b	d1,d3					; MJ: load red
 
-; loc_25F8: Pal_AddGreen2:
-.updategreen:
-	move.w	d2,d1
-	andi.w	#$E0,d1
-	cmpi.w	#$E0,d1
-	beq.s	.updateblue
-	addi.w	#$20,(a0)+	; increase green value
-	rts
+	andi.w	#$0E00,d1				; MJ: get only blue
+	cmp.w	#$0E00,d1
+	beq.s	FC3_NoBlue				; MJ: if blue is finished, branch
+	add.w	#$0200,d5				; MJ: decrease blue
 
-; loc_260A: Pal_AddBlue2:
-.updateblue:
-	move.w	d2,d1
-	andi.w	#$E00,d1
-	cmpi.w	#$E00,d1
-	beq.s	.updatenone
-	addi.w	#$200,(a0)+	; increase blue value
-	rts
+FC3_NoBlue:
+	andi.b	#$E0,d2					; MJ: get only green
+	cmp.b	#$E0,d2
+	beq.s	FC3_NoGreen				; MJ: if green is finished, branch
+	add.b	#$20,d5					; MJ: decrease green
 
-; loc_261C: Pal_AddNone2:
-.updatenone:
-	addq.w	#2,a0
-	rts
-; End of function Pal_AddColor2
+FC3_NoGreen:
+	andi.b	#$0E,d3					; MJ: get only red
+	cmp.b	#$0E,d3
+	beq.s	FC3_NoRed				; MJ: if red is finished, branch
+	addq.b	#$02,d5					; MJ: decrease red
 
-
-; Unused - dead code/data for old SEGA screen:
-
-; ===========================================================================
-; PalCycle_Sega:
-	tst.b	(PalCycle_Timer+1).w
-	bne.s	loc_2680
-	lea	(Normal_palette_line2).w,a1
-	lea	(Pal_Sega1).l,a0
-	moveq	#5,d1
-	move.w	(PalCycle_Frame).w,d0
-
-loc_2636:
-	bpl.s	loc_2640
-	addq.w	#2,a0
-	subq.w	#1,d1
-	addq.w	#2,d0
-	bra.s	loc_2636
-; ===========================================================================
-
-loc_2640:
-	move.w	d0,d2
-	andi.w	#$1E,d2
-	bne.s	loc_264A
-	addq.w	#2,d0
-
-loc_264A:
-	cmpi.w	#$60,d0
-	bhs.s	loc_2654
-	move.w	(a0)+,(a1,d0.w)
-
-loc_2654:
-	addq.w	#2,d0
-	dbf	d1,loc_2640
-	move.w	(PalCycle_Frame).w,d0
-	addq.w	#2,d0
-	move.w	d0,d2
-	andi.w	#$1E,d2
-	bne.s	loc_266A
-	addq.w	#2,d0
-
-loc_266A:
-	cmpi.w	#$64,d0
-	blt.s	loc_2678
-	move.w	#$401,(PalCycle_Timer).w
-	moveq	#-$C,d0
-
-loc_2678:
-	move.w	d0,(PalCycle_Frame).w
-	moveq	#1,d0
-	rts
-; ===========================================================================
-
-loc_2680:
-	subq.b	#1,(PalCycle_Timer).w
-	bpl.s	loc_26D2
-	move.b	#4,(PalCycle_Timer).w
-	move.w	(PalCycle_Frame).w,d0
-	addi.w	#$C,d0
-	cmpi.w	#$30,d0
-	blo.s	loc_269E
-	moveq	#0,d0
-	rts
-; ===========================================================================
-
-loc_269E:
-	move.w	d0,(PalCycle_Frame).w
-	lea	(Pal_Sega2).l,a0
-	lea	(a0,d0.w),a0
-	lea	(Normal_palette+4).w,a1
-	move.l	(a0)+,(a1)+
-	move.l	(a0)+,(a1)+
-	move.w	(a0)+,(a1)
-	lea	(Normal_palette_line2).w,a1
-	moveq	#0,d0
-	moveq	#$2C,d1
-
-loc_26BE:
-	move.w	d0,d2
-	andi.w	#$1E,d2
-	bne.s	loc_26C8
-	addq.w	#2,d0
-
-loc_26C8:
-	move.w	(a0),(a1,d0.w)
-	addq.w	#2,d0
-	dbf	d1,loc_26BE
-
-loc_26D2:
-	moveq	#1,d0
-	rts
-
-; ===========================================================================
-;----------------------------------------------------------------------------
-; Unused palette for the Sega logo
-;----------------------------------------------------------------------------
-; Pal_26D6:
-Pal_Sega1:	BINCLUDE	"art/palettes/Unused Sega logo.bin"
-;----------------------------------------------------------------------------
-; Unused palette for the Sega logo (fading?)
-;----------------------------------------------------------------------------
-; Pal_26E2:
-Pal_Sega2:	BINCLUDE	"art/palettes/Unused Sega logo 2.bin"
-
-; end of dead code/data
-
+FC3_NoRed:
+	move.w	d5,(a0)+				; MJ: save new colour
+	rts						; MJ: return
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 
 ; sub_2712: PalLoad1:
@@ -3602,7 +3478,7 @@ SegaScreen:
 ; loc_38CE:
 SegaScreen_Contin:
 	moveq	#PalID_SEGA,d0
-	bsr.w	PalLoad_Now
+	bsr.w	PalLoad_ForFade
 	move.w	#-$A,(PalCycle_Frame).w
 	move.w	#0,(PalCycle_Timer).w
 	move.w	#0,(SegaScr_VInt_Subrout).w
@@ -3614,6 +3490,7 @@ SegaScreen_Contin:
 	move.w	(VDP_Reg1_val).w,d0
 	ori.b	#$40,d0
 	move.w	d0,(VDP_control_port).l
+	bsr.w	Pal_FadeFromBlack
 ; loc_390E:
 Sega_WaitPalette:
 	move.b	#VintID_SEGA,(Vint_routine).w
@@ -10991,7 +10868,7 @@ MenuScreen:
 	clr.l	(Camera_Y_pos).w
 	move.b	#VintID_Menu,(Vint_routine).w
 	bsr.w	WaitForVint
-	music	mus_Options
+	music	mus_Competition
 
 	move.w	(VDP_Reg1_val).w,d0
 	ori.b	#$40,d0
@@ -11581,7 +11458,7 @@ MenuScreen_Info:
 
 	move.b	#VintID_Menu,(Vint_routine).w
 	bsr.w	WaitForVint
-	music	mus_Options
+	music	mus_UGT
 	command	Mus_Reset
 
 	move.w	(VDP_Reg1_val).w,d0
@@ -11602,19 +11479,25 @@ MenuScreen_Info:
 	move.w	d1,(a0)+
 	dbf	d0,.palettewrite	; fill palette with $000 (black)
 
-	move.w	#$15,d4
+	moveq	#$0E,d4
 .nextframe
 	move.w	d4,-(sp)
+.nextframe2
 	move.b	#VintID_Menu,(Vint_routine).w
 	bsr.w	WaitForVint
-	jsr	Pal_FadeFromBlack.UpdateAllColours
 
 	jsr	RunObjects
 	jsr	BuildSprites
 	lea	(Anim_SonicMilesBG).l,a2
 	jsrto	(Dynamic_Normal).l, JmpTo2_Dynamic_Normal
+
+	btst	#0,Vint_runcount+3.w
+	beq.s	.nextframe2
+
 	move.w	(sp)+,d4
-	dbf	d4,.nextframe
+	jsr	Pal_FadeFromBlack.UpdateAllColours
+	subq.b	#2,d4					; MJ: decrease colour check
+	bne.s	.nextframe				; MJ: if it has not reached null, branch
 
 .loop
 	move.b	#VintID_Menu,(Vint_routine).w
@@ -11727,7 +11610,7 @@ MenuScreen_LevelSelect:
 
 	move.b	#VintID_Menu,(Vint_routine).w
 	bsr.w	WaitForVint
-	music	mus_Options
+	music	mus_Unknown
 	command	Mus_Reset
 
 	move.w	(VDP_Reg1_val).w,d0
@@ -24004,6 +23887,11 @@ Obj_Monitor_MapUnc_12D36:	BINCLUDE "mappings/sprite/Obj_Monitor.bin"
 ; Object 0E - Flashing stars from intro
 ; ----------------------------------------------------------------------------
 ; Sprite_12E18:
+	if customAMPS
+Obj_IntroStars_Dest =	objoff_2A
+	else
+Obj_IntroStars_Dest =	y_pixel
+	endif
 Obj_IntroStars:
 	moveq	#0,d0
 	move.b	routine(a0),d0
@@ -24062,7 +23950,7 @@ Obj_IntroStars_Sonic_Init:
 	addq.b	#2,routine_secondary(a0)
 	move.b	#5,mapping_frame(a0)
 	move.w	#$110,x_pixel(a0)
-	move.w	#$E0,objoff_2A(a0)
+	move.w	#$E0,Obj_IntroStars_Dest(a0)
 	lea	(IntroLargeStar).w,a1
 	move.l	#Obj_IntroStars,id(a1)		; load Obj_IntroStars (flashing intro stars) at $FFFFB0C0
 	move.b	#8,subtype(a1)			; large star
@@ -24136,7 +24024,7 @@ loc_12F20:
 	bhs.w	loc_1310A
 	move.w	d1,objoff_2C(a0)
 	move.l	-4(a1,d1.w),d0
-	move.w	d0,objoff_2A(a0)
+	move.w	d0,Obj_IntroStars_Dest(a0)
 	swap	d0
 	move.w	d0,x_pixel(a0)
 +
@@ -24288,7 +24176,7 @@ off_13074:	offsetTable
 Obj_IntroStars_Tails_Init:
 	addq.b	#2,routine_secondary(a0)
 	move.w	#$D8,x_pixel(a0)
-	move.w	#$D8,objoff_2A(a0)
+	move.w	#$D8,Obj_IntroStars_Dest(a0)
 	move.b	#1,anim(a0)
 	rts
 ; ===========================================================================
@@ -24344,7 +24232,7 @@ Obj_IntroStars_LogoTop_Init:
 +
 	move.w	#prio(2),priority(a0)
 	move.w	#$120,x_pixel(a0)
-	move.w	#$E8,objoff_2A(a0)
+	move.w	#$E8,Obj_IntroStars_Dest(a0)
 
 loc_1310A:
 	addq.b	#2,routine_secondary(a0)
@@ -24384,7 +24272,7 @@ Obj_IntroStars_SkyPiece_Init:
 	move.b	#$11,mapping_frame(a0)
 	move.w	#prio(2),priority(a0)
 	move.w	#$100,x_pixel(a0)
-	move.w	#$F0,objoff_2A(a0)
+	move.w	#$F0,Obj_IntroStars_Dest(a0)
 
 BranchTo12_DisplaySprite
 	if customAMPS
@@ -24413,7 +24301,7 @@ Obj_IntroStars_LargeStar_Init:
 	move.b	#2,anim(a0)
 	move.w	#prio(1),priority(a0)
 	move.w	#$100,x_pixel(a0)
-	move.w	#$A8,objoff_2A(a0)
+	move.w	#$A8,Obj_IntroStars_Dest(a0)
 	move.w	#4,objoff_2E(a0)
 	rts
 ; ===========================================================================
@@ -24476,7 +24364,7 @@ Obj_IntroStars_SonicHand_Init:
 	move.b	#9,mapping_frame(a0)
 	move.w	#prio(3),priority(a0)
 	move.w	#$145,x_pixel(a0)
-	move.w	#$BF,objoff_2A(a0)
+	move.w	#$BF,Obj_IntroStars_Dest(a0)
 
 BranchTo13_DisplaySprite
 	if customAMPS
@@ -24514,7 +24402,7 @@ Obj_IntroStars_TailsHand_Init:
 	move.b	#$13,mapping_frame(a0)
 	move.w	#prio(3),priority(a0)
 	move.w	#$10F,x_pixel(a0)
-	move.w	#$D5,objoff_2A(a0)
+	move.w	#$D5,Obj_IntroStars_Dest(a0)
 
 BranchTo14_DisplaySprite
 	if customAMPS
@@ -24672,10 +24560,12 @@ Obj_TitleScreenPalChanger_Init:
 	move.b	subtype(a0),d0
 	lea	(PaletteChangerDataIndex).l,a1
 	adda.w	(a1,d0.w),a1
+
 	move.l	(a1)+,ttlscrpalchanger_codeptr(a0)
 	movea.l	(a1)+,a2
 	move.b	(a1)+,d0
 	move.w	d0,ttlscrpalchanger_start_offset(a0)
+
 	lea	(Target_palette).w,a3
 	adda.w	d0,a3
 	move.b	(a1)+,d0
@@ -24729,19 +24619,24 @@ C9PalInfo macro codeptr,dataptr,loadtoOffset,length,fadeinTime,fadeinAmount
 	dc.b loadtoOffset, length, fadeinTime, fadeinAmount
     endm
 
-off_1338C:	C9PalInfo Pal_FadeFromBlack.UpdateColour, Pal_1342C, $60, $F,2,$15
-off_13398:	C9PalInfo                      loc_1344C, Pal_1340C, $40, $F,4,7
-off_133A4:	C9PalInfo                      loc_1344C,  Pal_AD1E,   0, $F,8,7
-off_133B0:	C9PalInfo                      loc_1348A,  Pal_AD1E,   0, $F,8,7
-off_133BC:	C9PalInfo                      loc_1344C,  Pal_AC7E,   0,$1F,4,7
-off_133C8:	C9PalInfo                      loc_1344C,  Pal_ACDE, $40,$1F,4,7
-off_133D4:	C9PalInfo                      loc_1344C,  Pal_AD3E,   0, $F,4,7
-off_133E0:	C9PalInfo                      loc_1344C,  Pal_AC9E,   0,$1F,4,7
+off_1338C:	C9PalInfo 	  +, Pal_1342C, $60, $F,2,$08-1
+off_13398:	C9PalInfo loc_1344C, Pal_1340C, $40, $F,4,7
+off_133A4:	C9PalInfo loc_1344C,  Pal_AD1E,   0, $F,8,7
+off_133B0:	C9PalInfo loc_1348A,  Pal_AD1E,   0, $F,8,7
+off_133BC:	C9PalInfo loc_1344C,  Pal_AC7E,   0,$1F,4,7
+off_133C8:	C9PalInfo loc_1344C,  Pal_ACDE, $40,$1F,4,7
+off_133D4:	C9PalInfo loc_1344C,  Pal_AD3E,   0, $F,4,7
+off_133E0:	C9PalInfo loc_1344C,  Pal_AC9E,   0,$1F,4,7
 
 Pal_133EC:	BINCLUDE "art/palettes/Title Sonic.bin"
 Pal_1340C:	BINCLUDE "art/palettes/Title Background.bin"
 Pal_1342C:	BINCLUDE "art/palettes/Title Emblem.bin"
+; ===========================================================================
 
++	move.b	ttlscrpalchanger_fadein_amount(a3),d4
+	add.b	d4,d4
+	addq.b	#2,d4
+	jmp	Pal_FadeFromBlack.UpdateColour
 ; ===========================================================================
 
 loc_1344C:
@@ -24821,16 +24716,11 @@ TitleScreen_SetFinalState:
 	andi.b	#button_start_mask,d0
 	beq.w	+	; rts
 
-.dest := y_pixel
-	if customAMPS
-.dest :=	objoff_2A
-	endif
-
 	st.b	objoff_2F(a0)
 	move.b	#$10,routine_secondary(a0)
 	move.b	#$12,mapping_frame(a0)
 	move.w	#$108,x_pixel(a0)
-	move.w	#$98,.dest(a0)
+	move.w	#$98,Obj_IntroStars_Dest(a0)
 
 	lea	(IntroSonicHand).w,a1
 	bsr.w	TitleScreen_InitSprite
@@ -24840,7 +24730,7 @@ TitleScreen_SetFinalState:
 	move.b	#9,mapping_frame(a1)
 	move.b	#4,routine_secondary(a1)
 	move.w	#$141,x_pixel(a1)
-	move.w	#$C1,.dest(a1)
+	move.w	#$C1,Obj_IntroStars_Dest(a1)
 
 	lea	(IntroTails).w,a1
 	bsr.w	TitleScreen_InitSprite
@@ -24850,7 +24740,7 @@ TitleScreen_SetFinalState:
 	move.b	#6,routine_secondary(a1)
 	move.w	#prio(3),priority(a1)
 	move.w	#$C8,x_pixel(a1)
-	move.w	#$A0,.dest(a1)
+	move.w	#$A0,Obj_IntroStars_Dest(a1)
 
 	lea	(IntroTailsHand).w,a1
 	bsr.w	TitleScreen_InitSprite
@@ -24860,7 +24750,7 @@ TitleScreen_SetFinalState:
 	move.b	#$13,mapping_frame(a1)
 	move.b	#4,routine_secondary(a1)
 	move.w	#$10D,x_pixel(a1)
-	move.w	#$D1,.dest(a1)
+	move.w	#$D1,Obj_IntroStars_Dest(a1)
 
 	lea	(IntroEmblemTop).w,a1
 	move.l	#Obj_IntroStars,id(a1) ; load Obj_IntroStars
@@ -24882,6 +24772,9 @@ TitleScreen_SetFinalState:
 
 	lea	(TitleScreenPaletteChanger).w,a1
 	bsr.w	DeleteObject2
+	lea	(TitleScreenPaletteChanger3).w,a1
+	bsr.w	DeleteObject2
+
 	lea_	Pal_1342C,a1
 	lea	(Normal_palette_line4).w,a2
 
@@ -74548,7 +74441,7 @@ Obj_SonicOnSegaScreen_Init:
 	endif
 	bsr.w	LoadSubObject
 	move.b	#$40,width_pixels(a0)
-	move.w	#$1E8,x_pos(a0)
+	move.w	#$1E8 - ((customAMPS == 0) * $80),x_pos(a0)
 	move.w	#$70,y_pos(a0)
 	move.w	#$B,objoff_2A(a0)
 	move.w	#2,(SegaScr_VInt_Subrout).w
@@ -74724,14 +74617,15 @@ loc_3A33A:
 
 loc_3A346:
 	addq.b	#2,routine(a0)
-	bchg	#0,render_flags(a0)
 	move.w	#$B,objoff_2A(a0)
 	move.w	#4,(SegaScr_VInt_Subrout).w
 
 	if customAMPS
 		move.w	#-$20,x_pos(a0)
+		bchg	#0,render_flags(a0)
 	else
 		subi.w	#$28,x_pos(a0)
+		bchg	#0,status(a0)
 	endif
 
 	clearRAM Horiz_Scroll_Buf,Horiz_Scroll_Buf_End
@@ -74797,7 +74691,7 @@ Obj_SonicOnSegaScreen_EndWipe:
 		bge.s	loc_3A3DA
 	else
 		tst.w	objoff_2A(a0)
-		beq.s	loc_3A33A
+		beq.s	loc_3A3DA
 		subq.w	#1,objoff_2A(a0)
 	endif
 	bsr.w	Obj_SonicOnSegaScreen_Move_Streaks_Right
@@ -74898,6 +74792,7 @@ Obj_SonicOnSegaScreen_Move_Streaks_Right:
 		move.w	#$22,d6	; Number of streaks-1
 -		addi.w	#$20,(a1)
 		addq.w	#2 * 2 * 2,a1	; Advance to next streak 2 pixels down
+		dbf	d6,-
 	endif
 	rts
 ; ===========================================================================
