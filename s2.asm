@@ -10868,7 +10868,7 @@ MenuScreen:
 	clr.l	(Camera_Y_pos).w
 	move.b	#VintID_Menu,(Vint_routine).w
 	bsr.w	WaitForVint
-	music	mus_Competition
+	music	mus_Options
 
 	move.w	(VDP_Reg1_val).w,d0
 	ori.b	#$40,d0
@@ -11458,7 +11458,7 @@ MenuScreen_Info:
 
 	move.b	#VintID_Menu,(Vint_routine).w
 	bsr.w	WaitForVint
-	music	mus_UGT
+	music	mus_Options
 	command	Mus_Reset
 
 	move.w	(VDP_Reg1_val).w,d0
@@ -11610,7 +11610,7 @@ MenuScreen_LevelSelect:
 
 	move.b	#VintID_Menu,(Vint_routine).w
 	bsr.w	WaitForVint
-	music	mus_Unknown
+	music	mus_Options
 	command	Mus_Reset
 
 	move.w	(VDP_Reg1_val).w,d0
@@ -72944,8 +72944,6 @@ loc_38F58:
 	bsr.w	Obj_Grabber_CheckExplode
 	bra.w	loc_390BC
 ; ===========================================================================
-	rts
-; ===========================================================================
 
 BranchTo_Obj_Grabber_CheckExplode
 	bra.w	Obj_Grabber_CheckExplode
@@ -79348,7 +79346,7 @@ Obj_Eggrobo_Shoulder:
 	jsr	off_3DA34(pc,d1.w)
 	lea	byte_3DA38(pc),a1
 	bsr.w	loc_3E282
-	tst.l	(a0)
+	tst.l	id(a0)
 	beq.w	return_37A48
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -79378,7 +79376,7 @@ Obj_Eggrobo_FrontLowerLeg:
 	move.b	routine_secondary(a0),d0
 	move.w	off_3DA62(pc,d0.w),d1
 	jsr	off_3DA62(pc,d1.w)
-	tst.l	(a0)
+	tst.l	id(a0)
 	beq.w	return_37A48
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -79401,7 +79399,7 @@ Obj_Eggrobo_FrontForearm:
 	move.b	routine_secondary(a0),d0
 	move.w	off_3DA96(pc,d0.w),d1
 	jsr	off_3DA96(pc,d1.w)
-	tst.l	(a0)
+	tst.l	id(a0)
 	beq.s	return_3DA72
 	btst	#6,status(a0)
 	bne.s	return_3DA72
@@ -79507,7 +79505,7 @@ Obj_Eggrobo_Arm:
 	move.b	routine_secondary(a0),d0
 	move.w	off_3DB8C(pc,d0.w),d1
 	jsr	off_3DB8C(pc,d1.w)
-	tst.l	(a0)
+	tst.l	id(a0)
 	beq.s	return_3DB9C
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -79530,7 +79528,7 @@ Obj_Eggrobo_FrontThigh:
 	move.b	routine_secondary(a0),d0
 	move.w	off_3DBB6(pc,d0.w),d1
 	jsr	off_3DBB6(pc,d1.w)
-	tst.l	(a0)
+	tst.l	id(a0)
 	beq.w	return_37A48
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -79556,7 +79554,7 @@ Obj_Eggrobo_Head:
 	jsr	off_3DBE8(pc,d1.w)
 	lea	byte_3DBF2(pc),a1
 	bsr.w	loc_3E282
-	tst.l	(a0)
+	tst.l	id(a0)
 	beq.w	return_37A48
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -79662,7 +79660,7 @@ Obj_Eggrobo_BackLowerLeg:
 	move.b	routine_secondary(a0),d0
 	move.w	off_3DCB4(pc,d0.w),d1
 	jsr	off_3DCB4(pc,d1.w)
-	tst.l	(a0)
+	tst.l	id(a0)
 	beq.w	return_37A48
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -79687,7 +79685,7 @@ Obj_Eggrobo_BackForearm:
 	move.b	routine_secondary(a0),d0
 	move.w	off_3DCE4(pc,d0.w),d1
 	jsr	off_3DCE4(pc,d1.w)
-	tst.l	(a0)
+	tst.l	id(a0)
 	beq.w	return_37A48
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -79724,7 +79722,7 @@ Obj_Eggrobo_BackThigh:
 	move.b	routine_secondary(a0),d0
 	move.w	off_3DD38(pc,d0.w),d1
 	jsr	off_3DD38(pc,d1.w)
-	tst.l	(a0)
+	tst.l	id(a0)
 	beq.w	return_37A48
 	jmpto	(DisplaySprite).l, JmpTo45_DisplaySprite
 ; ===========================================================================
@@ -80174,7 +80172,7 @@ loc_3E168:
 byte_3E19E:
 	dc.b objoff_2C, objoff_2E, objoff_30, objoff_32
 	dc.b objoff_34, objoff_36, objoff_38, objoff_3A
-	dc.b objoff_3C, objoff_3E,   0
+	dc.b objoff_3C, objoff_3E, 0
 	even
 ; ===========================================================================
 
