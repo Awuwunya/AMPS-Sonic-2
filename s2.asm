@@ -66913,7 +66913,7 @@ loc_34F28:
 	move.b	#1,collision_property(a1)
 	tst.b	render_flags(a0)
 	bpl.s	.no
-	sfx	sfx_Collapse
+	sfx	sfx_Smash
 
 .no	move.b	#6,routine(a0)
 	move.b	#0,anim_frame(a0)
