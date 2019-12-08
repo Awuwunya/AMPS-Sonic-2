@@ -176,6 +176,8 @@ BreakPrep:
 		ld	(Int2_jp),a			; 13	; ''
 		ld	(Int1_ldhl),a			; 13	; ''
 		ld	(Int2_ldhl),a			; 13	; ''
+		ld	(PCM1_ResQuo),a			; 13	; ''
+		ld	(PCM2_ResQuo),a			; 13	; ''
 		pop	af				; 10	; restore a register and flags
 	;	ei					; 04	; enable interrupts
 		reti					; 14	; return
@@ -277,6 +279,9 @@ BDMA_Flush01:
 		ld	a,077h				; 07	; prepare "ld  (hl),a" instruction
 		ld	(Int1_ldhl),a			; 13	; change instrucitons
 		ld	(Int2_ldhl),a			; 13	; ''
+		ld	a,031h				; 07	; prepare "ld  sp,0????h" instruction
+		ld	(PCM1_ResQuo),a			; 13	; change instrucitons
+		ld	(PCM2_ResQuo),a			; 13	; ''
 
 BDMA_NoRestore:
 
@@ -302,7 +307,7 @@ YMF_Buff1:
 			exx					; 04	; switch registers back
 
 YM_Flush:
-			db 0DDh, 02Eh, 010h/002h ; ld	ixl,010h/002h	; 11	; set ix low byte to number of bytes to flush
+			ld	ixl,010h/002h		; 11	; set ix low byte to number of bytes to flush
 
 YMF_NextByte:
 			M_Flush02				; 59	; flush a byte to the YM2612
@@ -337,7 +342,7 @@ Z80_DelayYM2:	ld	b,006h				; 07	; delay a little longer...
 		ld	l,b				; 04	; move address to 4000
 		ld	(hl),02Ah			; 10	; reset YM2612 to DAC port address
 			exx					; 04	; switch registers
-			db 0DDh, 02Dh	; dec	ixl		; 08	; decrease ix low byte counter
+			dec	ixl				; 08	; decrease ix low byte counter
 			jp	nz,YMF_NextByte			; 10	; if it hasn't finished, branch
 
 	; --- Advance/Wrap OUT buffers ---
@@ -366,7 +371,7 @@ PCM_Flush_exx:
 			exx
 
 PCM_Flush:
-			db 0DDh, 02Eh, 010h/002h ; ld ixl,010h/002h	; 11	; set ix low byte to number of bytes to flush
+			ld ixl,010h/002h			; 11	; set ix low byte to number of bytes to flush
 
 PCM_NextByte:
 			M_Flush02				; 59	; flush a byte to the YM2612
@@ -383,7 +388,7 @@ Z80_DelayEnd2:	ld	b,00Ch				; 07	; delay a little longer...
 YMF_Enter01:	djnz	$				; 13 08	; ''
 
 			exx					; 04	; switch registers
-			db 0DDh, 02Dh	; dec	ixl		; 08	; decrease ix low byte counter
+			dec	ixl				; 08	; decrease ix low byte counter
 			jp	nz,PCM_NextByte			; 10	; if it hasn't finished, branch
 
 	; --- Advance/Wrap OUT buffers ---
@@ -875,7 +880,7 @@ CU_Flush:
 ; ---------------------------------------------------------------------------
 
 			exx					; 04	; switch registers back
-			db 0DDh, 02Eh, 010h/002h ; ld	ixl,010h/002h	; 11	; set ix low byte to number of bytes to flush
+			ld	ixl,010h/002h			; 11	; set ix low byte to number of bytes to flush
 
 FL_NextByte:
 			M_Flush02				; 59	; flush a byte to the YM2612
@@ -890,7 +895,7 @@ Z80_Flush2:	ld	b,00Ch
 		djnz	$
 			exx					; 04	; switch registers
 
-			db 0DDh, 02Dh	; dec	ixl		; 08	; decrease ix low byte counter
+			dec	ixl				; 08	; decrease ix low byte counter
 			jp	nz,FL_NextByte			; 10	; if it hasn't finished, branch
 
 	; --- Advance/Wrap OUT buffers ---
@@ -1520,7 +1525,7 @@ SVF_StartVolume:
 		dec	e				; 04	; check volume table counter
 		inc	e				; 04	; ''
 		jp	nz,SVF_LoadVolume		; 10	; if not finished, branch
-		ld	a,004h				; 07	; set timer for PCM volume changing
+		ld	a,000h				; 07	; set timer for PCM volume changing
 		ret					; 10	; return
 
 ; ===========================================================================

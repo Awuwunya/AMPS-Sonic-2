@@ -28,7 +28,6 @@ m00 =	$00
 ; ---------------------------------------------------------------------------------------------
 
 sHeaderInit	macro
-sPointZero :=	*
 sPatNum :=	0
     endm
 
@@ -60,7 +59,7 @@ sHeaderPrio	macro prio
 
 ; Header - Set up DAC Channel
 sHeaderDAC	macro loc,vol,samp
-	dc.w loc-sPointZero
+	dc.w loc-*
 
 	if "vol"<>""
 		dc.b (vol)&$FF
@@ -76,20 +75,20 @@ sHeaderDAC	macro loc,vol,samp
 
 ; Header - Set up FM Channel
 sHeaderFM	macro loc,pitch,vol
-	dc.w loc-sPointZero
+	dc.w loc-*
 	dc.b (pitch)&$FF,(vol)&$FF
     endm
 
 ; Header - Set up PSG Channel
 sHeaderPSG	macro loc,pitch,vol,detune,volenv
-	dc.w loc-sPointZero
+	dc.w loc-*
 	dc.b (pitch)&$FF,(vol)&$FF,(detune)&$FF,volenv
     endm
 
 ; Header - Set up SFX Channel
 sHeaderSFX	macro flags,type,loc,pitch,vol
 	dc.b flags,type
-	dc.w loc-sPointZero
+	dc.w loc-*
 	dc.b (pitch)&$FF,(vol)&$FF
     endm
 ; ---------------------------------------------------------------------------------------------
@@ -418,20 +417,20 @@ sStop		macro
 ; F6xxxx - Jump to xxxx (GOTO)
 sJump		macro loc
 	dc.b $F6
-	dc.w loc-*-1
+	dc.w loc-*-2
     endm
 
 ; F7xxyyzzzz - Loop back to zzzz yy times, xx being the loop index for loop recursion fixing (LOOP)
 sLoop		macro index,loops,loc
 	dc.b $F7, index
-	dc.w loc-*-1
+	dc.w loc-*-2
 	dc.b loops
     endm
 
 ; F8xxxx - Call pattern at xxxx, saving return point (GOSUB)
 sCall		macro loc
 	dc.b $F8
-	dc.w loc-*-1
+	dc.w loc-*-2
     endm
 
 ; F9 - Return (RETURN)

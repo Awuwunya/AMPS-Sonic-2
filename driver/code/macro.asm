@@ -1,8 +1,21 @@
+; REGISTER USAGE:
+;   a0 - Dual PCM cue
+;   a1 - current channel
+;   a2 - Tracker
+;   a3 - Special address (channels), target channel (playsnd), scratch
+;   a4 - music channel (dcStop), other various uses, scratch
+;   a5-a6 - scratch, use lower number when possible
+;   d0 - Channel dbf counter, other dbf counters
+;   d1 - Various things read from the tracker, scratch
+;   d2 - Volume or pitch when calculating it
+;   d3-d7 - scatch, use lower number when possible
+
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Various assembly flags
 ; ---------------------------------------------------------------------------
 
+FEATURE_SAFE_PSGFREQ =	1	; set to 1 to enable safety checks for PSG frequency. Some S3K SFX require this to be 0
 FEATURE_SFX_MASTERVOL =	0	; set to 1 to make SFX use master volumes
 FEATURE_MODULATION =	1	; set to 1 to enable software modulation effect
 FEATURE_PORTAMENTO =	0	; set to 1 to enable portamento flag
@@ -123,7 +136,7 @@ ctFM5 =		$05		; FM 5	- Valid for SFX
 ctFM6 =		$06		; FM 6
 	endif
 
-ctbDAC =	$03		; DAC bit
+ctbDAC =	$04		; DAC bit
 ctDAC1 =	(1<<ctbDAC)|$03	; DAC 1	- Valid for SFX
 ctDAC2 =	(1<<ctbDAC)|$06	; DAC 2
 
@@ -196,6 +209,7 @@ mLastCue	ds.b 1		; last YM Cue the sound driver was accessing
 		ds.b 1		; even's are broke in 64-bit values?
 	endif			; align channel data
 
+mBackUpArea =	*		; this is where backup stuff starts
 mDAC1		ds.b cSize	; DAC 1 data
 mDAC2		ds.b cSize	; DAC 2 data
 mFM1		ds.b cSize	; FM 1 data
@@ -219,6 +233,7 @@ mSFXPSG3	ds.b cSizeSFX	; SFX PSG 3 data
 mChannelEnd =	*		; used to determine where channel RAM ends
 
 	if FEATURE_BACKUP
+mBackUpLoc =	*		; this is where backup stuff is loaded
 mBackDAC1	ds.b cSize	; back-up DAC 1 data
 mBackDAC2	ds.b cSize	; back-up DAC 2 data
 mBackFM1	ds.b cSize	; back-up FM 1 data
@@ -259,6 +274,7 @@ mfbSpeed	ds.b 1		; if set, speed shoes are active
 mfbWater	ds.b 1		; if set, underwater mode is active
 mfbNoPAL	ds.b 1		; if set, play songs slowly in PAL region
 mfbBacked	ds.b 1		; if set, a song has been backed up already
+mfbExec		ds.b 1		; if set, AMPS is currently running
 mfbPaused =	$07		; if set, sound driver is paused
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -330,22 +346,31 @@ fLast		ds.l 0		; safe mode equate
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Quickly clear some memory in certain block sizes
+;
+; input:
+;   a4 - Destination address
+;   len - Length of clear
+;   block - Size of clear block
+;
+; thrashes:
+;   d6 - Set to $0000FFFF
+;   a4 - Destination address
 ; ---------------------------------------------------------------------------
 
 dCLEAR_MEM	macro len, block
-		move.w	#((len)/(block))-1,d1; load repeat count to d7
--
+		move.w	#((len)/(block))-1,d6; load repeat count to d6
+.loop
 	rept (block)/4
-		clr.l	(a1)+		; clear driver and music channel memory
+		clr.l	(a4)+		; clear driver and music channel memory
 	endm
-		dbf	d1, -		; loop for each longword to clear it...
+		dbf	d6, .loop	; loop for each longword to clear it...
 
 	rept ((len)#(block))/4
-		clr.l	(a1)+		; clear extra longs of memory
+		clr.l	(a4)+		; clear extra longs of memory
 	endm
 
 	if (len)&2
-		clr.w	(a1)+		; if there is an extra word, clear it too
+		clr.w	(a4)+		; if there is an extra word, clear it too
 	endif
     endm
 ; ===========================================================================
@@ -356,20 +381,45 @@ dCLEAR_MEM	macro len, block
 dREAD_WORD	macro areg, dreg
 	move.b	(areg)+,(sp)		; read the next byte into stack
 	move.w	(sp),dreg		; get word back from stack (shift byte by 8 bits)
-	move.b	(areg),dreg		; get the next byte into register
+	move.b	(areg)+,dreg		; get the next byte into register
     endm
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; used to calculate the address of the right FM voice
+; Used to calculate the address of the right FM voice
+;
+; input:
+;   d4 - Voice ID
+;   a4 - Voice table address
 ; ---------------------------------------------------------------------------
 
 dCALC_VOICE	macro off
-	lsl.w	#5,d0			; multiply voice ID by $20
+	lsl.w	#5,d4			; multiply voice ID by $20
 	if "off"<>""
-		add.w	#off,d0		; if have had extra argument, add it to offset
+		add.w	#off,d4		; if have had extra argument, add it to offset
 	endif
 
-	add.w	d0,a1			; add offset to voice table address
+	add.w	d4,a4			; add offset to voice table address
+    endm
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Used to calculate the address of the right FM voice bank
+;
+; input:
+;   a1 - Channel address
+; output:
+;   a4 - Voice table address
+; ---------------------------------------------------------------------------
+
+dCALC_BANK	macro off
+	lea	VoiceBank+off(pc),a4	; load sound effects voice table into a6
+	cmp.w	#mSFXDAC1,a1		; check if this is a SFX channel
+	bhs.s	.bank			; if so, branch
+	move.l	mVctMus.w,a4		; load music voice table into a1
+
+	if off<>0
+		add.w	#off,a4		; add offset into a1
+	endif
+.bank
     endm
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -393,26 +443,39 @@ startZ80 	macro
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Initializes YM writes
+;
+; output:
+;  d6 - part number
+;  d5 - channel type
 ; ---------------------------------------------------------------------------
 
 InitChYM	macro
-	move.b	cType(a5),d2		; get channel type to d2
-	move.b	d2,d1			; copy to d1
-	and.b	#3,d1			; get only the important part
-	lsr.b	#1,d2			; halve part value
-	and.b	#2,d2			; clear extra bits away
+	move.b	cType(a1),d6		; get channel type to d6
+	move.b	d6,d5			; copy to d5
+	and.b	#3,d5			; get only the important part
+	lsr.b	#1,d6			; halve part value
+	and.b	#2,d6			; clear extra bits away
     endm
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Write data to channel-specific YM part
+;
+; input:
+;   d6 - part number
+;   d5 - channel type
+;   reg - YM register to write
+;   value - value to write
+;
+; thrashes:
+;   d4 - used for register calculation
 ; ---------------------------------------------------------------------------
 
 WriteChYM	macro reg, value
-	move.b	d2,(a0)+		; write part
+	move.b	d6,(a0)+		; write part
 	move.b	value,(a0)+		; write register value to cue
-	move.b	d1,d0			; get the channel offset into d0
-	or.b	reg,d0			; or the actual register value
-	move.b	d0,(a0)+		; write register to cue
+	move.b	d5,d4			; get the channel offset into d4
+	or.b	reg,d4			; or the actual register value
+	move.b	d4,(a0)+		; write register to cue
     endm
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
