@@ -725,7 +725,7 @@ dFadeCommands:
 
 dPlaySnd_StopSFX:
 		moveq	#SFX_Ch,d0		; load num of SFX channels to d0
-		lea	mSFXDAC1.w,a5		; start from SFX DAC 1
+		lea	mSFXDAC1.w,a1		; start from SFX DAC 1
 
 .loop
 		tst.b	(a1)			; check if this channel is running a tracker
