@@ -6,5 +6,9 @@
 .FM5
 	sVoice		pGloop
 	ssMod68k	$00, $01, $7F, $F1
-	dc.b nF3, $0A
+
+.loop
+	dc.b nF3, $06
+	sCont		.loop
+	dc.b sHold, $04
 	sStop

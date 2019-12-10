@@ -695,14 +695,14 @@ dcBackup:
 		move.l	mBackTempoMain.w,mTempoMain.w; restore tempo settings
 		move.l	mBackVctMus.w,mVctMus.w	; restore voice table address
 
-		lea	mBackUpArea.w,a4	; load source address to a4
-		lea	mBackUpLoc.w,a3		; load destination address to a3
+		lea	mBackUpLoc.w,a4		; load source address to a4
+		lea	mBackUpArea.w,a3	; load destination address to a3
 		move.w	#(mSFXDAC1-mBackUpArea)/4-1,d4; load backup size to d4
 
 .backup
 		move.l	(a4),(a3)+		; restore data for each channel
 		clr.l	(a4)+			; clear back-up RAM
-		dbf	d4, .backup		; loop for each longword
+		dbf	d4,.backup		; loop for each longword
 
 	if (mSFXDAC1-mDAC1)&2
 		move.w	(a4),(a3)+		; restore data for each channel
@@ -742,8 +742,8 @@ dcBackup:
 		tst.b	(a1)			; check if channel is running
 		bpl.s	.nofm			; if not, skip it
 
-		moveq	#0,d1
-		move.b	cVoice(a1),d1		; load FM voice ID of the channel to d1
+		moveq	#0,d4
+		move.b	cVoice(a1),d4		; load FM voice ID of the channel to d4
 		bsr.s	dUpdateVoiceFM		; update FM voice for each channel
 
 .nofm

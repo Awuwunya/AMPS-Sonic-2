@@ -64,13 +64,14 @@ SoundIndex:
 	ptrSFX	0, Starpost, Spring, Signpost, Signpost2P, Register
 	ptrSFX	0, Collapse, Smash, Switch, Explode, Zapper, LidPop
 	ptrSFX	0, Elevator, Bumper, TinyBumper, LargeBumper, Stomp
-	ptrSFX	0, LaunchSpring, SlotMachine, Gloop, GloopDrop, Door
+	ptrSFX	0, LaunchSpring, SlotMachine, GloopDrop, Door
 	ptrSFX	0, LavaBall, Flame, Fire, ArrowFire, ArrowStick, Saw
 	ptrSFX	0, SpikeMove, SpikeSwitch, SpikeRing, PushBlock, Beep
 	ptrSFX	0, Rumble, Rumble2, DrawBridgeMove, DrawBridgeDown
 	ptrSFX	0, Sparkle, Transform, Helicopter, TrackLift, Leaves
 	ptrSFX	0, Lazer, LargeLazer, LazerFloor, PlatformKnock, Swap
 	ptrSFX	0, OilSlide, MechaSonic, Error, EnterSS, Continue
+	ptrSFX	$80, Gloop
 
 ; unused sfx
 	ptrSFX	0, Chain, Bonus, BigRing, ActionBlock, Diamonds

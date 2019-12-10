@@ -237,7 +237,7 @@ dPlaySnd_Music:
 ; ---------------------------------------------------------------------------
 
 	if FEATURE_BACKUP
-		btst	#6,(a4)			; check if this song should cause the last one to be backed up
+		btst	#6,(a2)			; check if this song should cause the last one to be backed up
 		beq.s	.clrback		; if not, skip
 		bset	#mfbBacked,mFlags.w	; check if song was backed up (and if not, set the bit)
 		bne.s	.noback			; if yes, preserved the backed up song
@@ -250,8 +250,8 @@ dPlaySnd_Music:
 		move.w	#(mSFXDAC1-mBackUpArea)/4-1,d3; load backup size to d3
 
 .backup
-		move.l	(a3)+,(a4)+		; back up data for every channel
-		dbf	d3, .backup		; loop for each longword
+		move.l	(a4)+,(a3)+		; back up data for every channel
+		dbf	d3,.backup		; loop for each longword
 
 		moveq	#$FF-(1<<cfbInt)-(1<<cfbVol),d3; each other bit except interrupted and volume update bits
 
@@ -514,8 +514,17 @@ dPlaySnd_SFX:
 ; sound good when restarted (plus, it requires more CPU time, anyway).
 ; Even the Marble Zone block pushing sound effect had similar behavior,
 ; but the code was not quite as matured as this here. Only one continous
-; SFX may be running at once, when other type is loaded, the earlier one
-; is stopped and replaced.
+; SFX may be running at once, however, there is no code to enforce this.
+; It may lead to problems where incorrect channels are kept running.
+; Please be careful with this!
+;
+; Note: Playing any other SFX will prevent continous sfx from continuing
+; (until played again). This was made because if you had a continous sfx
+; stop due to another SFX, it would actually break all continous sfx with
+; the same ID. Since there is no way to show any sfx is continous when
+; its running, there is no way to fix this without doing it this way. If
+; this breaks anything significant, let me know and I'll tackle this
+; problem once again.
 ; ---------------------------------------------------------------------------
 
 		tst.b	(a1,d1.w)		; check if this sound effect is continously looping
@@ -528,13 +537,17 @@ dPlaySnd_SFX:
 		addq.b	#1,mContCtr.w		; increment by 1, since num of channels is -1 the actual channel count
 		rts
 
+.nocont
+		moveq	#0,d1			; clear last continous sfx
+
 .setcont
 		move.b	d1,mContLast.w		; save new continous SFX ID
 
-.nocont
-		moveq	#0,d0
+		moveq	#0,d1			; reset channel count
 		lea	dSFXoverList(pc),a5	; load quick reference to the SFX override list to a5
 		lea	dSFXoffList(pc),a4	; load quick reference to the SFX channel list to a4
+
+		moveq	#0,d0
 		move.b	(a2)+,d5		; load sound effect priority to d5
 		move.b	(a2)+,d0		; load number of SFX channels to d0
 		moveq	#cSizeSFX,d6		; prepare SFX channel size to d6
@@ -571,6 +584,12 @@ dPlaySnd_SFX:
 .skip
 		addq.l	#6,a2			; skip this sound effect channel
 		dbf	d0,.loopSFX		; repeat for each requested channel
+
+		tst.w	d1			; check if any channel was loaded
+		bne.s	.rts			; if was, branch
+		clr.b	mContLast.w		; reset continous sfx counter (prevent ghost-loading)
+
+.rts
 		rts
 ; ---------------------------------------------------------------------------
 
@@ -591,10 +610,11 @@ dPlaySnd_SFX:
 
 .clearCh
 		move.w	a1,a3			; copy sound effect channel RAM pointer to a3
-		moveq	#cSizeSFX/4-1,d1	; prepare SFX channel size / 4 to d1
+		moveq	#cSizeSFX/4-1,d3	; prepare SFX channel size / 4 to d3
+
 .clear
 		clr.l	(a3)+			; clear 4 bytes of channel data
-		dbf	d1,.clear		; clear the entire channel
+		dbf	d3,.clear		; clear the entire channel
 
 	if cSizeSFX&2
 		clr.w	(a3)			; if channel size can not be divided by 4, clear extra word
@@ -615,12 +635,12 @@ dPlaySnd_SFX:
 		tst.b	d4			; check if this channel is a PSG channel
 		bmi.s	.loop			; if is, skip over this
 
-		moveq	#$C0,d1			; set panning to centre
-		move.b	d1,cPanning(a1)		; save to channel memory too
+		moveq	#$C0,d3			; set panning to centre
+		move.b	d3,cPanning(a1)		; save to channel memory too
 	CheckCue				; check that YM cue is valid
 	InitChYM				; prepare to write to channel
 	stopZ80
-	WriteChYM	#$B4, d1		; Panning and LFO: centre
+	WriteChYM	#$B4, d3		; Panning and LFO: centre
 	;	st	(a0)			; write end marker
 	startZ80
 
@@ -629,6 +649,7 @@ dPlaySnd_SFX:
 		move.w	#$100,cFreq(a1)		; DAC default frequency is $100, NOT $000
 
 .loop
+		addq.w	#1,d1			; set channel as loaded
 		dbf	d0,.loopSFX		; repeat for each requested channel
 		rts
 ; ---------------------------------------------------------------------------
