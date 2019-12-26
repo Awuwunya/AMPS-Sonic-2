@@ -86,9 +86,9 @@ HillTop_DAC1:
 	sStop
 
 HillTop_FM1:
+	dc.b nRst, $60
 	sVoice		$01
 	ssDetune	$06
-	dc.b nRst, $60
 	ssMod68k	$08, $01, $02, $40
 	dc.b nD4, $30
 	ssMod68k	$08, $01, $03, $20
@@ -155,8 +155,8 @@ HillTop_Call4:
 	sRet
 
 HillTop_FM3:
-	sVoice		$01
 	dc.b nRst, $60, nRst, nRst, nRst, nRst, $60
+	sVoice		$01
 	sCall		HillTop_Call3
 	dc.b nRst, $60
 	sCall		HillTop_Call5
@@ -232,11 +232,12 @@ HillTop_Call6:
 	sRet
 
 HillTop_FM5:
-	sVoice		$02
 	ssDetune	$04
 
 HillTop_Jump3:
-	dc.b nRst, $60, nRst, nRst, nRst
+	dc.b nRst, $60, nRst
+	sVoice		$02
+	dc.b nRst, nRst
 
 HillTop_Loop3:
 	dc.b nG4, $03, sHold, nA4, $5D, nF4, $03, sHold
@@ -262,10 +263,10 @@ HillTop_Call14:
 	sRet
 
 HillTop_FM4:
-	sVoice		$02
 
 HillTop_Jump2:
 	dc.b nRst, $60, nRst, nRst, nRst
+	sVoice		$02
 
 HillTop_Loop1:
 	dc.b nEb4, $03, sHold, nF4, $5D, nD4, $03, sHold

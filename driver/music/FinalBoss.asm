@@ -178,11 +178,11 @@ FinalBoss_Call6:
 	sRet
 
 FinalBoss_FM3:
-	sVoice		$01
 	ssMod68k	$13, $01, $03, $05
 
 FinalBoss_Jump1:
 	dc.b nRst, $60, nRst
+	sVoice		$01
 
 FinalBoss_Loop7:
 	sCall		FinalBoss_Call9
@@ -215,11 +215,12 @@ FinalBoss_Call10:
 	sRet
 
 FinalBoss_FM4:
-	sVoice		$02
 	ssMod68k	$12, $01, $05, $05
 
 FinalBoss_Jump2:
-	dc.b nRst, $60, nRst
+	dc.b nRst, $60
+	sVoice		$02
+	dc.b nRst
 
 FinalBoss_Loop8:
 	sCall		FinalBoss_Call5
@@ -247,11 +248,11 @@ FinalBoss_Call5:
 	sRet
 
 FinalBoss_FM5:
+	dc.b nRst, $60, nRst
 	sVoice		$01
 	ssDetune	$01
 	sPan		spRight
 	ssMod68k	$13, $01, $03, $05
-	dc.b nRst, $60, nRst
 
 FinalBoss_Loop10:
 	sCall		FinalBoss_Call9

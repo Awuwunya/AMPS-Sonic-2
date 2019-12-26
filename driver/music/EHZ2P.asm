@@ -176,9 +176,10 @@ EmeraldHill2P_Call1:
 	sRet
 
 EmeraldHill2P_FM4:
+	dc.b nRst, $03
 	sVoice		$04
 	saVol		$FA
-	dc.b nRst, $03, nF6, $06, nD6, nE6, nC6, nD6
+	dc.b nF6, $06, nD6, nE6, nC6, nD6
 	dc.b nB5, nB5, nG5, $03
 	saVol		$06
 
@@ -249,10 +250,10 @@ EmeraldHill2P_Loop3:
 	sJump		EmeraldHill2P_Loop3
 
 EmeraldHill2P_FM3:
+	dc.b nRst, $1E
 	sVoice		$03
 	sNoteTimeOut	$06
-	dc.b nRst, $1E, nG5, $03, $03, nA5, nC6, nC6
-	dc.b nA5
+	dc.b nG5, $03, $03, nA5, nC6, nC6, nA5
 
 EmeraldHill2P_Jump2:
 	sCall		EmeraldHill2P_Call2
@@ -351,9 +352,9 @@ EmeraldHill2P_Call2:
 	sRet
 
 EmeraldHill2P_FM5:
+	dc.b nRst, $30
 	sPan		spLeft, $01
 	sVoice		$01
-	dc.b nRst, $30
 
 EmeraldHill2P_Loop4:
 	sNoteTimeOut	$06
@@ -373,10 +374,10 @@ EmeraldHill2P_Loop5:
 	sJump		EmeraldHill2P_Loop4
 
 EmeraldHill2P_FM2:
+	dc.b nRst, $1E
 	sVoice		$03
 	sNoteTimeOut	$06
-	dc.b nRst, $1E, nG4, $03, $03, nA4, nC5, nC5
-	dc.b nA4
+	dc.b nG4, $03, $03, nA4, nC5, nC5, nA4
 	sVoice		$00
 	saVol		$FA
 

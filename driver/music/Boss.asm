@@ -186,13 +186,14 @@ Boss_FM4:
 	sJump		Boss_Jump2
 
 Boss_FM5:
-	sPan		spRight
 	ssMod68k	$0C, $01, $FC, $04
 
 Boss_Jump2:
 	sModOff
+	dc.b nRst, $30, nRst, $24
+	sPan		spRight
 	sVoice		$01
-	dc.b nRst, $30, nRst, $24, nD5, $06, nE5, nF5
+	dc.b nD5, $06, nE5, nF5
 	dc.b $0C, nF5, nE5, nE5, nD5, nD5, nE5, nRst
 	dc.b nRst, $30, nRst, $24, nD5, $06, nE5, nF5
 	dc.b $0C, nE5, nEb5, nE5, nAb5, $18, nE5

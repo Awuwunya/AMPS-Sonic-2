@@ -301,8 +301,8 @@ MysticCave2P_Jump5:
 	sJump		MysticCave2P_Jump5
 
 MysticCave2P_FM3:
-	sVoice		$04
 	dc.b nRst, $18
+	sVoice		$04
 
 MysticCave2P_Jump3:
 	saVol		$FC

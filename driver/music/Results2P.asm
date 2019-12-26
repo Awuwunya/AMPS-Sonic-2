@@ -122,11 +122,11 @@ Results2P_Header:
 	spTotalLv	$18, $22, $24, $01
 
 Results2P_FM1:
+	dc.b nRst, $02
 	sVoice		$04
 	ssMod68k	$02, $01, $01, $01
 	sPan		spRight
 	saVol		$03
-	dc.b nRst, $02
 	sCall		Results2P_Call1
 	dc.b nD6, $16
 	saVol		$FD

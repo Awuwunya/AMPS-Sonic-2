@@ -221,9 +221,9 @@ OilOcean_Call4:
 	sRet
 
 OilOcean_FM2:
+	dc.b nRst, $06, nRst, $30, nRst, nRst, $2A
 	sVoice		$00
-	dc.b nRst, $06, nRst, $30, nRst, nRst, $2A, nF4
-	dc.b $03, nG4
+	dc.b nF4, $03, nG4
 
 OilOcean_Loop2:
 	sCall		OilOcean_Call8
@@ -288,10 +288,10 @@ OilOcean_Call9:
 	sRet
 
 OilOcean_FM5:
+	dc.b nRst, $01
 	sVoice		$02
 	sPan		spLeft
 	saTranspose	$E8
-	dc.b nRst, $01
 	saVol		$F9
 	sCall		OilOcean_Call9
 	saVol		$07

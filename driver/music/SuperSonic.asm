@@ -224,9 +224,9 @@ SuperSonic_Call4:
 	sRet
 
 SuperSonic_FM5:
+	dc.b nRst, $60, nRst
 	sVoice		$03
 	sPan		spRight
-	dc.b nRst, $60, nRst
 
 SuperSonic_Loop9:
 	sCall		SuperSonic_Call6

@@ -125,9 +125,9 @@ WingFortress_Loop6:
 	sJump		WingFortress_Jump5
 
 WingFortress_FM1:
+	dc.b nRst, $12
 	sVoice		$00
 	ssDetune	$FF
-	dc.b nRst, $12
 
 WingFortress_Jump1:
 	sPan		spRight
@@ -162,8 +162,8 @@ WingFortress_Loop2:
 	sJump		WingFortress_Jump1
 
 WingFortress_FM2:
-	sVoice		$01
 	dc.b nRst, $12
+	sVoice		$01
 
 WingFortress_Jump2:
 	dc.b nRst, $5A
@@ -208,8 +208,8 @@ WingFortress_Call2:
 	sRet
 
 WingFortress_FM3:
-	sVoice		$02
 	dc.b nRst, $12
+	sVoice		$02
 
 WingFortress_Jump3:
 	saVol		$FC

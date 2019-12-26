@@ -423,11 +423,8 @@ ChemicalPlant_Loop7:
 	sJump		ChemicalPlant_Jump2
 
 ChemicalPlant_FM2:
+	dc.b nRst, $60, $60, $60
 	sVoice		$04
-
-ChemicalPlant_Loop2:
-	dc.b nRst, $30, nRst
-	sLoop		$00, $03, ChemicalPlant_Loop2
 	dc.b nFs2, $06, nEb2, $24, nRst, $06, nE2, $04
 	dc.b nRst, $08, nE2, $0C, nF2, $04, nRst, $08
 	dc.b nF2, $0C, nFs2, $04, nRst, $08, nFs2, $0C

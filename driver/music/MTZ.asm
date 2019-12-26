@@ -244,9 +244,10 @@ Metropolis_Loop14:
 	sJump		Metropolis_Loop12
 
 Metropolis_FM3:
+	dc.b nRst, $60, nRst
 	sVoice		$01
 	saTranspose	$F4
-	dc.b nRst, $60, nRst, nF3, $0C, sHold
+	dc.b nF3, $0C, sHold
 
 Metropolis_Loop3:
 	ssMod68k	$01, $01, $06, $08
@@ -285,9 +286,10 @@ Metropolis_Loop6:
 	sJump		Metropolis_Loop4
 
 Metropolis_FM4:
+	dc.b nRst, $60
 	sVoice		$01
 	saTranspose	$F4
-	dc.b nRst, $60, nRst, nBb3, $0C, sHold
+	dc.b nRst, nBb3, $0C, sHold
 
 Metropolis_Loop7:
 	ssMod68k	$01, $01, $06, $08
@@ -330,12 +332,11 @@ Metropolis_Loop8:
 	sJump		Metropolis_Loop8
 
 Metropolis_FM5:
-	sVoice		$00
-	ssMod68k	$0C, $01, $FC, $04
-
 Metropolis_Loop9:
 	dc.b nRst, $60
 	sLoop		$00, $04, Metropolis_Loop9
+	sVoice		$00
+	ssMod68k	$0C, $01, $FC, $04
 
 Metropolis_Loop10:
 	dc.b nRst, $18, nC4, $0B, nRst, $0D, nD4, $0C
@@ -364,8 +365,8 @@ Metropolis_Loop10:
 	sJump		Metropolis_Loop10
 
 Metropolis_FM2:
-	sVoice		$04
 	dc.b nRst, $60, nRst, nRst
+	sVoice		$04
 	saVol		$FC
 	dc.b nRst, $3C, nA0, $0C, nBb0, nB0
 	saVol		$04

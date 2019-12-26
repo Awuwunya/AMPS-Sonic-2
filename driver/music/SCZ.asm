@@ -170,8 +170,8 @@ SkyChase_Call4:
 	sRet
 
 SkyChase_FM5:
-	sVoice		$04
 	dc.b nRst, $60
+	sVoice		$04
 
 SkyChase_Jump4:
 	sPan		spLeft
@@ -227,8 +227,9 @@ SkyChase_Call6:
 	sRet
 
 SkyChase_FM1:
+	dc.b nRst, $06
 	sVoice		$06
-	dc.b nRst, $06, nG4, $03, nA4, nG4, $0C, nB4
+	dc.b nG4, $03, nA4, nG4, $0C, nB4
 	dc.b $03, nC5, nB4, $0C, nD5, $03, nE5, nD5
 	dc.b $30
 
@@ -253,9 +254,10 @@ SkyChase_Call1:
 	sRet
 
 SkyChase_FM3:
+	dc.b nRst, $06
 	ssDetune	$02
 	sVoice		$01
-	dc.b nRst, $06, nB4, $03, nC5, nB4, $0C, nD5
+	dc.b nB4, $03, nC5, nB4, $0C, nD5
 	dc.b $03, nE5, nD5, $0C, nG5, $03, nA5, nG5
 	dc.b $30
 
@@ -309,8 +311,9 @@ SkyChase_Call3:
 	sRet
 
 SkyChase_FM2:
+	dc.b nRst, $51
 	sVoice		$02
-	dc.b nRst, $51, nG3, $03, nA3, $06, nB3
+	dc.b nG3, $03, nA3, $06, nB3
 
 SkyChase_Loop1:
 	dc.b nC4, $03, $0F, $03, $0C, nG4, $03, nA4

@@ -103,7 +103,9 @@ GotThroughAct_Header:
 	spTotalLv	$1C, $02, $02, $02
 
 GotThroughAct_FM1:
+	dc.b nRst, $06
 	sVoice		$00
+	sJump		GotThroughAct_PSG1+2
 
 GotThroughAct_PSG1:
 	dc.b nRst, $06, nG4, nA4, nB4, nC5, nD5, nE5

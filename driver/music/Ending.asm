@@ -164,9 +164,10 @@ Ending_Call4:
 	sRet
 
 Ending_FM2:
+	dc.b nRst, $06
 	sVoice		$01
 	ssMod68k	$00, $02, $02, $02
-	dc.b nRst, $06, nE5, $03, nF5, nE5, $24
+	dc.b nE5, $03, nF5, nE5, $24
 	sCall		Ending_Call5
 	saVol		$02
 	dc.b nRst, $30
@@ -229,8 +230,9 @@ Ending_Call6:
 	sRet
 
 Ending_FM3:
+	dc.b nRst, $24
 	sVoice		$00
-	dc.b nRst, $24, nG3, $0C
+	dc.b nG3, $0C
 
 Ending_Loop3:
 	dc.b nC4, $15, nG3, $03, nC4, $06, $0C, $03
@@ -270,9 +272,10 @@ Ending_Loop5:
 	sStop
 
 Ending_FM4:
+	dc.b nRst, $12
 	sVoice		$02
 	sPan		spRight
-	dc.b nRst, $12, nG5, $03, nA5, nG5, $18
+	dc.b nG5, $03, nA5, nG5, $18
 
 Ending_Loop6:
 	dc.b nG5, $30, nEb5, $18, nF5, $0C, nA5
@@ -312,10 +315,10 @@ Ending_Loop9:
 	sStop
 
 Ending_FM5:
+	dc.b nRst, $13
 	sVoice		$02
 	sPan		spLeft
-	dc.b nRst, $01, nRst, $12, nG5, $03, nA5, nG5
-	dc.b $17
+	dc.b nG5, $03, nA5, nG5, $17
 
 Ending_Loop10:
 	dc.b nE5, $30, nC5, $18, nD5, $0C, nF5

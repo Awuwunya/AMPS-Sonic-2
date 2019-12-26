@@ -93,10 +93,10 @@ HiddenPalace_FM5:
 	sJump		HiddenPalace_Loop3
 
 HiddenPalace_FM4:
+	dc.b nRst, $06
 	ssMod68k	$0C, $01, $FD, $05
 	sVoice		$00
 	ssDetune	$02
-	dc.b nRst, $06
 	sJump		HiddenPalace_Jump3
 
 HiddenPalace_PSG2:
@@ -109,10 +109,10 @@ HiddenPalace_PSG1:
 
 HiddenPalace_FM1:
 	ssMod68k	$0C, $01, $03, $05
-	sVoice		$00
 
 HiddenPalace_Jump3:
 	dc.b nRst, $18
+	sVoice		$00
 
 HiddenPalace_Loop1:
 	dc.b nF4, $06, nG4, nA4, $18, nG4, $0C, nA4
@@ -128,10 +128,10 @@ HiddenPalace_Loop1:
 	sJump		HiddenPalace_Loop1
 
 HiddenPalace_FM2:
-	sVoice		$01
-
 HiddenPalace_Loop2:
-	dc.b nRst, $18, nA1, $0C, nD2, $06, nRst, $12
+	dc.b nRst, $18
+	sVoice		$01
+	dc.b nA1, $0C, nD2, $06, nRst, $12
 	dc.b nA1, $0C
 
 HiddenPalace_Jump1:

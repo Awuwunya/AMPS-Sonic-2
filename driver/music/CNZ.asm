@@ -68,8 +68,8 @@ CasinoNight_Header:
 	spTotalLv	$1E, $1E, $00, $00
 
 CasinoNight_FM1:
-	sVoice		$00
 	dc.b nRst, $18
+	sVoice		$00
 
 CasinoNight_Jump1:
 	dc.b nC3, $06, nC2, nC3, nC2, nC3, nC2, nC3
@@ -103,9 +103,9 @@ CasinoNight_Jump1:
 	sJump		CasinoNight_Jump1
 
 CasinoNight_FM3:
+	dc.b nRst, $18
 	sVoice		$02
 	sPan		spLeft
-	dc.b nRst, $18
 
 CasinoNight_Jump3:
 	sVoice		$02
@@ -163,9 +163,9 @@ CasinoNight_Call2:
 	sRet
 
 CasinoNight_FM4:
+	dc.b nRst, $18
 	sVoice		$02
 	sPan		spRight
-	dc.b nRst, $18
 
 CasinoNight_Jump4:
 	sVoice		$02
@@ -219,9 +219,9 @@ CasinoNight_Call4:
 	sRet
 
 CasinoNight_FM2:
+	dc.b nRst, $18
 	sVoice		$01
 	ssMod68k	$1C, $01, $06, $04
-	dc.b nRst, $18
 
 CasinoNight_Jump2:
 	sVoice		$01
@@ -264,7 +264,6 @@ CasinoNight_Jump2:
 	sJump		CasinoNight_Jump2
 
 CasinoNight_FM5:
-	sVoice		$01
 	dc.b nRst, $18
 	ssMod68k	$1C, $01, $06, $04
 

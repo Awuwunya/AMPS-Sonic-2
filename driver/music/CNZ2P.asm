@@ -208,8 +208,8 @@ CasionNight2P_Call3:
 	sRet
 
 CasionNight2P_FM3:
-	sVoice		$02
 	dc.b nRst, $60
+	sVoice		$02
 
 CasionNight2P_Loop6:
 	dc.b nRst, $60, $3C, nF6, $09, nE6, $03, nF6
@@ -303,8 +303,8 @@ CasionNight2P_Call5:
 	sRet
 
 CasionNight2P_FM5:
-	sVoice		$02
 	dc.b nRst, $60
+	sVoice		$02
 	sPan		spRight
 
 CasionNight2P_Loop11:

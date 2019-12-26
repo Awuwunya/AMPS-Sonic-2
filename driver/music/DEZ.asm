@@ -165,8 +165,10 @@ DeathEgg_Jump1:
 	sJump		DeathEgg_Jump1
 
 DeathEgg_FM3:
+	dc.b nRst, $30
 	sVoice		$02
 	ssMod68k	$08, $01, $05, $04
+	sJump		DeathEgg_Loop1
 
 DeathEgg_Loop2:
 	dc.b nRst, $30
@@ -203,12 +205,14 @@ DeathEgg_Call1:
 	sRet
 
 DeathEgg_FM4:
+	dc.b nRst, $30
 	sVoice		$02
 	ssMod68k	$08, $01, $05, $04
+	sJump		DeathEgg_Loop5+2
 
 DeathEgg_Loop5:
-	ssDetune	$02
 	dc.b nRst, $30
+	ssDetune	$02
 
 DeathEgg_Loop4:
 	dc.b nRst, $08, nEb6, $02, nCs6, nA5, nRst, nEb6

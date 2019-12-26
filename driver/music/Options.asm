@@ -115,21 +115,37 @@ Options_Loop1:
 	dc.b nD5, nC5, nBb4, nAb4, nD5, nC5, nBb4, nAb4
 	sJump		Options_Loop1
 
+Options_PSG1:
+	dc.b nRst, $0C
+	ssDetune	$01
+	sJump		Options_Jump2
+
 Options_FM3:
+	dc.b nRst, $0C
 	sVoice		$04
 
 Options_Jump2:
-	dc.b nRst, $0C, nC4, $06, nE4, nG4, $0C, nC4
+	dc.b nC4, $06, nE4, nG4, $0C, nC4
 	dc.b $06, nE4, nG4, $18, sHold, $18, nRst, $0C
 	dc.b nAb3, $06, nC4, nEb4, $18, nRst, $0C, nBb3
 	dc.b $06, nD4, nF4, $18
+	dc.b nRst, $0C
 	sJump		Options_Jump2
 
 Options_FM5:
+	dc.b nRst, $02
 	sVoice		$01
 	sPan		spRight
 	ssMod68k	$02, $01, $02, $04
+	sJump		Options_Jump1
+
+Options_PSG2:
 	dc.b nRst, $02
+	sJump		Options_Jump1
+
+Options_PSG3:
+	ssDetune	$01
+	dc.b nRst, $03
 	sJump		Options_Jump1
 
 Options_FM2:
@@ -153,19 +169,6 @@ Options_FM1:
 	dc.b nF2, $0C, nBb2, $06, nRst, $12, nBb2, $06
 	dc.b nRst, nG2, $0C
 	sJump		Options_FM1
-
-Options_PSG2:
-	dc.b nRst, $02
-	sJump		Options_Jump1
-
-Options_PSG3:
-	ssDetune	$01
-	dc.b nRst, $03
-	sJump		Options_Jump1
-
-Options_PSG1:
-	ssDetune	$01
-	sJump		Options_Jump2
 
 Options_DAC1:
 	sStop

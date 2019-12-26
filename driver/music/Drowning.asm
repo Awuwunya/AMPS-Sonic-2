@@ -131,9 +131,9 @@ Drowning_FM3_2:
 	sStop
 
 Drowning_FM4:
+	dc.b nRst, $03
 	sVoice		$03
 	sNoteTimeOut	$05
-	dc.b nRst, $03
 
 Drowning_Loop3:
 	sPan		spRight
@@ -148,9 +148,9 @@ Drowning_Loop3:
 	sStop
 
 Drowning_FM5:
+	dc.b nRst, $04
 	sVoice		$00
 	sNoteTimeOut	$05
-	dc.b nRst, $04
 
 Drowning_Loop4:
 	sPan		spLeft
