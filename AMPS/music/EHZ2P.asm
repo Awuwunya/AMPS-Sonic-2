@@ -114,11 +114,11 @@ EmeraldHill2P_Jump1:
 	sVoice		$03
 	saVol		$06
 	dc.b nG4, $06
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nA4, $03, nC5, nC5, nA4
 	sVoice		$04
 	saVol		$FA
-	sNoteTimeOut	$00
+	sGate		$00
 	sCall		EmeraldHill2P_Call1
 	dc.b nRst, $12, nC6, $18, nA5, $0C, nC6, nBb5
 	dc.b nC6, $06, nD6, $0C, nC6, $06, nBb5, $0C
@@ -143,33 +143,33 @@ EmeraldHill2P_Call1:
 	sVoice		$03
 	saVol		$06
 	dc.b nE5, $06
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nC5, $03, nA4, nC5, $06, nRst, nRst
 	sVoice		$04
 	saVol		$FA
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nB4, $06, $09, $03
 	sVoice		$03
 	saVol		$06
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nF5, $03, nF5, nRst, nF5, nRst, nF5
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nFs5, $06, nG5, nRst
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nG5, $03, $03, nA5, nG5
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nE5, $06
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nC5, $03, nA4, nC5, $06, nRst, nRst
-	sNoteTimeOut	$00
+	sGate		$00
 	sVoice		$04
 	saVol		$FA
 	dc.b nE5, nG5, nE5
 	sVoice		$02
 	saVol		$06
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nF5, $03, nF5, nRst, nF5, nRst, nF5
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nFs5, $06, nG5, $03, nRst
 	sVoice		$04
 	saVol		$FA
@@ -187,15 +187,15 @@ EmeraldHill2P_Loop3:
 	sVoice		$01
 	sPan		spRight
 	saTranspose	$F4
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nRst, $06, nE5, $03, $09, $0C, nG5, $03
 	dc.b $09, $06
 	sVoice		$04
 	sPan		spCenter
 	saVol		$FA
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nA5
-	sNoteTimeOut	$06
+	sGate		$06
 	saVol		$06
 	sVoice		$01
 	sPan		spRight
@@ -205,22 +205,22 @@ EmeraldHill2P_Loop3:
 	sPan		spCenter
 	saTranspose	$0C
 	dc.b nA5, $03, nA5, nRst, nA5, nRst, nA5
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nBb5, $06, nB5, $03
 	sVoice		$01
 	sPan		spRight
 	saTranspose	$F4
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nRst, nG5, $03, $09, $06
 	sVoice		$02
 	sPan		spCenter
 	saTranspose	$0C
-	sNoteTimeOut	$00
+	sGate		$00
 	sLoop		$00, $02, EmeraldHill2P_Loop3
 	sVoice		$01
 	sPan		spRight
 	saTranspose	$F4
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nRst, $06, nA5, $03, $09, $03, $09, $03
 	dc.b $09, $03, $03, nRst, $06, nG5, $03, $09
 	dc.b $03, $09, $03, $09, $03, $03, nRst, $06
@@ -229,13 +229,13 @@ EmeraldHill2P_Loop3:
 	sVoice		$02
 	sPan		spCenter
 	saTranspose	$0C
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nRst, $06, nG5, nA5, nG5, nRst, nG5, nA5
 	dc.b nG5
 	sVoice		$01
 	sPan		spRight
 	saTranspose	$F4
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nRst, $06, nA5, $03, $09, $03, $09, $03
 	dc.b $09, $03, $03, nRst, $06, nG5, $03, $09
 	dc.b $03, $09, $03, $09, $03, $03, nRst, $06
@@ -244,7 +244,7 @@ EmeraldHill2P_Loop3:
 	sVoice		$02
 	sPan		spCenter
 	saTranspose	$0C
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nB5, $03, nRst, nB5, $06, nC6, $03, nB5
 	dc.b nC6, $06, nB5, $03, nRst, $15
 	sJump		EmeraldHill2P_Loop3
@@ -252,7 +252,7 @@ EmeraldHill2P_Loop3:
 EmeraldHill2P_FM3:
 	dc.b nRst, $1E
 	sVoice		$03
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nG5, $03, $03, nA5, nC6, nC6, nA5
 
 EmeraldHill2P_Jump2:
@@ -260,29 +260,29 @@ EmeraldHill2P_Jump2:
 	sVoice		$01
 	sPan		spRight
 	saTranspose	$F4
-	sNoteTimeOut	$06
+	sGate		$06
 	saVol		$06
 	dc.b nRst, $06, nF5, $03, $09, $06
 	sVoice		$03
 	sPan		spCenter
 	saTranspose	$0C
-	sNoteTimeOut	$00
+	sGate		$00
 	saVol		$FA
 	dc.b nRst, nG5
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nA5, $03, nC6, nC6, nA5
 	sCall		EmeraldHill2P_Call2
 	sVoice		$01
 	sPan		spRight
 	saTranspose	$F4
-	sNoteTimeOut	$06
+	sGate		$06
 	saVol		$06
 	dc.b nRst, $06, nF5, $03, $09, $06, nRst, nG5
 	dc.b $03, $09, $06
 	sVoice		$03
 	sPan		spCenter
 	saTranspose	$0C
-	sNoteTimeOut	$00
+	sGate		$00
 	saVol		$FA
 	sCall		EmeraldHill2P_Call3
 	dc.b nRst, $30
@@ -290,14 +290,14 @@ EmeraldHill2P_Jump2:
 	sVoice		$01
 	sPan		spRight
 	saTranspose	$F4
-	sNoteTimeOut	$06
+	sGate		$06
 	saVol		$06
 	dc.b nRst, $06, nG5, $03, $09, $03, $09, $03
 	dc.b $09, $03, $03
 	sVoice		$03
 	sPan		spCenter
 	saTranspose	$0C
-	sNoteTimeOut	$00
+	sGate		$00
 	saVol		$FA
 	sCall		EmeraldHill2P_Call3
 	dc.b nRst, $30, nD6, $0C, nE6, nF6, nFs6, nG6
@@ -305,48 +305,48 @@ EmeraldHill2P_Jump2:
 	sVoice		$01
 	sPan		spRight
 	saTranspose	$F4
-	sNoteTimeOut	$06
+	sGate		$06
 	saVol		$06
 	dc.b nB5, $03, $09, $03, $03
 	sVoice		$03
 	sPan		spCenter
 	saTranspose	$0C
-	sNoteTimeOut	$00
+	sGate		$00
 	saVol		$FA
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nRst, $06, nG5
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nA5, $03, nC6, nC6, nA5
 	sJump		EmeraldHill2P_Jump2
 
 EmeraldHill2P_Call3:
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nRst, $06, nA5, nF5, $03, nC5, $06, $03
 	dc.b nF5, $06, nA5, nBb5, $03
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nA5, $09
 	sRet
 
 EmeraldHill2P_Call2:
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nE6, $06
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nC6, $03, nA5, nC6, $06, nRst, nRst, $09
 	sVoice		$04
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nC5, nA4, $06
-	sNoteTimeOut	$06
+	sGate		$06
 	sVoice		$03
 	dc.b nF6, $03, nF6, nRst, nF6, nRst, nF6
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nFs6, $06, nG6, nRst
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nG6, $03, $03, nA6, nG6
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nE6, $06
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nC6, $03, nA5, nC6, $06
-	sNoteTimeOut	$00
+	sGate		$00
 	sVoice		$04
 	dc.b nRst, $0F, nF5, $06, nF5, nC5, $03
 	sRet
@@ -357,7 +357,7 @@ EmeraldHill2P_FM5:
 	sVoice		$01
 
 EmeraldHill2P_Loop4:
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nRst, $06, nG5, $03, $09, $0C, nB5, $03
 	dc.b $09, $06, nRst, nA5, $03, $09, $0C, nB5
 	dc.b $03, $09, $06
@@ -376,13 +376,13 @@ EmeraldHill2P_Loop5:
 EmeraldHill2P_FM2:
 	dc.b nRst, $1E
 	sVoice		$03
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nG4, $03, $03, nA4, nC5, nC5, nA4
 	sVoice		$00
 	saVol		$FA
 
 EmeraldHill2P_Loop1:
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nRst, $06, nC4, nA3, $03, $03, nG3, $06
 	dc.b nRst, nB3, nA3, $03, $03, nG3, $06, nRst
 	dc.b nA3, nG3, $03, $03, nF3, $06, nRst, nG3
@@ -439,12 +439,12 @@ EmeraldHill2P_PSG2:
 	dc.b nRst, $30
 
 EmeraldHill2P_Jump3:
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nRst, $06, nC5, $03, $09, $0C, nG5, $03
 	dc.b $09, $06, nRst, nF5, $03, $09, $0C, nG5
 	dc.b $03, $09, $06
 	sLoop		$00, $04, EmeraldHill2P_Jump3
-	sNoteTimeOut	$00
+	sGate		$00
 	sVolEnv		v0B
 	dc.b nF5, $18, nF5, $0C, nF5, nEb5, nF5, $06
 	dc.b nEb5, $0C, nF5, $06, nEb5, $0C, nF5, $18

@@ -100,8 +100,8 @@ cStatPSG4 =	cPanning	; PSG4 type value. PSG3 only
 cStatPSG4 =	*-2		; PSG4 type value. PSG3 only
 	endif
 
-cNoteTimeCur	ds.b 1		; frame counter to note off. Music only
-cNoteTimeMain	ds.b 1		; copy of frame counter to note off. Music only
+cGateCur	ds.b 1		; frame counter to note off. Music only
+cGateMain	ds.b 1		; copy of frame counter to note off. Music only
 cStack		ds.b 1		; channel stack pointer. Music only
 		ds.b 1		; unused. Music only
 		ds.l 3		; channel stack data. Music only
@@ -269,7 +269,7 @@ mSize =		*		; end of the driver RAM
 ; ---------------------------------------------------------------------------
 
 	phase 0
-mfbRing		ds.b 1		; if set, change speaker (play different sfx)
+mfbSwap		ds.b 1		; if set, swap the sfx
 mfbSpeed	ds.b 1		; if set, speed shoes are active
 mfbWater	ds.b 1		; if set, underwater mode is active
 mfbNoPAL	ds.b 1		; if set, play songs slowly in PAL region
@@ -343,6 +343,30 @@ fStop		ds.l 1		; 84 - Stop all music
 fResVol		ds.l 1		; 88 - Reset volume and update
 fReset		ds.l 1		; 8C - Stop music playing and reset volume
 fLast		ds.l 0		; safe mode equate
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Enable multiple flags in target ea mode
+; ---------------------------------------------------------------------------
+
+mvbit		macro target
+.res :=	0
+	mvacc	ALLARGS			; AS is kinda shit
+	moveq	#.res,target		; moveq version
+    endm
+
+mvnbt		macro target
+.res :=	0
+	mvacc	ALLARGS			; AS is kinda shit
+	moveq	#(~.res)&$FF,target	; moveq version
+    endm
+
+mvacc		macro derp, bits
+	if "bits"<>""			; repeat for all bits
+.res :=		.res|(1<<bits)		; or the value of the bit
+		shift
+		mvacc ALLARGS		; call this again with new args
+	endif
+    endm
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Quickly clear some memory in certain block sizes
@@ -572,7 +596,7 @@ __LABEL__	label *
 incSWF		macro file
 	if "file"<>""			; repeate for all arguments
 SWF_file	equ *
-		binclude "driver/DAC/incswf/file.swf"; include PCM data
+		binclude "AMPS/DAC/incswf/file.swf"; include PCM data
 SWFR_file	equ *
 	 	asdata Z80E_Read*(MaxPitch/$100), $00; add end markers (for Dual PCM)
 

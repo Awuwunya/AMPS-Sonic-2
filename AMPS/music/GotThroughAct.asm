@@ -117,12 +117,12 @@ GotThroughAct_PSG1:
 
 GotThroughAct_FM2:
 	sVoice		$01
-	sNoteTimeOut	$0B
+	sGate		$0B
 ;	sComm		0, $01
 	dc.b nG5, $03, nG5, nG4, $06, nG4, nG5, $03
 	dc.b nG5, nG4, $06, nG4, nG5, $03, nG5, nRst
 	dc.b $06, nRst, $0C, nG4, $09
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nA4, $33
 ;	sComm		0, $01
 	sStop
@@ -130,20 +130,20 @@ GotThroughAct_FM2:
 GotThroughAct_FM3:
 	sPan		spLeft
 	sVoice		$02
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nC6, $03, nC6, nRst, $0C, nC6, $03, nC6
 	dc.b nRst, $0C, nC6, $03, nC6, nRst, $12
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nC6, $09, nD6, $33
 	sStop
 
 GotThroughAct_FM4:
 	sPan		spRight
 	sVoice		$02
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nA5, $03, nA5, nRst, $0C, nA5, $03, nA5
 	dc.b nRst, $0C, nA5, $03, nA5, nRst, $12
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nA5, $09, nB5, $33
 	sStop
 

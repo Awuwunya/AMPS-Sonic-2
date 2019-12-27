@@ -268,9 +268,9 @@ SkyChase_Jump2:
 	dc.b nE6, nD6, nB5, $18
 	sVoice		$01
 	saVol		$EE
-	sNoteTimeOut	$0B
+	sGate		$0B
 	dc.b nG5, $06, nD5, nE5, $03, nG5, $06
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b $15
 	sVoice		$05
 	saVol		$12
@@ -285,9 +285,9 @@ SkyChase_Jump2:
 	dc.b nD6, $18
 	sVoice		$01
 	saVol		$EE
-	sNoteTimeOut	$0B
+	sGate		$0B
 	dc.b nG5, $06, nD5, nE5, $03, nG5, $06
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b $15
 	sVoice		$05
 	saVol		$12
@@ -403,7 +403,7 @@ SkyChase_Jump5:
 
 SkyChase_PSG3:
 	sNoisePSG	$E7
-	sNoteTimeOut	$09
+	sGate		$09
 
 SkyChase_Jump6:
 	dc.b nHiHat, $0C

@@ -66,7 +66,7 @@ dPlaySnd_Pause:
 ; ---------------------------------------------------------------------------
 
 dMuteDAC:
-	StopZ80					; wait for Z80 to stop
+	stopZ80					; wait for Z80 to stop
 		lea	SampleList(pc),a5	; load address for the stop sample data into a2
 		lea	dZ80+PCM1_Sample.l,a4	; load addresses for PCM 1 sample to a1
 
@@ -83,7 +83,7 @@ dMuteDAC:
 
 		move.b	#$CA,dZ80+PCM1_NewRET.l	; activate sample switch (change instruction)
 		move.b	#$CA,dZ80+PCM2_NewRET.l	; activate sample switch (change instruction)
-	StartZ80				; enable Z80 execution
+	startZ80				; enable Z80 execution
 
 locret_MuteDAC:
 		rts
@@ -145,7 +145,6 @@ dPlaySnd_Unpause:
 		adda.w  d3,a1			; go to next channel
 		dbf     d0,.sfxloop		; repeat for all SFX FM channels
 	;	st	(a0)			; write end marker
-	startZ80
 ; ---------------------------------------------------------------------------
 ; Since the DAC channels have or based panning behavior, we need this
 ; piece of code to update its panning
@@ -158,8 +157,6 @@ dPlaySnd_Unpause:
 
 .nodacsfx
 		or.b	mDAC2+cPanning.w,d4	; or the panning value from music DAC2
-	CheckCue				; check that YM cue is valid
-	stopZ80
 	WriteYM2	#$B4+2, d4		; Panning & LFO
 	;	st	(a0)			; write end marker
 	startZ80
@@ -237,7 +234,7 @@ dPlaySnd_Music:
 ; ---------------------------------------------------------------------------
 
 	if FEATURE_BACKUP
-		btst	#6,(a2)			; check if this song should cause the last one to be backed up
+		btst	#6,1(a2)		; check if this song should cause the last one to be backed up
 		beq.s	.clrback		; if not, skip
 		bset	#mfbBacked,mFlags.w	; check if song was backed up (and if not, set the bit)
 		bne.s	.noback			; if yes, preserved the backed up song
@@ -253,7 +250,7 @@ dPlaySnd_Music:
 		move.l	(a4)+,(a3)+		; back up data for every channel
 		dbf	d3,.backup		; loop for each longword
 
-		moveq	#$FF-(1<<cfbInt)-(1<<cfbVol),d3; each other bit except interrupted and volume update bits
+		mvnbt	d3, cfbInt, cfbVol	; each other bit except interrupted and volume update bits
 
 .ch :=		mBackDAC1			; start at backup DAC1
 		rept Mus_Ch			; do for all music channels
@@ -278,7 +275,7 @@ dPlaySnd_Music:
 		jsr	dResetVolume(pc)	; reset volumes and end any fades
 
 		moveq	#0,d3
-		move.b	1(a2),d3		; load song tempo to d3
+		move.b	(a2)+,d3		; load song tempo to d3
 		move.b	d3,mTempoMain.w		; save as regular tempo
 		btst	#mfbSpeed,mFlags.w	; check if speed shoes flag was set
 		beq.s	.tempogot		; if not, use main tempo
@@ -287,25 +284,26 @@ dPlaySnd_Music:
 .tempogot
 		move.b	d3,mTempo.w		; save as the current tempo
 		move.b	d3,mTempoCur.w		; copy into the accumulator/counter
-		and.b	#$FF-(1<<mfbNoPAL),mFlags.w; enable PAL fix
+		and.b	#~(1<<mfbNoPAL),mFlags.w; enable PAL fix
 ; ---------------------------------------------------------------------------
 ; If the 7th bit (msb) of tick multiplier is set, PAL fix gets
 ; disabled. I know, very weird place to put it, but we dont have
 ; much free room in the song header
 ; ---------------------------------------------------------------------------
 
-		move.b	(a2),d4			; load the tick multiplier to d4
+		move.b	(a2)+,d4		; load the tick multiplier to d4
 		bpl.s	.noPAL			; branch if the loaded value was positive
 		or.b	#1<<mfbNoPAL,mFlags.w	; disable PAL fix
 
 .noPAL
-		move.b	3(a2),d0		; load the PSG channel count to d0
+		move.b	(a2),d0			; load the PSG channel count to d0
 		ext.w	d0			; extend to word (later, its read from stack...)
 		move.w	d0,-(sp)		; store in stack
+		addq.w	#2,a2			; go to DAC1 data section
 
-		moveq	#(1<<cfbRun)|(1<<cfbVol),d2; prepare running tracker and volume flags into d2
+		mvbit	d2, cfbRun, cfbVol	; prepare running tracker and volume flags into d2
 		moveq	#$C0,d1			; prepare panning value of centre to d1
-		addq.w	#4,a2			; go to DAC1 data section
+		move.w	#$100,d3		; prepare default DAC frequency
 
 		and.w	#$3F,d4			; keep tick multiplier value in range
 		moveq	#cSize,d6		; prepare channel size to d6
@@ -314,7 +312,6 @@ dPlaySnd_Music:
 		lea	mDAC1.w,a1		; start from DAC1 channel
 		lea	dDACtypeVals(pc),a4	; prepare DAC (and FM) type value list into a4
 		moveq	#2-1,d0			; always run for 2 DAC channels
-		move.w	#$100,d3		; prepare default DAC frequency
 
 .loopDAC
 		move.b	d2,(a1)			; save channel flags
@@ -342,9 +339,9 @@ dPlaySnd_Music:
 		dbf	d0,.loopDAC		; repeat for all DAC channels
 
 		moveq	#0,d0
-		move.b	-$A(a2),d0		; load the FM channel count to d0
+		move.b	-9(a2),d0		; load the FM channel count to d0
 		bmi.w	.doPSG			; if no FM channels are loaded, branch
-		moveq	#(1<<cfbRun)|(1<<cfbRest),d2; prepare running tracker and channel rest flags
+		mvbit	d2, cfbRun, cfbRest	; prepare running tracker and channel rest flags to d2
 
 .loopFM
 		move.b	d2,(a1)			; save channel flags
@@ -380,7 +377,7 @@ dPlaySnd_Music:
 ; this fix.
 ; ---------------------------------------------------------------------------
 
-		moveq	#(1<<cfbRun)|(1<<cfbVol)|(1<<cfbRest),d2; prepare running tracker, resting and volume flags into d2
+		mvbit	d2, cfbRun, cfbVol, cfbRest; prepare running tracker, resting and volume flags into d2
 		moveq	#2,d5			; prepare duration of 1 frames to d5
 		lea	dPSGtypeVals(pc),a4	; prepare PSG type value list into a4
 		lea	mPSG1.w,a1		; start from PSG1 channel
@@ -474,19 +471,6 @@ dPlaySnd_SFX:
 		btst	#mfbBacked,mFlags.w	; check if a song has been queued
 		bne.s	locret_PlaySnd		; branch if so
 	endif
-
-; ---------------------------------------------------------------------------
-; This is a little special case with Sonic 1 - 3K, where the ring
-; sound effect would change panning each time it is played. AMPS
-; emulates this behavior like the original drivers did, by
-; playing a different sound effect ID.
-; ---------------------------------------------------------------------------
-
-		cmpi.b	#sfx_RingRight,d1	; check if the sound effect was the ring sound effect
-		bne.s	.noring			; if not, skip
-		bchg	#mfbRing,mFlags.w	; swap flag and check if it was set
-		beq.s	.noring			; if was not, do not change sound effect
-		moveq	#sfx_RingLeft,d1	; switch to left panned sound effect instead
 ; ---------------------------------------------------------------------------
 ; To save few cycles, we don't directly substract the SFX offset from
 ; the ID, and instead offset the table position. In practice this will
@@ -499,7 +483,21 @@ dPlaySnd_SFX:
 		add.w	d1,d1			; quadruple sfx ID
 		add.w	d1,d1			; since each entry is 4 bytes in size
 		movea.l	(a1,d1.w),a2		; get SFX header pointer from the table
+; ---------------------------------------------------------------------------
+; This implements a system where the sound effect swaps every time its
+; played. This in particular needed with Sonic 1 to 3K, where the ring SFX
+; would every time change the panning by playing a different SFX ID. AMPS
+; extends this system to support any number of SFX following this same system.
+; ---------------------------------------------------------------------------
 
+		btst	#0,(a1,d1.w)		; check if sound effect has swapping behaviour
+		beq.s	.noswap			; if not, skip
+		bchg	#mfbSwap,mFlags.w	; swap th flag and check if it was set
+		beq.s	.noswap			; if was not, do not swap sound effect
+		addq.w	#4,d1			; go to next SFX
+		movea.l	(a1,d1.w),a2		; get the next SFX pointer from the table
+
+.noswap
 	if safe=1
 		move.l	a2,d2			; copy pointer to d2
 		and.l	#$FFFFFF,d2		; clearing the upper 8 bits allows the debugger
@@ -531,6 +529,7 @@ dPlaySnd_SFX:
 		bpl.s	.nocont			; if not, skip
 		clr.b	mContCtr.w		; reset continous sfx counter
 
+		lsr.w	#2,d1			; get actual SFX ID
 		cmp.b	mContLast.w,d1		; check if the last continous SFX had the same ID
 		bne.s	.setcont		; if not, play as a new sound effect anyway
 		move.b	1(a2),mContCtr.w	; copy the number of channels as the new continous loop counter
@@ -561,7 +560,7 @@ dPlaySnd_SFX:
 
 .loopSFX
 		moveq	#0,d3
-		moveq	#2,d2			; prepare duration of 1 frames to d5
+		moveq	#2,d2			; prepare duration of 1 frames to d2
 		move.b	1(a2),d3		; load sound effect channel type to d3
 		move.b	d3,d4			; copy type to d4
 		bmi.s	.chPSG			; if channel is a PSG channel, branch
@@ -577,7 +576,7 @@ dPlaySnd_SFX:
 		move.w	(a5,d3.w),a3		; get the music channel we should override
 		bset	#cfbInt,(a3)		; override music channel with sound effect
 
-		moveq	#1,d2			; prepare duration of 0 frames to d5
+		moveq	#1,d2			; prepare duration of 0 frames to d2
 		bra.s	.clearCh
 ; ---------------------------------------------------------------------------
 

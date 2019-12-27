@@ -86,7 +86,7 @@ Drowning_Header:
 Drowning_FM1:
 	sVoice		$00
 ;	sComm		0, $01
-	sNoteTimeOut	$05
+	sGate		$05
 	sCall		Drowning_Call1
 	ssTempo		$55
 	ssTempoShoes	$55
@@ -133,7 +133,7 @@ Drowning_FM3_2:
 Drowning_FM4:
 	dc.b nRst, $03
 	sVoice		$03
-	sNoteTimeOut	$05
+	sGate		$05
 
 Drowning_Loop3:
 	sPan		spRight
@@ -150,7 +150,7 @@ Drowning_Loop3:
 Drowning_FM5:
 	dc.b nRst, $04
 	sVoice		$00
-	sNoteTimeOut	$05
+	sGate		$05
 
 Drowning_Loop4:
 	sPan		spLeft

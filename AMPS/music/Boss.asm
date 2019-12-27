@@ -89,16 +89,16 @@ Boss_FM1:
 	sVoice		$00
 
 Boss_Jump1:
-	sNoteTimeOut	$08
+	sGate		$08
 	sCall		Boss_Call1
-	sNoteTimeOut	$0A
+	sGate		$0A
 
 Boss_Loop1:
 	dc.b nE1, $0C, nE2
 	sLoop		$00, $04, Boss_Loop1
-	sNoteTimeOut	$08
+	sGate		$08
 	sCall		Boss_Call1
-	sNoteTimeOut	$0A
+	sGate		$0A
 	dc.b nE1, $0C, nE2, nFs1, nFs2, nG1, nG2, nAb1
 	dc.b nAb2
 
@@ -131,10 +131,10 @@ Boss_FM2:
 	sVoice		$02
 
 Boss_Loop3:
-	sNoteTimeOut	$08
+	sGate		$08
 	dc.b nA3, $0C, nE3, nE3, nA3, nE3, nE3, nA3
 	dc.b nE3
-	sNoteTimeOut	$17
+	sGate		$17
 	dc.b nB3, $18, nB3, nB3, nB3
 	sLoop		$00, $02, Boss_Loop3
 	saTranspose	$F4
@@ -159,10 +159,10 @@ Boss_FM3:
 	sVoice		$02
 
 Boss_Loop5:
-	sNoteTimeOut	$08
+	sGate		$08
 	dc.b nC4, $0C, nA3, nA3, nC4, nA3, nA3, nC4
 	dc.b nA3
-	sNoteTimeOut	$17
+	sGate		$17
 	dc.b nAb3, $18, nAb3, nAb3, nAb3
 	sLoop		$00, $02, Boss_Loop5
 
@@ -186,12 +186,12 @@ Boss_FM4:
 	sJump		Boss_Jump2
 
 Boss_FM5:
+	sPan		spRight
 	ssMod68k	$0C, $01, $FC, $04
 
 Boss_Jump2:
 	sModOff
 	dc.b nRst, $30, nRst, $24
-	sPan		spRight
 	sVoice		$01
 	dc.b nD5, $06, nE5, nF5
 	dc.b $0C, nF5, nE5, nE5, nD5, nD5, nE5, nRst
@@ -227,7 +227,7 @@ Boss_Call4:
 
 Boss_PSG3:
 	sNoisePSG	$E7
-	sNoteTimeOut	$05
+	sGate		$05
 
 Boss_Loop9:
 	dc.b nHiHat, $24, $24, $18, nRst, $60

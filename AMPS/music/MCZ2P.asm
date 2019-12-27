@@ -330,7 +330,7 @@ MysticCave2P_Loop2:
 	sJump		MysticCave2P_Jump3
 
 MysticCave2P_PSG2:
-	sNoteTimeOut	$08
+	sGate		$08
 	dc.b nRst, $18
 
 MysticCave2P_Jump7:

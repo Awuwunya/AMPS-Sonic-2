@@ -372,45 +372,45 @@ Metropolis_FM2:
 	saVol		$04
 
 Metropolis_Jump1:
-	sNoteTimeOut	$09
+	sGate		$09
 	dc.b nC1, $0C, nC1, nC1, nC1, nC1, nC1, nC1
 	dc.b nC1, nC1, nC1, nC1, nC1
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nC1, nA0, nBb0, nB0
-	sNoteTimeOut	$09
+	sGate		$09
 	dc.b nC1, nC1, nC1, nC1, nC1, nC1, nC1, nC1
 	dc.b nC1, nC1, nC1, nC1, nC1, $06, nC2
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nA0, $0C, nBb0, nB0
-	sNoteTimeOut	$09
+	sGate		$09
 	dc.b nC1, nC1, nC1, nC1, nC1, nC1, nC1, nC1
 	dc.b nC1, nC1, nC1, nC1
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nC1, nA0, nBb0, nB0
-	sNoteTimeOut	$09
+	sGate		$09
 	dc.b nC1, nC1, nC1, nC1, nC1, nC1, nC1, nC1
 	dc.b nC1, nC1, nC1, nC1
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nC1, nEb1, nD1, nCs1
-	sNoteTimeOut	$09
+	sGate		$09
 	dc.b nC1, nC1, nC1, nC1, nC1, nC1, nC1, $0C
 	dc.b nC1, $06, nC1, $06, $0C, nC1, nC1, nC1
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nC1, nA0, nBb0, nB0
-	sNoteTimeOut	$09
+	sGate		$09
 	dc.b nC1, nC1, nC1, nC1, nC1, nC1, nC1, nC1
 	dc.b nC1, nC1, nC1, nC1, nC1, $06, nC2
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nA0, $0C, nBb0, nB0
-	sNoteTimeOut	$09
+	sGate		$09
 	dc.b nC1, nC1, nC1, nC1, nC1, nC1, nC1, nC1
 	dc.b nC1, nC1, nC1, nC1
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nC1, nA0, nBb0, nB0
-	sNoteTimeOut	$09
+	sGate		$09
 	dc.b nC1, nC1, nC1, nC1, nC1, nC1, nC1, nC1
 	dc.b nC1, nC1, nC1, nC1
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nC1, nEb1, nD1, nCs1, nBb0, nBb0, nBb0, nBb0
 	dc.b nBb0, nBb0, nBb0, nBb0, nD1, nD1, nD1, nD1
 	dc.b nBb0, nBb0, nBb0, nBb0, nC1, nC1, $06

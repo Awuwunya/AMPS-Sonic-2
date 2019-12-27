@@ -302,7 +302,7 @@ FinalBoss_Jump4:
 
 FinalBoss_PSG3:
 	sNoisePSG	$E7
-	sNoteTimeOut	$06
+	sGate		$06
 
 FinalBoss_Jump5:
 	dc.b nA5, $18, $18, $18, $0C, $0C

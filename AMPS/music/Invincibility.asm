@@ -130,13 +130,13 @@ Invincibility_PSG3:
 	dc.b nRst, $30
 
 Invincibility_Jump1:
-	sNoteTimeOut	$03
+	sGate		$03
 	dc.b nHiHat, $0C
-	sNoteTimeOut	$0C
+	sGate		$0C
 	dc.b $0C
-	sNoteTimeOut	$03
+	sGate		$03
 	dc.b $0C
-	sNoteTimeOut	$0C
+	sGate		$0C
 	dc.b $0C
 	sJump		Invincibility_Jump1
 

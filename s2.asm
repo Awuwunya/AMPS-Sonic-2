@@ -70,8 +70,8 @@ useFullWaterTables =	0
 
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ; AMPS related macros
-	include "driver/code/smps2asm.asm"
-	include "driver/code/macro.asm"
+	include "AMPS/code/smps2asm.asm"
+	include "AMPS/code/macro.asm"
 
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ; start of ROM
@@ -88476,13 +88476,13 @@ ArtNem_MCZGateLog:	BINCLUDE	"art/nemesis/Drawbridge logs from MCZ.bin"
 ; --------------------------------------------------------------------
 ; Include AMPS related files
 ; --------------------------------------------------------------------
-	include "driver/code/68k.asm"
+	include "AMPS/code/68k.asm"
 
 DualPCM:
 	save
 	!org 0
 	cpu z80undoc
-	include "driver/code/z80.asm"
+	include "AMPS/code/z80.asm"
 
 DualPCM_sz:
 	cpu 68000

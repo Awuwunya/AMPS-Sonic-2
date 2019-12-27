@@ -237,7 +237,7 @@ DeathEgg_Loop6:
 
 DeathEgg_FM5:
 	sVoice		$05
-	sNoteTimeOut	$00
+	sGate		$00
 	saVol		$0C
 	dc.b nA2, $30
 	ssMod68k	$10, $01, $FF, $FF
@@ -250,7 +250,7 @@ DeathEgg_FM5:
 	dc.b sHold, $18
 	saVol		$F4
 	sVoice		$04
-	sNoteTimeOut	$09
+	sGate		$09
 
 DeathEgg_Loop7:
 	dc.b nA2, $04, nRst, $28, nAb2, $04, nA2, nA2
@@ -269,7 +269,7 @@ DeathEgg_Loop8:
 
 DeathEgg_FM2:
 	sVoice		$01
-	sNoteTimeOut	$0A
+	sGate		$0A
 
 DeathEgg_Jump2:
 	dc.b nA1, $04, nA2, nA2, nA1, nG2, nA1, nFs2

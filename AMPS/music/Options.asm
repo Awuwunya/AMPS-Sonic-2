@@ -106,7 +106,7 @@ Options_Header:
 Options_FM4:
 	sVoice		$03
 	sPan		spRight
-	sNoteTimeOut	$05
+	sGate		$05
 
 Options_Loop1:
 	dc.b nC5, $06, nB4, nA4, nG4

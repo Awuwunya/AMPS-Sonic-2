@@ -189,9 +189,9 @@ UpdateAMPS:
 		moveq	#4-1,d1			; check Dual PCM status max 4 times
 
 .recheck
-	StopZ80					; wait for Z80 to stop
+	stopZ80					; wait for Z80 to stop
 		move.b	dZ80+YM_Buffer.l,d0	; load current cue buffer in use
-	StartZ80				; enable Z80 execution
+	startZ80				; enable Z80 execution
 
 		cmp.b	mLastCue.w,d0		; check if last queue was the same
 		bne.s	.bufferok		; if it is same, Dual PCM is delayed and its baaad =(
@@ -218,9 +218,9 @@ UpdateAMPS:
 		AMPS_Debug_CuePtr 3		; check if the cue is still valid
 	endif
 
-	StopZ80					; wait for Z80 to stop
+	stopZ80					; wait for Z80 to stop
 		st	(a0)			; make sure cue is marked as completed
-	StartZ80				; enable Z80 execution
+	startZ80				; enable Z80 execution
 		bclr	#mfbExec,mFlags.w	; set AMPS as finished running
 
 dPaused:
@@ -243,7 +243,8 @@ dUpdateAllAMPS:
 ; appear before ROM offset $10000, or else it will never be executed.
 ; ---------------------------------------------------------------------------
 
-.notempo	tst.b	mFadeAddr+1.w		; check if a fade program is already executing
+.notempo
+		tst.b	mFadeAddr+1.w		; check if a fade program is already executing
 	if safe=1
 		beq.w	.chkregion		; branch if not
 	else

@@ -384,7 +384,7 @@ CasionNight2P_Call10:
 CasionNight2P_PSG3:
 CasionNight2P_PSG1:
 	dc.b nRst, $60
-	sNoteTimeOut	$06
+	sGate		$06
 
 CasionNight2P_Loop12:
 	dc.b nRst, $0C, nF5, nRst, nF5, nRst, nF5, nRst
@@ -412,7 +412,7 @@ CasionNight2P_Loop14:
 
 CasionNight2P_PSG2:
 	dc.b nRst, $60
-	sNoteTimeOut	$06
+	sGate		$06
 
 CasionNight2P_Loop15:
 	dc.b nRst, $0C, nD5, nRst, nD5, nRst, nD5, nRst

@@ -760,33 +760,33 @@ Credits_Loop3:
 	sVoice		$1B
 	saVol		$06
 	dc.b nE5, $0C
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nC5, $06, nA4, nC5, $0C, nRst, nRst
 	sVoice		$1C
 	saVol		$FA
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nB4, $0C, $12, $06
 	sVoice		$1B
 	saVol		$06
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nF5, $06, nF5, nRst, nF5, nRst, nF5
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nFs5, $0C, nG5, nRst
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nG5, $06, $06, nA5, nG5
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nE5, $0C
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nC5, $06, nA4, nC5, $0C, nRst, nRst
-	sNoteTimeOut	$00
+	sGate		$00
 	sVoice		$1C
 	saVol		$FA
 	dc.b nE5, nG5, nE5
 	sVoice		$1A
 	saVol		$06
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nF5, $06, nF5, nRst, nF5, nRst, nF5
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nFs5, $0C, nG5, $06, nRst, nRst, $24, nRst
 	dc.b $30, nRst
 	sVoice		$1F
@@ -931,7 +931,7 @@ Credits_Call1:
 Credits_FM2:
 	dc.b nRst, $60
 	sVoice		$01
-	sNoteTimeOut	$06
+	sGate		$06
 	sCall		Credits_Call9
 	sCall		Credits_Call9
 
@@ -948,24 +948,24 @@ Credits_Loop5:
 Credits_Loop6:
 	dc.b nA0
 	sLoop		$00, $0A, Credits_Loop6
-	sNoteTimeOut	$00
+	sGate		$00
 	saVol		$FC
 	dc.b nA0, nBb0, nB0
 	saVol		$04
-	sNoteTimeOut	$09
+	sGate		$09
 
 Credits_Loop7:
 	dc.b nC1, $0C
 	sLoop		$00, $0C, Credits_Loop7
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nC1, nA0, nBb0, nB0
-	sNoteTimeOut	$09
+	sGate		$09
 
 Credits_Loop8:
 	dc.b nC1, $0C
 	sLoop		$00, $0C, Credits_Loop8
 	dc.b nC1, $06, nC2
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nA0, $0C, nBb0, nB0
 	saTranspose	$E8
 	saVol		$0C
@@ -1028,12 +1028,12 @@ Credits_Loop14:
 	dc.b nRst, $12, nRst, $60
 	sVoice		$1B
 	ssDetune	$00
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nRst, $3C, nG4, $06, $06, nA4, nC5, nC5
 	dc.b nA4
 	sVoice		$1D
 	saVol		$FA
-	sNoteTimeOut	$00
+	sGate		$00
 	sCall		Credits_Call16
 	dc.b nRst
 	sCall		Credits_Call17
@@ -1237,27 +1237,27 @@ Credits_Loop20:
 	sVoice		$1B
 	saVol		$FB
 	sPan		spCenter
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nG5, $06, $06, nA5, nC6, nC6, nA5
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nE6, $0C
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nC6, $06, nA5, nC6, $0C, nRst, nRst, $12
 	sVoice		$1C
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nC5, nA4, $0C
-	sNoteTimeOut	$06
+	sGate		$06
 	sVoice		$1B
 	dc.b nF6, $06, nF6, nRst, nF6, nRst, nF6
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nFs6, $0C, nG6, nRst
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nG6, $06, $06, nA6, nG6
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nE6, $0C
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nC6, $06, nA5, nC6, $0C
-	sNoteTimeOut	$00
+	sGate		$00
 	sVoice		$1C
 	dc.b nRst, $1E, nF5, $0C, nF5, nC5, $06, nRst
 	dc.b $60, nRst, $60
@@ -1425,15 +1425,15 @@ Credits_Loop26:
 	saVol		$FE
 	saTranspose	$F4
 	sModOff
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nRst, $0C, nE5, $06, $12, $18, nG5, $06
 	dc.b $12, $0C
 	sVoice		$1C
 	sPan		spCenter
 	saVol		$FA
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nA5
-	sNoteTimeOut	$06
+	sGate		$06
 	saVol		$06
 	sVoice		$1E
 	sPan		spRight
@@ -1443,18 +1443,18 @@ Credits_Loop26:
 	sPan		spCenter
 	saTranspose	$0C
 	dc.b nA5, $06, nA5, nRst, nA5, nRst, nA5
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nBb5, $0C, nB5, $06
 	sVoice		$1E
 	sPan		spRight
 	saTranspose	$F4
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nRst, nG5, $06, $12, $0C, nRst, $60
 	sVoice		$20
 	saTranspose	$18
 	saVol		$FA
 	sPan		spCenter
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b nEb4, $03, sHold, nF4, $5D, nD4, $03, sHold
 	dc.b nE4, $5D, nC4, $03, sHold, nD4, $5D, nD4
 	dc.b $03, sHold, nE4, $5D, nRst, $60
@@ -1620,7 +1620,7 @@ Credits_Loop29:
 	dc.b nRst, $2A, nRst, $60
 	sVoice		$1E
 	saTranspose	$F4
-	sNoteTimeOut	$06
+	sGate		$06
 
 Credits_Loop30:
 	dc.b nRst, $0C, nG5, $06, $12, $18, nB5, $06
@@ -1629,7 +1629,7 @@ Credits_Loop30:
 	sLoop		$00, $02, Credits_Loop30
 	dc.b nRst, $60
 	sVoice		$20
-	sNoteTimeOut	$00
+	sGate		$00
 	saTranspose	$18
 	saVol		$FA
 	dc.b nG4, $03, sHold, nA4, $5D, nF4, $03, sHold
@@ -1718,7 +1718,7 @@ Credits_Loop32:
 	dc.b nD5, sHold, nCs5, sHold, nC5, sHold, nB4, sHold
 	dc.b nBb4, sHold, nA4, nRst, $60
 	sVolEnv		v00
-	sNoteTimeOut	$06
+	sGate		$06
 	saTranspose	$F4
 	sCall		Credits_Call38
 	dc.b nF5, nRst, nF5
@@ -1728,7 +1728,7 @@ Credits_Loop32:
 	sVolEnv		v08
 	saTranspose	$04
 	saVol		$10
-	sNoteTimeOut	$06
+	sGate		$06
 
 Credits_Loop34:
 	sCall		Credits_Call39
@@ -1825,7 +1825,7 @@ Credits_Loop42:
 	sLoop		$00, $07, Credits_Loop42
 	sVolEnv		v00
 	saVol		-$10
-	sNoteTimeOut	$06
+	sGate		$06
 	dc.b nRst, $0C, nD5, nRst, nD5, nRst
 	dc.b nD5, nRst, nD5, nRst, $60, nRst, $0C, nD5
 	dc.b nRst, nD5, nRst, nD5, $04, nRst, nD5, nRst
@@ -1919,9 +1919,9 @@ Credits_Loop49:
 	saVol		$20
 
 Credits_Loop50:
-	sNoteTimeOut	$03
+	sGate		$03
 	dc.b nA5, $06, $06
-	sNoteTimeOut	$00
+	sGate		$00
 	dc.b $0C
 	sLoop		$00, $04, Credits_Loop50
 	sVolEnv		v02
@@ -1968,18 +1968,18 @@ Credits_Loop56:
 	sVolEnv		v04
 
 Credits_Loop57:
-	sNoteTimeOut	$03
+	sGate		$03
 	dc.b nA5, $0C
-	sNoteTimeOut	$0C
+	sGate		$0C
 	dc.b $0C
 	sLoop		$00, $1E, Credits_Loop57
-	sNoteTimeOut	$03
+	sGate		$03
 	dc.b nA5, $06
-	sNoteTimeOut	$0E
+	sGate		$0E
 	dc.b $12
-	sNoteTimeOut	$03
+	sGate		$03
 	dc.b $0C
-	sNoteTimeOut	$0F
+	sGate		$0F
 	dc.b $0C
 	sStop
 

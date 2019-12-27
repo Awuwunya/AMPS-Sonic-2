@@ -303,7 +303,7 @@ Results2P_FM4:
 	sJump		Results2P_FM4
 
 Results2P_PSG1:
-	sNoteTimeOut	$0A
+	sGate		$0A
 
 Results2P_Jump2:
 	sCall		Results2P_Call9
@@ -342,7 +342,7 @@ Results2P_Call10:
 	sRet
 
 Results2P_PSG2:
-	sNoteTimeOut	$0A
+	sGate		$0A
 
 Results2P_Jump3:
 	sCall		Results2P_Call12
@@ -375,7 +375,7 @@ Results2P_Call13:
 	sRet
 
 Results2P_PSG3:
-	sNoteTimeOut	$04
+	sGate		$04
 
 Results2P_Jump4:
 	dc.b nF6, $06, nD6, $03, $03, nF6, nRst, nD6

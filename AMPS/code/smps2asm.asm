@@ -4,7 +4,6 @@
 ; Based on Flamewing's SMPS2ASM, and S1SMPS2ASM by Marc (AKA Cinossu)
 ; Reworked and improved by Natsumi
 ; ---------------------------------------------------------------------------------------------
-; ---------------------------------------------------------------------------------------------
 ; Note Equates
 ; ---------------------------------------------------------------------------------------------
 
@@ -33,23 +32,24 @@ sPatNum :=	0
 
 ; Header - Set up Channel Usage
 sHeaderCh	macro fm,psg
-	dc.b fm-1
 
 	if "psg"<>""
+		dc.b psg-1, fm-1
 		if fm>(5+(FEATURE_FM6<>0))
 			warning "You sure there are fm FM channels?"
 		endif
 
-		dc.b psg-1
 		if psg>3
 			warning "You sure there are psg PSG channels?"
 		endif
+	else
+		dc.b fm-1
 	endif
     endm
 
 ; Header - Set up Tempo and Tick Multiplier
 sHeaderTempo	macro tmul,tempo
-	dc.b tmul-1,tempo
+	dc.b tempo,tmul-1
     endm
 
 ; Header - Set priority leve
@@ -424,7 +424,11 @@ sJump		macro loc
 sLoop		macro index,loops,loc
 	dc.b $F7, index
 	dc.w loc-*-2
-	dc.b loops
+	dc.b loops-1
+
+	if loops<2
+		fatal "Invalid number of loops! Must be 2 or more!"
+	endif
     endm
 
 ; F8xxxx - Call pattern at xxxx, saving return point (GOSUB)
@@ -454,7 +458,7 @@ sCondOff	macro
     endm
 
 ; FDxx - Stop note after xx frames (NOTE_STOP - NSTOP_NORMAL)
-sNoteTimeOut	macro val
+sGate		macro val
 	dc.b $FD, val
     endm
 

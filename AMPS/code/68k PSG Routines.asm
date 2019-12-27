@@ -249,9 +249,9 @@ dUpdateVolPSG:
 		cmp.w	#mSFXDAC1,a1		; check if this is a SFX channel
 		bhs.s	.send			; if so, update volume
 
-		tst.b	cNoteTimeMain(a1)	; check if note timeout is active
+		tst.b	cGateMain(a1)		; check if note timeout is active
 		beq.s	.send			; if not, update volume
-		tst.b	cNoteTimeCur(a1)	; is note stopped already?
+		tst.b	cGateCur(a1)		; is note stopped already?
 		beq.s	locret_UpdVolPSG	; if is, do not update
 
 .send

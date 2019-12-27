@@ -430,7 +430,7 @@ SpecialStage_Loop18:
 
 SpecialStage_PSG3:
 	sNoisePSG	$E7
-	sNoteTimeOut	$03
+	sGate		$03
 	dc.b nRst, $60, nRst, nRst
 
 SpecialStage_Loop12:

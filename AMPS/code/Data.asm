@@ -58,18 +58,19 @@ SFXoff =	__mus			; first SFX ID
 __sfx :=	SFXoff
 
 SoundIndex:
-	ptrSFX	0, RingRight, RingLeft, RingLoss, Splash, Break
-	ptrSFX	0, Jump, Roll, Skid, Bubble, Drown, SpikeHit, Death
-	ptrSFX	0, Spindash, Dash, AirDing, Shield, BossHit, Flipper
-	ptrSFX	0, Starpost, Spring, Signpost, Signpost2P, Register
-	ptrSFX	0, Collapse, Smash, Switch, Explode, Zapper, LidPop
-	ptrSFX	0, Elevator, Bumper, TinyBumper, LargeBumper, Stomp
-	ptrSFX	0, LaunchSpring, SlotMachine, GloopDrop, Door
-	ptrSFX	0, LavaBall, Flame, Fire, ArrowFire, ArrowStick, Saw
-	ptrSFX	0, SpikeMove, SpikeSwitch, SpikeRing, PushBlock, Beep
+	ptrSFX	$01, RingRight
+	ptrSFX	0, RingLeft, RingLoss, Splash, Break, Jump, Roll
+	ptrSFX	0, Skid, Bubble, Drown, SpikeHit, Death, Spindash
+	ptrSFX	0, Dash, AirDing, Shield, BossHit, Flipper, Spring
+	ptrSFX	0, Starpost, Signpost, Signpost2P, Register, Smash
+	ptrSFX	0, Collapse, Switch, Explode, Zapper, LidPop, Bumper
+	ptrSFX	0, Elevator, TinyBumper, LargeBumper, Stomp, Door
+	ptrSFX	0, LaunchSpring, SlotMachine, GloopDrop, LavaBall
+	ptrSFX	0, Flame, Fire, ArrowFire, ArrowStick, Saw, TrackLift
+	ptrSFX	0, SpikeMove, SpikeSwitch, SpikeRing, PushBlock
 	ptrSFX	0, Rumble, Rumble2, DrawBridgeMove, DrawBridgeDown
-	ptrSFX	0, Sparkle, Transform, Helicopter, TrackLift, Leaves
-	ptrSFX	0, Lazer, LargeLazer, LazerFloor, PlatformKnock, Swap
+	ptrSFX	0, Sparkle, Transform, Helicopter, Leaves, Beep, Swap
+	ptrSFX	0, Lazer, LargeLazer, LazerFloor, PlatformKnock
 	ptrSFX	0, OilSlide, MechaSonic, Error, EnterSS, Continue
 	ptrSFX	$80, Gloop
 
@@ -213,7 +214,7 @@ ModEnvs_End:
 ; Include music, sound effects and voice table
 ; ---------------------------------------------------------------------------
 
-	include "driver/Voices.asm"	; include universal Voice bank
+	include "AMPS/Voices.asm"	; include universal Voice bank
 
 
 ; include SFX and music
@@ -226,8 +227,8 @@ musend:
 ; ---------------------------------------------------------------------------
 
 		align	$8000		; must be aligned to bank... By the way, these are also set in Z80.asm. Be sure to check it out also.
-fLog:		binclude "driver/filters/Logarithmic.dat"; logarithmic filter (no filter)
-;fLinear:	binclude "driver/filters/Linear.dat"	; linear filter (no filter)
+fLog:		binclude "AMPS/filters/Logarithmic.dat"	; logarithmic filter (no filter)
+;fLinear:	binclude "AMPS/filters/Linear.dat"	; linear filter (no filter)
 
 dacaddr:	asdata Z80E_Read*(MaxPitch/$100), $00
 SWF_Stop:	asdata $8000-(2*Z80E_Read*(MaxPitch/$100)), $80

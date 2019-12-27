@@ -177,7 +177,7 @@ HiddenPalace_Jump2:
 
 HiddenPalace_PSG3:
 	dc.b nRst, $24
-	sNoteTimeOut	$10
+	sGate		$10
 
 HiddenPalace_Loop4:
 	saVol		-$10
