@@ -20,8 +20,8 @@
 ; Other Equates
 ; ---------------------------------------------------------------------------------------------
 
-v00 =	$00
-m00 =	$00
+v00 =		$00
+m00 =		$00
 ; ---------------------------------------------------------------------------------------------
 ; Header Macros
 ; ---------------------------------------------------------------------------------------------
@@ -119,108 +119,110 @@ p{"name"} :=	sPatNum
 	endif
 
 sPatNum :=	sPatNum+1
-spAl	:= val
+spAl :=		val
     endm
 
-spFeedback macro val
-spFe	:= val
+spFeedback	macro val
+spFe :=		val
     endm
 
 ; Patches - Detune
-spDetune macro op1,op2,op3,op4
-spDe1	:= op1
-spDe2	:= op2
-spDe3	:= op3
-spDe4	:= op4
+spDetune	macro op1,op2,op3,op4
+spDe1 :=	op1
+spDe2 :=	op2
+spDe3 :=	op3
+spDe4 :=	op4
     endm
 
 ; Patches - Multiple
-spMultiple macro op1,op2,op3,op4
-spMu1	:= op1
-spMu2	:= op2
-spMu3	:= op3
-spMu4	:= op4
+spMultiple	macro op1,op2,op3,op4
+spMu1 :=	op1
+spMu2 :=	op2
+spMu3 :=	op3
+spMu4 :=	op4
     endm
 
 ; Patches - Rate Scale
-spRateScale macro op1,op2,op3,op4
-spRS1	:= op1
-spRS2	:= op2
-spRS3	:= op3
-spRS4	:= op4
+spRateScale	macro op1,op2,op3,op4
+spRS1 :=	op1
+spRS2 :=	op2
+spRS3 :=	op3
+spRS4 :=	op4
     endm
 
 ; Patches - Attack Rate
-spAttackRt macro op1,op2,op3,op4
-spAR1	:= op1
-spAR2	:= op2
-spAR3	:= op3
-spAR4	:= op4
+spAttackRt	macro op1,op2,op3,op4
+spAR1 :=	op1
+spAR2 :=	op2
+spAR3 :=	op3
+spAR4 :=	op4
     endm
 
 ; Patches - Amplitude Modulation
-spAmpMod macro op1,op2,op3,op4
-spAM1	:= op1
-spAM2	:= op2
-spAM3	:= op3
-spAM4	:= op4
+spAmpMod	macro op1,op2,op3,op4
+spAM1 :=	op1
+spAM2 :=	op2
+spAM3 :=	op3
+spAM4 :=	op4
     endm
 
 ; Patches - Sustain Rate
-spSustainRt macro op1,op2,op3,op4
-spSR1	:= op1		; Also known as decay 1 rate
-spSR2	:= op2
-spSR3	:= op3
-spSR4	:= op4
+spSustainRt	macro op1,op2,op3,op4
+spSR1 :=	op1		; Also known as decay 1 rate
+spSR2 :=	op2
+spSR3 :=	op3
+spSR4 :=	op4
     endm
 
 ; Patches - Sustain Level
-spSustainLv macro op1,op2,op3,op4
-spSL1	:= op1		; also known as decay 1 level
-spSL2	:= op2
-spSL3	:= op3
-spSL4	:= op4
+spSustainLv	macro op1,op2,op3,op4
+spSL1 :=	op1		; also known as decay 1 level
+spSL2 :=	op2
+spSL3 :=	op3
+spSL4 :=	op4
     endm
 
 ; Patches - Decay Rate
-spDecayRt macro op1,op2,op3,op4
-spDR1	:= op1		; Also known as decay 2 rate
-spDR2	:= op2
-spDR3	:= op3
-spDR4	:= op4
+spDecayRt	macro op1,op2,op3,op4
+spDR1 :=	op1		; Also known as decay 2 rate
+spDR2 :=	op2
+spDR3 :=	op3
+spDR4 :=	op4
     endm
 
 ; Patches - Release Rate
-spReleaseRt macro op1,op2,op3,op4
-spRR1	:= op1
-spRR2	:= op2
-spRR3	:= op3
-spRR4	:= op4
+spReleaseRt	macro op1,op2,op3,op4
+spRR1 :=	op1
+spRR2 :=	op2
+spRR3 :=	op3
+spRR4 :=	op4
     endm
 
 ; Patches - SSG-EG
-spSSGEG macro op1,op2,op3,op4
-spSS1	:= op1
-spSS2	:= op2
-spSS3	:= op3
-spSS4	:= op4
+spSSGEG		macro op1,op2,op3,op4
+spSS1 :=	op1
+spSS2 :=	op2
+spSS3 :=	op3
+spSS4 :=	op4
     endm
 
 ; Patches - Total Level
-spTotalLv macro op1,op2,op3,op4
-spTL1	:= op1
-spTL2	:= op2
-spTL3	:= op3
-spTL4	:= op4
+spTotalLv	macro op1,op2,op3,op4
+spTL1 :=	op1
+spTL2 :=	op2
+spTL3 :=	op3
+spTL4 :=	op4
 
 ; Construct the patch finally.
-	dc.b	(spFe<<3)+spAl
+	dc.b (spFe<<3)+spAl
+
 ;   0     1     2     3     4     5     6     7
 ;%1000,%1000,%1000,%1000,%1010,%1110,%1110,%1111
-spTLMask4 := $80
-spTLMask2 := ((spAl>=5)<<7)
-spTLMask3 := ((spAl>=4)<<7)
-spTLMask1 := ((spAl=7)<<7)
+
+spTLMask4 :=	$80
+spTLMask2 :=	((spAl>=5)<<7)
+spTLMask3 :=	((spAl>=4)<<7)
+spTLMask1 :=	((spAl=7)<<7)
 
 	dc.b (spDe1<<4)+spMu1, (spDe3<<4)+spMu3, (spDe2<<4)+spMu2, (spDe4<<4)+spMu4
 	dc.b (spRS1<<6)+spAR1, (spRS3<<6)+spAR3, (spRS2<<6)+spAR2, (spRS4<<6)+spAR4
@@ -237,10 +239,10 @@ spTLMask1 := ((spAl=7)<<7)
 
 ; Patches - Total Level (for broken total level masks)
 spTotalLv2 macro op1,op2,op3,op4
-spTL1	:= op1
-spTL2	:= op2
-spTL3	:= op3
-spTL4	:= op4
+spTL1 :=	op1
+spTL2 :=	op2
+spTL3 :=	op3
+spTL4 :=	op4
 
 	dc.b (spFe<<3)+spAl
 	dc.b (spDe1<<4)+spMu1, (spDe3<<4)+spMu3, (spDe2<<4)+spMu2, (spDe4<<4)+spMu4
@@ -351,13 +353,13 @@ sModePitchDAC	macro
     endm
 
 ; EDxx - Add xx to channel volume (VOLUME - VOL_CN_FM / VOL_CN_PSG / VOL_CN_DAC)
-saVol		macro vol
-	dc.b $ED, vol
+saVol		macro volume
+	dc.b $ED, volume
     endm
 
 ; EExx - Set channel volume to xx (VOLUME - VOL_CN_ABS)
-ssVol		macro vol
-	dc.b $EE, vol
+ssVol		macro volume
+	dc.b $EE, volume
     endm
 
 ; EFxxyy - Enable/Disable LFO (SET_LFO - LFO_AMSEN)
@@ -389,18 +391,18 @@ sModData	macro wait, speed, step, count
     endm
 
 ; F1xx - Set portamento speed to xx frames. 0 means portamento is disabled (PORTAMENTO)
-ssPortamento	macro vol
-	dc.b $F1, vol
+ssPortamento	macro frames
+	dc.b $F1, frames
     endm
 
 ; FF00 - Turn on Modulation (MOD_SET - MODS_ON)
 sModOn		macro
-	dc.b $FF, $00
+	dc.b $FF,$00
     endm
 
 ; FF04 - Turn off Modulation (MOD_SET - MODS_OFF)
 sModOff		macro
-	dc.b $FF, $04
+	dc.b $FF,$04
     endm
 
 ; F4xxxx - Keep looping back to xxxx each time the SFX is being played (CONT_SFX)
@@ -527,8 +529,8 @@ sBackup		macro
     endm
 
 ; FF3Cxx - PSG4 noise mode xx (PSG_NOISE - PNOIS_AMPS)
-sNoisePSG	macro val
-	dc.b $FF, $3C, val
+sNoisePSG	macro mode
+	dc.b $FF,$3C, mode
     endm
 
 ; FF40 - Freeze 68k. Debug flag (DEBUG_STOP_CPU)
