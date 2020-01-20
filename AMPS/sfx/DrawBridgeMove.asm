@@ -1,4 +1,4 @@
-	sHeaderInit						; Z80 offset is $FDDF
+	sHeaderInitSFX						; Z80 offset is $FDDF
 	sHeaderPrio	$6F
 	sHeaderCh	$01
 	sHeaderSFX	$A1, ctPSG3, .PSG3, $00+$0C, $00

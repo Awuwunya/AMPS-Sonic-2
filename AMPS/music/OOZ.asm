@@ -9,8 +9,8 @@ OilOcean_Header:
 	sHeaderFM	OilOcean_FM3, $C4, $09
 	sHeaderFM	OilOcean_FM4, $F4, $10
 	sHeaderFM	OilOcean_FM5, $F4, $10
-	sHeaderPSG	OilOcean_PSG1, $D0+$0C, $20, $00, v00
-	sHeaderPSG	OilOcean_PSG2, $D0+$0C, $28, $00, v00
+	sHeaderPSG	OilOcean_PSG1, $D0+$0C, $20, $00, vNone
+	sHeaderPSG	OilOcean_PSG2, $D0+$0C, $28, $00, vNone
 	sHeaderPSG	OilOcean_PSG3, $FE+$0C, $38, $00, v01
 
 	; Patch $00
@@ -346,7 +346,7 @@ OilOcean_PSG1:
 OilOcean_Jump2:
 	saVol		$18
 	dc.b nRst, $60, $60
-	sVolEnv		v00
+	sVolEnv		vNone
 	saVol		-$18
 	sCall		OilOcean_Call3
 	sCall		OilOcean_Call5
@@ -368,7 +368,7 @@ OilOcean_Jump3:
 	dc.b nAb6, $01, nG6, $0B, nEb6, $01, nD6, $30
 	dc.b sHold, $30, sHold, $05
 	saVol		$10
-	sVolEnv		v00
+	sVolEnv		vNone
 	saVol		-$18
 	sCall		OilOcean_Call3
 	sCall		OilOcean_Call5

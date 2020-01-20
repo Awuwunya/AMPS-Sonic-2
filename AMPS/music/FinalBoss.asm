@@ -9,7 +9,7 @@ FinalBoss_Header:
 	sHeaderFM	FinalBoss_FM3, $E8, $0E
 	sHeaderFM	FinalBoss_FM4, $F4, $14
 	sHeaderFM	FinalBoss_FM5, $F4, $14
-	sHeaderPSG	FinalBoss_PSG1, $D0+$0C, $30, $00, v00
+	sHeaderPSG	FinalBoss_PSG1, $D0+$0C, $30, $00, vNone
 	sHeaderPSG	FinalBoss_PSG2, $F4+$0C, $28, $00, v08
 	sHeaderPSG	FinalBoss_PSG3, $FE+$0C, $18, $00, v04
 

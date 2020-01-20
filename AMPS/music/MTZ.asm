@@ -9,8 +9,8 @@ Metropolis_Header:
 	sHeaderFM	Metropolis_FM3, $0C, $14
 	sHeaderFM	Metropolis_FM4, $0C, $16
 	sHeaderFM	Metropolis_FM5, $0C, $16
-	sHeaderPSG	Metropolis_PSG1, $E8+$0C, $30, $00, v00
-	sHeaderPSG	Metropolis_PSG2, $DC+$0C, $40, $00, v00
+	sHeaderPSG	Metropolis_PSG1, $E8+$0C, $30, $00, vNone
+	sHeaderPSG	Metropolis_PSG2, $DC+$0C, $40, $00, vNone
 	sHeaderPSG	Metropolis_PSG3, $00+$0C, $10, $00, v03
 
 	; Patch $00

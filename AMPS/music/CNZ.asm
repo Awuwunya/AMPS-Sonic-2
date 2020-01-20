@@ -9,9 +9,9 @@ CasinoNight_Header:
 	sHeaderFM	CasinoNight_FM3, $F4, $12
 	sHeaderFM	CasinoNight_FM4, $F4, $12
 	sHeaderFM	CasinoNight_FM5, $F4, $0F
-	sHeaderPSG	CasinoNight_PSG1, $DC+$0C, $28, $00, v00
-	sHeaderPSG	CasinoNight_PSG2, $DC+$0C, $28, $00, v00
-	sHeaderPSG	CasinoNight_PSG3, $00, $20, $00, v00
+	sHeaderPSG	CasinoNight_PSG1, $DC+$0C, $28, $00, vNone
+	sHeaderPSG	CasinoNight_PSG2, $DC+$0C, $28, $00, vNone
+	sHeaderPSG	CasinoNight_PSG3, $00, $20, $00, vNone
 
 	; Patch $00
 	; $3A
@@ -322,7 +322,7 @@ CasinoNight_Jump6:
 	saVol		-$08
 	sCall		CasinoNight_Call1
 	saVol		$08
-	sVolEnv		v00
+	sVolEnv		vNone
 	saTranspose	$E8
 	sCall		CasinoNight_Call2
 	saTranspose	$18
@@ -353,7 +353,7 @@ CasinoNight_Jump7:
 	saVol		-$08
 	sCall		CasinoNight_Call3
 	saVol		$08
-	sVolEnv		v00
+	sVolEnv		vNone
 	saTranspose	$E8
 	sCall		CasinoNight_Call4
 	saTranspose	$18

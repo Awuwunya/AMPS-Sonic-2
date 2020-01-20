@@ -468,7 +468,7 @@ EmeraldHill_Loop5:
 	sModOff
 	saVol		-$18
 	dc.b nRst, $20, nRst
-	sVolEnv		v00
+	sVolEnv		vNone
 	ssDetune	$01
 	saVol		$08
 	dc.b nRst, nB5, $02, nRst, $06, nC6, $04, nB5
@@ -479,7 +479,7 @@ EmeraldHill_Loop5:
 	saVol		$18
 	dc.b nB5, $02, nRst, $02
 	saVol		-$30
-	sVolEnv		v00
+	sVolEnv		vNone
 	dc.b nRst, $20, nRst, nRst, nRst, nRst, nRst
 	saVol		$08
 	dc.b nRst, nB5, $02, nRst, $06, nC6, $04, nB5

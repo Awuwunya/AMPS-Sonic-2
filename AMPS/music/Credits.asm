@@ -1717,7 +1717,7 @@ Credits_Loop32:
 	dc.b nFs5, sHold, nF5, sHold, nE5, sHold, nEb5, sHold
 	dc.b nD5, sHold, nCs5, sHold, nC5, sHold, nB4, sHold
 	dc.b nBb4, sHold, nA4, nRst, $60
-	sVolEnv		v00
+	sVolEnv		vNone
 	sGate		$06
 	saTranspose	$F4
 	sCall		Credits_Call38
@@ -1737,7 +1737,7 @@ Credits_Loop34:
 Credits_Loop35:
 	dc.b nRst, $60
 	sLoop		$00, $07, Credits_Loop35
-	sVolEnv		v00
+	sVolEnv		vNone
 	saTranspose	$F0
 	saVol		-$08
 	sCall		Credits_Call23
@@ -1823,7 +1823,7 @@ Credits_Loop41:
 Credits_Loop42:
 	dc.b nRst, $60
 	sLoop		$00, $07, Credits_Loop42
-	sVolEnv		v00
+	sVolEnv		vNone
 	saVol		-$10
 	sGate		$06
 	dc.b nRst, $0C, nD5, nRst, nD5, nRst
@@ -1839,7 +1839,7 @@ Credits_Loop43:
 Credits_Loop44:
 	dc.b nRst, $60
 	sLoop		$00, $07, Credits_Loop44
-	sVolEnv		v00
+	sVolEnv		vNone
 ;	saTranspose	$F4
 	saVol		-$08
 	saTranspose	$E8

@@ -17,17 +17,17 @@
 	enum nC7=$D5,nCs7,nD7,nEb7,nE7,nF7,nFs7,nG7,nAb7,nA7,nBb7
 	enum nRst=$80, nHiHat=nA6
 ; ---------------------------------------------------------------------------------------------
-; Other Equates
-; ---------------------------------------------------------------------------------------------
-
-v00 =		$00
-m00 =		$00
-; ---------------------------------------------------------------------------------------------
 ; Header Macros
 ; ---------------------------------------------------------------------------------------------
 
+; Header - Initialize a music file
 sHeaderInit	macro
 sPatNum :=	0
+    endm
+
+; Header - Initialize a sound effect file
+sHeaderInitSFX	macro
+
     endm
 
 ; Header - Set up Channel Usage

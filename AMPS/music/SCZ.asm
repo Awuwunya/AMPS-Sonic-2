@@ -9,8 +9,8 @@ SkyChase_Header:
 	sHeaderFM	SkyChase_FM3, $F4, $09
 	sHeaderFM	SkyChase_FM4, $F4, $10
 	sHeaderFM	SkyChase_FM5, $DC, $24
-	sHeaderPSG	SkyChase_PSG1, $F4+$0C, $60, $00, v00
-	sHeaderPSG	SkyChase_PSG2, $F9+$0C, $48, $00, v00
+	sHeaderPSG	SkyChase_PSG1, $F4+$0C, $60, $00, vNone
+	sHeaderPSG	SkyChase_PSG2, $F9+$0C, $48, $00, vNone
 	sHeaderPSG	SkyChase_PSG3, $00, $20, $00, v04
 
 	; Patch $00

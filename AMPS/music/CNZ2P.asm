@@ -9,9 +9,9 @@ CasionNight2P_Header:
 	sHeaderFM	CasionNight2P_FM3, $F4, $10
 	sHeaderFM	CasionNight2P_FM4, $E8, $0E
 	sHeaderFM	CasionNight2P_FM5, $F4, $10
-	sHeaderPSG	CasionNight2P_PSG1, $D0+$0C, $20, $00, v00
-	sHeaderPSG	CasionNight2P_PSG2, $D0+$0C, $20, $00, v00
-	sHeaderPSG	CasionNight2P_PSG3, $C4+$0C, $28, $00, v00
+	sHeaderPSG	CasionNight2P_PSG1, $D0+$0C, $20, $00, vNone
+	sHeaderPSG	CasionNight2P_PSG2, $D0+$0C, $20, $00, vNone
+	sHeaderPSG	CasionNight2P_PSG3, $C4+$0C, $28, $00, vNone
 
 	; Patch $00
 	; $08

@@ -9,9 +9,9 @@ EmeraldHill2P_Header:
 	sHeaderFM	EmeraldHill2P_FM3, $F4, $0A
 	sHeaderFM	EmeraldHill2P_FM4, $F4, $10
 	sHeaderFM	EmeraldHill2P_FM5, $E8, $10
-	sHeaderPSG	EmeraldHill2P_PSG1, $D0+$0C, $30, $00, v00
-	sHeaderPSG	EmeraldHill2P_PSG2, $D0+$0C, $30, $00, v00
-	sHeaderPSG	EmeraldHill2P_PSG3, $00, $28, $00, v00
+	sHeaderPSG	EmeraldHill2P_PSG1, $D0+$0C, $30, $00, vNone
+	sHeaderPSG	EmeraldHill2P_PSG2, $D0+$0C, $30, $00, vNone
+	sHeaderPSG	EmeraldHill2P_PSG3, $00, $28, $00, vNone
 
 	; Patch $00
 	; $20

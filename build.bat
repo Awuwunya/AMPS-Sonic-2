@@ -55,7 +55,7 @@ IF NOT "%1"=="" goto parseloop
 
 echo Assembling...
 
-"AMPS/AMPS Includer.exe" AS AMPS AMPS/.Data
+"AMPS/Includer.exe" AS AMPS AMPS/.Data
 "win32/as/asw" -xx -c %debug_syms% %print_err% -A -L %revision_override% s2.asm
 
 REM // if there were errors, there won't be any s2.p output

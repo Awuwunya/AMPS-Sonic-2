@@ -1,4 +1,4 @@
-	sHeaderInit						; Z80 offset is $FF91
+	sHeaderInitSFX						; Z80 offset is $FF91
 	sHeaderPrio	$78
 	sHeaderCh	$03
 	sHeaderSFX	$80, ctFM5, .FM5, $00, $0B

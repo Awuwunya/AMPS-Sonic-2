@@ -9,8 +9,8 @@ ChemicalPlant_Header:
 	sHeaderFM	ChemicalPlant_FM3, $00, $10
 	sHeaderFM	ChemicalPlant_FM4, $00, $10
 	sHeaderFM	ChemicalPlant_FM5, $00, $10
-	sHeaderPSG	ChemicalPlant_PSG1, $00, $00, $00, v00
-	sHeaderPSG	ChemicalPlant_PSG2, $00, $00, $00, v00
+	sHeaderPSG	ChemicalPlant_PSG1, $00, $00, $00, vNone
+	sHeaderPSG	ChemicalPlant_PSG2, $00, $00, $00, vNone
 	sHeaderPSG	ChemicalPlant_PSG3, $00, $00, $00, v02
 
 	; Patch $00

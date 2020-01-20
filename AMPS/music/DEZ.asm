@@ -9,8 +9,8 @@ DeathEgg_Header:
 	sHeaderFM	DeathEgg_FM3, $00, $10
 	sHeaderFM	DeathEgg_FM4, $00, $10
 	sHeaderFM	DeathEgg_FM5, $00, $06
-	sHeaderPSG	DeathEgg_PSG1, $E8+$0C, $30, $00, v00
-	sHeaderPSG	DeathEgg_PSG2, $E8+$0C, $30, $00, v00
+	sHeaderPSG	DeathEgg_PSG1, $E8+$0C, $30, $00, vNone
+	sHeaderPSG	DeathEgg_PSG2, $E8+$0C, $30, $00, vNone
 	sHeaderPSG	DeathEgg_PSG3, $00, $10, $00, v01
 
 	; Patch $00

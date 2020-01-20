@@ -9,7 +9,7 @@ HiddenPalace_Header:
 	sHeaderFM	HiddenPalace_FM3, $00, $14
 	sHeaderFM	HiddenPalace_FM4, $00, $0E
 	sHeaderFM	HiddenPalace_FM5, $F4, $14
-	sHeaderPSG	HiddenPalace_PSG1, $E8+$0C, $30, $00, v00
+	sHeaderPSG	HiddenPalace_PSG1, $E8+$0C, $30, $00, vNone
 	sHeaderPSG	HiddenPalace_PSG2, $E8+$0C, $40, $00, v08
 	sHeaderPSG	HiddenPalace_PSG3, $F4+$0C, $40, $00, v08
 

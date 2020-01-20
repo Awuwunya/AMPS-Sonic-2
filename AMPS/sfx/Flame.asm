@@ -1,4 +1,4 @@
-	sHeaderInit						; Z80 offset is $F28E
+	sHeaderInitSFX						; Z80 offset is $F28E
 	sHeaderPrio	$60
 	sHeaderCh	$02
 	sHeaderSFX	$80, ctFM5, .FM5, $00, $00
@@ -12,7 +12,7 @@
 	sStop
 
 .PSG3
-	sVolEnv		v00
+	sVolEnv		vNone
 	dc.b nRst, $0B
 	sNoisePSG	$E7
 	dc.b nD3, $25, sHold

@@ -1,4 +1,4 @@
-	sHeaderInit						; Z80 offset is $FB19
+	sHeaderInitSFX						; Z80 offset is $FB19
 	sHeaderPrio	$60
 	sHeaderCh	$02
 	sHeaderSFX	$80, ctFM4, .FM4, $00, $0E
@@ -15,7 +15,7 @@
 	sStop
 
 .PSG3
-	sVolEnv		v00
+	sVolEnv		vNone
 	sNoisePSG	$E7
 	dc.b nD3, $40
 
