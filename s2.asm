@@ -191,7 +191,7 @@ PortA_Ok:
 	move.b	HW_Version-Z80_Bus_Request(a1),d0	; Get hardware version
 	andi.b	#$F,d0	; Compare
 	beq.s	SkipSecurity	; If the console has no TMSS, skip the security stuff.
-	move.l	#'SEGA',Security_Addr-Z80_Bus_Request(a1) ; Satisfy the TMSS
+	move.l	Header.w,Security_Addr-Z80_Bus_Request(a1) ; Satisfy the TMSS
 ; loc_234:
 SkipSecurity:
 	move.w	(a4),d0	; check if VDP works
@@ -38346,12 +38346,6 @@ Obj_TailsTailsAni_Hanging:	dc.b   9,$81,$82,$83,$84,$FF
 
 JmpTo2_KillCharacter
 	jmp	(KillCharacter).l
-; ===========================================================================
-	align 4
-
-
-
-
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Object 0A - Small bubbles from Sonic's face while underwater
@@ -88123,14 +88117,7 @@ MiscKoz_SpecialLevelLayout:	BINCLUDE	"misc/Special stage level layouts (Nemesis 
 ; Special stage object location list (Kosinski compression)	; MiscKoz_E35F2:
 ;--------------------------------------------------------------------------------------
 MiscKoz_SpecialObjectLocations:	BINCLUDE	"misc/Special stage object location lists (Kosinski compression).bin"
-
-;--------------------------------------------------------------------------------------
-; Filler (free space) (unnecessary; could be replaced with "even")
-;--------------------------------------------------------------------------------------
-	align $100
-
-
-
+	even
 
 ;--------------------------------------------------------------------------------------
 ; Offset index of ring locations
@@ -88208,12 +88195,7 @@ Rings_ARZ_1:	BINCLUDE	"level/rings/ARZ_1.bin"
 Rings_ARZ_2:	BINCLUDE	"level/rings/ARZ_2.bin"
 Rings_SCZ_1:	BINCLUDE	"level/rings/SCZ_1.bin"
 Rings_SCZ_2:	BINCLUDE	"level/rings/SCZ_2.bin"
-
-; --------------------------------------------------------------------------------------
-; Filler (free space) (unnecessary; could be replaced with "even")
-; --------------------------------------------------------------------------------------
-	align $200
-
+	even
 ; --------------------------------------------------------------------------------------
 ; Offset index of object locations
 ; --------------------------------------------------------------------------------------
@@ -88476,17 +88458,18 @@ ArtNem_MCZGateLog:	BINCLUDE	"art/nemesis/Drawbridge logs from MCZ.bin"
 ; --------------------------------------------------------------------
 ; Include AMPS related files
 ; --------------------------------------------------------------------
-	include "AMPS/code/68k.asm"
+	!align		$1000			; putting this here because it fixes the pc-related ASS bugs
+	include "AMPS/code/68k.asm"		; fucking hate doing it but... AS is broken
 
 DualPCM:
-	save
-	!org 0
-	cpu z80undoc
-	include "AMPS/code/z80.asm"
+	save					; save processor flags
+	!org 0					; go to address 0 in Z80 ROM
+	cpu z80undoc				; use Z80 with (broken) undocumented instructions support
+	include "AMPS/code/z80.asm"		; include Z80 code
 
 DualPCM_sz:
-	cpu 68000
-	restore
+	cpu 68000				; switch back to 68000
+	restore					; restore processor flags
 	!org (DualPCM+Size_of_Snd_driver_guess)	; don't worry; I know what I'm doing
 
 ; --------------------------------------------------------------------

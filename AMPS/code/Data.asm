@@ -229,7 +229,7 @@ musend:
 ; Include samples and filters
 ; ---------------------------------------------------------------------------
 
-		align	$8000		; must be aligned to bank... By the way, these are also set in Z80.asm. Be sure to check it out also.
+		align	$8000		; must be aligned to bank... By the way, these are also set in Z80.asm. Be sure to check it out.
 fLog:		binclude "AMPS/filters/Logarithmic.dat"	; logarithmic filter (no filter)
 ;fLinear:	binclude "AMPS/filters/Linear.dat"	; linear filter (no filter)
 
