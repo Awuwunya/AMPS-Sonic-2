@@ -35,9 +35,8 @@
 ; Define music and SFX
 ; ---------------------------------------------------------------------------
 
-;	opt oz-				; disable zero-offset optimization
 	if safe=0
-	;	nolist			; if in safe mode, list data section.
+		listings off		; if in safe mode, list data section.
 	endif
 
 __mus :=	MusOff
@@ -217,8 +216,7 @@ ModEnvs_End:
 ; Include music, sound effects and voice table
 ; ---------------------------------------------------------------------------
 
-	include "AMPS/Voices.asm"	; include universal Voice bank
-
+	include "AMPS/Voices.s2a"	; include universal Voice bank
 
 ; include SFX and music
 sfxaddr:	incSFX
@@ -240,5 +238,6 @@ SWFR_Stop:	asdata Z80E_Read*(MaxPitch/$100), $00
 	incSWF	Kick, Snare, Clap, Tom, Timpani, Bongo
 	incSWF	Scratch, SEGA
 	even
-;	list				; continue source listing
+
+	listing on			; continue source listing
 ; ===========================================================================

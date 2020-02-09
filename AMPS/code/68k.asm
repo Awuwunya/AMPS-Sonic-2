@@ -1,5 +1,3 @@
-;	opt oz+						; enable zero-offset optimization
-;	opt l.						; local lables are dots
 	padding off
 
 	include "AMPS/code/68k Macro Routines.asm"	; include macro'd routines
