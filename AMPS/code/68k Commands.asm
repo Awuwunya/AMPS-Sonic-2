@@ -356,11 +356,11 @@ dcaTempoCur:
 ; ---------------------------------------------------------------------------
 
 dcNoisePSG:
+		move.b	(a2)+,d3		; load PSG4 status to d3
 	if safe=1
 		AMPS_Debug_dcNoisePSG		; check if this is a PSG3 channel
 	endif
 
-		move.b	(a2)+,d3		; load PSG4 status to d3
 		move.b	d3,cStatPSG4(a1)	; save status
 		beq.s	.psg3			; if disabling PSG4 mode, branch
 		move.b	#ctPSG4,cType(a1)	; make PSG3 act on behalf of PSG4

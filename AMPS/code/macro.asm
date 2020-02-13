@@ -528,7 +528,7 @@ WriteYM2	macro reg, value
 
 CheckCue	macro
 	if safe=1
-		AMPS_Debug_CuePtr Gen		; check if cue pointer is valid
+		AMPS_Debug_CuePtr Gen	; check if cue pointer is valid
 	endif
     endm
 ; ===========================================================================
@@ -594,7 +594,7 @@ __LABEL__	label *
 ; ---------------------------------------------------------------------------
 
 incSWF		macro file
-	if "file"<>""			; repeate for all arguments
+	if "file"<>""			; repeat for all arguments
 SWF_file	equ *
 		binclude "AMPS/DAC/incswf/file.swf"; include PCM data
 SWFR_file	equ *
@@ -610,13 +610,13 @@ SWFR_file	equ *
 ; ---------------------------------------------------------------------------
 
 sample		macro freq, start, loop, name
-	if "name"<>""		; if we have 4 arguments, we'd like a custom name
-d{"name"} =	__samp		; use the extra argument to create SMPS2ASM equate
+	if "name"<>""			; if we have 4 arguments, we'd like a custom name
+d{"name"} =	__samp			; use the extra argument to create SMPS2ASM equate
 	else
-d{"start"} =	__samp		; else, use the first one!
+d{"start"} =	__samp			; else, use the first one!
 	endif
 
-__samp :=	__samp+1	; increase sample ID
+__samp :=	__samp+1		; increase sample ID
 
 ; create offsets for the sample normal, reverse, loop normal, loop reverse.
 	if ("start"="Stop")|("start"="STOP")|("start"="stop")
@@ -633,8 +633,8 @@ __samp :=	__samp+1	; increase sample ID
 		dc.b (SWFR_loop-1)&$FF,(((SWFR_loop-1)>>$08)&$7F)|$80,((SWFR_loop-1)>>$0F)&$FF
 	endif
 
-	dc.w freq-$100		; sample frequency (actually offset, so we remove $100)
-	dc.w 0			; unused!
+	dc.w freq-$100			; sample frequency (actually offset, so we remove $100)
+	dc.w 0				; unused!
     endm
 ; ===========================================================================
 ; ---------------------------------------------------------------------------

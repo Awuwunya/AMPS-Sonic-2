@@ -4,7 +4,22 @@
 ; make it easier to debug built ROMS! If you would like easier
 ; assistance from Natsumi, please keep this section intact!
 ; ---------------------------------------------------------------------------
-	dc.b "AMPS-AS-1.1 "		; ident str
+	dc.b "AMPS-v1.1"		; ident str
+
+	if safe
+		dc.b "s"		; safe mode enabled
+
+	else
+		dc.b " "		; safe mode disabled
+	endif
+
+	if FEATURE_FM6
+		dc.b "F6"		; FM6 enabled
+	endif
+
+	if FEATURE_SFX_MASTERVOL
+		dc.b "SM"		; sfx ignore master volume
+	endif
 
 	if FEATURE_UNDERWATER
 		dc.b "UW"		; underwater mode enabled
