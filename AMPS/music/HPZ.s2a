@@ -26,9 +26,10 @@ HiddenPalace_Header:
 	spAttackRt	$1D, $1D, $1D, $0A
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $00, $00, $00
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$00, $00, $00, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$05, $04, $05, $0A
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$1E, $28, $1E, $09
 
 	; Patch $01
@@ -44,9 +45,10 @@ HiddenPalace_Header:
 	spAttackRt	$12, $14, $16, $0C
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0A, $0A, $06, $04
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$01, $05, $02, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$06, $06, $06, $06
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$1F, $1C, $22, $00
 
 	; Patch $02
@@ -62,9 +64,10 @@ HiddenPalace_Header:
 	spAttackRt	$0F, $1A, $18, $11
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $0B, $16, $00
-	spDecayRt	$04, $00, $00, $00
 	spSustainLv	$05, $00, $01, $00
+	spDecayRt	$04, $00, $00, $00
 	spReleaseRt	$00, $00, $00, $0A
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$1B, $1E, $1F, $00
 
 	; Patch $03
@@ -80,9 +83,10 @@ HiddenPalace_Header:
 	spAttackRt	$17, $1A, $18, $11
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$17, $0B, $16, $00
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$01, $00, $01, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$00, $00, $00, $0A
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$20, $21, $11, $00
 
 HiddenPalace_FM5:

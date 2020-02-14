@@ -26,9 +26,10 @@ CasionNight2P_Header:
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$12, $0A, $0E, $0A
-	spDecayRt	$00, $04, $04, $03
 	spSustainLv	$02, $02, $02, $02
+	spDecayRt	$00, $04, $04, $03
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$25, $13, $30, $00
 
 	; Patch $01
@@ -44,9 +45,10 @@ CasionNight2P_Header:
 	spAttackRt	$0E, $0D, $0E, $13
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $0E, $0E, $03
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$01, $01, $0F, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$17, $27, $28, $00
 
 	; Patch $02
@@ -62,9 +64,10 @@ CasionNight2P_Header:
 	spAttackRt	$0E, $0D, $0E, $13
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $0E, $0E, $03
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$01, $01, $0F, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$17, $20, $28, $00
 
 	; Patch $03
@@ -80,9 +83,10 @@ CasionNight2P_Header:
 	spAttackRt	$0E, $0D, $0E, $13
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $0E, $0E, $03
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$01, $01, $0F, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$18, $16, $4E, $00
 
 	; Patch $04
@@ -98,9 +102,10 @@ CasionNight2P_Header:
 	spAttackRt	$1F, $1C, $18, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$10, $04, $0A, $04
-	spDecayRt	$0F, $08, $08, $08
 	spSustainLv	$05, $0B, $05, $0B
+	spDecayRt	$0F, $08, $08, $08
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$14, $17, $2B, $00
 
 CasionNight2P_FM1:

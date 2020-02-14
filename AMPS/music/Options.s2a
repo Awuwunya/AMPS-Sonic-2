@@ -26,9 +26,10 @@ Options_Header:
 	spAttackRt	$1F, $1F, $1E, $1E
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0F, $0E, $11, $12
-	spDecayRt	$0E, $08, $05, $08
 	spSustainLv	$05, $06, $00, $00
+	spDecayRt	$0E, $08, $05, $08
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$25, $2F, $2D, $00
 
 	; Patch $01
@@ -44,9 +45,10 @@ Options_Header:
 	spAttackRt	$10, $0F, $0D, $13
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $0E, $0E, $05
-	spDecayRt	$02, $02, $03, $04
 	spSustainLv	$01, $01, $0F, $00
+	spDecayRt	$02, $02, $03, $04
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$16, $27, $28, $00
 
 	; Patch $02
@@ -62,9 +64,10 @@ Options_Header:
 	spAttackRt	$18, $1D, $18, $1A
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$05, $05, $09, $06
-	spDecayRt	$03, $04, $01, $04
 	spSustainLv	$01, $00, $00, $0A
+	spDecayRt	$03, $04, $01, $04
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$21, $31, $47, $00
 
 	; Patch $03
@@ -80,9 +83,10 @@ Options_Header:
 	spAttackRt	$0F, $0F, $0E, $0E
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $00, $02, $02
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$00, $00, $03, $03
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$02, $02, $07, $08
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$1E, $1F, $00, $00
 
 	; Patch $04
@@ -98,9 +102,10 @@ Options_Header:
 	spAttackRt	$0C, $0E, $18, $0E
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0A, $06, $0D, $06
-	spDecayRt	$00, $00, $00, $01
 	spSustainLv	$01, $00, $0F, $05
+	spDecayRt	$00, $00, $00, $01
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$1F, $3B, $2E, $00
 
 Options_FM4:

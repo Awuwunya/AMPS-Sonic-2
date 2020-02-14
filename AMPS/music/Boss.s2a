@@ -26,9 +26,10 @@ Boss_Header:
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$07, $09, $06, $06
-	spDecayRt	$07, $06, $06, $08
 	spSustainLv	$02, $01, $01, $0F
+	spDecayRt	$07, $06, $06, $08
 	spReleaseRt	$09, $09, $09, $09
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$1C, $16, $3A, $00
 
 	; Patch $01
@@ -44,9 +45,10 @@ Boss_Header:
 	spAttackRt	$0F, $0F, $0F, $0D
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$09, $00, $09, $03
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$01, $00, $0F, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$05, $05, $05, $0A
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$19, $19, $1F, $01
 
 	; Patch $02
@@ -62,9 +64,10 @@ Boss_Header:
 	spAttackRt	$0E, $0D, $0E, $13
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $0E, $0E, $03
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$01, $01, $0F, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$17, $27, $28, $06
 
 	; Patch $03
@@ -80,9 +83,10 @@ Boss_Header:
 	spAttackRt	$0F, $0F, $0B, $0F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$1F, $1F, $1F, $0F
-	spDecayRt	$00, $00, $00, $02
 	spSustainLv	$00, $00, $00, $01
+	spDecayRt	$00, $00, $00, $02
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$1C, $22, $28, $01
 
 Boss_FM1:

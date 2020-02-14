@@ -26,9 +26,10 @@ OilOcean_Header:
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$11, $13, $0F, $09
-	spDecayRt	$05, $04, $04, $03
 	spSustainLv	$02, $02, $02, $02
+	spDecayRt	$05, $04, $04, $03
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$23, $17, $2C, $00
 
 	; Patch $01
@@ -44,9 +45,10 @@ OilOcean_Header:
 	spAttackRt	$12, $0F, $11, $16
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $0E, $0E, $03
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$01, $01, $0F, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$17, $27, $28, $00
 
 	; Patch $02
@@ -62,9 +64,10 @@ OilOcean_Header:
 	spAttackRt	$0E, $15, $15, $18
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $14, $11, $04
-	spDecayRt	$23, $06, $22, $05
 	spSustainLv	$03, $02, $04, $00
+	spDecayRt	$23, $06, $22, $05
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$19, $07, $0E, $07
 
 	; Patch $03
@@ -80,9 +83,10 @@ OilOcean_Header:
 	spAttackRt	$1C, $17, $1C, $12
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0F, $12, $14, $12
-	spDecayRt	$00, $0A, $00, $0A
 	spSustainLv	$0F, $0F, $0F, $0F
+	spDecayRt	$00, $0A, $00, $0A
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$05, $00, $00, $00
 
 	; Patch $04
@@ -98,9 +102,10 @@ OilOcean_Header:
 	spAttackRt	$0D, $0D, $0D, $0E
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$09, $06, $06, $06
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$01, $02, $02, $02
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$10, $17, $14, $00
 
 	; Patch $05
@@ -116,9 +121,10 @@ OilOcean_Header:
 	spAttackRt	$11, $0E, $1E, $0F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $04, $0A, $04
-	spDecayRt	$03, $00, $02, $00
 	spSustainLv	$03, $02, $04, $00
+	spDecayRt	$03, $00, $02, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$0F, $33, $10, $00
 
 OilOcean_FM1:

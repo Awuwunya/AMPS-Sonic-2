@@ -624,7 +624,7 @@ AMPS_Debug_dcNoisePSG	macro
 
 .ckch
 	cmp.b	#ctPSG3,cType(a1); check if this is PSG3 or PSG4 channel
-	bhs.s	.ck2		; if is, branch
+	bhs.s	.ok		; if is, branch
 
 	if isAMPS		; check if Vladik's debugger is active
 		RaiseError "sNoisePSG on an invalid channel!", AMPS_Debug_Console_Channel

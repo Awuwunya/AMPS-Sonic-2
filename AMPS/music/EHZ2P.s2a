@@ -26,9 +26,10 @@ EmeraldHill2P_Header:
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $09, $06, $0C
-	spDecayRt	$07, $06, $06, $08
 	spSustainLv	$02, $01, $01, $0F
+	spDecayRt	$07, $06, $06, $08
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$1C, $16, $3A, $00
 
 	; Patch $01
@@ -44,9 +45,10 @@ EmeraldHill2P_Header:
 	spAttackRt	$1F, $19, $19, $19
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0A, $05, $05, $05
-	spDecayRt	$00, $02, $02, $02
 	spSustainLv	$03, $02, $02, $02
+	spDecayRt	$00, $02, $02, $02
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$28, $06, $00, $0D
 
 	; Patch $02
@@ -62,9 +64,10 @@ EmeraldHill2P_Header:
 	spAttackRt	$1D, $1D, $1D, $10
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$04, $1F, $0F, $1F
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$01, $00, $05, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$22, $22, $1E, $00
 
 	; Patch $03
@@ -80,9 +83,10 @@ EmeraldHill2P_Header:
 	spAttackRt	$12, $0E, $0D, $14
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0D, $00, $0C, $03
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$0F, $00, $02, $05
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$16, $1D, $2A, $00
 
 	; Patch $04
@@ -98,9 +102,10 @@ EmeraldHill2P_Header:
 	spAttackRt	$1F, $16, $18, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$01, $03, $1B, $08
-	spDecayRt	$01, $01, $04, $05
 	spSustainLv	$0F, $03, $02, $02
+	spDecayRt	$01, $01, $04, $05
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$24, $30, $29, $00
 
 EmeraldHill2P_FM1:

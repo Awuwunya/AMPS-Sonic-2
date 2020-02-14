@@ -1,3 +1,4 @@
+	listing	off			; do not list this voice bank, it'd be huge!
 VoiceBank:
 sPatNum := 0
 	; Voice $00
@@ -15,7 +16,6 @@ sPatNum := 0
 	spSustainRt	$07, $07, $0A, $0D
 	spSustainLv	$01, $01, $00, $00
 	spDecayRt	$00, $00, $0B, $0B
-	spSSGEG		$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
 	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$23, $23, $00, $00
@@ -33,8 +33,8 @@ sPatNum := 0
 	spAttackRt	$16, $1C, $1C, $1C
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $11, $11, $11
-	spDecayRt	$09, $06, $0A, $0A
 	spSustainLv	$04, $03, $03, $03
+	spDecayRt	$09, $06, $0A, $0A
 	spReleaseRt	$0F, $0F, $0F, $0F
 	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$17, $20, $00, $00
@@ -52,9 +52,10 @@ sPatNum := 0
 	spAttackRt	$1E, $1C, $18, $1C
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $04, $0A, $05
-	spDecayRt	$08, $08, $08, $08
 	spSustainLv	$0B, $0B, $0B, $0B
+	spDecayRt	$08, $08, $08, $08
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$14, $14, $3C, $00
 
 	; Patch $03
@@ -70,9 +71,10 @@ sPatNum := 0
 	spAttackRt	$0F, $0F, $1F, $0F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$05, $09, $08, $02
-	spDecayRt	$06, $06, $0F, $02
 	spSustainLv	$01, $04, $02, $02
+	spDecayRt	$06, $06, $0F, $02
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$0F, $0E, $1A, $00
 
 	; Patch $04
@@ -88,9 +90,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$04, $04, $05, $01
-	spDecayRt	$04, $04, $04, $02
 	spSustainLv	$0F, $01, $00, $0A
+	spDecayRt	$04, $04, $04, $02
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$29, $0F, $20, $00
 
 	; Patch $05
@@ -106,9 +109,10 @@ sPatNum := 0
 	spAttackRt	$0F, $19, $14, $1A
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0A, $0A, $0A, $0A
-	spDecayRt	$0A, $0A, $0A, $0A
 	spSustainLv	$05, $05, $05, $05
+	spDecayRt	$0A, $0A, $0A, $0A
 	spReleaseRt	$07, $07, $07, $07
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$00, $00, $00, $00
 
 	; Patch $06
@@ -124,9 +128,10 @@ sPatNum := 0
 	spAttackRt	$19, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$12, $14, $11, $0F
-	spDecayRt	$0A, $0A, $00, $0D
 	spSustainLv	$0F, $0F, $0F, $0F
+	spDecayRt	$0A, $0A, $00, $0D
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$22, $27, $07, $00
 
 	; Patch $07
@@ -142,9 +147,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$05, $09, $18, $02
-	spDecayRt	$0B, $10, $1F, $05
 	spSustainLv	$01, $04, $02, $02
+	spDecayRt	$0B, $10, $1F, $05
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$0E, $04, $07, $00
 
 	; Patch $08
@@ -160,9 +166,10 @@ sPatNum := 0
 	spAttackRt	$1E, $0D, $0D, $0E
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0C, $03, $15, $06
-	spDecayRt	$16, $09, $0E, $10
 	spSustainLv	$02, $01, $02, $01
+	spDecayRt	$16, $09, $0E, $10
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$15, $12, $12, $00
 
 	; Patch $09
@@ -178,9 +185,10 @@ sPatNum := 0
 	spAttackRt	$12, $0F, $11, $13
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$05, $09, $18, $02
-	spDecayRt	$06, $06, $0F, $02
 	spSustainLv	$01, $04, $02, $02
+	spDecayRt	$06, $06, $0F, $02
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$2F, $0E, $1A, $00
 
 	; Patch $0A
@@ -196,9 +204,10 @@ sPatNum := 0
 	spAttackRt	$1E, $0C, $08, $1C
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $04, $0A, $05
-	spDecayRt	$08, $08, $08, $08
 	spSustainLv	$0B, $0B, $0B, $0B
+	spDecayRt	$08, $08, $08, $08
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$04, $14, $2C, $00
 
 	; Patch $0B
@@ -214,8 +223,8 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $00, $00, $00
-	spDecayRt	$02, $02, $02, $02
 	spSustainLv	$02, $0F, $02, $03
+	spDecayRt	$02, $02, $02, $02
 	spReleaseRt	$0F, $0F, $0F, $0F
 	spTotalLv	$0B, $01, $16, $02
 
@@ -232,9 +241,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $00, $00, $00
-	spDecayRt	$02, $02, $02, $02
 	spSustainLv	$02, $0F, $02, $03
+	spDecayRt	$02, $02, $02, $02
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$05, $34, $10, $07
 
 	; Patch $0D
@@ -250,9 +260,10 @@ sPatNum := 0
 	spAttackRt	$0E, $11, $10, $0E
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0C, $03, $15, $06
-	spDecayRt	$16, $09, $0E, $10
 	spSustainLv	$02, $04, $02, $04
+	spDecayRt	$16, $09, $0E, $10
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$2F, $12, $12, $00
 
 	; Patch $0E
@@ -268,9 +279,10 @@ sPatNum := 0
 	spAttackRt	$16, $1C, $1C, $1C
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $11, $11, $11
-	spDecayRt	$09, $06, $0A, $0A
 	spSustainLv	$04, $03, $03, $03
+	spDecayRt	$09, $06, $0A, $0A
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$1F, $2B, $00, $00
 
 	; Patch $0F
@@ -286,9 +298,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$12, $0C, $0C, $0C
-	spDecayRt	$12, $08, $08, $08
 	spSustainLv	$01, $05, $05, $05
+	spDecayRt	$12, $08, $08, $08
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$07, $00, $00, $00
 
 	; Patch $10
@@ -304,9 +317,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$05, $09, $18, $02
-	spDecayRt	$06, $06, $0F, $02
 	spSustainLv	$01, $04, $02, $02
+	spDecayRt	$06, $06, $0F, $02
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$0F, $0E, $1A, $00
 
 	; Patch $11
@@ -322,9 +336,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$18, $14, $0F, $0E
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$0F, $0F, $0F, $0F
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$20, $1B, $00, $00
 
 	; Patch $12
@@ -340,9 +355,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $0F, $16, $0F
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$00, $0F, $0A, $0F
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$00, $0A, $00, $00
 
 	; Patch $13
@@ -358,9 +374,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$10, $0C, $0C, $0C
-	spDecayRt	$0B, $10, $1F, $05
 	spSustainLv	$01, $04, $02, $02
+	spDecayRt	$0B, $10, $1F, $05
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$09, $12, $04, $0E
 
 	; Patch $14
@@ -376,9 +393,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$05, $09, $18, $02
-	spDecayRt	$0B, $10, $1F, $05
 	spSustainLv	$01, $04, $02, $02
+	spDecayRt	$0B, $10, $1F, $05
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$0E, $04, $07, $00
 
 	; Patch $15
@@ -394,9 +412,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$05, $05, $18, $10
-	spDecayRt	$0B, $10, $1F, $10
 	spSustainLv	$01, $01, $02, $02
+	spDecayRt	$0B, $10, $1F, $10
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$0D, $01, $00, $00
 
 	; Patch $16
@@ -412,9 +431,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $15
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $00, $1F, $00
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$00, $00, $00, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$0D, $28, $00, $00
 
 	; Patch $17
@@ -430,9 +450,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$15, $1C, $18, $13
-	spDecayRt	$0B, $0D, $08, $09
 	spSustainLv	$00, $08, $09, $00
+	spDecayRt	$0B, $0D, $08, $09
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$24, $0A, $05, $00
 
 	; Patch $18
@@ -448,9 +469,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$19, $19, $12, $0E
-	spDecayRt	$05, $00, $12, $0F
 	spSustainLv	$00, $0F, $07, $0F
+	spDecayRt	$05, $00, $12, $0F
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$00, $00, $00, $00
 
 	; Patch $19
@@ -466,9 +488,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$05, $05, $18, $10
-	spDecayRt	$0B, $10, $1F, $10
 	spSustainLv	$01, $04, $02, $02
+	spDecayRt	$0B, $10, $1F, $10
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$0D, $04, $07, $00
 
 	; Patch $1A
@@ -484,9 +507,10 @@ sPatNum := 0
 	spAttackRt	$1E, $0C, $08, $1C
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $04, $0A, $05
-	spDecayRt	$08, $08, $08, $08
 	spSustainLv	$0B, $0B, $0B, $0B
+	spDecayRt	$08, $08, $08, $08
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$24, $04, $1C, $00
 
 	; Patch $1B
@@ -502,9 +526,10 @@ sPatNum := 0
 	spAttackRt	$1E, $0C, $08, $1C
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $04, $0A, $05
-	spDecayRt	$08, $08, $08, $08
 	spSustainLv	$0B, $0B, $0B, $0B
+	spDecayRt	$08, $08, $08, $08
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$24, $04, $2C, $00
 
 	; Patch $1C
@@ -520,9 +545,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$07, $07, $0A, $0D
-	spDecayRt	$00, $00, $0B, $0B
 	spSustainLv	$01, $01, $00, $00
+	spDecayRt	$00, $00, $0B, $0B
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$13, $13, $01, $08
 
 	; Patch $1D
@@ -538,9 +564,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$15, $15, $15, $13
-	spDecayRt	$13, $0D, $0C, $10
 	spSustainLv	$02, $03, $02, $02
+	spDecayRt	$13, $0D, $0C, $10
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$00, $1F, $10, $00
 
 	; Patch $1E
@@ -556,9 +583,10 @@ sPatNum := 0
 	spAttackRt	$18, $1A, $1A, $16
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$17, $0A, $0E, $10
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$0F, $0F, $0F, $0F
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$00, $39, $28, $00
 
 	; Patch $1F
@@ -574,9 +602,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$07, $07, $0A, $0D
-	spDecayRt	$00, $00, $0B, $0B
 	spSustainLv	$01, $01, $00, $00
+	spDecayRt	$00, $00, $0B, $0B
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$23, $23, $00, $00
 
 	; Patch $20
@@ -592,9 +621,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$04, $16, $14, $0C
-	spDecayRt	$00, $00, $04, $00
 	spSustainLv	$01, $0D, $06, $0F
+	spDecayRt	$00, $00, $04, $00
 	spReleaseRt	$0F, $08, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$03, $00, $25, $00
 
 	; Patch $21
@@ -610,9 +640,10 @@ sPatNum := 0
 	spAttackRt	$01, $1B, $09, $0B
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$09, $09, $06, $08
-	spDecayRt	$01, $02, $03, $A9
 	spSustainLv	$00, $00, $00, $00
+	spDecayRt	$01, $02, $03, $A9
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$29, $23, $27, $00
 
 	; Patch $22
@@ -628,9 +659,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$07, $09, $06, $06
-	spDecayRt	$07, $06, $06, $08
 	spSustainLv	$02, $01, $01, $0F
+	spDecayRt	$07, $06, $06, $08
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$16, $13, $30, $00
 
 	; Patch $23
@@ -646,9 +678,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $0B, $00, $0B
-	spDecayRt	$00, $05, $00, $08
 	spSustainLv	$00, $0F, $00, $0F
+	spDecayRt	$00, $05, $00, $08
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$0C, $03, $0B, $00
 
 	; Patch $24
@@ -664,9 +697,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $00, $00, $00
-	spDecayRt	$02, $02, $02, $02
 	spSustainLv	$02, $0F, $02, $03
+	spDecayRt	$02, $02, $02, $02
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$06, $34, $10, $07
 
 	; Patch $25
@@ -682,9 +716,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $19, $0E, $10
-	spDecayRt	$00, $00, $0C, $0F
 	spSustainLv	$00, $0F, $0E, $0F
+	spDecayRt	$00, $00, $0C, $0F
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$05, $00, $00, $00
 
 	; Patch $26
@@ -700,9 +735,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $00, $00, $00
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$0F, $0F, $0F, $0F
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$29, $20, $29, $00
 
 	; Patch $27
@@ -718,9 +754,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $00, $00, $00
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$0F, $0F, $0F, $0F
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$2A, $0F, $0F, $00
 
 	; Patch $28
@@ -736,9 +773,10 @@ sPatNum := 0
 	spAttackRt	$1F, $0F, $0F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$12, $14, $11, $0E
-	spDecayRt	$1A, $0A, $03, $0D
 	spSustainLv	$0F, $0F, $0F, $0F
+	spDecayRt	$1A, $0A, $03, $0D
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$03, $07, $07, $00
 
 	; Patch $29
@@ -754,9 +792,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$1F, $1F, $1F, $1F
-	spDecayRt	$0F, $0E, $0F, $0E
 	spSustainLv	$00, $00, $00, $00
+	spDecayRt	$0F, $0E, $0F, $0E
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$2E, $00, $20, $00
 
 	; Patch $2A
@@ -772,9 +811,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $00, $00, $00
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$00, $00, $00, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$27, $00, $00, $00
 
 	; Patch $2B
@@ -790,9 +830,10 @@ sPatNum := 0
 	spAttackRt	$1C, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$15, $12, $0B, $0F
-	spDecayRt	$0C, $0D, $00, $0D
 	spSustainLv	$00, $02, $0F, $0F
+	spDecayRt	$0C, $0D, $00, $0D
 	spReleaseRt	$07, $0F, $0A, $0A
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$00, $29, $00, $00
 
 	; Patch $2C
@@ -808,9 +849,10 @@ sPatNum := 0
 	spAttackRt	$16, $1C, $1C, $1C
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $11, $11, $11
-	spDecayRt	$09, $06, $0A, $0A
 	spSustainLv	$04, $03, $03, $03
+	spDecayRt	$09, $06, $0A, $0A
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$17, $20, $00, $00
 
 	; Patch $2D
@@ -826,9 +868,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$12, $0A, $01, $0D
-	spDecayRt	$00, $01, $01, $0C
 	spSustainLv	$00, $02, $0C, $0F
+	spDecayRt	$00, $01, $01, $0C
 	spReleaseRt	$00, $03, $03, $06
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$08, $07, $1C, $03
 
 	; Patch $2E
@@ -844,9 +887,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $1A, $11, $0A
-	spDecayRt	$09, $0A, $0A, $0A
 	spSustainLv	$04, $03, $03, $03
+	spDecayRt	$09, $0A, $0A, $0A
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$7F, $00, $00, $23
 
 	; Patch $2F
@@ -862,9 +906,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $0E
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $00, $00, $00
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$00, $00, $00, $01
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$00, $00, $00, $00
 
 	; Patch $30
@@ -880,9 +925,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $00, $00, $00
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$00, $00, $00, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$01, $0E, $14, $00
 
 	; Patch $31
@@ -898,9 +944,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$10, $00, $13, $15
-	spDecayRt	$1F, $00, $1F, $1A
 	spSustainLv	$07, $00, $07, $05
+	spDecayRt	$1F, $00, $1F, $1A
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$02, $28, $00, $00
 
 	; Patch $32
@@ -916,9 +963,10 @@ sPatNum := 0
 	spAttackRt	$0F, $14, $19, $16
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$08, $0A, $0B, $05
-	spDecayRt	$03, $03, $03, $05
 	spSustainLv	$01, $06, $08, $05
+	spDecayRt	$03, $03, $03, $05
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$1F, $22, $1F, $00
 
 	; Patch $33
@@ -934,9 +982,10 @@ sPatNum := 0
 	spAttackRt	$1F, $0C, $0F, $15
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $00, $00, $00
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$00, $00, $00, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$00, $1D, $00, $00
 
 	; Patch $34
@@ -952,9 +1001,10 @@ sPatNum := 0
 	spAttackRt	$1F, $0E, $19, $0E
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$07, $12, $15, $09
-	spDecayRt	$0A, $09, $1D, $06
 	spSustainLv	$0E, $00, $00, $01
+	spDecayRt	$0A, $09, $1D, $06
 	spReleaseRt	$08, $03, $0A, $07
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$07, $00, $00, $00
 
 	; Patch $35
@@ -970,9 +1020,10 @@ sPatNum := 0
 	spAttackRt	$0F, $0C, $1F, $15
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$06, $00, $02, $01
-	spDecayRt	$02, $0A, $04, $08
 	spSustainLv	$0B, $0B, $0B, $0B
+	spDecayRt	$02, $0A, $04, $08
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$00, $08, $00, $00
 
 	; Patch $36
@@ -988,9 +1039,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0F, $0A, $00, $01
-	spDecayRt	$0A, $0A, $0D, $0D
 	spSustainLv	$04, $00, $00, $00
+	spDecayRt	$0A, $0A, $0D, $0D
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$13, $00, $00, $00
 
 	; Patch $37
@@ -1006,9 +1058,10 @@ sPatNum := 0
 	spAttackRt	$1A, $1F, $10, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0F, $1F, $1F, $1F
-	spDecayRt	$0C, $0D, $11, $11
 	spSustainLv	$00, $00, $00, $00
+	spDecayRt	$0C, $0D, $11, $11
 	spReleaseRt	$0C, $09, $09, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$0E, $04, $00, $00
 
 	; Patch $38
@@ -1024,9 +1077,10 @@ sPatNum := 0
 	spAttackRt	$0F, $0D, $1B, $17
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $04, $02, $0B
-	spDecayRt	$08, $00, $08, $09
 	spSustainLv	$06, $05, $04, $06
+	spDecayRt	$08, $00, $08, $09
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$05, $00, $00, $00
 
 	; Patch $39
@@ -1042,9 +1096,10 @@ sPatNum := 0
 	spAttackRt	$1F, $16, $16, $16
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $00, $00, $04
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$00, $00, $00, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$15, $02, $02, $00
 
 	; Patch $3A
@@ -1060,9 +1115,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $00, $00, $00
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$00, $00, $00, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$00, $00, $00, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$0F, $06, $23, $00
 
 	; Patch $3B
@@ -1078,9 +1134,10 @@ sPatNum := 0
 	spAttackRt	$14, $14, $0F, $0F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $00, $00, $00
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$00, $00, $00, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$02, $02, $08, $08
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$35, $14, $00, $00
 
 	; Patch $3C
@@ -1096,9 +1153,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$12, $0A, $01, $07
-	spDecayRt	$00, $01, $01, $03
 	spSustainLv	$00, $02, $0C, $04
+	spDecayRt	$00, $01, $01, $03
 	spReleaseRt	$00, $03, $03, $06
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$08, $07, $1C, $03
 
 	; Patch $3D
@@ -1114,9 +1172,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $00, $00, $00
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$00, $00, $00, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$1F, $0C, $17, $00
 
 	; Patch $3E
@@ -1132,7 +1191,10 @@ sPatNum := 0
 	spAttackRt	$1F, $1D, $1E, $0E
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$00, $0C, $1D, $00
-	spDecayRt	$00, $00, $01, $00
 	spSustainLv	$00, $00, $00, $00
+	spDecayRt	$00, $00, $01, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$08, $06, $07, $00
+
+	listing	on			; do not list this voice bank, it'd be huge!

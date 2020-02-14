@@ -26,9 +26,10 @@ AquaticRuin_Header:
 	spAttackRt	$1E, $1C, $1C, $1C
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0D, $04, $06, $01
-	spDecayRt	$08, $03, $0A, $05
 	spSustainLv	$0B, $03, $0B, $02
+	spDecayRt	$08, $03, $0A, $05
 	spReleaseRt	$06, $06, $06, $08
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$2C, $14, $22, $00
 
 	; Patch $01
@@ -44,9 +45,10 @@ AquaticRuin_Header:
 	spAttackRt	$0D, $07, $07, $12
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$09, $00, $00, $03
-	spDecayRt	$01, $02, $02, $00
 	spSustainLv	$05, $00, $00, $02
+	spDecayRt	$01, $02, $02, $00
 	spReleaseRt	$02, $02, $02, $08
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$18, $18, $22, $00
 
 	; Patch $02
@@ -62,9 +64,10 @@ AquaticRuin_Header:
 	spAttackRt	$10, $10, $10, $10
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$07, $08, $08, $08
-	spDecayRt	$01, $00, $00, $00
 	spSustainLv	$02, $01, $01, $01
+	spDecayRt	$01, $00, $00, $00
 	spReleaseRt	$04, $08, $08, $08
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$1C, $02, $02, $02
 
 	; Patch $03
@@ -80,9 +83,10 @@ AquaticRuin_Header:
 	spAttackRt	$1F, $1F, $19, $14
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$05, $05, $05, $07
-	spDecayRt	$02, $02, $02, $02
 	spSustainLv	$01, $01, $01, $07
+	spDecayRt	$02, $02, $02, $02
 	spReleaseRt	$01, $01, $01, $02
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$23, $26, $2D, $00
 
 	; Patch $04
@@ -98,9 +102,10 @@ AquaticRuin_Header:
 	spAttackRt	$1F, $1F, $1F, $18
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$01, $00, $1F, $00
-	spDecayRt	$00, $00, $0F, $00
 	spSustainLv	$05, $00, $00, $01
+	spDecayRt	$00, $00, $0F, $00
 	spReleaseRt	$0A, $03, $0F, $0A
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$3B, $4F, $30, $00
 
 	; Patch $05
@@ -116,9 +121,10 @@ AquaticRuin_Header:
 	spAttackRt	$1F, $1F, $19, $14
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$05, $05, $05, $07
-	spDecayRt	$02, $02, $02, $02
 	spSustainLv	$01, $01, $01, $07
+	spDecayRt	$02, $02, $02, $02
 	spReleaseRt	$01, $01, $01, $07
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$23, $26, $2D, $00
 
 AquaticRuin_Call1:

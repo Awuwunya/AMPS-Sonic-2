@@ -23,9 +23,10 @@ HillTop_Header:
 	spAttackRt	$1F, $1F, $1F, $1F
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$12, $0A, $0E, $0A
-	spDecayRt	$00, $04, $04, $03
 	spSustainLv	$02, $02, $02, $02
+	spDecayRt	$00, $04, $04, $03
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$25, $13, $30, $04
 
 	; Patch $01
@@ -41,9 +42,10 @@ HillTop_Header:
 	spAttackRt	$14, $10, $14, $0E
 	spAmpMod	$00, $00, $00, $01
 	spSustainRt	$05, $02, $08, $08
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$09, $00, $00, $01
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$09, $09, $09, $0A
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$2D, $19, $2C, $06
 
 	; Patch $02
@@ -59,9 +61,10 @@ HillTop_Header:
 	spAttackRt	$1F, $19, $19, $19
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0A, $05, $05, $05
-	spDecayRt	$00, $02, $02, $02
 	spSustainLv	$03, $02, $02, $02
+	spDecayRt	$00, $02, $02, $02
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$28, $0B, $06, $13
 
 	; Patch $03
@@ -77,9 +80,10 @@ HillTop_Header:
 	spAttackRt	$0E, $0D, $0E, $13
 	spAmpMod	$00, $00, $00, $00
 	spSustainRt	$0E, $0E, $0E, $03
-	spDecayRt	$00, $00, $00, $00
 	spSustainLv	$01, $01, $0F, $00
+	spDecayRt	$00, $00, $00, $00
 	spReleaseRt	$0F, $0F, $0F, $0F
+	spSSGEG		$00, $00, $00, $00
 	spTotalLv	$17, $27, $28, $06
 
 HillTop_DAC1:
