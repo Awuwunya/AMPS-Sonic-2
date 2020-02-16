@@ -124,6 +124,7 @@ dPlaySnd_Unpause:
 		bpl.s	.skipmus		; if not, do not update
 		btst	#cfbInt,(a1)		; is the channel interrupted by SFX?
 		bne.s	.skipmus		; if is, do not update
+
 	InitChYM				; prepare to write to YM
 	WriteChYM	#$B4, cPanning(a1)	; Panning and LFO: read from channel
 
@@ -144,7 +145,6 @@ dPlaySnd_Unpause:
 .skipsfx
 		adda.w  d3,a1			; go to next channel
 		dbf     d0,.sfxloop		; repeat for all SFX FM channels
-	;	st	(a0)			; write end marker
 ; ---------------------------------------------------------------------------
 ; Since the DAC channels have or based panning behavior, we need this
 ; piece of code to update its panning
@@ -253,6 +253,10 @@ dPlaySnd_Music:
 .backup
 		move.l	(a4)+,(a3)+		; back up data for every channel
 		dbf	d3,.backup		; loop for each longword
+
+	if (mSFXDAC1-mBackUpArea)&2
+		move.w	(a4)+,(a3)+		; back up data for every channel
+	endif
 
 		mvnbt	d3, cfbInt, cfbVol	; each other bit except interrupted and volume update bits
 
