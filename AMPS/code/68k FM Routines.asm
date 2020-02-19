@@ -454,7 +454,7 @@ dFreqFM:dc.w								       $025E; Octave-1 - (80)
 dFreqFM_:
 
 	if safe=1				; in safe mode, we have extra debug data
-.x := $100|((dFreqFM_-dFreqFM)/2)		; to check if we played an invalid note
+.x :=		$100|((dFreqFM_-dFreqFM)/2)	; to check if we played an invalid note
 		rept $80-((dFreqFM_-dFreqFM)/2)	; and if so, tell us which note it was
 			dc.w .x
 .x :=			.x+$101

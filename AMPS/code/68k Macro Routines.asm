@@ -464,7 +464,6 @@ dStopChannel	macro	stop
 		jmp	dMuteDACmus(pc)		; mute DAC channel
 	endif
 
-
 .cont
 	if stop<>0
 		rts
