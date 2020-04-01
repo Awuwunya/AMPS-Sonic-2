@@ -2,7 +2,7 @@
 ; ---------------------------------------------------------------------------
 ; Flags section. None of this is required, but I added it here to
 ; make it easier to debug built ROMS! If you would like easier
-; assistance from Natsumi, please keep this section intact!
+; assistance from Aurora, please keep this section intact!
 ; ---------------------------------------------------------------------------
 	dc.b "AMPS-v1.1"		; ident str
 
@@ -68,8 +68,8 @@ MusicIndex:
 
 MusCount =	__mus-MusOff		; number of installed music tracks
 SFXoff =	__mus			; first SFX ID
-
 __sfx :=	SFXoff
+; ---------------------------------------------------------------------------
 
 SoundIndex:
 	ptrSFX	$01, RingRight
@@ -228,10 +228,10 @@ ModEnvs_End:
 	endif
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Include music, sound effects and voice table
+; Include music, sound effects and voice bank
 ; ---------------------------------------------------------------------------
 
-	include "AMPS/Voices.s2a"	; include universal Voice bank
+	include "AMPS/Voices.s2a"	; include universal voice bank
 
 ; include SFX and music
 sfxaddr:	incSFX
@@ -242,13 +242,14 @@ musend:
 ; Include samples and filters
 ; ---------------------------------------------------------------------------
 
-		align	$8000		; must be aligned to bank... By the way, these are also set in Z80.asm. Be sure to check it out.
+		align	$8000		; must be aligned to bank. By the way, these are also set in Z80.asm. Be sure to check it out
 fLog:		binclude "AMPS/filters/Logarithmic.dat"	; logarithmic filter (no filter)
 ;fLinear:	binclude "AMPS/filters/Linear.dat"	; linear filter (no filter)
 
 dacaddr:	asdata Z80E_Read*(MaxPitch/$100), $00
 SWF_Stop:	asdata $8000-(2*Z80E_Read*(MaxPitch/$100)), $80
 SWFR_Stop:	asdata Z80E_Read*(MaxPitch/$100), $00
+; ---------------------------------------------------------------------------
 
 	incSWF	Kick, Snare, Clap, Tom, Timpani, Bongo
 	incSWF	Scratch, SEGA

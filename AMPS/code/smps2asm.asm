@@ -1,11 +1,9 @@
-; ---------------------------------------------------------------------------------------------
-; AMPS - SMPS2ASM macro & equate file.
-;
-; Based on Flamewing's SMPS2ASM, and S1SMPS2ASM by Marc (AKA Cinossu)
-; Reworked and improved by Natsumi
-; ---------------------------------------------------------------------------------------------
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; AMPS - SMPS2ASM macro & equate file
+; ---------------------------------------------------------------------------
 ; Note Equates
-; ---------------------------------------------------------------------------------------------
+; ---------------------------------------------------------------------------
 
 	enum nC0=$81,nCs0,nD0,nEb0,nE0,nF0,nFs0,nG0,nAb0,nA0,nBb0,nB0
 	enum nC1=$8D,nCs1,nD1,nEb1,nE1,nF1,nFs1,nG1,nAb1,nA1,nBb1,nB1
@@ -16,9 +14,10 @@
 	enum nC6=$C9,nCs6,nD6,nEb6,nE6,nF6,nFs6,nG6,nAb6,nA6,nBb6,nB6
 	enum nC7=$D5,nCs7,nD7,nEb7,nE7,nF7,nFs7,nG7,nAb7,nA7,nBb7
 	enum nRst=$80, nHiHat=nA6
-; ---------------------------------------------------------------------------------------------
+; ===========================================================================
+; ---------------------------------------------------------------------------
 ; Header Macros
-; ---------------------------------------------------------------------------------------------
+; ---------------------------------------------------------------------------
 
 ; Header - Initialize a music file
 sHeaderInit	macro
@@ -32,7 +31,6 @@ sHeaderInitSFX	macro
 
 ; Header - Set up Channel Usage
 sHeaderCh	macro fm,psg
-
 	if "psg"<>""
 		dc.b psg-1, fm-1
 		if fm>(5+(FEATURE_FM6<>0))
@@ -47,17 +45,17 @@ sHeaderCh	macro fm,psg
 	endif
     endm
 
-; Header - Set up Tempo and Tick Multiplier
+; Header - Set up Tempo and tick multiplier
 sHeaderTempo	macro tmul,tempo
 	dc.b tempo,tmul-1
     endm
 
-; Header - Set priority leve
+; Header - Set priority level
 sHeaderPrio	macro prio
 	dc.b prio
     endm
 
-; Header - Set up DAC Channel
+; Header - Set up a DAC channel
 sHeaderDAC	macro loc,vol,samp
 	dc.w loc-*
 
@@ -73,40 +71,31 @@ sHeaderDAC	macro loc,vol,samp
 	endif
     endm
 
-; Header - Set up FM Channel
+; Header - Set up an FM channel
 sHeaderFM	macro loc,pitch,vol
 	dc.w loc-*
 	dc.b (pitch)&$FF,(vol)&$FF
     endm
 
-; Header - Set up PSG Channel
+; Header - Set up a PSG channel
 sHeaderPSG	macro loc,pitch,vol,detune,volenv
 	dc.w loc-*
 	dc.b (pitch)&$FF,(vol)&$FF,(detune)&$FF,volenv
     endm
 
-; Header - Set up SFX Channel
+; Header - Set up an SFX channel
 sHeaderSFX	macro flags,type,loc,pitch,vol
 	dc.b flags,type
 	dc.w loc-*
 	dc.b (pitch)&$FF,(vol)&$FF
     endm
-; ---------------------------------------------------------------------------------------------
-; Command Flag Macros and Equates. Based on the original s1smps2asm, and Flamewing's smps2asm
-; ---------------------------------------------------------------------------------------------
-
-spNone =	$00
-spRight =	$40
-spLeft =	$80
-spCentre =	$C0
-spCenter =	$C0
-; ---------------------------------------------------------------------------------------------
+; ===========================================================================
+; ---------------------------------------------------------------------------
 ; Macros for FM instruments
-; Patches - Feedback
-; ---------------------------------------------------------------------------------------------
+; ---------------------------------------------------------------------------
 
-; Patches - Algorithm
-spAlgorithm macro val, name
+; Patches - Algorithm and patch name
+spAlgorithm	macro val, name
 	if (sPatNum<>0)&(safe=0)
 		; align the patch
 		dc.b ((*)!(sPatNum*spTL4))&$FF
@@ -122,6 +111,7 @@ sPatNum :=	sPatNum+1
 spAl :=		val
     endm
 
+; Patches - Feedback
 spFeedback	macro val
 spFe :=		val
     endm
@@ -238,7 +228,7 @@ spTLMask1 :=	((spAl=7)<<7)
     endm
 
 ; Patches - Total Level (for broken total level masks)
-spTotalLv2 macro op1,op2,op3,op4
+spTotalLv2	macro op1,op2,op3,op4
 spTL1 :=	op1
 spTL2 :=	op2
 spTL3 :=	op3
@@ -257,9 +247,20 @@ spTL4 :=	op4
 		dc.b "NAT"	; align the patch
 	endif
     endm
-; ---------------------------------------------------------------------------------------------
+; ===========================================================================
+; ---------------------------------------------------------------------------
+; Equates for sPan
+; ---------------------------------------------------------------------------
+
+spNone =	$00
+spRight =	$40
+spLeft =	$80
+spCentre =	$C0
+spCenter =	$C0
+; ===========================================================================
+; ---------------------------------------------------------------------------
 ; tracker commands
-; ---------------------------------------------------------------------------------------------
+; ---------------------------------------------------------------------------
 
 ; E0xx - Panning, AMS, FMS (PANAFMS - PAFMS_PAN)
 sPan		macro pan, ams, fms
@@ -275,61 +276,61 @@ sPan		macro pan, ams, fms
     endm
 
 ; E1xx - Set channel frequency displacement to xx (DETUNE_SET)
-ssDetune	macro val
-	dc.b $E1, val
+ssDetune	macro detune
+	dc.b $E1, detune
     endm
 
 ; E2xx - Add xx to channel frequency displacement (DETUNE)
-saDetune	macro val
-	dc.b $E2, val
+saDetune	macro detune
+	dc.b $E2, detune
     endm
 
 ; E3xx - Set channel pitch to xx (TRANSPOSE - TRNSP_SET)
-ssTranspose	macro val
-	dc.b $E3, val
+ssTranspose	macro transp
+	dc.b $E3, transp
     endm
 
 ; E4xx - Add xx to channel pitch (TRANSPOSE - TRNSP_ADD)
-saTranspose	macro val
-	dc.b $E4, val
+saTranspose	macro transp
+	dc.b $E4, transp
     endm
 
 ; E5xx - Set channel tick multiplier to xx (TICK_MULT - TMULT_CUR)
-ssTickMulCh	macro val
-	dc.b $E5, val-1
+ssTickMulCh	macro tick
+	dc.b $E5, tick-1
     endm
 
 ; E6xx - Set global tick multiplier to xx (TICK_MULT - TMULT_ALL)
-ssTickMul	macro val
-	dc.b $E6, val-1
+ssTickMul	macro tick
+	dc.b $E6, tick-1
     endm
 
 ; E7 - Do not attack of next note (HOLD)
 sHold =		$E7
 
 ; E8xx - Set patch/voice/sample to xx (INSTRUMENT - INS_C_FM / INS_C_PSG / INS_C_DAC)
-sVoice		macro val
-	dc.b $E8, val
+sVoice		macro voice
+	dc.b $E8, voice
     endm
 
 ; F2xx - Set volume envelope to xx (INSTRUMENT - INS_C_PSG) (FM_VOLENV / DAC_VOLENV)
-sVolEnv		macro val
-	dc.b $F2, val
+sVolEnv		macro env
+	dc.b $F2, env
     endm
 
 ; F3xx - Set modulation envelope to xx (MOD_ENV - MENV_GEN)
-sModEnv		macro val
-	dc.b $F3, val
+sModEnv		macro env
+	dc.b $F3, env
     endm
 
 ; E9xx - Set music speed shoes tempo to xx (TEMPO - TEMPO_SET_SPEED)
-ssTempoShoes	macro val
-	dc.b $E9, val
+ssTempoShoes	macro tempo
+	dc.b $E9, tempo
     endm
 
 ; EAxx - Set music tempo to xx (TEMPO - TEMPO_SET)
-ssTempo		macro val
-	dc.b $EA, val
+ssTempo		macro tempo
+	dc.b $EA, tempo
     endm
 
 ; FF18xx - Add xx to music speed tempo (TEMPO - TEMPO_ADD_SPEED)
@@ -342,12 +343,12 @@ saTempo		macro tempo
 	dc.b $FF,$1C, tempo
     endm
 
-; EB - Use sample DAC mode (DAC_MODE - DACM_SAMP)
+; EB - Use sample DAC mode, where each note is a different sample (DAC_MODE - DACM_SAMP)
 sModeSampDAC	macro
 	dc.b $EB
     endm
 
-; EC - Use pitch DAC mode (DAC_MODE - DACM_NOTE)
+; EC - Use pitch DAC mode, where each note is a different pitch (DAC_MODE - DACM_NOTE)
 sModePitchDAC	macro
 	dc.b $EC
     endm
@@ -445,13 +446,13 @@ sRet		macro
     endm
 
 ; FAyyxx - Set communications byte yy to xx (SET_COMM - SPECIAL)
-sComm		macro num, val
-	dc.b $FA, num,val
+sComm		macro index, val
+	dc.b $FA, index,val
     endm
 
 ; FBxyzz - Get communications byte y, and compare zz with it using condition x (COMM_CONDITION)
-sCond		macro num, cond, val
-	dc.b $FB, num|(cond<<4),val
+sCond		macro index, cond, val
+	dc.b $FB, index|(cond<<4),val
     endm
 
 ; FC - Reset condition (COMM_RESET)
@@ -460,8 +461,8 @@ sCondOff	macro
     endm
 
 ; FDxx - Stop note after xx frames (NOTE_STOP - NSTOP_NORMAL)
-sGate		macro val
-	dc.b $FD, val
+sGate		macro frames
+	dc.b $FD, frames
     endm
 
 ; FExxyy - YM command yy on register xx (YMCMD)
@@ -491,8 +492,8 @@ sSpinReset	macro
     endm
 
 ; FF20xyzz - Get RAM address pointer offset by y, compare zz with it using condition x (COMM_CONDITION - COMM_SPEC)
-sCondReg	macro off, cond, val
-	dc.b $FF,$20, off|(cond<<4),val
+sCondReg	macro frames, cond, val
+	dc.b $FF,$20, frames|(cond<<4),val
     endm
 
 ; FF24xx - Play another music/sfx (SND_CMD)
@@ -501,19 +502,19 @@ sPlayMus	macro id
     endm
 
 ; FF28 - Enable raw frequency mode (RAW_FREQ)
-sFreqOn		macro freq
+sFreqOn		macro
 	dc.b $FF,$28
 	fatal "Flag is currently not implemented! Please remove."
     endm
 
 ; FF2C - Disable raw frequency mode (RAW_FREQ - RAW_FREQ_OFF)
-sFreqOff	macro freq
+sFreqOff	macro
 	dc.b $FF,$2C
 	fatal "Flag is currently not implemented! Please remove."
     endm
 
 ; FF30 - Enable FM3 special mode (SPC_FM3)
-sSpecFM3	macro freq
+sSpecFM3	macro
 	dc.b $FF,$30
 	fatal "Flag is currently not implemented! Please remove."
     endm
@@ -546,9 +547,10 @@ sCheck		macro
 		dc.b $FF,$44
 	endif
     endm
-; ---------------------------------------------------------------------------------------------
+; ===========================================================================
+; ---------------------------------------------------------------------------
 ; equates for sNoisePSG
-; ---------------------------------------------------------------------------------------------
+; ---------------------------------------------------------------------------
 
 	enum snOff=$00			; disables PSG3 noise mode.
 	enum snPeri10=$E0,snPeri20,snPeri40,snPeriPSG3
