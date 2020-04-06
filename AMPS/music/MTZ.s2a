@@ -139,6 +139,7 @@ Metropolis_Loop1:
 	sModAMPS	$00, $02, $01, $7F
 	dc.b nB2
 	sModAMPS	$00, $01, $08, $06
+	ssModReset
 	dc.b sHold, nC3
 	saVol		$04
 	dc.b sHold, $0C
@@ -157,23 +158,28 @@ Metropolis_Loop2:
 	sModAMPS	$01, $01, $0C, $0C
 	dc.b nEb3, $0C
 	sModOff
+	ssModReset
 	dc.b sHold, nE3, $0C, nD3, $0C, nC3, $18
 	sModAMPS	$01, $01, $10, $06
 	dc.b nEb3, $06
 	sModOff
+	ssModReset
 	dc.b sHold, nE3, $06, nRst, $30, nRst, $0C, nRst
 	dc.b $30, nRst, $0C, nE3, nF3, nE3
 	sModAMPS	$01, $01, $06, $18
 	dc.b nFs3, $0C
 	sModOff
+	ssModReset
 	dc.b sHold, nG3, $0C
 	sModAMPS	$01, $01, $06, $18
 	dc.b nEb3, $0C
 	sModOff
+	ssModReset
 	dc.b sHold, nE3, $0C
 	sModAMPS	$01, $01, $05, $18
 	dc.b nB2, $0C
 	sModOff
+	ssModReset
 	dc.b sHold, nC3, $0C, nRst, $18
 	sLoop		$00, $02, Metropolis_Loop2
 	dc.b nRst, $60, nRst, nRst
@@ -259,10 +265,13 @@ Metropolis_Loop3:
 	sModAMPS	$01, $01, $06, $08
 	dc.b nFs3, $04
 	sModOff
+	ssModReset
 	dc.b sHold, nG3, $08, sHold
 	sModAMPS	$01, $01, $FA, $08
+	ssModReset
 	dc.b nFs3, $04
 	sModOff
+	ssModReset
 	dc.b sHold, nF3, $08
 	sLoop		$00, $06, Metropolis_Loop3
 	dc.b nRst, $24
@@ -301,10 +310,13 @@ Metropolis_Loop7:
 	sModAMPS	$01, $01, $06, $08
 	dc.b nB3, $04
 	sModOff
+	ssModReset
 	dc.b sHold, nC4, $08, sHold
 	sModAMPS	$01, $01, $FA, $08
+	ssModReset
 	dc.b nB3, $04
 	sModOff
+	ssModReset
 	dc.b sHold, nBb3, $08
 	sLoop		$00, $06, Metropolis_Loop7
 	dc.b nRst, $24
