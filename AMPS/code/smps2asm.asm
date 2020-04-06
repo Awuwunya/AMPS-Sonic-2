@@ -391,11 +391,6 @@ sModData	macro wait, speed, step, count
 	dc.b speed, count, wait, step
     endm
 
-; F1xx - Set portamento speed to xx frames. 0 means portamento is disabled (PORTAMENTO)
-ssPortamento	macro frames
-	dc.b $F1, frames
-    endm
-
 ; FF00 - Turn on Modulation (MOD_SET - MODS_ON)
 sModOn		macro
 	dc.b $FF,$00
@@ -404,6 +399,22 @@ sModOn		macro
 ; FF04 - Turn off Modulation (MOD_SET - MODS_OFF)
 sModOff		macro
 	dc.b $FF,$04
+    endm
+
+; FF28xxxx - Set modulation frequency to xxxx (MOD_SET - MODS_FREQ)
+ssModFreq	macro freq
+	dc.b $FF,$28
+	dc.w freq
+    endm
+
+; FF2C - Reset modulation data (MOD_SET - MODS_RESET)
+ssModReset	macro
+	dc.b $FF,$2C
+    endm
+
+; F1xx - Set portamento speed to xx frames. 0 means portamento is disabled (PORTAMENTO)
+ssPortamento	macro frames
+	dc.b $F1, frames
     endm
 
 ; F4xxxx - Keep looping back to xxxx each time the SFX is being played (CONT_SFX)
@@ -499,18 +510,6 @@ sCondReg	macro frames, cond, val
 ; FF24xx - Play another music/sfx (SND_CMD)
 sPlayMus	macro id
 	dc.b $FF,$24, id
-    endm
-
-; FF28 - Enable raw frequency mode (RAW_FREQ)
-sFreqOn		macro
-	dc.b $FF,$28
-	fatal "Flag is currently not implemented! Please remove."
-    endm
-
-; FF2C - Disable raw frequency mode (RAW_FREQ - RAW_FREQ_OFF)
-sFreqOff	macro
-	dc.b $FF,$2C
-	fatal "Flag is currently not implemented! Please remove."
     endm
 
 ; FF30 - Enable FM3 special mode (SPC_FM3)

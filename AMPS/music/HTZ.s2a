@@ -96,8 +96,9 @@ HillTop_FM1:
 	sModAMPS	$08, $01, $02, $40
 	dc.b nD4, $30
 	sModAMPS	$08, $01, $03, $20
+	ssModReset
 	dc.b sHold, nD4, $18
-	sModAMPS	$08, $01, $03, $20
+	ssModReset
 	dc.b sHold, nD4, $18
 	sModOff
 	dc.b nC4, $0C, nRst, $54
