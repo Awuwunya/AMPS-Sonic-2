@@ -577,11 +577,9 @@ dcPortamento:
 dcMod68K:
 	if FEATURE_MODULATION
 		move.l	a2,cMod(a1)		; set modulation data address
-		addq.w	#4,a2			; skip all the modulation data
+		addq.w	#3,a2			; skip all the modulation data
+		move.b	(a2)+,cModDelay(a1)	; copy delay
 	; continue to enabling modulation
-
-	elseif safe=1
-		AMPS_Debug_dcModulate		; display an error if disabled
 	endif
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -592,9 +590,6 @@ dcModOn:
 	if FEATURE_MODULATION
 		bset	#cfbMod,(a1)		; enable modulation
 		rts
-
-	elseif safe=1
-		AMPS_Debug_dcModulate		; display an error if disabled
 	endif
 ; ---------------------------------------------------------------------------
 
@@ -602,9 +597,6 @@ dcModOff:
 	if FEATURE_MODULATION
 		bclr	#cfbMod,(a1)		; disable modulation
 		rts
-
-	elseif safe=1
-		AMPS_Debug_dcModulate		; display an error if disabled
 	endif
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -616,9 +608,6 @@ dcsModFreq:
 		move.b	(a2)+,cModFreq(a1)	; load modulating frequency from tracker to channel
 		move.b	(a2)+,cModFreq+1(a1)	; ''
 		rts
-
-	elseif safe=1
-		AMPS_Debug_dcModulate		; display an error if disabled
 	endif
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -635,8 +624,8 @@ dcsModReset:
 		lsr.b	#1,d4			; halve it
 		move.b	d4,cModCount(a1)	; save as the current number of steps
 
-		move.b	(a4)+,cModDelay(a1)	; copy delay
 		move.b	(a4)+,cModStep(a1)	; copy step offset
+		move.b	(a4)+,cModDelay(a1)	; copy delay
 		rts
 
 	elseif safe=1

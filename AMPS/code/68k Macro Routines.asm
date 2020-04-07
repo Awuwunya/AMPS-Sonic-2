@@ -368,8 +368,8 @@ dProcNote	macro sfx, chan
 		lsr.b	#1,d1			; halve it
 		move.b	d1,cModCount(a1)	; save as the current number of steps
 
-		move.b	(a4)+,cModDelay(a1)	; copy delay
 		move.b	(a4)+,cModStep(a1)	; copy step offset
+		move.b	(a4)+,cModDelay(a1)	; copy delay
 	endif
 .endpn
     endm

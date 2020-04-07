@@ -247,15 +247,15 @@ DeathEgg_FM5:
 	saVol		$0C
 	dc.b nA2, $30
 	sModAMPS	$10, $01, $FF, $FF
-	ssModReset
+	sModReset
 	dc.b sHold, $30, sHold
 	sModAMPS	$00, $01, $10, $FF
-	ssModReset
+	sModReset
 	dc.b nG2, $08
 	sModOff
 	dc.b nC3, $40
 	sModAMPS	$10, $01, $FE, $FF
-	ssModReset
+	sModReset
 	dc.b sHold, $18
 	saVol		$F4
 	sVoice		$04
@@ -301,14 +301,14 @@ DeathEgg_Loop9:
 	sModOff
 	dc.b nA2, $30
 	sModAMPS	$06, $01, $01, $FF
-	ssModReset
+	sModReset
 	dc.b sHold, $18
 	sModAMPS	$00, $01, $FA, $FF
 	dc.b nG2, $08
 	sModOff
 	dc.b nC3, $40
 	sModAMPS	$00, $01, $01, $FF
-	ssModReset
+	sModReset
 	dc.b sHold, $18
 	sLoop		$00, $02, DeathEgg_Loop9
 
@@ -327,7 +327,7 @@ DeathEgg_Loop10:
 	sModOff
 	dc.b nA2, $40
 	sModAMPS	$06, $01, $01, $FF
-	ssModReset
+	sModReset
 	dc.b sHold, $18
 	sJump		DeathEgg_PSG1
 

@@ -388,7 +388,7 @@ sModAMPS	macro wait, speed, step, count
     endm
 
 sModData	macro wait, speed, step, count
-	dc.b speed, count, wait, step
+	dc.b speed, count, step, wait
     endm
 
 ; FF00 - Turn on Modulation (MOD_SET - MODS_ON)
@@ -408,7 +408,7 @@ ssModFreq	macro freq
     endm
 
 ; FF2C - Reset modulation data (MOD_SET - MODS_RESET)
-ssModReset	macro
+sModReset	macro
 	dc.b $FF,$2C
     endm
 
