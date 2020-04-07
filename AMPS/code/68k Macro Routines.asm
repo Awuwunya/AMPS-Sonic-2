@@ -1,6 +1,6 @@
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Note timout handler macro for DAC
+; Gate handler macro for DAC
 ; ---------------------------------------------------------------------------
 
 dGateDAC	macro
@@ -17,7 +17,7 @@ dGateDAC	macro
     endm
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Note timout handler macro for FM
+; Gate handler macro for FM
 ; ---------------------------------------------------------------------------
 
 dGateFM		macro
@@ -33,7 +33,7 @@ dGateFM		macro
     endm
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Note timout handler macro for PSG
+; Gate handler macro for PSG
 ; ---------------------------------------------------------------------------
 
 dGatePSG	macro
@@ -197,7 +197,7 @@ dModulate	macro jump,loop,type
 ; Macro for generating fast looping code for modulation and portamento
 ; ---------------------------------------------------------------------------
 
-dGenLoops macro	mode,jump,loop,type
+dGenLoops	macro	mode,jump,loop,type
 	if type>=0
 		if FEATURE_DACFMVOLENV=0
 			bclr	#cfbVol,(a1)	; check if volume update is needed and clear bit
@@ -250,7 +250,7 @@ dDoTracker	macro
 ; Macro for playing a note, and setting up for it (software updates only)
 ; ---------------------------------------------------------------------------
 
-dProcNote	macro sfx, chan
+dProcNote	macro	sfx, chan
 		move.l	a2,cData(a1)		; save tracker address
 		move.b	cLastDur(a1),cDuration(a1); copy stored duration
 
@@ -415,7 +415,7 @@ dKeyOnFM	macro	sfx
 		bne.s	.k			; if so, do not note on
 
 		moveq	#$F0,d3			; turn all FM operators on
-		or.b	cType(a1),d3		; add channel type bits to d3
+		or.b	cType(a1),d3		; OR channel type bits to d3
 	CheckCue				; check that cue is valid
 	stopZ80
 	WriteYM1	#$28, d3		; Key on: turn all FM operators on

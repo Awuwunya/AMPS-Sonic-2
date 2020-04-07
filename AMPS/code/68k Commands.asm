@@ -249,7 +249,7 @@ dcsVolume:
 ; ---------------------------------------------------------------------------
 
 dcSampDAC:
-		move.w	#$100,cFreq(a1)		; reset to defualt base frequency
+		move.w	#$100,cFreq(a1)		; reset to default base frequency
 		bclr	#cfbMode,(a1)		; enable sample mode
 		rts
 ; ===========================================================================
@@ -822,6 +822,7 @@ dVoiceReg	macro	offset, reg
 		dVoiceReg ._x, ALLARGS		; get the next argument
 	endif
     endm
+; ---------------------------------------------------------------------------
 
 dUpdateVoiceFM:
 		move.l	a2,-(sp)		; save the tracker address to stack
@@ -830,6 +831,7 @@ dUpdateVoiceFM:
 
 		sub.w	#(VoiceRegs+1)*2,sp	; prepapre space in the stack
 		move.l	sp,a5			; copy pointer to the free space to a5
+
 		move.b	cType(a1),d2		; load channel type to d2
 		and.b	#3,d2			; keep in range
 
@@ -974,7 +976,7 @@ dcStop:
 		btst	#ctbDAC,cType(a1)	; check if the channel is a DAC channel
 		bne.s	.fixch			; if yes, skip
 
-		bset	#cfbRest,(a1)		; Set channel resting flag
+		bset	#cfbRest,(a1)		; set channel resting flag
 		moveq	#0,d4
 		move.b	cVoice(a1),d4		; load FM voice ID of the channel to d4
 		jsr	dUpdateVoiceFM(pc)	; send FM voice for this channel
@@ -1150,6 +1152,7 @@ dcCondCom:
 
 .false
 		bset	#cfbCond,(a1)		; set condition to false
+; ---------------------------------------------------------------------------
 
 .cond
 	rts			; T

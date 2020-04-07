@@ -259,7 +259,7 @@ spCentre =	$C0
 spCenter =	$C0
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; tracker commands
+; Tracker commands
 ; ---------------------------------------------------------------------------
 
 ; E0xx - Panning, AMS, FMS (PANAFMS - PAFMS_PAN)
@@ -554,3 +554,4 @@ sCheck		macro
 	enum snOff=$00			; disables PSG3 noise mode.
 	enum snPeri10=$E0,snPeri20,snPeri40,snPeriPSG3
 	enum snWhite10=$E4,snWhite20,snWhite40,snWhitePSG3
+; ---------------------------------------------------------------------------

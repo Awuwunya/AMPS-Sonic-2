@@ -223,6 +223,7 @@ dPlaySnd_Music:
 		lea	.index(pc),a2		; get music pointer table with an offset
 		add.w	d1,d1			; quadruple music ID
 		add.w	d1,d1			; since each entry is 4 bytes in size
+
 		move.b	(a2,d1.w),d6		; load speed shoes tempo from the unused 8 bits into d6
 		movea.l	(a2,d1.w),a2		; get music header pointer from the table
 
@@ -799,7 +800,7 @@ dPlaySnd_Stop:
 dStopMusic:
 		lea	mVctMus.w,a4		; load driver RAM start to a4
 		move.b	mMasterVolDAC.w,d5	; load DAC master volume to d5
-	dCLEAR_MEM	mChannelEnd-mVctMus, 32	; clear this block of memory with 32 byts per loop
+	dCLEAR_MEM	mChannelEnd-mVctMus, 32	; clear this block of memory with 32 bytes per loop
 
 	if safe=1
 		clr.b	msChktracker.w		; if in safe mode, also clear the check tracker variable!

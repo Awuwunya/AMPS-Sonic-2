@@ -54,7 +54,7 @@ cData		ds.l 1		; tracker address for the channel
 cEnvPos =	*		; volume envelope position. PSG only
 	endif
 cPanning	ds.b 1		; channel panning and LFO. FM and DAC only
-cDetune		ds.b 1		; frequency detune offset
+cDetune		ds.b 1		; frequency detune (offset)
 cPitch		ds.b 1		; pitch (transposition) offset
 cVolume		ds.b 1		; channel volume
 cTick		ds.b 1		; channel tick multiplier
@@ -483,8 +483,8 @@ startZ80 	macro
 ; Initializes YM writes
 ;
 ; output:
-;  d6 - YM part
-;  d5 - channel type
+;   d6 - YM part
+;   d5 - channel type
 ; ---------------------------------------------------------------------------
 
 InitChYM	macro

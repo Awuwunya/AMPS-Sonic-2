@@ -252,9 +252,9 @@ dEnvelopePSG2:
 
 dUpdateVolPSG:
 		bclr	#cfbVol,(a1)		; clear volume update flag
-		btst	#cfbRest,(a1)		; is this channel resting
-		bne.s	locret_UpdVolPSG	; if is, do not update
 		btst	#cfbInt,(a1)		; is channel interrupted by sfx?
+		bne.s	locret_UpdVolPSG	; if is, do not update
+		btst	#cfbRest,(a1)		; is this channel resting
 		bne.s	locret_UpdVolPSG	; if is, do not update
 
 		btst	#cfbHold,(a1)		; check if note is held

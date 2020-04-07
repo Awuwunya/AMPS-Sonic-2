@@ -126,6 +126,7 @@ dNoteOnDAC3:
 		lsl.w	#4,d3			; multiply sample ID by $10 (size of each entry)
 		lea	(a3,d3.w),a2		; get sample data to a2
 		pea	dUpdateFreqOffDAC(pc)	; update frequency after loading sample
+; ---------------------------------------------------------------------------
 
 dNoteOnDAC5:
 		btst	#ctbPt2,cType(a1)	; check if this channel is DAC1
