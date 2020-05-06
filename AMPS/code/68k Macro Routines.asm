@@ -175,13 +175,13 @@ dModulate	macro jump,loop,type
 		movea.l	cMod(a1),a4		; get modulation data offset to a1
 		move.b	(a4)+,cModSpeed(a1)	; reload modulation speed counter
 
-		tst.b	cModCount(a1)		; check if this was the last step
-		bne.s	.norev			; if was not, don't reverse
+		subq.b	#1,cModCount(a1)	; decrease step counter
+		bne.s	.norev			; if it isnt 0, don't reverse
 		move.b	(a4)+,cModCount(a1)	; reload steps counter
+		beq.s	.norev			; $00 means the modulation is actually infinite
 		neg.b	cModStep(a1)		; negate step amount
 
 .norev
-		subq.b	#1,cModCount(a1)	; decrease step counter
 		move.b	cModStep(a1),d5		; get step offset into d5
 		ext.w	d5			; extend to word
 
@@ -365,9 +365,13 @@ dProcNote	macro	sfx, chan
 		move.b	(a4)+,cModSpeed(a1)	; copy speed
 
 		move.b	(a4)+,d1		; get number of steps
+		beq.s	.set			; branch if 0 specifically (otherwise this would cause a problem)
 		lsr.b	#1,d1			; halve it
-		move.b	d1,cModCount(a1)	; save as the current number of steps
+		bne.s	.set			; if result is not 0, branch
+		moveq	#1,d1			; use 1 is the initial count, not 0!
 
+.set
+		move.b	d1,cModCount(a1)	; save as the current number of steps
 		move.b	(a4)+,cModStep(a1)	; copy step offset
 		move.b	(a4)+,cModDelay(a1)	; copy delay
 	endif

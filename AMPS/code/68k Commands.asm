@@ -621,9 +621,13 @@ dcsModReset:
 		move.b	(a4)+,cModSpeed(a1)	; copy speed
 
 		move.b	(a4)+,d4		; get number of steps
+		beq.s	.set			; branch if 0 specifically (otherwise this would cause a problem)
 		lsr.b	#1,d4			; halve it
-		move.b	d4,cModCount(a1)	; save as the current number of steps
+		bne.s	.set			; if result is not 0, branch
+		moveq	#1,d4			; use 1 is the initial count, not 0!
 
+.set
+		move.b	d4,cModCount(a1)	; save as the current number of steps
 		move.b	(a4)+,cModStep(a1)	; copy step offset
 		move.b	(a4)+,cModDelay(a1)	; copy delay
 		rts
@@ -952,9 +956,19 @@ dUpdateVoiceFM:
 dcStop:
 		and.b	#$FF-(1<<cfbHold)-(1<<cfbRun),(a1); clear hold and running tracker flags
 	dStopChannel	0			; stop channel operation
-
 		cmpa.w	#mSFXFM3,a1		; check if this is a SFX channel
-		blo.s	.exit			; if not, skip all this
+		bhs.s	.sfx			; if yes, run SFX code
+
+		btst	#ctbDAC,cType(a1)	; check if the channel is a DAC channel
+		beq.s	.nodac			; if not, skip
+		clr.b	cPanning(a1)		; clear panning (required for DAC to work right)
+
+.nodac
+		addq.l	#2,(sp)			; go to next channel immediately (this skips a bra.s instruction)
+		rts
+; ---------------------------------------------------------------------------
+
+.sfx
 		clr.b	cPrio(a1)		; clear channel priority
 
 		lea	dSFXoverList(pc),a4	; load quick reference to the SFX override list to a4

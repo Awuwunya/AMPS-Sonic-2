@@ -13,7 +13,7 @@
 	enum nC5=$BD,nCs5,nD5,nEb5,nE5,nF5,nFs5,nG5,nAb5,nA5,nBb5,nB5
 	enum nC6=$C9,nCs6,nD6,nEb6,nE6,nF6,nFs6,nG6,nAb6,nA6,nBb6,nB6
 	enum nC7=$D5,nCs7,nD7,nEb7,nE7,nF7,nFs7,nG7,nAb7,nA7,nBb7
-	enum nRst=$80, nHiHat=nA6
+	enum nRst=$80, nHiHat=nBb6
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Header Macros

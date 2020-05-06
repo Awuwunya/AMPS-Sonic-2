@@ -11,7 +11,7 @@ Credits_Header:
 	sHeaderFM	Credits_FM5, $0C, $16
 	sHeaderPSG	Credits_PSG1, $E8+$0C, $30, $00, v0B
 	sHeaderPSG	Credits_PSG2, $DC+$0C, $38, $00, v0B
-	sHeaderPSG	Credits_PSG3, $00+$0C, $10, $00, v03
+	sHeaderPSG	Credits_PSG3, $00, $10, $00, v03
 
 	; Patch $00
 	; $3A
@@ -1928,7 +1928,7 @@ Credits_PSG3:
 	sVolEnv		v02
 
 Credits_Loop45:
-	dc.b nA5, $0C, $0C, $0C, $06, $06, $0C, $0C
+	dc.b nHiHat, $0C, $0C, $0C, $06, $06, $0C, $0C
 	dc.b $06, $06, $0C
 	sLoop		$00, $08, Credits_Loop45
 
@@ -1937,15 +1937,15 @@ Credits_Loop46:
 	sLoop		$00, $04, Credits_Loop46
 
 Credits_Loop47:
-	dc.b nA5, $0C, $06, $06
+	dc.b nHiHat, $0C, $06, $06
 	sLoop		$00, $1F, Credits_Loop47
 	dc.b $0C
 	sVolEnv		v03
-	dc.b nA5
+	dc.b nHiHat
 	sVolEnv		v02
 
 Credits_Loop48:
-	dc.b nA5, $0C, $06, $06
+	dc.b nHiHat, $0C, $06, $06
 	sLoop		$00, $07, Credits_Loop48
 	dc.b $06, $06, $06, $06
 	sLoop		$02, $04, Credits_Loop48
@@ -1958,7 +1958,7 @@ Credits_Loop49:
 
 Credits_Loop50:
 	sGate		$03
-	dc.b nA5, $06, $06
+	dc.b nHiHat, $06, $06
 	sGate		$00
 	dc.b $0C
 	sLoop		$00, $04, Credits_Loop50
@@ -1966,25 +1966,25 @@ Credits_Loop50:
 	saVol		-$18
 
 Credits_Loop51:
-	dc.b nRst, $0C, nA5, $06, nRst, $07, nA5, $06
-	dc.b nRst, $11, nA5, $0C, nRst, $06, nA5, $0C
-	dc.b nRst, $06, nA5, nRst
+	dc.b nRst, $0C, nHiHat, $06, nRst, $07, nHiHat, $06
+	dc.b nRst, $11, nHiHat, $0C, nRst, $06, nHiHat, $0C
+	dc.b nRst, $06, nHiHat, nRst
 	sLoop		$00, $07, Credits_Loop51
 	saVol		$10
 
 Credits_Loop52:
-	dc.b nA5, $0C, $08, $04
+	dc.b nHiHat, $0C, $08, $04
 	sLoop		$00, $18, Credits_Loop52
 
 Credits_Loop53:
-	dc.b nA5, $0C, $0C, $0C, $08, $04
+	dc.b nHiHat, $0C, $0C, $0C, $08, $04
 	sLoop		$00, $08, Credits_Loop53
 	dc.b nRst, $60
 	sVolEnv		v04
 	saVol		$10
 
 Credits_Loop54:
-	dc.b nA5, $06, $06, $0C
+	dc.b nHiHat, $06, $06, $0C
 	sLoop		$00, $10, Credits_Loop54
 
 Credits_Loop55:
@@ -1994,7 +1994,7 @@ Credits_Loop55:
 
 Credits_Loop56:
 	sVolEnv		v01
-	dc.b nA5, $0C
+	dc.b nHiHat, $0C
 	sVolEnv		v02
 	saVol		-$08
 	dc.b $08
@@ -2007,12 +2007,12 @@ Credits_Loop56:
 
 Credits_Loop57:
 	sGate		$03
-	dc.b nA5, $0C
+	dc.b nHiHat, $0C
 	sGate		$0C
 	dc.b $0C
 	sLoop		$00, $1E, Credits_Loop57
 	sGate		$03
-	dc.b nA5, $06
+	dc.b nHiHat, $06
 	sGate		$0E
 	dc.b $12
 	sGate		$03
