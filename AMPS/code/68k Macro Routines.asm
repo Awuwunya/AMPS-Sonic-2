@@ -255,7 +255,7 @@ dProcNote	macro	sfx, chan
 		move.b	cLastDur(a1),cDuration(a1); copy stored duration
 
 	if FEATURE_PORTAMENTO
-		move.w	(sp)+,d1		; load the last frequency to d2
+		move.w	(sp)+,d1		; load the last frequency to d1
 		if chan<=0
 			beq.s	.noporta	; if it was not 0, branch
 		else
@@ -292,7 +292,7 @@ dProcNote	macro	sfx, chan
 ; <$25D and >$4C0 works the best.
 ; ---------------------------------------------------------------------------
 
-		if \chan=0
+		if chan=0
 		; for FM, process frequency difference differently
 			move.w	#$800+$25D-$4C0,d3; get frequency addition to d3
 			move.w	d2,d1		; copy the frequency difference to d2

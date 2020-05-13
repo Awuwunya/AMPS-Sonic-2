@@ -11,11 +11,10 @@
 dCommands:
 		add.b	d1,d1			; quadruple command ID
 		add.b	d1,d1			; since each entry is 4 bytes large
-
 		btst	#cfbCond,(a1)		; check if condition state
 		bne.w	.falsecomm		; branch if false
-.cunt = 	.comm-$80			; AS is ASS
-		jmp	.cunt(pc,d1.w)		; jump to appropriate handler
+.whyyy =	.comm-$80			; AS is ASS
+		jmp	.whyyy(pc,d1.w)		; jump to appropriate handler
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Command handlers for normal execution
@@ -64,8 +63,8 @@ dCommands:
 		jmp	.meta(pc,d1.w)		; jump to appropriate meta handler
 
 .falsecomm
-.fuck = 	.false-$80			; AS is ASS
-		jmp	.fuck(pc,d1.w)		; jump to appropriate handler (false command)
+.awman =	.false-$80			; AS is ASS
+		jmp	.awman(pc,d1.w)		; jump to appropriate handler (false command)
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Command handlers for meta commands
@@ -83,7 +82,7 @@ dCommands:
 		bra.w	dcCondReg		; FF 20 - Get RAM table offset by y, and chk zz with cond x (COMM_CONDITION - COMM_SPEC)
 		bra.w	dcSound			; FF 24 - Play another music/sfx (SND_CMD)
 		bra.w	dcsModFreq		; FF 28 - Set modulation frequency to xxxx (MOD_SET - MODS_FREQ)
-		bra.w	dcsModReset		; FF 2C - Reset modulation data (MOD_SET - MODS_RESET)
+		bra.w	dcModReset		; FF 2C - Reset modulation data (MOD_SET - MODS_RESET)
 		bra.w	dcSpecFM3		; FF 30 - Enable FM3 special mode (SPC_FM3)
 		bra.w	dcFilter		; FF 34 - Set DAC filter bank. (DAC_FILTER)
 		bra.w	dcBackup		; FF 38 - Load the last song from back-up (FADE_IN_SONG)
@@ -577,7 +576,8 @@ dcPortamento:
 dcMod68K:
 	if FEATURE_MODULATION
 		move.l	a2,cMod(a1)		; set modulation data address
-		addq.w	#3,a2			; skip all the modulation data
+		addq.w	#2,a2			; skip all the modulation data
+		move.b	(a2)+,cModStep(a1)	; copy step offset
 		move.b	(a2)+,cModDelay(a1)	; copy delay
 	; continue to enabling modulation
 	endif
@@ -614,7 +614,7 @@ dcsModFreq:
 ; Tracker command for resetting modulation
 ; ---------------------------------------------------------------------------
 
-dcsModReset:
+dcModReset:
 	if FEATURE_MODULATION
 		move.l	cMod(a1),a4		; get modulation data address
 		clr.w	cModFreq(a1)		; clear frequency offset
@@ -753,7 +753,7 @@ dcBackup:
 		move.b	#$FF,dPSG.l		; mute PSG4
 		cmp.b	#ctPSG4,mPSG3+cType.w	; check if PSG3 channel is in PSG4 mode
 		bne.s	locret_Backup		; if not, skip
-		move.b	mPSG3+cStatPSG4.w,dPSG.l; update PSG4 status to PSG port
+		move.b	mPSG3+cStatPSG4.w,dPSG.l	; update PSG4 status to PSG port
 
 	elseif safe=1
 		AMPS_Debug_dcBackup
@@ -768,7 +768,7 @@ locret_Backup:
 
 dcVoice:
 		moveq	#0,d4
-		move.b	(a2)+,d4		; load voice/sample/volume envelope from tracker to d1
+		move.b	(a2)+,d4		; load voice/sample/volume envelope from tracker to d4
 		move.b	d4,cVoice(a1)		; save to channel
 
 	if FEATURE_DACFMVOLENV

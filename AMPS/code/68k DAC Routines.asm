@@ -132,15 +132,15 @@ dNoteOnDAC5:
 		btst	#ctbPt2,cType(a1)	; check if this channel is DAC1
 		beq.s	dNoteWriteDAC1		; if is, branch
 
-		lea	dZ80+PCM2_Sample,a5	; load addresses for PCM 1
-		lea	dZ80+PCM2_NewRET,a4	; ''
+		lea	dZ80+PCM2_Sample.l,a5	; load addresses for PCM 1
+		lea	dZ80+PCM2_NewRET.l,a4	; ''
 		bra.s	dNoteOnDAC4
 ; ---------------------------------------------------------------------------
 
 dNoteWriteDAC1:
 
-		lea	dZ80+PCM1_Sample,a5	; load addresses for PCM 2
-		lea	dZ80+PCM1_NewRET,a4	; ''
+		lea	dZ80+PCM1_Sample.l,a5	; load addresses for PCM 2
+		lea	dZ80+PCM1_NewRET.l,a4	; ''
 
 dNoteOnDAC4:
 	stopZ80					; wait for Z80 to stop
@@ -359,13 +359,13 @@ dUpdateVolDAC2:
 
 		btst	#ctbPt2,cType(a1)	; check if this channel is DAC1
 		beq.s	.dac1			; if is, branch
-		move.b	d1,dZ80+PCM2_Volume+1.l	; save volume for PCM 1
+		move.b	d1,dZ80+PCM2_Volume+1.l	; save volume for PCM 2
 	startZ80				; enable Z80 execution
 		rts
 ; ---------------------------------------------------------------------------
 
 .dac1
-		move.b	d1,dZ80+PCM1_Volume+1.l	; save volume for PCM 2
+		move.b	d1,dZ80+PCM1_Volume+1.l	; save volume for PCM 1
 	startZ80				; enable Z80 execution
 
 locret_VolDAC:

@@ -1,4 +1,4 @@
-; =; ===========================================================================
+; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Routine for running modulation envelope programs
 ;
@@ -42,7 +42,7 @@ dModEnvProg2:
 		ble.s	dModEnvCommand		; if it is handle it
 
 .value
-		move.b	cModEnvSens(a1),d5	; load sensitivity to d1 (unsigned value - effective range is ~ -$7000 to $8000)
+		move.b	cModEnvSens(a1),d5	; load sensitivity to d5 (unsigned value - effective range is ~ -$7000 to $8000)
 		addq.w	#1,d5			; increment sensitivity by 1 (range of 1 to $100)
 		ext.w	d4			; extend to displacement to a word
 		muls	d5,d4			; signed multiply loaded value with sensitivity
@@ -62,8 +62,8 @@ dModEnvCommand:
 		AMPS_Debug_VolEnvCmd		; check if command is valid
 	endif
 
-.gahh =		.comm-$80			; damn it AS
-		jmp	.gahh(pc,d4.w)		; jump to command handler
+.derpp =	.comm-$80			; damn it AS
+		jmp	.derpp(pc,d4.w)		; jump to command handler
 
 .comm
 		bra.s	.reset			; 80 - Loop back to beginning
@@ -163,8 +163,8 @@ dEnvCommand:
 		AMPS_Debug_VolEnvCmd		; check if command is valid
 	endif
 
-.grrr =		.comm-$80			; damn it AS
-		jmp	.grrr(pc,d4.w)		; jump to command handler
+.burpp =	.comm-$80			; damn it AS
+		jmp	.burpp(pc,d4.w)		; jump to command handler
 
 .comm
 		bra.s	.reset			; 80 - Loop back to beginning

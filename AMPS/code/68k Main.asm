@@ -1,6 +1,6 @@
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Normal fade out data
+; Fade out data used in AMPS
 ; ---------------------------------------------------------------------------
 
 dFadeOutDataLog:
@@ -263,7 +263,7 @@ dUpdateAllAMPS:
 		AMPS_Debug_FadeAddr		; check whether this fade address is valid
 	endif
 
-		moveq	#1<<cfbVol,d0		; prepare volume update to d1
+		moveq	#1<<cfbVol,d0		; prepare volume update to d0
 		moveq	#0,d2
 		move.b	(a4)+,d2		; get FM/command byte from fade data
 		bpl.s	.nofadeend		; branch if this is not a command
@@ -362,7 +362,7 @@ dUpdateAllAMPS:
 ; the tempo, but at high ranges it gets worse. Meanwhile the counter
 ; method isn't as good for small values, but for large value it works
 ; better. You may choose this setting in the macro.asm file
-; --------------------------------------------------------------------------
+; ---------------------------------------------------------------------------
 
 	if TEMPO_ALGORITHM		; Counter method
 		subq.b	#1,mTempoCur.w		; sub 1 from counter
@@ -380,3 +380,4 @@ dUpdateAllAMPS:
 		addq.b	#1,.ch.w		; add 1 to duration
 .ch :=		.ch+cSize			; go to next channel
 	endm
+; ---------------------------------------------------------------------------

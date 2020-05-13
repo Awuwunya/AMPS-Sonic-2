@@ -69,15 +69,15 @@ dPlaySnd_Pause:
 
 dMuteDAC:
 	stopZ80					; wait for Z80 to stop
-		lea	SampleList(pc),a5	; load address for the stop sample data into a2
-		lea	dZ80+PCM1_Sample.l,a4	; load addresses for PCM 1 sample to a1
+		lea	SampleList(pc),a5	; load address for the stop sample data into a5
+		lea	dZ80+PCM1_Sample.l,a4	; load addresses for PCM 1 sample to a4
 
 	rept 12
 		move.b	(a5)+,(a4)+		; send sample data to Dual PCM
 	endm
 
-		lea	SampleList(pc),a5	; load address for the stop sample data into a2
-		lea	dZ80+PCM2_Sample.l,a4	; load addresses for PCM 2 sample to a1
+		lea	SampleList(pc),a5	; load address for the stop sample data into a5
+		lea	dZ80+PCM2_Sample.l,a4	; load addresses for PCM 2 sample to a4
 
 	rept 12
 		move.b	(a5)+,(a4)+		; send sample data to Dual PCM
@@ -136,7 +136,7 @@ dPlaySnd_Unpause:
 ; ---------------------------------------------------------------------------
 
 		lea	mSFXFM3.w,a1		; start from SFX FM1 channel
-		moveq	#SFX_FM-1,d0		; load the number of SFX FM channels to d4
+		moveq	#SFX_FM-1,d0		; load the number of SFX FM channels to d0
 		moveq	#cSizeSFX,d3		; get the size of each SFX channel to d3
 
 .sfxloop
@@ -223,12 +223,11 @@ dPlaySnd_Music:
 		lea	.index(pc),a2		; get music pointer table with an offset
 		add.w	d1,d1			; quadruple music ID
 		add.w	d1,d1			; since each entry is 4 bytes in size
-
 		move.b	(a2,d1.w),d6		; load speed shoes tempo from the unused 8 bits into d6
-		movea.l	(a2,d1.w),a2		; get music header pointer from the table
+		move.l	(a2,d1.w),a2		; get music header pointer from the table
 
 	if safe=1
-		move.l	a2,d2			; copy pointer to d0
+		move.l	a2,d2			; copy pointer to d2
 		and.l	#$FFFFFF,d2		; clearing the upper 8 bits allows the debugger
 		move.l	d2,a2			; to show the address correctly. Move ptr back to a2
 		AMPS_Debug_PlayTrackMus		; check if this was valid music
@@ -262,7 +261,7 @@ dPlaySnd_Music:
 		move.w	(a4)+,(a3)+		; back up data for every channel
 	endif
 
-		mvnbt	d3, cfbInt, cfbVol	; each other bit except interrupted and volume update bits
+		moveq	#$FF-(1<<cfbInt)|(1<<cfbVol),d3; each other bit except interrupted and volume update bits
 
 .ch :=		mBackDAC1			; start at backup DAC1
 		rept Mus_Ch			; do for all music channels
@@ -313,7 +312,7 @@ dPlaySnd_Music:
 		moveq	#cSize,d6		; prepare channel size to d6
 		moveq	#1,d5			; prepare duration of 0 frames to d5
 
-		mvbit	d2, cfbRun, cfbVol	; prepare running tracker and volume flags into d2
+		moveq	#(1<<cfbRun)|(1<<cfbVol),d2; prepare running tracker and volume flags into d2
 		moveq	#$C0,d1			; prepare panning value of centre to d1
 		move.w	#$100,d3		; prepare default DAC frequency to d3
 ; ---------------------------------------------------------------------------
@@ -356,7 +355,7 @@ dPlaySnd_Music:
 	endif
 
 		ext.w	d0			; convert byte to word (because of dbf)
-		mvbit	d2, cfbRun, cfbRest	; prepare running tracker and channel rest flags to d2
+		moveq	#(1<<cfbRun)|(1<<cfbRest),d2; prepare running tracker and channel rest flags to d2
 
 .loopFM
 		move.b	d2,(a1)			; save channel flags
@@ -381,7 +380,7 @@ dPlaySnd_Music:
 ; It adds a delay of 1 frame to DAC and FM due to the YMCue, and PCM
 ; buffering to avoid quality loss from DMA's. This means that, since PSG
 ; is controlled by the 68000, we would be off by a single frame without
-; this fix
+; this fix.
 ; ---------------------------------------------------------------------------
 
 .doPSG
@@ -392,7 +391,7 @@ dPlaySnd_Music:
 		bmi.s	.finish			; if no PSG channels are loaded, branch
 	endif
 
-		mvbit	d2, cfbRun, cfbVol, cfbRest; prepare running tracker, resting and volume flags into d2
+		moveq	#(1<<cfbRun)|(1<<cfbVol)|(1<<cfbRest),d2; prepare running tracker, resting and volume flags into d2
 		moveq	#2,d5			; prepare duration of 1 frames to d5
 		lea	dPSGtypeVals(pc),a4	; prepare PSG type value list into a4
 		lea	mPSG1.w,a1		; start from PSG1 channel
@@ -494,12 +493,11 @@ dPlaySnd_SFX:
 ; have the same effect, but saves us 8 cycles overall
 ; ---------------------------------------------------------------------------
 
-.noring
 .index =	SoundIndex-(SFXoff*4)		; effin ASS
 		lea	.index(pc),a1		; get sfx pointer table with an offset to a1
 		add.w	d1,d1			; quadruple sfx ID
 		add.w	d1,d1			; since each entry is 4 bytes in size
-		movea.l	(a1,d1.w),a2		; get SFX header pointer from the table
+		move.l	(a1,d1.w),a2		; get SFX header pointer from the table
 ; ---------------------------------------------------------------------------
 ; This implements a system where the sound effect swaps every time its
 ; played. This in particular needed with Sonic 1 to 3K, where the ring SFX
@@ -512,7 +510,7 @@ dPlaySnd_SFX:
 		bchg	#mfbSwap,mFlags.w	; swap the flag and check if it was set
 		beq.s	.noswap			; if was not, do not swap sound effect
 		addq.w	#4,d1			; go to next SFX
-		movea.l	(a1,d1.w),a2		; get the next SFX pointer from the table
+		move.l	(a1,d1.w),a2		; get the next SFX pointer from the table
 
 .noswap
 	if safe=1
@@ -693,7 +691,7 @@ dPlaySnd_SFX:
 		rts
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; pointers for music channels SFX can override and addresses of SFX channels
+; Pointers for music channels SFX can override and addresses of SFX channels
 ; ---------------------------------------------------------------------------
 
 dSFXoffList:	dc.w mSFXFM3			; FM3
@@ -935,11 +933,11 @@ dPlaySnd_OutWater:
 ; Force volume update on all FM channels
 ;
 ; thrash:
-;   d6 - Used for quickly or'ing the value
+;   d6 - Used for quickly OR-ing the value
 ; ---------------------------------------------------------------------------
 
 dReqVolUpFM:
-		moveq	#1<<cfbVol,d6		; prepare volume update flag to d0
+		moveq	#1<<cfbVol,d6		; prepare volume update flag to d6
 
 .ch :=	mSFXFM3					; start at SFX FM3
 	rept SFX_FM				; loop through all SFX FM channels
@@ -949,7 +947,7 @@ dReqVolUpFM:
 ; ---------------------------------------------------------------------------
 
 dReqVolUpMusicFM:
-		moveq	#1<<cfbVol,d6		; prepare volume update flag to d0
+		moveq	#1<<cfbVol,d6		; prepare volume update flag to d6
 
 .ch :=	mFM1					; start at FM1
 	rept Mus_FM				; loop through all music FM channels

@@ -1,3 +1,8 @@
+; ===========================================================================
+; ---------------------------------------------------------------------------
+;
+; ---------------------------------------------------------------------------
+
 	if safe=1	; all of this code is only required in safe mode!
 		ifndef isAMPS
 			warning "Not using custom debugger macro definition! All features may not work."
@@ -138,6 +143,7 @@ AMPS_Debug_Console_Channel:
 	AMPS_Debug_GetChannel
 	Console.BreakLine
 	Console.WriteLine "%<pal1>Addr: %<pal0>%<.l a4 sym|split>%<pal2>%<symdisp>"
+; ---------------------------------------------------------------------------
 
 ; fmt: flag, type, pan, det, pitch, vol, tick, sample/voice, dur, lastdur, freq
 
@@ -158,6 +164,7 @@ AMPS_Debug_Console_Channel:
 	move.w	cFreq(a1),d3
 	Console.Write	  "%<.b d0> %<.b d1> %<.b d2> %<.w d3> "
 	Console.BreakLine
+; ---------------------------------------------------------------------------
 
 	if FEATURE_MODULATION
 		move.l	cMod(a1),d0
@@ -171,6 +178,7 @@ AMPS_Debug_Console_Channel:
 		Console.Write	  "%<pal1>Mod Data: %<pal2>%<.b d0> %<.w d1> %<.b d2> %<.b d3> %<.b d4>"
 		Console.BreakLine
 	endif
+; ---------------------------------------------------------------------------
 
 	if FEATURE_PORTAMENTO
 		move.b	cPortaSpeed(a1),d0
@@ -179,15 +187,18 @@ AMPS_Debug_Console_Channel:
 		Console.WriteLine "%<pal1>Porta: %<pal2>%<.b d0> %<.w d1> %<.w d2>"
 		Console.BreakLine
 	endif
+; ---------------------------------------------------------------------------
 
 	if FEATURE_DACFMVOLENV
 		move.b	cVolEnv(a1),d0
 		move.b	cEnvPos(a1),d1
 		Console.WriteLine "%<pal1>VolEnv: %<pal2>%<.b d0> %<pal2>%<.b d1>"
+		Console.BreakLine
 		if FEATURE_MODENV=0
 			Console.BreakLine
 		endif
 	endif
+; ---------------------------------------------------------------------------
 
 	if FEATURE_MODENV
 		move.b	cModEnv(a1),d0
@@ -196,6 +207,7 @@ AMPS_Debug_Console_Channel:
 		Console.WriteLine "%<pal1>ModEnv: %<pal2>%<.b d0> %<.b d1>%<.b d2>"
 		Console.BreakLine
 	endif
+; ---------------------------------------------------------------------------
 
 	move.b	cLoop(a1),d0
 	move.b	cLoop+1(a1),d1
@@ -211,6 +223,7 @@ AMPS_Debug_Console_Channel:
 	move.b	cGateMain(a1),d1
 	Console.WriteLine "%<.b d2> %<.b d1>"
 	Console.WriteLine "%<pal1>Stack: %<pal2>%<.b d0>"
+; ---------------------------------------------------------------------------
 
 	move.w	a1,d1
 	add.w	#cSize,d1
@@ -242,6 +255,7 @@ AMPS_Debug_Console_Main:
 	Console.WriteLine "  %<pal0>d6: %<pal2>%<.l d6>  %<pal0>a6: %<pal2>%<.l a6>"
 	Console.WriteLine "  %<pal0>d7: %<pal2>%<.l d7>  %<pal0>sp: %<pal2>%<.l a7>"
 	Console.BreakLine
+; ---------------------------------------------------------------------------
 
 	move.l	mVctMus.w,d0
 	Console.WriteLine "%<pal1>PatMus: %<pal0>%<.l d0 sym|split>%<pal2>%<symdisp>"
@@ -306,6 +320,7 @@ AMPS_Debug_FadeAddr	macro
 
 .ok2
     endm
+; ---------------------------------------------------------------------------
 
 	if isAMPS		; check if Vladik's debugger is active
 AMPS_DebugR_FadeAddr:
@@ -332,8 +347,10 @@ AMPS_Debug_FadeCmd	macro
 	else
 		bra.w	*
 	endif
+
 .ok
     endm
+; ---------------------------------------------------------------------------
 
 	if isAMPS		; check if Vladik's debugger is active
 AMPS_DebugR_FadeCmd:
@@ -353,8 +370,10 @@ AMPS_Debug_VolEnvID	macro
 	else
 		bra.w	*
 	endif
+
 .ok
     endm
+; ---------------------------------------------------------------------------
 
 	if isAMPS		; check if Vladik's debugger is active
 AMPS_DebugR_VolEnvID:
@@ -374,6 +393,7 @@ AMPS_Debug_VolEnvCmd	macro
 	else
 		bra.w	*
 	endif
+
 .ok
     endm
 ; ===========================================================================
@@ -390,8 +410,10 @@ AMPS_Debug_ModEnvID	macro
 	else
 		bra.w	*
 	endif
+
 .ok
     endm
+; ---------------------------------------------------------------------------
 
 	if isAMPS		; check if Vladik's debugger is active
 AMPS_DebugR_ModEnvID:
@@ -412,8 +434,10 @@ AMPS_Debug_NotePSG	macro
 	else
 		bra.w	*
 	endif
+
 .ok
     endm
+; ---------------------------------------------------------------------------
 
 	if isAMPS		; check if Vladik's debugger is active
 AMPS_DebugR_NotePSG:
@@ -435,8 +459,10 @@ AMPS_Debug_NoteFM	macro
 	else
 		bra.w	*
 	endif
+
 .ok
     endm
+; ---------------------------------------------------------------------------
 
 	if isAMPS		; check if Vladik's debugger is active
 AMPS_DebugR_NoteFM:
@@ -460,8 +486,10 @@ AMPS_Debug_FreqDAC	macro
 	else
 		bra.w	*
 	endif
+
 .ok
     endm
+; ---------------------------------------------------------------------------
 
 	if isAMPS		; check if Vladik's debugger is active
 AMPS_DebugR_FreqDAC:
@@ -486,7 +514,7 @@ AMPS_Debug_dcInvalid	macro
 
 AMPS_Debug_dcPortamento	macro
 	if isAMPS		; check if Vladik's debugger is active
-		RaiseError "Portamento feature is disabled. Set FEATURE_PORTAMENTO to 1 to enable.", AMPS_Debug_Console_Channel
+		RaiseError "Portamento feature is disabled. Set   FEATURE_PORTAMENTO to 1 to enable.", AMPS_Debug_Console_Channel
 	else
 		bra.w	*
 	endif
@@ -503,11 +531,12 @@ AMPS_Debug_dcModulate	macro
 		bra.w	*
 	endif
     endm
+; ---------------------------------------------------------------------------
 
 	if FEATURE_MODULATION=0
 	if isAMPS		; check if Vladik's debugger is active
 AMPS_DebugR_dcModulate:
-		RaiseError "Modulation feature is disabled. Set FEATURE_MODULATION to 1 to enable.", AMPS_Debug_Console_Channel
+		RaiseError "Modulation feature is disabled. Set   FEATURE_MODULATION to 1 to enable.", AMPS_Debug_Console_Channel
 	endif
 	endif
 ; ===========================================================================
@@ -526,6 +555,7 @@ AMPS_Debug_dcVoiceEnv	macro
 	endif
 .ok
     endm
+; ---------------------------------------------------------------------------
 
 	if FEATURE_DACFMVOLENV
 	if isAMPS		; check if Vladik's debugger is active
@@ -547,6 +577,7 @@ AMPS_Debug_dcVolEnv	macro
 	else
 		bra.w	*
 	endif
+
 .ok
     endm
 ; ===========================================================================
@@ -664,26 +695,29 @@ AMPS_Debug_dcGate	macro
 
 AMPS_Debug_dcCall1	macro
 	cmp.w	#mSFXDAC1,a1	; check for SFX channel
-	blo.s	.ok		; if no, branch
+	blo.s	.ok1		; if no, branch
 
 	if isAMPS		; check if Vladik's debugger is active
 		RaiseError "sCall on a SFX channel!", AMPS_Debug_Console_Channel
 	else
 		bra.w	*
 	endif
-.ok
+
+.ok1
     endm
+; ---------------------------------------------------------------------------
 
 AMPS_Debug_dcCall2	macro
 	cmp.b	#cGateCur,d4	; check for invalid stack address
-	bhi.s	.ok		; if no, branch
+	bhi.s	.ok2		; if no, branch
 
 	if isAMPS		; check if Vladik's debugger is active
 		RaiseError "sCall stack too deep!", AMPS_Debug_Console_Channel
 	else
 		bra.w	*
 	endif
-.ok
+
+.ok2
     endm
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -694,11 +728,11 @@ AMPS_Debug_dcLoop	macro
 	cmp.b	#cSizeSFX-cLoop,d4	; check for invalid call number
 	bhi.s	.fail			; if is, branch
 	cmp.w	#mSFXDAC1,a1		; check for SFX channel
-	blo.s	.nock			; if no, branch
+	blo.s	.nosfx			; if no, branch
 	cmp.b	#cPrio-cLoop,d4		; check if cPrio
 	beq.s	.fail			; if so, branch
 
-.nock
+.nosfx
 	if FEATURE_DACFMVOLENV
 		bra.s	.ok		; no need to check others
 	else
@@ -714,6 +748,7 @@ AMPS_Debug_dcLoop	macro
 	else
 		bra.w	*
 	endif
+
 .ok
     endm
 ; ===========================================================================
@@ -723,26 +758,29 @@ AMPS_Debug_dcLoop	macro
 
 AMPS_Debug_dcReturn1	macro
 	cmp.w	#mSFXDAC1,a1	; check for SFX channel
-	blo.s	.ok		; if no, branch
+	blo.s	.ok1		; if no, branch
 
 	if isAMPS		; check if Vladik's debugger is active
 		RaiseError "sRet on a SFX channel!", AMPS_Debug_Console_Channel
 	else
 		bra.w	*
 	endif
-.ok
+
+.ok1
     endm
+; ---------------------------------------------------------------------------
 
 AMPS_Debug_dcReturn2	macro
 	cmp.b	#cSize,d3	; check for invalid stack address
-	bls.s	.ok		; if no, branch
+	bls.s	.ok2		; if no, branch
 
 	if isAMPS		; check if Vladik's debugger is active
 		RaiseError "sRet stack too shallow!", AMPS_Debug_Console_Channel
 	else
 		bra.w	*
 	endif
-.ok
+
+.ok2
     endm
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -762,6 +800,7 @@ AMPS_Debug_UpdVoiceFM	macro
 	else
 		bra.w	*
 	endif
+
 .ok
     endm
 ; ===========================================================================
@@ -781,8 +820,10 @@ AMPS_Debug_UpdVolFM	macro
 	else
 		bra.w	*
 	endif
+
 .ok
     endm
+; ---------------------------------------------------------------------------
 
 	if isAMPS		; check if Vladik's debugger is active
 AMPS_DebugR_UpdVolFM:
@@ -806,8 +847,10 @@ AMPS_Debug_CuePtr	macro id
 	else
 		bra.w	*
 	endif
+
 .ok
     endm
+; ---------------------------------------------------------------------------
 
 	if isAMPS		; check if Vladik's debugger is active
 AMPS_DebugR_CuePtrGen:
@@ -831,11 +874,12 @@ AMPS_Debug_PlayCmd	macro
 	else
 		bra.w	*
 	endif
+
 .ok
     endm
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Tracker address handlers
+; Sound ID check
 ; ---------------------------------------------------------------------------
 
 AMPS_Debug_SoundID	macro
@@ -871,6 +915,7 @@ AMPS_Debug_PlayTrackMus	macro
 
 .ok
     endm
+; ---------------------------------------------------------------------------
 
 AMPS_Debug_PlayTrackMus2	macro ch
 	swap	d2		; make some space to store stuff
@@ -894,6 +939,7 @@ AMPS_Debug_PlayTrackMus2	macro ch
 	move.w	d2,d1		; get the value back
 	swap	d2		; also this one as well
     endm
+; ---------------------------------------------------------------------------
 
 AMPS_Debug_PlayTrackSFX	macro
 	cmp.l	#sfxaddr,d2	; check if this is valid tracker
@@ -911,6 +957,7 @@ AMPS_Debug_PlayTrackSFX	macro
 
 .ok
     endm
+; ---------------------------------------------------------------------------
 
 AMPS_Debug_PlayTrackSFX2	macro
 	move.l	a3,d4
@@ -929,16 +976,17 @@ AMPS_Debug_PlayTrackSFX2	macro
 
 .ok
     endm
+; ---------------------------------------------------------------------------
 
 AMPS_Debug_TrackUpd	macro
 	move.l	a2,d1		; copy to d1
 	and.l	#$FFFFFF,d1	; remove high byte
 	cmp.l	#sfxaddr,d1	; check if this is valid tracker
-	blo.s	.fail		; if no, branch
+	blo.s	.fail2		; if no, branch
 	cmp.l	#dacaddr,d1	; check if this is valid tracker
 	blo.s	.data		; if is, branch
 
-.fail
+.fail2
 	if isAMPS		; check if Vladik's debugger is active
 		RaiseError "Invalid tracker address: %<.l a2>%<endl>%<.l a2 sym>", AMPS_Debug_Console_Channel
 	else
@@ -958,9 +1006,10 @@ AMPS_Debug_ChkTracker	macro
 		bra.w	*
 	endif
     endm
+; ---------------------------------------------------------------------------
 
 AMPS_DebugR_ChkTracker:
-	ifndef isAMPS		; if not custom version
+	ifndef isAMPS				; if not custom version
 		moveq	#0,d7
 		Console.Run AMPS_DebugR_ChkTracker2
 
@@ -976,6 +1025,7 @@ AMPS_DebugR_ChkTracker:
 .nodraw
 		moveq	#-1,d6
 		dbf	d6,*			; delay a lot
+; ---------------------------------------------------------------------------
 
 	; implement reading control data
 		lea	$A10003,a1
@@ -1010,9 +1060,10 @@ AMPS_DebugR_ChkTracker:
 		beq.s	.nodraw			; if not, branch
 		bra.w	.loop
 	endif
+; ---------------------------------------------------------------------------
 
 AMPS_Debug_CalcMax:
-		moveq	#28,d6	; max lines count
+		moveq	#28,d6		; max lines count
 		moveq	#10-1,d7	; run for 10 chs
 		moveq	#cSize,d5	; prepare size
 		lea	mPSG3.w,a5	; start at PSG3
@@ -1047,12 +1098,13 @@ AMPS_Debug_CalcMax:
 		addq.w	#1,d7		; increase ch by 1
 .rts
 		rts
+; ---------------------------------------------------------------------------
 
 AMPS_DebugR_ChkTracker_Ch:
 		subq.w	#1,d7		; sub 1 from offset
-		bpl.w	++		; branch if positive
+		bpl.w	.n		; branch if positive
 		tst.w	d6		; check if we need to render anymore
-		bmi.w	++		; if not, branch
+		bmi.w	.n		; if not, branch
 
 ; fmt: <addr> lstdur, dur, freq, sample, loop0, loop1, loop2
 		jsr	(a0)
@@ -1069,9 +1121,10 @@ AMPS_DebugR_ChkTracker_Ch:
 
 	move.l	cData(a5),d0
 	Console.WriteLine " %<pal1>Addr: %<pal0>%<.l d0 sym|split>%<pal2>%<symdisp>"
+; ---------------------------------------------------------------------------
 
 		subq.w	#2,d6		; sub those 2 lines from stuff
-		bmi.w	++		; if drawn all, branch
+		bmi.w	.n		; if drawn all, branch
 		move.w	a5,d1		; copy ch to d1
 		add.w	d5,d1		; go to end of it
 
@@ -1080,32 +1133,33 @@ AMPS_DebugR_ChkTracker_Ch:
 		lea	(a5,d0.w),a6	; and get first element to a6
 
 		cmp.w	a6,d1		; check if stack is dry
-		bls.s	+		; if is, branch
+		bls.s	.c		; if is, branch
 	Console.WriteLine " %<pal1>Stack:%<pal0>%<.l (a6) sym|split>%<pal2>%<symdisp>"
 		tst.l	(a6)+		; AS HACK
 		subq.w	#1,d6		; sub a line
-		bmi.s	++		; if drawn all, branch
+		bmi.s	.n		; if drawn all, branch
 
--
+.loop
 		cmp.w	a6,d1		; check if we printed full stack
-		bls.s	+		; if not though, branch
+		bls.s	.c		; if not though, branch
 	Console.WriteLine "   %<pal0>%<.l (a6) sym|split>%<pal2>%<symdisp>"
 		tst.l	(a6)+		; AS HACK
 		subq.w	#1,d6		; sub a line
-		bpl.s	-		; if we havent drawn all, branch
+		bpl.s	.loop		; if we havent drawn all, branch
 
-+
+.c
 	Console.BreakLine
 		subq.w	#1,d6		; sub a line
-+
+
+.n
 		add.w	d5,a5		; go to next ch
 		rts
+; ---------------------------------------------------------------------------
 
 AMPS_DebugR_ChkTracker2:
 		moveq	#40-1,d6
 		moveq	#cSize,d5
 		lea	mDAC1.w,a5
-
 
 		lea	AMPS_DebugR_ChDAC1(pc),a0
 		jsr	AMPS_DebugR_ChkTracker_Ch(pc)
@@ -1129,6 +1183,7 @@ AMPS_DebugR_ChkTracker2:
 		jsr	AMPS_DebugR_ChkTracker_Ch(pc)
 		lea	AMPS_DebugR_ChPSG3(pc),a0
 		jmp	AMPS_DebugR_ChkTracker_Ch(pc)
+; ---------------------------------------------------------------------------
 
 AMPS_DebugR_ChDAC1:
 	Console.Write " %<pal0>DAC1"
@@ -1170,3 +1225,4 @@ AMPS_DebugR_ChPSG3:
 	Console.Write " %<pal0>PSG3"
 		rts
 	endif
+; ---------------------------------------------------------------------------

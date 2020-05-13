@@ -16,7 +16,7 @@
 	enum nRst=$80, nHiHat=nBb6
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Header Macros
+; Header macros
 ; ---------------------------------------------------------------------------
 
 ; Header - Initialize a music file
@@ -29,11 +29,11 @@ sHeaderInitSFX	macro
 
     endm
 
-; Header - Set up Channel Usage
+; Header - Set up channel usage
 sHeaderCh	macro fm,psg
 	if "psg"<>""
 		dc.b psg-1, fm-1
-		if fm>(5+(FEATURE_FM6<>0))
+		if fm>(5+((FEATURE_FM6<>0)&1))
 			warning "You sure there are fm FM channels?"
 		endif
 
@@ -45,7 +45,7 @@ sHeaderCh	macro fm,psg
 	endif
     endm
 
-; Header - Set up Tempo and tick multiplier
+; Header - Set up tempo and tick multiplier
 sHeaderTempo	macro tmul,tempo
 	dc.b tempo,tmul-1
     endm
@@ -104,7 +104,7 @@ spAlgorithm	macro val, name
 	endif
 
 	if "name"<>""
-p{"name"} :=	sPatNum
+p{"name"} :=		sPatNum
 	endif
 
 sPatNum :=	sPatNum+1
@@ -118,90 +118,90 @@ spFe :=		val
 
 ; Patches - Detune
 spDetune	macro op1,op2,op3,op4
-spDe1 :=	op1
-spDe2 :=	op2
-spDe3 :=	op3
-spDe4 :=	op4
+spDe1 :=		op1
+spDe2 :=		op2
+spDe3 :=		op3
+spDe4 :=		op4
     endm
 
 ; Patches - Multiple
 spMultiple	macro op1,op2,op3,op4
-spMu1 :=	op1
-spMu2 :=	op2
-spMu3 :=	op3
-spMu4 :=	op4
+spMu1 :=		op1
+spMu2 :=		op2
+spMu3 :=		op3
+spMu4 :=		op4
     endm
 
 ; Patches - Rate Scale
 spRateScale	macro op1,op2,op3,op4
-spRS1 :=	op1
-spRS2 :=	op2
-spRS3 :=	op3
-spRS4 :=	op4
+spRS1 :=		op1
+spRS2 :=		op2
+spRS3 :=		op3
+spRS4 :=		op4
     endm
 
 ; Patches - Attack Rate
 spAttackRt	macro op1,op2,op3,op4
-spAR1 :=	op1
-spAR2 :=	op2
-spAR3 :=	op3
-spAR4 :=	op4
+spAR1 :=		op1
+spAR2 :=		op2
+spAR3 :=		op3
+spAR4 :=		op4
     endm
 
 ; Patches - Amplitude Modulation
 spAmpMod	macro op1,op2,op3,op4
-spAM1 :=	op1
-spAM2 :=	op2
-spAM3 :=	op3
-spAM4 :=	op4
+spAM1 :=		op1
+spAM2 :=		op2
+spAM3 :=		op3
+spAM4 :=		op4
     endm
 
 ; Patches - Sustain Rate
 spSustainRt	macro op1,op2,op3,op4
-spSR1 :=	op1		; Also known as decay 1 rate
-spSR2 :=	op2
-spSR3 :=	op3
-spSR4 :=	op4
+spSR1 :=		op1		; Also known as decay 1 rate
+spSR2 :=		op2
+spSR3 :=		op3
+spSR4 :=		op4
     endm
 
 ; Patches - Sustain Level
 spSustainLv	macro op1,op2,op3,op4
-spSL1 :=	op1		; also known as decay 1 level
-spSL2 :=	op2
-spSL3 :=	op3
-spSL4 :=	op4
+spSL1 :=		op1		; also known as decay 1 level
+spSL2 :=		op2
+spSL3 :=		op3
+spSL4 :=		op4
     endm
 
 ; Patches - Decay Rate
 spDecayRt	macro op1,op2,op3,op4
-spDR1 :=	op1		; Also known as decay 2 rate
-spDR2 :=	op2
-spDR3 :=	op3
-spDR4 :=	op4
+spDR1 :=		op1		; Also known as decay 2 rate
+spDR2 :=		op2
+spDR3 :=		op3
+spDR4 :=		op4
     endm
 
 ; Patches - Release Rate
 spReleaseRt	macro op1,op2,op3,op4
-spRR1 :=	op1
-spRR2 :=	op2
-spRR3 :=	op3
-spRR4 :=	op4
+spRR1 :=		op1
+spRR2 :=		op2
+spRR3 :=		op3
+spRR4 :=		op4
     endm
 
 ; Patches - SSG-EG
 spSSGEG		macro op1,op2,op3,op4
-spSS1 :=	op1
-spSS2 :=	op2
-spSS3 :=	op3
-spSS4 :=	op4
+spSS1 :=		op1
+spSS2 :=		op2
+spSS3 :=		op3
+spSS4 :=		op4
     endm
 
 ; Patches - Total Level
 spTotalLv	macro op1,op2,op3,op4
-spTL1 :=	op1
-spTL2 :=	op2
-spTL3 :=	op3
-spTL4 :=	op4
+spTL1 :=		op1
+spTL2 :=		op2
+spTL3 :=		op3
+spTL4 :=		op4
 
 ; Construct the patch finally.
 	dc.b (spFe<<3)+spAl
@@ -229,10 +229,10 @@ spTLMask1 :=	((spAl=7)<<7)
 
 ; Patches - Total Level (for broken total level masks)
 spTotalLv2	macro op1,op2,op3,op4
-spTL1 :=	op1
-spTL2 :=	op2
-spTL3 :=	op3
-spTL4 :=	op4
+spTL1 :=		op1
+spTL2 :=		op2
+spTL3 :=		op3
+spTL4 :=		op4
 
 	dc.b (spFe<<3)+spAl
 	dc.b (spDe1<<4)+spMu1, (spDe3<<4)+spMu3, (spDe2<<4)+spMu2, (spDe4<<4)+spMu4
@@ -503,8 +503,8 @@ sSpinReset	macro
     endm
 
 ; FF20xyzz - Get RAM address pointer offset by y, compare zz with it using condition x (COMM_CONDITION - COMM_SPEC)
-sCondReg	macro frames, cond, val
-	dc.b $FF,$20, frames|(cond<<4),val
+sCondReg	macro index, cond, val
+	dc.b $FF,$20, index|(cond<<4),val
     endm
 
 ; FF24xx - Play another music/sfx (SND_CMD)
@@ -548,7 +548,7 @@ sCheck		macro
     endm
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; equates for sNoisePSG
+; Equates for sNoisePSG
 ; ---------------------------------------------------------------------------
 
 	enum snOff=$00			; disables PSG3 noise mode.

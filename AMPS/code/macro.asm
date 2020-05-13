@@ -155,7 +155,7 @@ ctPSG4 =	$E0		; PSG 4
 ; ---------------------------------------------------------------------------
 
 Mus_DAC =	2		; number of DAC channels
-Mus_FM =	5+(FEATURE_FM6<>0); number of FM channels (5 or 6)
+Mus_FM =	5+((FEATURE_FM6<>0)&1); number of FM channels (5 or 6)
 Mus_PSG =	3		; number of PSG channels
 Mus_Ch =	Mus_DAC+Mus_FM+Mus_PSG; total number of music channels
 SFX_DAC =	1		; number of DAC SFX channels
@@ -174,7 +174,7 @@ Z80E_Read =	$0018		; this is used by Dual PCM internally but we need this for ma
 ; These values are only here to allow you to give lower pitch samples higher
 ; quality, and playing samples at higher rates than Dual PCM can process them
 ; may decrease the perceived quality by the end user. Use these equates only
-; if you know what you are doing
+; if you know what you are doing.
 ; ---------------------------------------------------------------------------
 
 sr17 =		$0140		; 5 Quarter sample rate	17500 Hz
@@ -214,7 +214,7 @@ mContLast	ds.b 1		; last continous sfx played
 mLastCue	ds.b 1		; last YM Cue the sound driver was accessing
 	if 1&(*)
 		ds.b 1		; even's are broke in 64-bit values?
-	endif			; align channel data
+	endif			; align data
 ; ---------------------------------------------------------------------------
 
 mBackUpArea =	*		; this is where the area to be backed up starts
@@ -268,7 +268,6 @@ mBackVctMus	ds.l 1		; back-up address of voice table for music
 	if safe=1
 msChktracker	ds.b 1		; safe mode only: If set, bring up debugger
 	endif
-
 	if 1&(*)
 		ds.b 1		; even's are broke in 64-bit values?
 	endif			; align data
@@ -352,31 +351,7 @@ fEnd		ds.l 1		; 80 - Do nothing
 fStop		ds.l 1		; 84 - Stop all music
 fResVol		ds.l 1		; 88 - Reset volume and update
 fReset		ds.l 1		; 8C - Stop music playing and reset volume
-fLast		ds.l 0		; safe mode equate
-; ===========================================================================
-; ---------------------------------------------------------------------------
-; Enable multiple flags in target ea mode
-; ---------------------------------------------------------------------------
-
-mvbit		macro target
-.res :=	0
-	mvacc	ALLARGS			; AS is kinda shit
-	moveq	#.res,target		; moveq version
-    endm
-
-mvnbt		macro target
-.res :=	0
-	mvacc	ALLARGS			; AS is kinda shit
-	moveq	#(~.res)&$FF,target	; moveq version
-    endm
-
-mvacc		macro derp, bits
-	if "bits"<>""			; repeat for all bits
-.res :=		.res|(1<<bits)		; or the value of the bit
-		shift
-		mvacc ALLARGS		; call this again with new args
-	endif
-    endm
+fLast =		*		; safe mode equate
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Quickly clear some memory in certain block sizes
@@ -571,8 +546,8 @@ volenv		macro name
 v{"name"} =	__venv			; create SMPS2ASM equate
 		dc.l vd{"name"}		; create pointer
 __venv :=	__venv+1		; increase ID
-		shift			; shift next argument into view
-		volenv ALLARGS		; process next item
+	shift				; shift next argument into view
+	volenv ALLARGS			; process next item
 	endif
     endm
 ; ===========================================================================
@@ -589,13 +564,13 @@ m{"name"} =	__menv			; create SMPS2ASM equate
 		endif
 
 __menv :=	__menv+1		; increase ID
-		shift			; shift next argument into view
-		modenv ALLARGS		; process next item
+	shift				; shift next argument into view
+	modenv ALLARGS			; process next item
 	endif
     endm
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Include PCM data
+; Include PCM data file
 ; ---------------------------------------------------------------------------
 
 incSWF		macro file
@@ -605,13 +580,13 @@ SWF_file	equ *
 SWFR_file	equ *
 	 	asdata Z80E_Read*(MaxPitch/$100), $00; add end markers (for Dual PCM)
 
-		shift			; shift next argument into view
-		incSWF ALLARGS		; process next item
+	shift				; shift next argument into view
+	incSWF ALLARGS			; process next item
 	endif
     endm
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
-; Create data for a sample
+; Create pointers for a sample
 ; ---------------------------------------------------------------------------
 
 sample		macro freq, start, loop, name
