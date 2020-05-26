@@ -1,10 +1,10 @@
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Flags section. None of this is required, but I added it here to
-; make it easier to debug built ROMS! If you would like easier
+; make it easier to debug built ROMs! If you would like easier
 ; assistance from Aurora, please keep this section intact!
 ; ---------------------------------------------------------------------------
-	dc.b "AMPS-v1.1"		; ident str
+	dc.b "AMPS-v2.1"		; ident str
 
 	if safe
 		dc.b "s"		; safe mode enabled
@@ -44,6 +44,10 @@
 	if FEATURE_BACKUP
 		dc.b "BA"		; backup enabled
 	endif
+
+	if FEATURE_SOUNDTEST
+		dc.b "ST"		; soundtest enabled
+	endif
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
 ; Define music and SFX
@@ -56,13 +60,13 @@
 __mus :=	MusOff
 
 MusicIndex:
-	ptrMusic EHZ, $42, CPZ, $00, ARZ, $00, CNZ, $98, HTZ, $22, MCZ, $2A
-	ptrMusic OOZ, $10, MTZ, $00, SCZ, $85, WFZ, $58, DEZ, $80, HPZ, $00
-	ptrMusic EHZ2P, $85, CNZ2P, $23, MCZ2P, $00
-	ptrMusic SS, $00, Options, $79, Results2P, $98, Invincibility, $00
-	ptrMusic SuperSonic, $00, Boss, $00, FinalBoss, $37, Drowning, $80
-	ptrMusic Title, $33, GotThroughAct, $56, Emerald, $2B, ExtraLife, $33
-	ptrMusic GameOver, $0E, Continue, $25, Ending, $69, Credits, $10
+	ptrMusic EHZ, $20, CPZ, $12, ARZ, $20, CNZ, $20, HTZ, $20, MCZ, $20
+	ptrMusic OOZ, $20, MTZ, $16, SCZ, $20, WFZ, $20, DEZ, $20, HPZ, $20
+	ptrMusic EHZ2P, $20, CNZ2P, $20, MCZ2P, $14
+	ptrMusic SS, $00, Options, $00, Results2P, $00, Invincibility, $18
+	ptrMusic SuperSonic, $06, Boss, $1D, FinalBoss, $20, Drowning, $00
+	ptrMusic Title, $00, GotThroughAct, $00, Emerald, $00, ExtraLife, $00
+	ptrMusic GameOver, $00, Continue, $00, Ending, $00, Credits, $00
 	ptrMusic SEGA, $00
 
 MusCount =	__mus-MusOff		; number of installed music tracks

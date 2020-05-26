@@ -269,10 +269,10 @@ AMPS_Debug_Console_Main:
 	move.b	mContLast.w,d2
 	Console.WriteLine "%<.b d0> %<.b d1> %<.b d2>"
 
-	move.b	mTempoMain.w,d0
-	move.b	mTempoSpeed.w,d1
-	move.b	mTempoMain.w,d2
-	move.b	mTempoSpeed.w,d3
+	move.b	mTempo.w,d0
+	move.b	mTempoAcc.w,d1
+	move.b	mSpeed.w,d2
+	move.b	mSpeedAcc.w,d3
 	Console.WriteLine "%<pal1>Tempo:  %<pal2>%<.b d0> %<.b d1> %<.b d2> %<.b d3>"
 
 	move.b	mMasterVolFM.w,d0
