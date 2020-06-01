@@ -1851,7 +1851,7 @@
 		<li>AMPS, 68k SMPS and Z80 SMPS all have different modulation algorithms.</li>
 		<li>Modulation parameters are not reset in SMPS Z80, in AMPS only <b>&lt;wait&gt;</b> and <b>&lt;step&gt;</b> are reset, and in SMPS 68k all are reset when the modulation command (sModAMPS, ssMod68k or ssModZ80) is played. This makes a difference when modulation command is used when note is held. While normally, the parameters eventually get reset anyway, in SMPS 68k, they are also reset when note is held.</li>
 		<li>When <b>&lt;count&gt;</b> is $00 in AMPS, the length of modulation is infinite. The <b>&lt;count&gt;</b> is never negated, which makes the modulation only go in one direction.</li>
-		<li>In SMPS Z80, the same frame as note is played, the modulation is updated, while in AMPS and SMPS 68k, it is not.</li>
+		<li>In SMPS Z80 and AMPS, the same frame as note is played, the modulation is updated, while in SMPS 68k, it is not.</li>
 	</ul>
 
 	<h1 id="part12" class="bd">12 — Installing AMPS</h1>
@@ -1962,6 +1962,7 @@
 		<li>sFreqOn and sFreqOff are no longer tracker commands.</li>
 		<li>New tracker commands: ssModFreq and sModReset.</li>
 		<li>Changes to sModAMPS: Only the <b>&lt;wait&gt;</b> and <b>&lt;step&gt;</b> parameters are loaded initially. This only makes a difference when note is held. The modulation parameters are not reset, which allows the user to change how modulation works mid-note without resetting the offset. In order for the old behaviour to work, sModReset can be used after sModAMPS is used. The <b>&lt;count&gt;</b> is also changed. Now, the value is subtracted before being checked, meaning value of $00 will not start by negating the <b>&lt;step&gt;</b>. Additionally, now it is treated as infinite, meaning modulation up and down is possible for unlimited time. If <b>&lt;count&gt;</b> is $01, the value initially is set to $01 instead of $00, making short modulations still possible. When <b>&lt;wait&gt;</b> is counting down, modulation frequency is still accounted for.</li>
+		<li>The frame a note is played, modulation, portamento and modulation envelope are all updated.</li>
 		<li>mfbNoPAL flag is used to check whether or not PAL mode is enabled, instead of checking for the region. The flag is updated based on song header and PAL region by dPlaySnd_Music.</li>
 		<li>Fixed a bug where DAC panning was not reset correctly for music channels, leading to issues with panning.</li>
 		<li>Fixed a bug with modulation envelopes not working as intended.</li>

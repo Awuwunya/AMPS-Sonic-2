@@ -15,7 +15,7 @@ dAMPSnextPSGSFX:
 		beq.w	.update			; if timed out, update channel
 
 	dCalcFreq				; calculate channel base frequency
-	dModPorta .endm, -1, -1			; run modulation + portamento code
+	dModPortaWait	.endm, -1, -1		; run modulation + portamento code
 		bsr.w	dUpdateFreqPSG3		; if frequency needs changing, do it
 
 .endm
@@ -66,7 +66,7 @@ dAMPSnextPSG:
 
 	dGatePSG				; handle PSG-specific gate behavior
 	dCalcFreq				; calculate channel base frequency
-	dModPorta .endm, -1, -1			; run modulation + portamento code
+	dModPortaWait	.endm, -1, -1		; run modulation + portamento code
 		bsr.w	dUpdateFreqPSG2		; if frequency needs changing, do it
 
 .endm
@@ -139,20 +139,7 @@ dUpdateFreqPSG:
 		move.b	cDetune(a1),d6		; load detune value to d6
 		ext.w	d6			; extend to word
 		add.w	d6,d2			; add to channel base frequency to d2
-
-	if FEATURE_MODENV
-		jsr	dModEnvProg(pc)		; process modulation envelope
-	endif
-
-	if FEATURE_PORTAMENTO
-		add.w	cPortaFreq(a1),d2	; add portamento speed to frequency
-	endif
-
-	if FEATURE_MODULATION
-		btst	#cfbMod,(a1)		; check if channel is modulating
-		beq.s	dUpdateFreqPSG2		; if not, branch
-		add.w	cModFreq(a1),d2		; add modulation frequency offset to d2
-	endif
+	dModPortaTrk	-1			; run modulation and portamento code
 ; ---------------------------------------------------------------------------
 
 dUpdateFreqPSG2:
@@ -189,11 +176,11 @@ dUpdateFreqPSG3:
 ; such case, but beware of this issue!
 ; ---------------------------------------------------------------------------
 
+		move.b	d6,dPSG.l		; write frequency low nibble and latch channel
 		lsr.w	#4,d2			; get the 2 higher nibbles of frequency
 	if FEATURE_SAFE_PSGFREQ
 		andi.b	#$3F,d2			; clear any extra bits that aren't valid
 	endif
-		move.b	d6,dPSG.l		; write frequency low nibble and latch channel
 		move.b	d2,dPSG.l		; write frequency high nibbles to PSG
 
 locret_UpdateFreqPSG:
