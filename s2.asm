@@ -34332,7 +34332,6 @@ Sonic_UpdateSpindash:
 	bset	#2,status(a0)
 	move.b	#0,(Sonic_Dust+anim).w
 	sfx	sfx_Dash
-	rts
 	bra.s	Obj_Sonic_Spindash_ResetScr
 ; ===========================================================================
 ; word_1AD0C:
