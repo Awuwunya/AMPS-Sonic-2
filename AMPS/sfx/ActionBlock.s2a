@@ -4,6 +4,6 @@
 	sHeaderSFX	$A1, ctPSG2, .PSG2, $00+$0C, $00
 
 .PSG2
-	sModAMPS	$00, $01, $E6, $35
+	sModAMPS	$01, $01, $E6, $35
 	dc.b nCs1, $06
 	sStop

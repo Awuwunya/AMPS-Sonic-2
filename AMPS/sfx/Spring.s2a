@@ -6,7 +6,7 @@
 .FM4
 	sVoice		pSpring
 	dc.b nRst, $01
-	sModAMPS	$03, $01, $5D, $0F
+	sModAMPS	$04, $01, $5D, $0F
 	dc.b nB3, $0C
 	sModOff
 

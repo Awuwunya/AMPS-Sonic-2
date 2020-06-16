@@ -4,7 +4,7 @@
 	sHeaderSFX	$80, ctFM5, .FM5, $00, $02
 
 .FM5
-	sModAMPS	$00, $01, $2A, $07
+	sModAMPS	$01, $01, $2A, $07
 	sVoice		pUnk52
 
 .Loop1

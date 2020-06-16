@@ -5,6 +5,6 @@
 
 .FM5
 	sVoice		pBonu
-	sModAMPS	$00, $01, $33, $18
+	sModAMPS	$01, $01, $33, $18
 	dc.b nAb4, $1A
 	sStop

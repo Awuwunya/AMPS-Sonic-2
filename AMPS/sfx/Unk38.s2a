@@ -4,7 +4,7 @@
 	sHeaderSFX	$A1, ctPSG3, .PSG3, $00+$0C, $00
 
 .PSG3
-	sModAMPS	$00, $01, $F0, $08
+	sModAMPS	$01, $01, $F0, $08
 	sNoisePSG	$E7
 	dc.b nEb4, $08
 

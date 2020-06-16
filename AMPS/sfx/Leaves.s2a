@@ -6,12 +6,12 @@
 .PSG3
 	sVolEnv		v03
 	sNoisePSG	$E7
-	dc.b nF6, $03
+	dc.b nFs6, $03
 	sVolEnv		v06
-	dc.b nF6, $04
+	dc.b nFs6, $04
 	saVol		$10
-	dc.b nF6, $02
+	dc.b nFs6, $02
 	sVolEnv		v03
 	saVol		-$10
-	dc.b nF6, $08, nF6, $18
+	dc.b nFs6, $08, nFs6, $18
 	sStop

@@ -6,7 +6,7 @@
 
 .FM5
 	sVoice		pDrown
-	sModAMPS	$00, $01, $83, $0C-1
+	sModAMPS	$01, $01, $83, $0C-1
 
 .Loop2
 	dc.b nA0, $05, $05
@@ -17,7 +17,7 @@
 .FM4
 	dc.b nRst, $06
 	sVoice		pDrown
-	sModAMPS	$00, $01, $6F, $0E-1
+	sModAMPS	$01, $01, $6F, $0E-1
 
 .Loop1
 	dc.b nC1, $04, $05
