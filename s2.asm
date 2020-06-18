@@ -429,7 +429,7 @@ LevelSelectMenu2P: ;;
 	jmp	(MenuScreen).l
 ; ===========================================================================
 ; loc_3F6:
-JmpTo_EndingSequence
+JmpTo_EndingSequence ; JmpTo
 	jmp	(EndingSequence).l
 ; ===========================================================================
 ; loc_3FC:
@@ -1056,9 +1056,9 @@ loc_1072:
 
     if ~~removeJmpTos
 ; sub_10E0:
-JmpTo_LoadTilesAsYouMove
+JmpTo_LoadTilesAsYouMove ; JmpTo
 	jmp	(LoadTilesAsYouMove).l
-JmpTo_SegaScr_VInt
+JmpTo_SegaScr_VInt ; JmpTo
 	jmp	(SegaScr_VInt).l
 
 	align 4
@@ -3562,7 +3562,7 @@ PlaneMapToVRAM_H80_Sega:
 
     if ~~removeJmpTos
 ; sub_3990:
-JmpTo_RunObjects
+JmpTo_RunObjects ; JmpTo
 	jmp	(RunObjects).l
 
 	align 4
@@ -3906,7 +3906,7 @@ CopyrightText_End:
 
     if ~~removeJmpTos
 ; sub_3E98:
-JmpTo_SwScrl_Title
+JmpTo_SwScrl_Title ; JmpTo
 	jmp	(SwScrl_Title).l
 
 	align 4
@@ -5668,13 +5668,13 @@ LoadZoneTiles:
     endif
 
     if ~~removeJmpTos
-JmpTo_loadZoneBlockMaps
+JmpTo_loadZoneBlockMaps ; JmpTo
 	jmp	(loadZoneBlockMaps).l
-JmpTo_DeformBgLayer
+JmpTo_DeformBgLayer ; JmpTo
 	jmp	(DeformBgLayer).l
-JmpTo_AniArt_Load
+JmpTo_AniArt_Load ; JmpTo
 	jmp	(AniArt_Load).l
-JmpTo_DrawInitialBG
+JmpTo_DrawInitialBG ; JmpTo
 	jmp	(DrawInitialBG).l
 
 	align 4
@@ -8725,7 +8725,7 @@ loc_710A:
 	blt.w	JmpTo_DeleteObject
 
     if removeJmpTos
-JmpTo_DisplaySprite
+JmpTo_DisplaySprite ; JmpTo
     endif
 
 	jmpto	(DisplaySprite).l, JmpTo_DisplaySprite
@@ -8820,7 +8820,7 @@ loc_7218:
 ; ===========================================================================
 
     if removeJmpTos
-JmpTo_DeleteObject
+JmpTo_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
     endif
 
@@ -9339,20 +9339,20 @@ SpecialStage_ResultsLetters:
     endif
 
     if ~~removeJmpTos
-JmpTo_DisplaySprite
+JmpTo_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo_LoadTitleCardSS
+JmpTo_LoadTitleCardSS ; JmpTo
 	jmp	(LoadTitleCardSS).l
-JmpTo_DeleteObject
+JmpTo_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo_Obj_SSMessage_CreateRingReqMessage
+JmpTo_Obj_SSMessage_CreateRingReqMessage ; JmpTo
 	jmp	(Obj_SSMessage_CreateRingReqMessage).l
-JmpTo_Obj_SSMessage_PrintPhrase
+JmpTo_Obj_SSMessage_PrintPhrase ; JmpTo
 	jmp	(Obj_SSMessage_PrintPhrase).l
 ; sub_7862:
-JmpTo_ObjectMove
+JmpTo_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
-JmpTo_Hud_Base
+JmpTo_Hud_Base ; JmpTo
 	jmp	(Hud_Base).l
 
 	align 4
@@ -9537,7 +9537,7 @@ Obj_ContinueText_Init:
 	move.w	#$120,x_pixel(a0)
 	move.w	#$C0,y_pixel(a0)
 
-JmpTo2_DisplaySprite
+JmpTo2_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 ; word_7AB2:
@@ -9603,11 +9603,11 @@ loc_7B46:
 	bne.s	JmpTo3_DisplaySprite
 	bchg	#0,mapping_frame(a0)
 
-JmpTo3_DisplaySprite
+JmpTo3_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 
-JmpTo2_DeleteObject
+JmpTo2_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -9724,9 +9724,9 @@ Ani_Obj_ContinueChars:	offsetTable
 Obj_ContinueText_MapUnc_7CB6:	BINCLUDE	"mappings/sprite/Obj_ContinueText.bin"
 
     if ~~removeJmpTos
-JmpTo_Adjust2PArtPointer2
+JmpTo_Adjust2PArtPointer2 ; JmpTo
 	jmp	(Adjust2PArtPointer2).l
-JmpTo_Adjust2PArtPointer
+JmpTo_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
@@ -10074,7 +10074,7 @@ Obj_HUD_Main:
 	beq.s	JmpTo4_DisplaySprite
 	ori.w	#palette_line_1,art_tile(a0)
 
-JmpTo4_DisplaySprite
+JmpTo4_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 ; --------------------------------------------------------------------------
@@ -10748,9 +10748,9 @@ Map_2PSpecialStageZoneResults:	BINCLUDE "mappings/misc/2P Special Stage Zone Res
 	even
 
     if ~~removeJmpTos
-JmpTo2_Adjust2PArtPointer
+JmpTo2_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo_Dynamic_Normal
+JmpTo_Dynamic_Normal ; JmpTo
 	jmp	(Dynamic_Normal).l
 
 	align 4
@@ -12113,9 +12113,9 @@ MapEng_InfoScreen:	BINCLUDE "mappings/misc/info screen.bin"
 
     if ~~removeJmpTos
 ; loc_9C70: JmpTo_PlaneMapToVRAM
-JmpTo_PlaneMapToVRAM_H40
+JmpTo_PlaneMapToVRAM_H40 ; JmpTo
 	jmp	(PlaneMapToVRAM_H40).l
-JmpTo2_Dynamic_Normal
+JmpTo2_Dynamic_Normal ; JmpTo
 	jmp	(Dynamic_Normal).l
 
 	align 4
@@ -13335,7 +13335,7 @@ loc_AB8E:
 	addq.w	#4,sp
 
     if removeJmpTos
-JmpTo3_DeleteObject
+JmpTo3_DeleteObject ; JmpTo
     endif
 
 	jmpto	(DeleteObject).l, JmpTo3_DeleteObject
@@ -13762,30 +13762,30 @@ ArtNem_CreditText:	BINCLUDE	"art/nemesis/Credit Text.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo5_DisplaySprite
+JmpTo5_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo3_DeleteObject
+JmpTo3_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo_Obj_Tornado_Animate_Pilot
+JmpTo_Tornado_Animate_Pilot ; JmpTo
 	jmp	(Obj_Tornado_Animate_Pilot).l
-JmpTo_AnimateSprite
+JmpTo_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo_NemDec
+JmpTo_NemDec ; JmpTo
 	jmp	(NemDec).l
-JmpTo_EniDec
+JmpTo_EniDec ; JmpTo
 	jmp	(EniDec).l
-JmpTo_ClearScreen
+JmpTo_ClearScreen ; JmpTo
 	jmp	(ClearScreen).l
-JmpTo_LoadChildObject
+JmpTo_LoadChildObject ; JmpTo
 	jmp	(LoadChildObject).l
 ; JmpTo2_PlaneMapToVRAM_H40
-JmpTo2_PlaneMapToVRAM_H40
+JmpTo2_PlaneMapToVRAM_H40 ; JmpTo
 	jmp	(PlaneMapToVRAM_H40).l
-JmpTo2_ObjectMove
+JmpTo2_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
-JmpTo_PalCycle_Load
+JmpTo_PalCycle_Load ; JmpTo
 	jmp	(PalCycle_Load).l
-JmpTo_LoadSubObject_Part3
+JmpTo_LoadSubObject_Part3 ; JmpTo
 	jmp	(LoadSubObject_Part3).l
 
 	align 4
@@ -18173,11 +18173,11 @@ sub_E59C:
 
     if ~~removeJmpTos
 ; JmpTo_PalLoad2
-JmpTo_PalLoad_Now
+JmpTo_PalLoad_Now ; JmpTo
 	jmp	(PalLoad_Now).l
-JmpTo_LoadPLC
+JmpTo_LoadPLC ; JmpTo
 	jmp	(LoadPLC).l
-JmpTo_KosDec
+JmpTo_KosDec ; JmpTo
 	jmp	(KosDec).l
 
 	align 4
@@ -19743,12 +19743,12 @@ LoadPLC_AnimalExplosion:
     endif
 
     if ~~removeJmpTos
-JmpTo_SingleObjLoad
+JmpTo_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
 ; JmpTo2_PalLoad2
-JmpTo2_PalLoad_Now
+JmpTo2_PalLoad_Now ; JmpTo
 	jmp	(PalLoad_Now).l
-JmpTo2_LoadPLC
+JmpTo2_LoadPLC ; JmpTo
 	jmp	(LoadPLC).l
 	align 4
     endif
@@ -20270,12 +20270,12 @@ Obj_Bridge_MapUnc_FC70:	BINCLUDE "mappings/sprite/Obj_Bridge_b.bin"
 
     if ~~removeJmpTos
 ; sub_FC88:
-JmpTo_SingleObjLoad2
+JmpTo_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo_PlatformObject11_cont
+JmpTo_PlatformObject11_cont ; JmpTo
 	jmp	(PlatformObject11_cont).l
 ; sub_FC94:
-JmpTo_CalcSine
+JmpTo_CalcSine ; JmpTo
 	jmp	(CalcSine).l
 
 	align 4
@@ -20792,13 +20792,13 @@ word_102E4:	dc.w 2
     endif
 
     if ~~removeJmpTos
-JmpTo_PlatformObject2
+JmpTo_PlatformObject2 ; JmpTo
 	jmp	(PlatformObject2).l
-JmpTo2_SingleObjLoad2
+JmpTo2_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo2_CalcSine
+JmpTo2_CalcSine ; JmpTo
 	jmp	(CalcSine).l
-JmpTo_ObjCheckRightWallDist
+JmpTo_ObjCheckRightWallDist ; JmpTo
 	jmp	(ObjCheckRightWallDist).l
 
 	align 4
@@ -21340,11 +21340,11 @@ Obj_FloatingPlatform_MapUnc_1084E:	BINCLUDE "mappings/sprite/Obj_FloatingPlatfor
     endif
 
     if ~~removeJmpTos
-JmpTo3_CalcSine
+JmpTo3_CalcSine ; JmpTo
 	jmp	(CalcSine).l
-JmpTo_PlatformObject
+JmpTo_PlatformObject ; JmpTo
 	jmp	(PlatformObject).l
-JmpTo_SolidObject
+JmpTo_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 
 	align 4
@@ -21724,9 +21724,9 @@ Obj_CollapsingPlatform_MapUnc_1115E:	BINCLUDE "mappings/sprite/Obj_CollapsingPla
     endif
 
     if ~~removeJmpTos
-JmpTo_SlopedPlatform
+JmpTo_SlopedPlatform ; JmpTo
 	jmp	(SlopedPlatform).l
-JmpTo2_PlatformObject
+JmpTo2_PlatformObject ; JmpTo
 	jmp	(PlatformObject).l
 
 	align 4
@@ -22115,7 +22115,7 @@ Obj_Barrier_MapUnc_11822:	BINCLUDE "mappings/sprite/Obj_Barrier.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo2_SolidObject
+JmpTo2_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 
 	align 4
@@ -22655,7 +22655,7 @@ Obj_Animal_MapUnc_11EAC:	BINCLUDE "mappings/sprite/Obj_Animal_e.bin"
 Obj_Points_MapUnc_11ED0:	BINCLUDE "mappings/sprite/Obj_Points.bin"
 
     if ~~removeJmpTos
-JmpTo_RandomNumber
+JmpTo_RandomNumber ; JmpTo
 	jmp	(RandomNumber).l
 
 	align 4
@@ -22758,7 +22758,7 @@ CollectRing_1P:
 	addq.b	#1,(Update_HUD_lives).w	; add 1 to the displayed life count
 	moveq	#mus_ExtraLife,d0	; prepare to play the extra life jingle
 
-JmpTo_PlaySoundStereo
+JmpTo_PlaySoundStereo ; JmpTo
 	move.b	d0,mQueue+1.w
 	rts
 ; ===========================================================================
@@ -22791,7 +22791,7 @@ CollectRing_Tails:
 	addq.b	#1,(Update_HUD_lives_2P).w	; add 1 to the displayed life count
 	moveq	#mus_ExtraLife,d0		; prepare to play the extra life jingle
 
-JmpTo2_PlaySoundStereo
+JmpTo2_PlaySoundStereo ; JmpTo
 	move.b	d0,mQueue+1.w
 	rts
 ; End of function CollectRing
@@ -23192,7 +23192,7 @@ Ani_Obj_RingPrize:	offsetTable
     endif
 
     if ~~removeJmpTos
-JmpTo4_CalcSine
+JmpTo4_CalcSine ; JmpTo
 	jmp	(CalcSine).l
 
 	align 4
@@ -24243,14 +24243,14 @@ BranchTo11_DisplaySprite
 	else
 		pea	DisplaySprite(pc)
 
-	sub_31017E:
+sub_31017E:
 		move.w	Title_TextBanner.w,d0
 		neg.w	d0
 		move.w	objoff_2A(a0),d1
 		add.w	d0,d1
 		move.w	d1,y_pixel(a0)
 
-	return_310194:
+return_310194:
 		rts
 	endif
 ; ===========================================================================
@@ -26759,13 +26759,13 @@ TitleCardLetters_DEZ:
     endif
 
     if ~~removeJmpTos
-JmpTo2_NemDec
+JmpTo2_NemDec ; JmpTo
 	jmp	(NemDec).l
-JmpTo_NemDecToRAM
+JmpTo_NemDecToRAM ; JmpTo
 	jmp	(NemDecToRAM).l
-JmpTo3_LoadPLC
+JmpTo3_LoadPLC ; JmpTo
 	jmp	(LoadPLC).l
-JmpTo_sub_8476
+JmpTo_sub_8476 ; JmpTo
 	jmp	(sub_8476).l
 
 	align 4
@@ -28708,11 +28708,11 @@ byte_16F06:
     endif
 
     if ~~removeJmpTos
-JmpTo_BuildHUD
+JmpTo_BuildHUD ; JmpTo
 	jmp	(BuildHUD).l
-JmpTo_BuildHUD_P1
+JmpTo_BuildHUD_P1 ; JmpTo
 	jmp	(BuildHUD_P1).l
-JmpTo_BuildHUD_P2
+JmpTo_BuildHUD_P2 ; JmpTo
 	jmp	(BuildHUD_P2).l
 
 	align 4
@@ -35511,7 +35511,7 @@ return_1B89A:
 	rts
 ; ===========================================================================
 
-JmpTo_KillCharacter
+JmpTo_KillCharacter ; JmpTo
 	jmp	(KillCharacter).l
 
     if ~~removeJmpTos
@@ -38343,7 +38343,7 @@ Obj_TailsTailsAni_Hanging:	dc.b   9,$81,$82,$83,$84,$FF
 
 ; ===========================================================================
 
-JmpTo2_KillCharacter
+JmpTo2_KillCharacter ; JmpTo
 	jmp	(KillCharacter).l
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -38433,7 +38433,7 @@ Obj_SmallBubbles_Wobble:
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 
-JmpTo4_DeleteObject
+JmpTo4_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 ; loc_1D40E:
@@ -38450,7 +38450,7 @@ Obj_SmallBubbles_Display:
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 
-JmpTo5_DeleteObject
+JmpTo5_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 ; loc_1D434:
@@ -38474,7 +38474,7 @@ Obj_SmallBubbles_Display2:
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 
-JmpTo6_DeleteObject
+JmpTo6_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 ; loc_1D474:
@@ -38857,7 +38857,7 @@ return_1D976:
 	rts
 ; ===========================================================================
 
-JmpTo7_DeleteObject
+JmpTo7_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -39328,7 +39328,7 @@ loc_1E176:
 	move.w	(MainCharacter+x_pos).w,x_pos(a0)
 	move.w	(MainCharacter+y_pos).w,y_pos(a0)
 
-JmpTo6_DisplaySprite
+JmpTo6_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 
@@ -39349,7 +39349,7 @@ loc_1E1AA:
 	rts
 ; ===========================================================================
 
-JmpTo8_DeleteObject
+JmpTo8_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 ; -------------------------------------------------------------------------------
@@ -41301,7 +41301,7 @@ loc_1F5D6:
 	jmpto	(MarkObjGone).l, JmpTo_MarkObjGone
 ; ===========================================================================
 
-JmpTo10_DeleteObject
+JmpTo10_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 
@@ -41310,11 +41310,11 @@ JmpTo10_DeleteObject
     endif
 
     if ~~removeJmpTos
-JmpTo_MarkObjGone
+JmpTo_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo2_AnimateSprite
+JmpTo2_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo3_Adjust2PArtPointer
+JmpTo3_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
@@ -41384,7 +41384,7 @@ Obj7D_NoAdd:
 	rts
 ; ===========================================================================
 
-JmpTo11_DeleteObject
+JmpTo11_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 word_1F6D2:
@@ -41405,7 +41405,7 @@ Obj7D_Main:
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 
-JmpTo12_DeleteObject
+JmpTo12_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 ; -------------------------------------------------------------------------------
@@ -41419,7 +41419,7 @@ Obj7D_MapUnc_1F6FE:	BINCLUDE "mappings/sprite/obj7D.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo4_Adjust2PArtPointer
+JmpTo4_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
@@ -41541,11 +41541,11 @@ Obj_RoundBumper_MapUnc_1F85A:	BINCLUDE "mappings/sprite/Obj_RoundBumper.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo2_MarkObjGone
+JmpTo2_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo3_AnimateSprite
+JmpTo3_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo5_Adjust2PArtPointer
+JmpTo5_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
@@ -41639,7 +41639,7 @@ loc_1F988:
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 
-JmpTo13_DeleteObject
+JmpTo13_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 
@@ -41652,12 +41652,12 @@ loc_1F99E:
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 
-JmpTo14_DeleteObject
+JmpTo14_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 
     if removeJmpTos
-JmpTo15_DeleteObject
+JmpTo15_DeleteObject ; JmpTo
     endif
 
 BranchTo_JmpTo15_DeleteObject
@@ -41759,7 +41759,7 @@ loc_1FACE:
 	rts
 
     if removeJmpTos
-JmpTo7_DisplaySprite
+JmpTo7_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
     endif
 ; ===========================================================================
@@ -41955,14 +41955,14 @@ word_1FCB8:
     endif
 
     if ~~removeJmpTos
-JmpTo7_DisplaySprite
+JmpTo7_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo15_DeleteObject
+JmpTo15_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo6_Adjust2PArtPointer
+JmpTo6_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 ; loc_1FCD6:
-JmpTo3_ObjectMove
+JmpTo3_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -42216,7 +42216,7 @@ Obj_PlaneSwitcher_MapUnc_1FFB8:	BINCLUDE "mappings/sprite/Obj_PlaneSwitcher.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo7_Adjust2PArtPointer
+JmpTo7_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
@@ -42335,9 +42335,9 @@ Obj_TippingFloor_MapUnc_201A0:	BINCLUDE "mappings/sprite/Obj_TippingFloor.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo3_MarkObjGone
+JmpTo3_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo8_Adjust2PArtPointer
+JmpTo8_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
@@ -42449,11 +42449,11 @@ Obj0C_MapUnc_202FA:	BINCLUDE "mappings/sprite/obj0C.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo4_MarkObjGone
+JmpTo4_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo9_Adjust2PArtPointer
+JmpTo9_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo5_CalcSine
+JmpTo5_CalcSine ; JmpTo
 	jmp	(CalcSine).l
 
 	align 4
@@ -42512,16 +42512,16 @@ Obj_HPZEmerald_MapUnc_20382:	BINCLUDE "mappings/sprite/Obj_HPZEmerald.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo8_DisplaySprite
+JmpTo8_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo16_DeleteObject
+JmpTo16_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo10_Adjust2PArtPointer
+JmpTo10_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
     else
-JmpTo16_DeleteObject
+JmpTo16_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
     endif
 
@@ -42662,18 +42662,18 @@ Obj_HPZWaterfall_MapUnc_20528:	BINCLUDE "mappings/sprite/Obj_HPZWaterfall.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo9_DisplaySprite
+JmpTo9_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo17_DeleteObject
+JmpTo17_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo2_Adjust2PArtPointer2
+JmpTo2_Adjust2PArtPointer2 ; JmpTo
 	jmp	(Adjust2PArtPointer2).l
-JmpTo11_Adjust2PArtPointer
+JmpTo11_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
     else
-JmpTo17_DeleteObject
+JmpTo17_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
     endif
 
@@ -43440,18 +43440,18 @@ loc_2146C:
 
     if ~~removeJmpTos
 ; loc_214AC:
-JmpTo10_DisplaySprite
+JmpTo10_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo18_DeleteObject
+JmpTo18_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo2_SingleObjLoad
+JmpTo2_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo12_Adjust2PArtPointer
+JmpTo12_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
     else
-JmpTo18_DeleteObject
+JmpTo18_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
     endif
 
@@ -43483,7 +43483,7 @@ Obj_Spiral_ChkDel:
 	bhi.s	JmpTo19_DeleteObject
 	rts
 ; ---------------------------------------------------------------------------
-JmpTo19_DeleteObject
+JmpTo19_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 
 ; ===========================================================================
@@ -43804,7 +43804,7 @@ return_2191E:
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo6_CalcSine
+JmpTo6_CalcSine ; JmpTo
 	jmp	(CalcSine).l
 
 	align 4
@@ -44165,13 +44165,13 @@ Obj_Seesaw_MapUnc_21D7C:	BINCLUDE "mappings/sprite/Obj_Seesaw_b.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo3_SingleObjLoad2
+JmpTo3_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo13_Adjust2PArtPointer
+JmpTo13_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo_ObjectMoveAndFall
+JmpTo_ObjectMoveAndFall ; JmpTo
 	jmp	(ObjectMoveAndFall).l
-JmpTo_MarkObjGone2
+JmpTo_MarkObjGone2 ; JmpTo
 	jmp	(MarkObjGone2).l
 
 	align 4
@@ -44308,16 +44308,16 @@ Obj_HTZLift_MapUnc_21F14:	BINCLUDE "mappings/sprite/Obj_HTZLift.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo5_MarkObjGone
+JmpTo5_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo4_SingleObjLoad2
+JmpTo4_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo14_Adjust2PArtPointer
+JmpTo14_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo3_PlatformObject
+JmpTo3_PlatformObject ; JmpTo
 	jmp	(PlatformObject).l
 ; loc_22010:
-JmpTo4_ObjectMove
+JmpTo4_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -44582,21 +44582,21 @@ Obj_FloatingPlatform2_MapUnc_2222A:	BINCLUDE "mappings/sprite/Obj_FloatingPlatfo
     endif
 
     if ~~removeJmpTos
-JmpTo11_DisplaySprite
+JmpTo11_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo20_DeleteObject
+JmpTo20_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo15_Adjust2PArtPointer
+JmpTo15_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo4_PlatformObject
+JmpTo4_PlatformObject ; JmpTo
 	jmp	(PlatformObject).l
 ; loc_222A4:
-JmpTo5_ObjectMove
+JmpTo5_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
     else
-JmpTo20_DeleteObject
+JmpTo20_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
     endif
 
@@ -44720,9 +44720,9 @@ Obj_SpeedBooster_MapUnc_223E2:	BINCLUDE "mappings/sprite/Obj_SpeedBooster.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo6_MarkObjGone
+JmpTo6_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo16_Adjust2PArtPointer
+JmpTo16_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
@@ -44878,14 +44878,14 @@ Obj_BlueBalls_MapUnc_22576:	BINCLUDE "mappings/sprite/Obj_BlueBalls.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo7_MarkObjGone
+JmpTo7_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo5_SingleObjLoad2
+JmpTo5_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo3_Adjust2PArtPointer2
+JmpTo3_Adjust2PArtPointer2 ; JmpTo
 	jmp	(Adjust2PArtPointer2).l
 ; loc_22596:
-JmpTo6_ObjectMove
+JmpTo6_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -44909,7 +44909,7 @@ Obj_CPZSpinTube:
 	beq.s	JmpTo_MarkObjGone3
 	rts
 
-JmpTo_MarkObjGone3:
+JmpTo_MarkObjGone3 ; JmpTo
 	jmp	(MarkObjGone3).l
 ; ===========================================================================
 ; JmpTbl_225B8: Obj_CPZSpinTube_States:
@@ -45312,7 +45312,7 @@ __LABEL__ label *
     endif
 
     if ~~removeJmpTos
-JmpTo_MarkObjGone3
+JmpTo_MarkObjGone3 ; JmpTo
 	jmp	(MarkObjGone3).l
 
 	align 4
@@ -45535,18 +45535,18 @@ Obj_LavaBubble_MapUnc_23294:	BINCLUDE "mappings/sprite/Obj_LavaBubble_b.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo21_DeleteObject
+JmpTo21_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo8_MarkObjGone
+JmpTo8_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo6_SingleObjLoad2
+JmpTo6_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo4_AnimateSprite
+JmpTo4_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo17_Adjust2PArtPointer
+JmpTo17_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 ; loc_232FA:
-JmpTo7_ObjectMove
+JmpTo7_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -45975,27 +45975,27 @@ Obj_BreakableBlock_MapUnc_23886:	BINCLUDE "mappings/sprite/Obj_BreakableBlock_b.
     endif
 
     if ~~removeJmpTos
-JmpTo12_DisplaySprite
+JmpTo12_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo22_DeleteObject
+JmpTo22_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo3_SingleObjLoad
+JmpTo3_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo9_MarkObjGone
+JmpTo9_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo18_Adjust2PArtPointer
+JmpTo18_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo_BreakObjectToPieces
+JmpTo_BreakObjectToPieces ; JmpTo
 	jmp	(BreakObjectToPieces).l
-JmpTo3_SolidObject
+JmpTo3_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 ; loc_238D6:
-JmpTo8_ObjectMove
+JmpTo8_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
     else
-JmpTo22_DeleteObject
+JmpTo22_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
     endif
 
@@ -46150,22 +46150,22 @@ Obj_RisingLava_SlopeData:
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo23_DeleteObject
+JmpTo23_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo_Touch_ChkHurt
+JmpTo_Touch_ChkHurt ; JmpTo
 	jmp	(Touch_ChkHurt).l
-JmpTo2_MarkObjGone3
+JmpTo2_MarkObjGone3 ; JmpTo
 	jmp	(MarkObjGone3).l
-JmpTo_DropOnFloor
+JmpTo_DropOnFloor ; JmpTo
 	jmp	(DropOnFloor).l
-JmpTo_SolidObject_Always
+JmpTo_SolidObject_Always ; JmpTo
 	jmp	(SolidObject_Always).l
-JmpTo_SlopedSolid
+JmpTo_SlopedSolid ; JmpTo
 	jmp	(SlopedSolid).l
 
 	align 4
     else
-JmpTo2_MarkObjGone3
+JmpTo2_MarkObjGone3 ; JmpTo
 	jmp	(MarkObjGone3).l
     endif
 
@@ -46424,11 +46424,11 @@ Obj_OOZPoppingPlatform_MapUnc_23DF0:	BINCLUDE "mappings/sprite/Obj_OOZPoppingPla
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo10_MarkObjGone
+JmpTo10_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo7_SingleObjLoad2
+JmpTo7_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo4_SolidObject
+JmpTo4_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 
 	align 4
@@ -46537,7 +46537,7 @@ loc_23F0A:
 	cmpi.w	#$280,d0
 	bhi.s	loc_23F36
 
-JmpTo13_DisplaySprite
+JmpTo13_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 
@@ -46551,7 +46551,7 @@ loc_23F44:
 	move.w	respawn_index(a0),a2
 	bclr	#7,(a2)
 
-JmpTo24_DeleteObject
+JmpTo24_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 
@@ -46617,9 +46617,9 @@ Obj_SlidingSpike_MapUnc_23FE0:	BINCLUDE "mappings/sprite/Obj_SlidingSpike.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo8_SingleObjLoad2
+JmpTo8_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo19_Adjust2PArtPointer
+JmpTo19_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
@@ -46733,9 +46733,9 @@ Obj_Oil_End:
     endif
 
     if ~~removeJmpTos
-JmpTo3_KillCharacter
+JmpTo3_KillCharacter ; JmpTo
 	jmp	(KillCharacter).l
-JmpTo_PlatformObject_SingleCharacter
+JmpTo_PlatformObject_SingleCharacter ; JmpTo
 	jmp	(PlatformObject_SingleCharacter).l
 
 	align 4
@@ -47259,7 +47259,7 @@ loc_24BC4:
 	bclr	#7,(a2)
 
     if removeJmpTos
-JmpTo25_DeleteObject
+JmpTo25_DeleteObject ; JmpTo
     endif
 
 BranchTo_JmpTo25_DeleteObject
@@ -47334,23 +47334,23 @@ Obj_OOZBall_MapUnc_24C52:	BINCLUDE "mappings/sprite/Obj_OOZBall.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo25_DeleteObject
+JmpTo25_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo4_SingleObjLoad
+JmpTo4_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
 ; some of these are still used, for some reason:
-JmpTo11_MarkObjGone
+JmpTo11_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo20_Adjust2PArtPointer
+JmpTo20_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo5_SolidObject
+JmpTo5_SolidObject ; JmpTo
 	jmp	(SolidObject).l
-JmpTo_SolidObject_Always_SingleCharacter
+JmpTo_SolidObject_Always_SingleCharacter ; JmpTo
 	jmp	(SolidObject_Always_SingleCharacter).l
-JmpTo_SolidObject45
+JmpTo_SolidObject45 ; JmpTo
 	jmp	(SolidObject45).l
 ; loc_24CEE:
-JmpTo9_ObjectMove
+JmpTo9_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -47432,11 +47432,11 @@ Obj_Button_MapUnc_24D96:	BINCLUDE "mappings/sprite/Obj_Button.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo12_MarkObjGone
+JmpTo12_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo21_Adjust2PArtPointer
+JmpTo21_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo6_SolidObject
+JmpTo6_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 
 	align 4
@@ -47709,31 +47709,31 @@ Obj_OOZLauncher_MapUnc_250BA:	BINCLUDE "mappings/sprite/Obj_OOZLauncher.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo14_DisplaySprite
+JmpTo14_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo26_DeleteObject
+JmpTo26_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo13_MarkObjGone
+JmpTo13_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo9_SingleObjLoad2
+JmpTo9_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo3_MarkObjGone3
+JmpTo3_MarkObjGone3 ; JmpTo
 	jmp	(MarkObjGone3).l
-JmpTo22_Adjust2PArtPointer
+JmpTo22_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo2_BreakObjectToPieces
+JmpTo2_BreakObjectToPieces ; JmpTo
 	jmp	(BreakObjectToPieces).l
-JmpTo7_SolidObject
+JmpTo7_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 ; loc_2523C:
-JmpTo10_ObjectMove
+JmpTo10_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
     else
-JmpTo3_MarkObjGone3
+JmpTo3_MarkObjGone3 ; JmpTo
 	jmp	(MarkObjGone3).l
-JmpTo26_DeleteObject
+JmpTo26_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; Unused
 ;JmpTo13_MarkObjGone
@@ -47759,7 +47759,7 @@ Obj_LauncherBall:
 	jmpto	(DisplaySprite).l, JmpTo15_DisplaySprite
 
     if removeJmpTos
-JmpTo14_MarkObjGone
+JmpTo14_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
     endif
 ; ===========================================================================
@@ -48002,11 +48002,11 @@ Obj_LauncherBall_MapUnc_254FE:	BINCLUDE "mappings/sprite/Obj_LauncherBall.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo15_DisplaySprite
+JmpTo15_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo14_MarkObjGone
+JmpTo14_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo23_Adjust2PArtPointer
+JmpTo23_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
@@ -48156,18 +48156,18 @@ Obj_ArrowShooter_MapUnc_25804:	BINCLUDE "mappings/sprite/Obj_ArrowShooter.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo27_DeleteObject
+JmpTo27_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo5_SingleObjLoad
+JmpTo5_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo15_MarkObjGone
+JmpTo15_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo5_AnimateSprite
+JmpTo5_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo24_Adjust2PArtPointer
+JmpTo24_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 ; loc_25886:
-JmpTo11_ObjectMove
+JmpTo11_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -48532,25 +48532,25 @@ Obj_RisingPillar_MapUnc_25C6E:	BINCLUDE "mappings/sprite/Obj_RisingPillar.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo16_DisplaySprite
+JmpTo16_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo28_DeleteObject
+JmpTo28_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo16_MarkObjGone
+JmpTo16_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo10_SingleObjLoad2
+JmpTo10_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo25_Adjust2PArtPointer
+JmpTo25_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo8_SolidObject
+JmpTo8_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 ; loc_260FC:
-JmpTo12_ObjectMove
+JmpTo12_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
     else
-JmpTo28_DeleteObject
+JmpTo28_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
     endif
 
@@ -48746,7 +48746,7 @@ Obj_LeavesGenerator_Leaf:
 	jmpto	(DisplaySprite).l, JmpTo17_DisplaySprite
 
     if removeJmpTos
-JmpTo29_DeleteObject
+JmpTo29_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
     endif
 ; ===========================================================================
@@ -48761,15 +48761,15 @@ Obj_LeavesGenerator_MapUnc_2631E:	BINCLUDE "mappings/sprite/Obj_LeavesGenerator.
     endif
 
     if ~~removeJmpTos
-JmpTo17_DisplaySprite
+JmpTo17_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo29_DeleteObject
+JmpTo29_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo6_SingleObjLoad
+JmpTo6_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo2_RandomNumber
+JmpTo2_RandomNumber ; JmpTo
 	jmp	(RandomNumber).l
-JmpTo7_CalcSine
+JmpTo7_CalcSine ; JmpTo
 	jmp	(CalcSine).l
 
 	align 4
@@ -48985,13 +48985,13 @@ Obj_SpringBoard_MapUnc_265F4:	BINCLUDE "mappings/sprite/Obj_SpringBoard.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo17_MarkObjGone
+JmpTo17_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo6_AnimateSprite
+JmpTo6_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo26_Adjust2PArtPointer
+JmpTo26_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo_SlopedSolid_SingleCharacter
+JmpTo_SlopedSolid_SingleCharacter ; JmpTo
 	jmp	(SlopedSolid_SingleCharacter).l
 
 	align 4
@@ -49187,7 +49187,7 @@ loc_2683A:
 	jmpto	(DisplaySprite).l, JmpTo18_DisplaySprite
 
     if removeJmpTos
-JmpTo30_DeleteObject
+JmpTo30_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
     endif
 ; ===========================================================================
@@ -49198,17 +49198,17 @@ Obj_SteamSpring_MapUnc_2686C:	BINCLUDE "mappings/sprite/Obj_SteamSpring.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo18_DisplaySprite
+JmpTo18_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo30_DeleteObject
+JmpTo30_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo7_SingleObjLoad
+JmpTo7_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo18_MarkObjGone
+JmpTo18_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo27_Adjust2PArtPointer
+JmpTo27_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo2_SolidObject_Always_SingleCharacter
+JmpTo2_SolidObject_Always_SingleCharacter ; JmpTo
 	jmp	(SolidObject_Always_SingleCharacter).l
 
 	align 4
@@ -49297,7 +49297,7 @@ Obj_MTZTwinStompers_Main:
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 
-JmpTo31_DeleteObject
+JmpTo31_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 ; off_269F4:
@@ -49359,9 +49359,9 @@ Obj_MTZTwinStompers_MapUnc_26A5C:	BINCLUDE "mappings/sprite/Obj_MTZTwinStompers.
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo28_Adjust2PArtPointer
+JmpTo28_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo9_SolidObject
+JmpTo9_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 
 	align 4
@@ -49769,13 +49769,13 @@ Obj_MTZLongPlatform_MapUnc_26F04:	BINCLUDE "mappings/sprite/Obj_MTZLongPlatform_
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo19_MarkObjGone
+JmpTo19_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo11_SingleObjLoad2
+JmpTo11_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo29_Adjust2PArtPointer
+JmpTo29_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo10_SolidObject
+JmpTo10_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 
 	align 4
@@ -49877,7 +49877,7 @@ loc_2702C:
 	rts
 
     if removeJmpTos
-JmpTo33_DeleteObject
+JmpTo33_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
     endif
 ; ===========================================================================
@@ -49953,15 +49953,15 @@ Obj_MTZSpringWall_MapUnc_27120:	BINCLUDE "mappings/sprite/Obj_MTZSpringWall.bin"
     if ~~removeJmpTos
 
      if gameRevision=0
-JmpTo47_DisplaySprite
+JmpTo47_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
      endif
 
-JmpTo33_DeleteObject
+JmpTo33_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo30_Adjust2PArtPointer
+JmpTo30_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo3_SolidObject_Always_SingleCharacter
+JmpTo3_SolidObject_Always_SingleCharacter ; JmpTo
 	jmp	(SolidObject_Always_SingleCharacter).l
 
 	align 4
@@ -50244,16 +50244,16 @@ Obj_MTZSpinTube_MapUnc_27548:	BINCLUDE "mappings/sprite/Obj_MTZSpinTube.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo19_DisplaySprite
+JmpTo19_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo7_AnimateSprite
+JmpTo7_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo4_MarkObjGone3
+JmpTo4_MarkObjGone3 ; JmpTo
 	jmp	(MarkObjGone3).l
 
 	align 4
     else
-JmpTo4_MarkObjGone3
+JmpTo4_MarkObjGone3 ; JmpTo
 	jmp	(MarkObjGone3).l
     endif
 
@@ -50516,15 +50516,15 @@ Obj_FloorSpike_Action_End:
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo20_MarkObjGone
+JmpTo20_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo12_SingleObjLoad2
+JmpTo12_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo31_Adjust2PArtPointer
+JmpTo31_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo11_SolidObject
+JmpTo11_SolidObject ; JmpTo
 	jmp	(SolidObject).l
-JmpTo2_MarkObjGone2
+JmpTo2_MarkObjGone2 ; JmpTo
 	jmp	(MarkObjGone2).l
 
 	align 4
@@ -50712,16 +50712,16 @@ Obj_Nut_MapUnc_27A26:	BINCLUDE "mappings/sprite/Obj_Nut.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo21_MarkObjGone
+JmpTo21_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo_ObjCheckFloorDist
+JmpTo_ObjCheckFloorDist ; JmpTo
 	jmp	(ObjCheckFloorDist).l
-JmpTo32_Adjust2PArtPointer
+JmpTo32_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo12_SolidObject
+JmpTo12_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 ; loc_27AA8:
-JmpTo13_ObjectMove
+JmpTo13_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -50932,13 +50932,13 @@ Obj_MTZMovingPlatforms_MapUnc_27D30:	BINCLUDE "mappings/sprite/Obj_MTZMovingPlat
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo13_SingleObjLoad2
+JmpTo13_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo33_Adjust2PArtPointer
+JmpTo33_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo13_SolidObject
+JmpTo13_SolidObject ; JmpTo
 	jmp	(SolidObject).l
-JmpTo3_MarkObjGone2
+JmpTo3_MarkObjGone2 ; JmpTo
 	jmp	(MarkObjGone2).l
 
 	align 4
@@ -51257,14 +51257,14 @@ Obj_CPZSquarePlatform_MapUnc_2800E:	BINCLUDE "mappings/sprite/Obj_CPZSquarePlatf
     endif
 
     if ~~removeJmpTos
-JmpTo34_Adjust2PArtPointer
+JmpTo34_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo14_SolidObject
+JmpTo14_SolidObject ; JmpTo
 	jmp	(SolidObject).l
-JmpTo4_MarkObjGone2
+JmpTo4_MarkObjGone2 ; JmpTo
 	jmp	(MarkObjGone2).l
 ; loc_2802E:
-JmpTo14_ObjectMove
+JmpTo14_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -51533,18 +51533,18 @@ Obj_Conveyor_MapUnc_28372:	BINCLUDE "mappings/sprite/Obj_Conveyor.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo20_DisplaySprite
+JmpTo20_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo34_DeleteObject
+JmpTo34_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo8_SingleObjLoad
+JmpTo8_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo35_Adjust2PArtPointer
+JmpTo35_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo5_PlatformObject
+JmpTo5_PlatformObject ; JmpTo
 	jmp	(PlatformObject).l
 ; loc_283A6:
-JmpTo15_ObjectMove
+JmpTo15_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -51696,9 +51696,9 @@ Obj_LargeRotPlatform_MapUnc_2852C:	BINCLUDE "mappings/sprite/Obj_LargeRotPlatfor
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo36_Adjust2PArtPointer
+JmpTo36_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo15_SolidObject
+JmpTo15_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 
 	align 4
@@ -51895,11 +51895,11 @@ Obj_Cog_MapUnc_28786:	BINCLUDE "mappings/sprite/Obj_Cog.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo14_SingleObjLoad2
+JmpTo14_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo4_Adjust2PArtPointer2
+JmpTo4_Adjust2PArtPointer2 ; JmpTo
 	jmp	(Adjust2PArtPointer2).l
-JmpTo16_SolidObject
+JmpTo16_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 
 	align 4
@@ -51973,7 +51973,7 @@ Obj_CNZConveyorBelt_Action:
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo5_MarkObjGone3
+JmpTo5_MarkObjGone3 ; JmpTo
 	jmp	(MarkObjGone3).l
 
 	align 4
@@ -52166,15 +52166,15 @@ Obj_RotatingRings_MapUnc_28B9C:	BINCLUDE "mappings/sprite/Obj_RotatingRings.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo21_DisplaySprite
+JmpTo21_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo9_SingleObjLoad
+JmpTo9_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo_DeleteObject2
+JmpTo_DeleteObject2 ; JmpTo
 	jmp	(DeleteObject2).l
-JmpTo37_Adjust2PArtPointer
+JmpTo37_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo17_SolidObject
+JmpTo17_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 
 	align 4
@@ -52347,23 +52347,23 @@ Obj_MCZBrick_MapUnc_28D8A:	BINCLUDE "mappings/sprite/Obj_MCZBrick.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo_DisplaySprite3
+JmpTo_DisplaySprite3 ; JmpTo
 	jmp	(DisplaySprite3).l
-JmpTo22_DisplaySprite
+JmpTo22_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo38_DeleteObject
+JmpTo38_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo22_MarkObjGone
+JmpTo22_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo2_DeleteObject2
+JmpTo2_DeleteObject2 ; JmpTo
 	jmp	(DeleteObject2).l
-JmpTo15_SingleObjLoad2
+JmpTo15_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo38_Adjust2PArtPointer
+JmpTo38_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo8_CalcSine
+JmpTo8_CalcSine ; JmpTo
 	jmp	(CalcSine).l
-JmpTo18_SolidObject
+JmpTo18_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 
 	align 4
@@ -52508,13 +52508,13 @@ Obj_MCZSlidingSpike_MapUnc_28F3A:	BINCLUDE "mappings/sprite/Obj_MCZSlidingSpike.
     endif
 
     if ~~removeJmpTos
-JmpTo_Touch_ChkHurt2
+JmpTo_Touch_ChkHurt2 ; JmpTo
 	jmp	(Touch_ChkHurt2).l
-JmpTo39_Adjust2PArtPointer
+JmpTo39_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo19_SolidObject
+JmpTo19_SolidObject ; JmpTo
 	jmp	(SolidObject).l
-JmpTo5_MarkObjGone2
+JmpTo5_MarkObjGone2 ; JmpTo
 	jmp	(MarkObjGone2).l
 
 	align 4
@@ -52621,11 +52621,11 @@ Obj_MCZBridge_MapUnc_29064:	BINCLUDE "mappings/sprite/Obj_MCZBridge.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo23_MarkObjGone
+JmpTo23_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo40_Adjust2PArtPointer
+JmpTo40_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo20_SolidObject
+JmpTo20_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 
 	align 4
@@ -52834,13 +52834,13 @@ return_29386:
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo16_SingleObjLoad2
+JmpTo16_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo5_Adjust2PArtPointer2
+JmpTo5_Adjust2PArtPointer2 ; JmpTo
 	jmp	(Adjust2PArtPointer2).l
-JmpTo21_SolidObject
+JmpTo21_SolidObject ; JmpTo
 	jmp	(SolidObject).l
-JmpTo6_MarkObjGone2
+JmpTo6_MarkObjGone2 ; JmpTo
 	jmp	(MarkObjGone2).l
 
 	align 4
@@ -52981,7 +52981,7 @@ loc_294C4:
 	move.w	respawn_index(a0),a2
 	bclr	#7,(a2)
 
-JmpTo39_DeleteObject
+JmpTo39_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 ; loc_294EA:
@@ -53043,13 +53043,13 @@ Obj_SidewaysPlatform_MapUnc_29564:	BINCLUDE "mappings/sprite/Obj_SidewaysPlatfor
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo24_DisplaySprite
+JmpTo24_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo17_SingleObjLoad2
+JmpTo17_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo41_Adjust2PArtPointer
+JmpTo41_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo6_PlatformObject
+JmpTo6_PlatformObject ; JmpTo
 	jmp	(PlatformObject).l
 
 	align 4
@@ -53081,7 +53081,7 @@ Obj_PipeExitSpring:
 	jmpto	(DisplaySprite).l, JmpTo25_DisplaySprite
 
     if removeJmpTos
-JmpTo40_DeleteObject
+JmpTo40_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
     endif
 ; ===========================================================================
@@ -53245,15 +53245,15 @@ Obj_PipeExitSpring_MapUnc_29780:	BINCLUDE "mappings/sprite/Obj_PipeExitSpring.bi
     endif
 
     if ~~removeJmpTos
-JmpTo25_DisplaySprite
+JmpTo25_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo40_DeleteObject
+JmpTo40_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo8_AnimateSprite
+JmpTo8_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo42_Adjust2PArtPointer
+JmpTo42_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo4_SolidObject_Always_SingleCharacter
+JmpTo4_SolidObject_Always_SingleCharacter ; JmpTo
 	jmp	(SolidObject_Always_SingleCharacter).l
 
 	align 4
@@ -53377,9 +53377,9 @@ Obj_VineSwitch_MapUnc_29938:	BINCLUDE "mappings/sprite/Obj_VineSwitch.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo24_MarkObjGone
+JmpTo24_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo43_Adjust2PArtPointer
+JmpTo43_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
@@ -53663,9 +53663,9 @@ Obj_MovingVine_MapUnc_29DD0:	BINCLUDE "mappings/sprite/Obj_MovingVine_b.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo25_MarkObjGone
+JmpTo25_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo44_Adjust2PArtPointer
+JmpTo44_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
@@ -53885,21 +53885,21 @@ Obj_MCZDrawbridge_MapUnc_2A24E:	BINCLUDE "mappings/sprite/Obj_MCZDrawbridge.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo2_DisplaySprite3
+JmpTo2_DisplaySprite3 ; JmpTo
 	jmp	(DisplaySprite3).l
-JmpTo26_DisplaySprite
+JmpTo26_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo41_DeleteObject
+JmpTo41_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo3_DeleteObject2
+JmpTo3_DeleteObject2 ; JmpTo
 	jmp	(DeleteObject2).l
-JmpTo18_SingleObjLoad2
+JmpTo18_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo45_Adjust2PArtPointer
+JmpTo45_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo9_CalcSine
+JmpTo9_CalcSine ; JmpTo
 	jmp	(CalcSine).l
-JmpTo22_SolidObject
+JmpTo22_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 
 	align 4
@@ -54141,18 +54141,18 @@ Obj_SwingingPlatforms_MapUnc_2A476:	BINCLUDE "mappings/sprite/Obj_SwingingPlatfo
     endif
 
     if ~~removeJmpTos
-JmpTo2_ObjCheckFloorDist
+JmpTo2_ObjCheckFloorDist ; JmpTo
 	jmp	(ObjCheckFloorDist).l
-JmpTo46_Adjust2PArtPointer
+JmpTo46_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo_ObjCheckCeilingDist
+JmpTo_ObjCheckCeilingDist ; JmpTo
 	jmp	(ObjCheckCeilingDist).l
-JmpTo23_SolidObject
+JmpTo23_SolidObject ; JmpTo
 	jmp	(SolidObject).l
-JmpTo7_MarkObjGone2
+JmpTo7_MarkObjGone2 ; JmpTo
 	jmp	(MarkObjGone2).l
 ; loc_2A4F6:
-JmpTo16_ObjectMove
+JmpTo16_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -54414,23 +54414,23 @@ Obj_ARZRotPlatforms_PlatformSubObject:
     endif
 
     if ~~removeJmpTos
-JmpTo3_DisplaySprite3
+JmpTo3_DisplaySprite3 ; JmpTo
 	jmp	(DisplaySprite3).l
-JmpTo27_DisplaySprite
+JmpTo27_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo42_DeleteObject
+JmpTo42_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo4_DeleteObject2
+JmpTo4_DeleteObject2 ; JmpTo
 	jmp	(DeleteObject2).l
-JmpTo19_SingleObjLoad2
+JmpTo19_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo47_Adjust2PArtPointer
+JmpTo47_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo10_CalcSine
+JmpTo10_CalcSine ; JmpTo
 	jmp	(CalcSine).l
-JmpTo7_PlatformObject
+JmpTo7_PlatformObject ; JmpTo
 	jmp	(PlatformObject).l
-JmpTo8_MarkObjGone2
+JmpTo8_MarkObjGone2 ; JmpTo
 	jmp	(MarkObjGone2).l
 
 	align 4
@@ -54674,9 +54674,9 @@ Obj_Fan_MapUnc_2AAC4:	BINCLUDE "mappings/sprite/Obj_Fan_b.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo26_MarkObjGone
+JmpTo26_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo48_Adjust2PArtPointer
+JmpTo48_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
@@ -55106,13 +55106,13 @@ Obj_LauncherSpring_MapUnc_2B0EC:	BINCLUDE "mappings/sprite/Obj_LauncherSpring_b.
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo4_DisplaySprite3
+JmpTo4_DisplaySprite3 ; JmpTo
 	jmp	(DisplaySprite3).l
-JmpTo43_DeleteObject
+JmpTo43_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo49_Adjust2PArtPointer
+JmpTo49_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo5_SolidObject_Always_SingleCharacter
+JmpTo5_SolidObject_Always_SingleCharacter ; JmpTo
 	jmp	(SolidObject_Always_SingleCharacter).l
 
 	align 4
@@ -55391,17 +55391,17 @@ Obj_Flipper_MapUnc_2B45A:	BINCLUDE "mappings/sprite/Obj_Flipper.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo27_MarkObjGone
+JmpTo27_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo9_AnimateSprite
+JmpTo9_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo50_Adjust2PArtPointer
+JmpTo50_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo11_CalcSine
+JmpTo11_CalcSine ; JmpTo
 	jmp	(CalcSine).l
-JmpTo6_SolidObject_Always_SingleCharacter
+JmpTo6_SolidObject_Always_SingleCharacter ; JmpTo
 	jmp	(SolidObject_Always_SingleCharacter).l
-JmpTo2_SlopedSolid
+JmpTo2_SlopedSolid ; JmpTo
 	jmp	(SlopedSolid).l
 
 	align 4
@@ -55537,13 +55537,13 @@ Obj_CNZRectangularBlocks_MapUnc_2B694:	BINCLUDE "mappings/sprite/Obj_CNZRectangu
     endif
 
     if ~~removeJmpTos
-JmpTo6_MarkObjGone3
+JmpTo6_MarkObjGone3 ; JmpTo
 	jmp	(MarkObjGone3).l
-JmpTo51_Adjust2PArtPointer
+JmpTo51_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo24_SolidObject
+JmpTo24_SolidObject ; JmpTo
 	jmp	(SolidObject).l
-JmpTo9_MarkObjGone2
+JmpTo9_MarkObjGone2 ; JmpTo
 	jmp	(MarkObjGone2).l
 
 	align 4
@@ -55606,7 +55606,7 @@ BranchTo_JmpTo44_DeleteObject
 	jmpto	(DeleteObject).l, JmpTo44_DeleteObject
 
     if removeJmpTos
-JmpTo28_DisplaySprite
+JmpTo28_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
     endif
 ; ===========================================================================
@@ -55617,9 +55617,9 @@ Obj_BombPrize_MapUnc_2B8D4:	BINCLUDE "mappings/sprite/Obj_PointPokey_a.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo28_DisplaySprite
+JmpTo28_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo44_DeleteObject
+JmpTo44_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 
 	align 4
@@ -55725,14 +55725,14 @@ Obj_CNZBigBlock_MapUnc_2B9CA:	BINCLUDE "mappings/sprite/Obj_CNZBigBlock.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo52_Adjust2PArtPointer
+JmpTo52_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo25_SolidObject
+JmpTo25_SolidObject ; JmpTo
 	jmp	(SolidObject).l
-JmpTo10_MarkObjGone2
+JmpTo10_MarkObjGone2 ; JmpTo
 	jmp	(MarkObjGone2).l
 ; loc_2BA02:
-JmpTo17_ObjectMove
+JmpTo17_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -55870,14 +55870,14 @@ Obj_Elevator_MapUnc_2BB40:	BINCLUDE "mappings/sprite/Obj_Elevator.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo28_MarkObjGone
+JmpTo28_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo53_Adjust2PArtPointer
+JmpTo53_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo_PlatformObjectD5
+JmpTo_PlatformObjectD5 ; JmpTo
 	jmp	(PlatformObjectD5).l
 ; loc_2BB66:
-JmpTo18_ObjectMove
+JmpTo18_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -56703,19 +56703,19 @@ SlotSequence3:	dc.b   3,  0,  1,  4,  2,  5,  4,  1
     endif
 
     if ~~removeJmpTos
-JmpTo10_SingleObjLoad
+JmpTo10_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo29_MarkObjGone
+JmpTo29_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo10_AnimateSprite
+JmpTo10_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo6_Adjust2PArtPointer2
+JmpTo6_Adjust2PArtPointer2 ; JmpTo
 	jmp	(Adjust2PArtPointer2).l
-JmpTo54_Adjust2PArtPointer
+JmpTo54_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo12_CalcSine
+JmpTo12_CalcSine ; JmpTo
 	jmp	(CalcSine).l
-JmpTo7_SolidObject_Always_SingleCharacter
+JmpTo7_SolidObject_Always_SingleCharacter ; JmpTo
 	jmp	(SolidObject_Always_SingleCharacter).l
 
 	align 4
@@ -56885,7 +56885,7 @@ loc_2C5F8:
 	jmp	(DeleteObject).l
 
     if removeJmpTos
-JmpTo30_MarkObjGone
+JmpTo30_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
     endif
 ; ===========================================================================
@@ -56912,13 +56912,13 @@ Obj_Bumper_MapUnc_2C626:	BINCLUDE "mappings/sprite/Obj_Bumper.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo30_DisplaySprite
+JmpTo30_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo30_MarkObjGone
+JmpTo30_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo11_AnimateSprite
+JmpTo11_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo55_Adjust2PArtPointer
+JmpTo55_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
@@ -57119,7 +57119,7 @@ loc_2C884:
 	jmpto	(MarkObjGone).l, JmpTo31_MarkObjGone
 
     if removeJmpTos
-JmpTo46_DeleteObject
+JmpTo46_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
     endif
 ; ===========================================================================
@@ -57151,15 +57151,15 @@ Obj_BonusBlock_MapUnc_2C8C4:	BINCLUDE "mappings/sprite/Obj_BonusBlock.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo46_DeleteObject
+JmpTo46_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo11_SingleObjLoad
+JmpTo11_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo31_MarkObjGone
+JmpTo31_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo12_AnimateSprite
+JmpTo12_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo56_Adjust2PArtPointer
+JmpTo56_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
@@ -57257,7 +57257,7 @@ Obj_Grab_CheckCharacter_End:
     endif
 
     if ~~removeJmpTos
-JmpTo7_MarkObjGone3
+JmpTo7_MarkObjGone3 ; JmpTo
 	jmp	(MarkObjGone3).l
 
 	align 4
@@ -57304,7 +57304,7 @@ Obj_Octus_Angry:	; Used by removed sub-object
 	jmpto	(DisplaySprite).l, JmpTo31_DisplaySprite
 
     if removeJmpTos
-JmpTo47_DeleteObject
+JmpTo47_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
     endif
 ; ===========================================================================
@@ -57469,18 +57469,18 @@ Obj_Octus_MapUnc_2CBFE:	BINCLUDE "mappings/sprite/Obj_Octus.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo31_DisplaySprite
+JmpTo31_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo47_DeleteObject
+JmpTo47_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo32_MarkObjGone
+JmpTo32_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo13_AnimateSprite
+JmpTo13_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo2_ObjectMoveAndFall
+JmpTo2_ObjectMoveAndFall ; JmpTo
 	jmp	(ObjectMoveAndFall).l
 ; loc_2CCC2:
-JmpTo19_ObjectMove
+JmpTo19_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -57768,29 +57768,29 @@ Obj_Aquis_MapUnc_2CF94:	BINCLUDE "mappings/sprite/Obj_Aquis.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo32_DisplaySprite
+JmpTo32_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo48_DeleteObject
+JmpTo48_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo12_SingleObjLoad
+JmpTo12_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo33_MarkObjGone
+JmpTo33_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo14_AnimateSprite
+JmpTo14_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo_Obj_GetOrientationToPlayer
+JmpTo_Obj_GetOrientationToPlayer ; JmpTo
 	jmp	(Obj_GetOrientationToPlayer).l
-JmpTo_Obj_CapSpeed
+JmpTo_Obj_CapSpeed ; JmpTo
 	jmp	(Obj_CapSpeed).l
-JmpTo_Obj_MoveStop
+JmpTo_Obj_MoveStop ; JmpTo
 	jmp	(Obj_MoveStop).l
 ; loc_2D060:
-JmpTo20_ObjectMove
+JmpTo20_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
     else
-JmpTo48_DeleteObject
+JmpTo48_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
     endif
 
@@ -58043,28 +58043,28 @@ Obj_Buzzer_MapUnc_2D2EA:	BINCLUDE "mappings/sprite/Obj_Buzzer.bin"
 
     if ~~removeJmpTos
 ; loc_2D368:
-JmpTo49_DeleteObject
+JmpTo49_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo20_SingleObjLoad2
+JmpTo20_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo15_AnimateSprite
+JmpTo15_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo7_Adjust2PArtPointer2
+JmpTo7_Adjust2PArtPointer2 ; JmpTo
 	jmp	(Adjust2PArtPointer2).l
-JmpTo_MarkObjGone_P1
+JmpTo_MarkObjGone_P1 ; JmpTo
 	jmp	(MarkObjGone_P1).l
-JmpTo57_Adjust2PArtPointer
+JmpTo57_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 ; loc_2D38C:
-JmpTo21_ObjectMove
+JmpTo21_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
     else
-JmpTo49_DeleteObject
+JmpTo49_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; loc_2D38C:
-JmpTo21_ObjectMove
+JmpTo21_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
     endif
 
@@ -58147,14 +58147,14 @@ Obj_Masher_MapUnc_2D442:	BINCLUDE "mappings/sprite/Obj_Masher.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo34_MarkObjGone
+JmpTo34_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo16_AnimateSprite
+JmpTo16_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo58_Adjust2PArtPointer
+JmpTo58_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 ; loc_2D48E:
-JmpTo22_ObjectMove
+JmpTo22_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -58206,7 +58206,7 @@ Obj_BossExplosion_Main:
 	jmpto	(DisplaySprite).l, JmpTo33_DisplaySprite
 
     if removeJmpTos
-JmpTo50_DeleteObject
+JmpTo50_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
     endif
 ; ===========================================================================
@@ -58422,15 +58422,15 @@ Boss_LoadExplosion:
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo33_DisplaySprite
+JmpTo33_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo50_DeleteObject
+JmpTo50_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo4_LoadPLC
+JmpTo4_LoadPLC ; JmpTo
 	jmp	(LoadPLC).l
-JmpTo_AddPoints
+JmpTo_AddPoints ; JmpTo
 	jmp	(AddPoints).l
-JmpTo59_Adjust2PArtPointer
+JmpTo59_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
@@ -58701,7 +58701,7 @@ Obj_CPZBoss_Main_Delete:
 	jsr	(DeleteObject2).l
 
     if removeJmpTos
-JmpTo51_DeleteObject
+JmpTo51_DeleteObject ; JmpTo
     endif
 
 	jmp	(DeleteObject).l
@@ -59482,7 +59482,7 @@ loc_2E3E6:
 	move.l	(sp)+,d7
 
     if removeJmpTos
-JmpTo34_DisplaySprite
+JmpTo34_DisplaySprite ; JmpTo
     endif
 
 	jmpto	(DisplaySprite).l, JmpTo34_DisplaySprite
@@ -60090,28 +60090,28 @@ Obj_CPZBoss_MapUnc_2EEA0:	BINCLUDE "mappings/sprite/Obj_CPZBoss_d.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo34_DisplaySprite
+JmpTo34_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo51_DeleteObject
+JmpTo51_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo35_MarkObjGone
+JmpTo35_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo8_Adjust2PArtPointer2
+JmpTo8_Adjust2PArtPointer2 ; JmpTo
 	jmp	(Adjust2PArtPointer2).l
-JmpTo5_LoadPLC
+JmpTo5_LoadPLC ; JmpTo
 	jmp	(LoadPLC).l
-JmpTo2_AddPoints
+JmpTo2_AddPoints ; JmpTo
 	jmp	(AddPoints).l
-JmpTo60_Adjust2PArtPointer
+JmpTo60_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo_PlayLevelMusic
+JmpTo_PlayLevelMusic ; JmpTo
 	jmp	(PlayLevelMusic).l
-JmpTo_LoadPLC_AnimalExplosion
+JmpTo_LoadPLC_AnimalExplosion ; JmpTo
 	jmp	(LoadPLC_AnimalExplosion).l
-JmpTo3_ObjectMoveAndFall
+JmpTo3_ObjectMoveAndFall ; JmpTo
 	jmp	(ObjectMoveAndFall).l
 ; loc_2EF12:
-JmpTo23_ObjectMove
+JmpTo23_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -61015,40 +61015,40 @@ Obj_EHZBoss_MapUnc_2FAF8:	BINCLUDE "mappings/sprite/Obj_EHZBoss_c.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo35_DisplaySprite
+JmpTo35_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo52_DeleteObject
+JmpTo52_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo36_MarkObjGone
+JmpTo36_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo5_DeleteObject2
+JmpTo5_DeleteObject2 ; JmpTo
 	jmp	(DeleteObject2).l
-JmpTo21_SingleObjLoad2
+JmpTo21_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo17_AnimateSprite
+JmpTo17_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo9_Adjust2PArtPointer2
+JmpTo9_Adjust2PArtPointer2 ; JmpTo
 	jmp	(Adjust2PArtPointer2).l
-JmpTo3_ObjCheckFloorDist
+JmpTo3_ObjCheckFloorDist ; JmpTo
 	jmp	(ObjCheckFloorDist).l
-JmpTo6_LoadPLC
+JmpTo6_LoadPLC ; JmpTo
 	jmp	(LoadPLC).l
-JmpTo3_AddPoints
+JmpTo3_AddPoints ; JmpTo
 	jmp	(AddPoints).l
-JmpTo61_Adjust2PArtPointer
+JmpTo61_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 JmpTo2_PlayLevelMusic ; play level Music
 	jmp	(PlayLevelMusic).l
 JmpTo2_LoadPLC_AnimalExplosion ; PLC_Explosion
 	jmp	(LoadPLC_AnimalExplosion).l
-JmpTo4_ObjectMoveAndFall
+JmpTo4_ObjectMoveAndFall ; JmpTo
 	jmp	(ObjectMoveAndFall).l
 
 	align 4
     else
-JmpTo52_DeleteObject
+JmpTo52_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo35_DisplaySprite
+JmpTo35_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
     endif
 
@@ -61151,7 +61151,7 @@ loc_2FD50:
 	bsr.w	loc_300A4
 
     if removeJmpTos
-JmpTo36_DisplaySprite
+JmpTo36_DisplaySprite ; JmpTo
     endif
 
 	jmpto	(DisplaySprite).l, JmpTo36_DisplaySprite
@@ -61547,7 +61547,7 @@ loc_301AA:
 	move.w	#$3160,(Camera_Max_X_pos).w
 
     if removeJmpTos
-JmpTo53_DeleteObject
+JmpTo53_DeleteObject ; JmpTo
     endif
 
 	jmpto	(DeleteObject).l, JmpTo53_DeleteObject
@@ -61643,29 +61643,29 @@ Obj_HTZBoss_MapUnc_302BC:	BINCLUDE "mappings/sprite/Obj_HTZBoss_b.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo36_DisplaySprite
+JmpTo36_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo53_DeleteObject
+JmpTo53_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo13_SingleObjLoad
+JmpTo13_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo37_MarkObjGone
+JmpTo37_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo18_AnimateSprite
+JmpTo18_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo4_ObjCheckFloorDist
+JmpTo4_ObjCheckFloorDist ; JmpTo
 	jmp	(ObjCheckFloorDist).l
-JmpTo7_LoadPLC
+JmpTo7_LoadPLC ; JmpTo
 	jmp	(LoadPLC).l
 JmpTo_Obj_LavaBubble
 	jmp	(Obj_LavaBubble).l
-JmpTo4_AddPoints
+JmpTo4_AddPoints ; JmpTo
 	jmp	(AddPoints).l
-JmpTo62_Adjust2PArtPointer
+JmpTo62_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo3_PlayLevelMusic
+JmpTo3_PlayLevelMusic ; JmpTo
 	jmp	(PlayLevelMusic).l
-JmpTo3_LoadPLC_AnimalExplosion
+JmpTo3_LoadPLC_AnimalExplosion ; JmpTo
 	jmp	(LoadPLC_AnimalExplosion).l
 
 	align 4
@@ -62138,7 +62138,7 @@ Obj_ARZBoss_Main_SubC_Standard:
 	jmpto	(DisplaySprite).l, JmpTo37_DisplaySprite
 ; ===========================================================================
 
-JmpTo54_DeleteObject
+JmpTo54_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 ; loc_309A8:
@@ -62442,7 +62442,7 @@ Obj_ARZBoss_Arrow_Sub6:
 ; ===========================================================================
 
     if removeJmpTos
-JmpTo55_DeleteObject
+JmpTo55_DeleteObject ; JmpTo
     endif
 
 BranchTo_JmpTo55_DeleteObject
@@ -62535,29 +62535,29 @@ Obj_ARZBoss_MapUnc_30E04:	BINCLUDE "mappings/sprite/Obj_ARZBoss_b.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo37_DisplaySprite
+JmpTo37_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo55_DeleteObject
+JmpTo55_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo14_SingleObjLoad
+JmpTo14_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo22_SingleObjLoad2
+JmpTo22_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo19_AnimateSprite
+JmpTo19_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo3_RandomNumber
+JmpTo3_RandomNumber ; JmpTo
 	jmp	(RandomNumber).l
-JmpTo8_LoadPLC
+JmpTo8_LoadPLC ; JmpTo
 	jmp	(LoadPLC).l
-JmpTo5_AddPoints
+JmpTo5_AddPoints ; JmpTo
 	jmp	(AddPoints).l
-JmpTo4_PlayLevelMusic
+JmpTo4_PlayLevelMusic ; JmpTo
 	jmp	(PlayLevelMusic).l
-JmpTo4_LoadPLC_AnimalExplosion
+JmpTo4_LoadPLC_AnimalExplosion ; JmpTo
 	jmp	(LoadPLC_AnimalExplosion).l
-JmpTo8_PlatformObject
+JmpTo8_PlatformObject ; JmpTo
 	jmp	(PlatformObject).l
-JmpTo26_SolidObject
+JmpTo26_SolidObject ; JmpTo
 	jmp	(SolidObject).l
 
 	align 4
@@ -63062,7 +63062,7 @@ Obj_MCZBoss_Main_SubC_Standard:
 	jmpto	(DisplaySprite).l, JmpTo38_DisplaySprite
 ; ===========================================================================
 
-JmpTo56_DeleteObject
+JmpTo56_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 ;loc_315F2:
@@ -63135,23 +63135,23 @@ Obj_MCZBoss_MapUnc_316EC:	BINCLUDE "mappings/sprite/Obj_MCZBoss.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo38_DisplaySprite
+JmpTo38_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo57_DeleteObject
+JmpTo57_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo15_SingleObjLoad
+JmpTo15_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo4_RandomNumber
+JmpTo4_RandomNumber ; JmpTo
 	jmp	(RandomNumber).l
-JmpTo9_LoadPLC
+JmpTo9_LoadPLC ; JmpTo
 	jmp	(LoadPLC).l
-JmpTo6_AddPoints
+JmpTo6_AddPoints ; JmpTo
 	jmp	(AddPoints).l
-JmpTo5_PlayLevelMusic
+JmpTo5_PlayLevelMusic ; JmpTo
 	jmp	(PlayLevelMusic).l
-JmpTo5_LoadPLC_AnimalExplosion
+JmpTo5_LoadPLC_AnimalExplosion ; JmpTo
 	jmp	(LoadPLC_AnimalExplosion).l
-JmpTo5_ObjectMoveAndFall
+JmpTo5_ObjectMoveAndFall ; JmpTo
 	jmp	(ObjectMoveAndFall).l
 
 	align 4
@@ -63398,7 +63398,7 @@ loc_31C08:
 	bsr.w	AnimateBoss
 
     if removeJmpTos
-JmpTo39_DisplaySprite
+JmpTo39_DisplaySprite ; JmpTo
     endif
 
 	jmpto	(DisplaySprite).l, JmpTo39_DisplaySprite
@@ -63607,10 +63607,10 @@ loc_31E4A:
 ; ===========================================================================
 
     if removeJmpTos
-JmpTo59_DeleteObject
+JmpTo59_DeleteObject ; JmpTo
     endif
 
-JmpTo58_DeleteObject
+JmpTo58_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 
@@ -63831,23 +63831,23 @@ Obj_CNZBoss_MapUnc_320EA:	BINCLUDE "mappings/sprite/Obj_CNZBoss.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo39_DisplaySprite
+JmpTo39_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo59_DeleteObject
+JmpTo59_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo16_SingleObjLoad
+JmpTo16_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo23_SingleObjLoad2
+JmpTo23_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo20_AnimateSprite
+JmpTo20_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo10_LoadPLC
+JmpTo10_LoadPLC ; JmpTo
 	jmp	(LoadPLC).l
-JmpTo7_AddPoints
+JmpTo7_AddPoints ; JmpTo
 	jmp	(AddPoints).l
-JmpTo6_PlayLevelMusic
+JmpTo6_PlayLevelMusic ; JmpTo
 	jmp	(PlayLevelMusic).l
-JmpTo6_LoadPLC_AnimalExplosion
+JmpTo6_LoadPLC_AnimalExplosion ; JmpTo
 	jmp	(LoadPLC_AnimalExplosion).l
 
 	align 4
@@ -64358,7 +64358,7 @@ Obj_MTZBoss_MainSub12:
 	jmpto	(DisplaySprite).l, JmpTo40_DisplaySprite
 ; ===========================================================================
 
-JmpTo60_DeleteObject
+JmpTo60_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 ; ===========================================================================
 
@@ -64720,7 +64720,7 @@ Obj_MTZBossOrb_Burst:
 	subi_.b	#1,objoff_2C(a1)
 
     if removeJmpTos
-JmpTo61_DeleteObject
+JmpTo61_DeleteObject ; JmpTo
     endif
 
 	jmpto	(DeleteObject).l, JmpTo61_DeleteObject
@@ -64782,7 +64782,7 @@ Obj_MTZBoss_LaserShooter:
 	bset	#0,render_flags(a0)
 
     if removeJmpTos
-JmpTo40_DisplaySprite
+JmpTo40_DisplaySprite ; JmpTo
     endif
 
 	jmpto	(DisplaySprite).l, JmpTo40_DisplaySprite
@@ -64826,26 +64826,26 @@ Obj_MTZBoss_MapUnc_32DC6:	BINCLUDE "mappings/sprite/Obj_MTZBoss.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo40_DisplaySprite
+JmpTo40_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo61_DeleteObject
+JmpTo61_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo17_SingleObjLoad
+JmpTo17_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo21_AnimateSprite
+JmpTo21_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo11_LoadPLC
+JmpTo11_LoadPLC ; JmpTo
 	jmp	(LoadPLC).l
-JmpTo8_AddPoints
+JmpTo8_AddPoints ; JmpTo
 	jmp	(AddPoints).l
-JmpTo7_PlayLevelMusic
+JmpTo7_PlayLevelMusic ; JmpTo
 	jmp	(PlayLevelMusic).l
-JmpTo7_LoadPLC_AnimalExplosion
+JmpTo7_LoadPLC_AnimalExplosion ; JmpTo
 	jmp	(LoadPLC_AnimalExplosion).l
-JmpTo6_ObjectMoveAndFall
+JmpTo6_ObjectMoveAndFall ; JmpTo
 	jmp	(ObjectMoveAndFall).l
 ; loc_32F88:
-JmpTo24_ObjectMove
+JmpTo24_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -65081,7 +65081,7 @@ Obj_OOZBoss_Defeated_Sink:
 	jmpto	(DisplaySprite).l, JmpTo41_DisplaySprite
 ; ===========================================================================
     if removeJmpTos
-JmpTo62_DeleteObject
+JmpTo62_DeleteObject ; JmpTo
     endif
 
 BranchTo_JmpTo62_DeleteObject
@@ -65592,30 +65592,30 @@ Obj_OOZBoss_MapUnc_33756:	BINCLUDE "mappings/sprite/Obj_OOZBoss.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo41_DisplaySprite
+JmpTo41_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo62_DeleteObject
+JmpTo62_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo18_SingleObjLoad
+JmpTo18_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo38_MarkObjGone
+JmpTo38_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo24_SingleObjLoad2
+JmpTo24_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo22_AnimateSprite
+JmpTo22_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo5_RandomNumber
+JmpTo5_RandomNumber ; JmpTo
 	jmp	(RandomNumber).l
-JmpTo63_Adjust2PArtPointer
+JmpTo63_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo13_CalcSine
+JmpTo13_CalcSine ; JmpTo
 	jmp	(CalcSine).l
-JmpTo8_PlayLevelMusic
+JmpTo8_PlayLevelMusic ; JmpTo
 	jmp	(PlayLevelMusic).l
-JmpTo8_LoadPLC_AnimalExplosion
+JmpTo8_LoadPLC_AnimalExplosion ; JmpTo
 	jmp	(LoadPLC_AnimalExplosion).l
 ; loc_338E4:
-JmpTo25_ObjectMove
+JmpTo25_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -66514,9 +66514,9 @@ Obj_SonicSS_MapRUnc_345FA:	BINCLUDE "mappings/spriteDPLC/Obj_SonicSS.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo42_DisplaySprite
+JmpTo42_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo_SSSingleObjLoad
+JmpTo_SSSingleObjLoad ; JmpTo
 	jmp	(SSSingleObjLoad).l
 
 	align 4
@@ -66840,9 +66840,9 @@ Obj_SSTailsTails_MapUnc_34DA8:	BINCLUDE "mappings/sprite/Obj_SSTailsTails.bin"
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo43_DisplaySprite
+JmpTo43_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo23_AnimateSprite
+JmpTo23_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
 
 	align 4
@@ -67145,7 +67145,7 @@ loc_3516C:
 	st	objoff_2A(a1)
 
     if removeJmpTos
-JmpTo63_DeleteObject
+JmpTo63_DeleteObject ; JmpTo
     endif
 
 	jmpto	(DeleteObject).l, JmpTo63_DeleteObject
@@ -68830,26 +68830,26 @@ byte_36502: dc.b   2, $A, $B, $C,$FF
 Obj_SSBomb_MapUnc_36508:	BINCLUDE "mappings/sprite/Obj_SSBomb.bin"
 ; ===========================================================================
 
-JmpTo44_DisplaySprite
+JmpTo44_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo63_DeleteObject
+JmpTo63_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo24_AnimateSprite
+JmpTo24_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo_SSStartNewAct
+JmpTo_SSStartNewAct ; JmpTo
 	jmp	(SSStartNewAct).l
-JmpTo_CalcAngle
+JmpTo_CalcAngle ; JmpTo
 	jmp	(CalcAngle).l
-JmpTo14_CalcSine
+JmpTo14_CalcSine ; JmpTo
 	jmp	(CalcSine).l
-JmpTo7_ObjectMoveAndFall
+JmpTo7_ObjectMoveAndFall ; JmpTo
 	jmp	(ObjectMoveAndFall).l
-JmpTo_SSSingleObjLoad2
+JmpTo_SSSingleObjLoad2 ; JmpTo
 	jmp	(SSSingleObjLoad2).l
-JmpTo2_SSSingleObjLoad
+JmpTo2_SSSingleObjLoad ; JmpTo
 	jmp	(SSSingleObjLoad).l
 
 	align 4
@@ -69353,10 +69353,10 @@ Obj_DeleteOffScreen:
 ; ===========================================================================
 
     if removeJmpTos
-JmpTo65_DeleteObject
+JmpTo65_DeleteObject ; JmpTo
     endif
 
-JmpTo64_DeleteObject
+JmpTo64_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
 
 
@@ -80957,46 +80957,46 @@ Scale_2x_RightPixels2:
 ; ===========================================================================
 
     if ~~removeJmpTos
-JmpTo5_DisplaySprite3
+JmpTo5_DisplaySprite3 ; JmpTo
 	jmp	(DisplaySprite3).l
-JmpTo45_DisplaySprite
+JmpTo45_DisplaySprite ; JmpTo
 	jmp	(DisplaySprite).l
-JmpTo65_DeleteObject
+JmpTo65_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo19_SingleObjLoad
+JmpTo19_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
-JmpTo39_MarkObjGone
+JmpTo39_MarkObjGone ; JmpTo
 	jmp	(MarkObjGone).l
-JmpTo6_DeleteObject2
+JmpTo6_DeleteObject2 ; JmpTo
 	jmp	(DeleteObject2).l
-JmpTo25_SingleObjLoad2
+JmpTo25_SingleObjLoad2 ; JmpTo
 	jmp	(SingleObjLoad2).l
-JmpTo25_AnimateSprite
+JmpTo25_AnimateSprite ; JmpTo
 	jmp	(AnimateSprite).l
-JmpTo6_RandomNumber
+JmpTo6_RandomNumber ; JmpTo
 	jmp	(RandomNumber).l
-JmpTo2_MarkObjGone_P1
+JmpTo2_MarkObjGone_P1 ; JmpTo
 	jmp	(MarkObjGone_P1).l
-JmpTo_Pal_FadeToWhite_UpdateColour
+JmpTo_Pal_FadeToWhite_UpdateColour ; JmpTo
 	jmp	(Pal_FadeToWhite.UpdateColour).l
-JmpTo_LoadTailsDynPLC_Part2
+JmpTo_LoadTailsDynPLC_Part2 ; JmpTo
 	jmp	(LoadTailsDynPLC_Part2).l
-JmpTo_LoadSonicDynPLC_Part2
+JmpTo_LoadSonicDynPLC_Part2 ; JmpTo
 	jmp	(LoadSonicDynPLC_Part2).l
-JmpTo8_MarkObjGone3
+JmpTo8_MarkObjGone3 ; JmpTo
 	jmp	(MarkObjGone3).l
-JmpTo64_Adjust2PArtPointer
+JmpTo64_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
-JmpTo_Boss_LoadExplosion
+JmpTo_Boss_LoadExplosion ; JmpTo
 	jmp	(Boss_LoadExplosion).l
-JmpTo9_PlatformObject
+JmpTo9_PlatformObject ; JmpTo
 	jmp	(PlatformObject).l
-JmpTo27_SolidObject
+JmpTo27_SolidObject ; JmpTo
 	jmp	(SolidObject).l
-JmpTo8_ObjectMoveAndFall
+JmpTo8_ObjectMoveAndFall ; JmpTo
 	jmp	(ObjectMoveAndFall).l
 ; loc_3EAC0:
-JmpTo26_ObjectMove
+JmpTo26_ObjectMove ; JmpTo
 	jmp	(ObjectMove).l
 
 	align 4
@@ -81058,7 +81058,7 @@ Obj8A_MapUnc_3EB4E:	BINCLUDE "mappings/sprite/obj8A.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo65_Adjust2PArtPointer
+JmpTo65_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
@@ -81233,7 +81233,7 @@ loc_3F38E:
 	jmp	(MarkObjGone).l
 
     if removeJmpTos
-JmpTo66_DeleteObject
+JmpTo66_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
     endif
 ; ===========================================================================
@@ -81305,9 +81305,9 @@ Obj_EggPrison_MapUnc_3F436:	BINCLUDE "mappings/sprite/Obj_EggPrison.bin"
     endif
 
     if ~~removeJmpTos
-JmpTo66_DeleteObject
+JmpTo66_DeleteObject ; JmpTo
 	jmp	(DeleteObject).l
-JmpTo20_SingleObjLoad
+JmpTo20_SingleObjLoad ; JmpTo
 	jmp	(SingleObjLoad).l
 
 	align 4
@@ -82197,11 +82197,11 @@ loc_3FCA4:
     endif
 
     if ~~removeJmpTos
-JmpTo_Sonic_ResetOnFloor_Part2
+JmpTo_Sonic_ResetOnFloor_Part2 ; JmpTo
 	jmp	(Sonic_ResetOnFloor_Part2).l
 JmpTo_Check_CNZ_bumpers
 	jmp	(Check_CNZ_bumpers).l
-JmpTo_Touch_Rings
+JmpTo_Touch_Rings ; JmpTo
 	jmp	(Touch_Rings).l
 
 	align 4
@@ -83569,7 +83569,7 @@ loc_407E4:
     endif
 
     if ~~removeJmpTos
-JmpTo2_NemDecToRAM
+JmpTo2_NemDecToRAM ; JmpTo
 	jmp	(NemDecToRAM).l
 
 	align 4
@@ -84656,9 +84656,9 @@ Art_LivesNums:	BINCLUDE	"art/uncompressed/Big and small numbers used on counters
 Art_Text:	BINCLUDE	"art/uncompressed/Big and small numbers used on counters - 3.bin"
 
     if ~~removeJmpTos
-JmpTo_DrawSprite_2P_Loop
+JmpTo_DrawSprite_2P_Loop ; JmpTo
 	jmp	(DrawSprite_2P_Loop).l
-JmpTo_DrawSprite_Loop
+JmpTo_DrawSprite_Loop ; JmpTo
 	jmp	(DrawSprite_Loop).l
 
 	align 4
@@ -85282,7 +85282,7 @@ DbgObjList_SCZ: dbglistheader
 DbgObjList_SCZ_End
 
     if ~~removeJmpTos
-JmpTo66_Adjust2PArtPointer
+JmpTo66_Adjust2PArtPointer ; JmpTo
 	jmp	(Adjust2PArtPointer).l
 
 	align 4
