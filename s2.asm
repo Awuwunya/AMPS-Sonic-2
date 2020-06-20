@@ -311,11 +311,11 @@ Z80StartupCodeBegin: ; loc_2CA:
 		rept 8
 			ld	(hl),a			; save a to address
 			inc	hl			; go to next address
-		endr
+		endm
 
 		dec	de				; decrease loop counter
 		ld	a,d				; load d to a
-		zor	e				; check if both d and e are 0
+		or	e				; check if both d and e are 0
 		jr	nz, .loop			; if no, clear more memoty
 .pc		jr	.pc				; trap CPU execution
 zStartupCodeEndLoc:
@@ -327,7 +327,8 @@ zStartupCodeEndLoc:
 	dc.w $F3C3,$0100
     endif
 Z80StartupCodeEnd:
-
+	even
+	
 	dc.w	$8104	; value for VDP display mode
 	dc.w	$8F02	; value for VDP increment
 	dc.l	vdpComm($0000,CRAM,WRITE)	; value for CRAM write mode
