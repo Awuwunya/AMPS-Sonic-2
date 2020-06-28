@@ -301,8 +301,23 @@ Z80StartupCodeBegin: ; loc_2CA:
     save
     CPU Z80 ; start assembling Z80 code
     phase 0 ; pretend we're at address 0
-		di				; disable interrupts
-.pc		jp	.pc			; loop in place
+		di
+		im	1
+		ld	hl,YM_Buffer1			; we need to clear from YM_Buffer1
+		ld	de,(YM_BufferEnd-YM_Buffer1)/8	; to end of Z80 RAM, setting it to 0FFh
+
+.loop
+		ld	a,0FFh				; load 0FFh to a
+		rept 8
+			ld	(hl),a			; save a to address
+			inc	hl			; go to next address
+		endm
+
+		dec	de				; decrease loop counter
+		ld	a,d				; load d to a
+		or	e				; check if both d and e are 0
+		jr	nz, .loop			; if no, clear more memoty
+.pc		jr	.pc				; trap CPU execution
 zStartupCodeEndLoc:
     dephase ; stop pretending
 	restore
@@ -312,7 +327,8 @@ zStartupCodeEndLoc:
 	dc.w $F3C3,$0100
     endif
 Z80StartupCodeEnd:
-
+	even
+	
 	dc.w	$8104	; value for VDP display mode
 	dc.w	$8F02	; value for VDP increment
 	dc.l	vdpComm($0000,CRAM,WRITE)	; value for CRAM write mode

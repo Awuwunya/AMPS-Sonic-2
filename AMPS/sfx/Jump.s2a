@@ -6,6 +6,6 @@
 .PSG1
 	sVolEnv		vNone
 	dc.b nF2, $05
-	sModAMPS	$02, $01, $F8, $65
+	sModAMPS	$03, $01, $F8, $65
 	dc.b nBb2, $15
 	sStop
