@@ -114,7 +114,8 @@ dPortamentoTrk	macro type
 ; ---------------------------------------------------------------------------
 
 dPortamento	macro type
-.doporta
+.doporta label *				; AS sucks ASS
+
 		move.w	cPortaFreq(a1),d5	; load portamento frequency offset to d5
 		beq.s	.nochk			; branch if 0 already
 		bmi.s	.ppos			; branch if negative
@@ -163,7 +164,7 @@ dPortamento	macro type
 		clr.w	cPortaFreq(a1)		; reset portamento frequency
 	endif
 
-.nowrap
+.nowrap	label *					; AS sucks ASS
     endm
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
