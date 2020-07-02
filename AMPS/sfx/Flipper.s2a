@@ -5,6 +5,6 @@
 
 .FM5
 	sVoice		pFlipper
-	sModAMPS	$00, $01, $04, $56
+	sModAMPS	$01, $01, $04, $56
 	dc.b nF1, $03, nCs2, $25
 	sStop

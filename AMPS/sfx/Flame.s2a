@@ -7,7 +7,7 @@
 .FM5
 	sVoice		pLavaBall
 	dc.b nRst, $01
-	sModAMPS	$00, $01, $40, $48
+	sModAMPS	$01, $01, $40, $48
 	dc.b nD0, $06, nE0, $02
 	sStop
 

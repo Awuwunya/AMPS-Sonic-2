@@ -17,7 +17,7 @@
 
 .FM4
 	sVoice		pBossHit
-	sModAMPS	$02, $01, $20, $04
+	sModAMPS	$03, $01, $20, $04
 
 .Loop1
 	dc.b nC0, $18
@@ -26,7 +26,7 @@
 	sStop
 
 .PSG3
-	sModAMPS	$00, $01, $0F, $05
+	sModAMPS	$01, $01, $0F, $05
 	sNoisePSG	$E7
 
 .Loop2

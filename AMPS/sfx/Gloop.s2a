@@ -5,7 +5,7 @@
 
 .FM5
 	sVoice		pGloop
-	sModAMPS	$00, $01, $7F, $F1
+	sModAMPS	$01, $01, $7F, $F1
 
 .loop
 	dc.b nF3, $06

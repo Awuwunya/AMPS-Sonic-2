@@ -6,7 +6,7 @@
 
 .FM5
 	sVoice		pStomp1
-	sModAMPS	$00, $01, $60, $01
+	sModAMPS	$01, $01, $60, $01
 	dc.b nD3, $08
 	sStop
 

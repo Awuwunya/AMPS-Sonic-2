@@ -5,7 +5,7 @@
 
 .FM5
 	sVoice		pElevator
-	sModAMPS	$00, $01, $1E, $FF
+	sModAMPS	$01, $01, $1E, $FF
 	dc.b nD1, $1C
 	sModOff
 

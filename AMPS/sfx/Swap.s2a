@@ -11,7 +11,7 @@
 
 .FM5
 	sVoice		pSwap2
-	sModAMPS	$00, $01, $EC, $56
+	sModAMPS	$01, $01, $EC, $56
 	dc.b nEb5, $24
 	sModOff
 	sVoice		pSwap1

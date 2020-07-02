@@ -5,7 +5,7 @@
 
 .FM5
 	sVoice		pBossHit
-	sModAMPS	$00, $01, $0C, $01
+	sModAMPS	$01, $01, $0C, $01
 
 .Loop1
 	dc.b nC0, $0A

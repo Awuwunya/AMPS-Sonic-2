@@ -7,12 +7,12 @@
 
 .FM5
 	sVoice		pDash
-	sModAMPS	$00, $01, $C5, $1A
+	sModAMPS	$01, $01, $C5, $1A
 	dc.b nE6, $07
 	saVol		$0A
 	dc.b nRst, $06
 	sVoice		pTransform2
-	sModAMPS	$00, $01, $11, $FF
+	sModAMPS	$01, $01, $11, $FF
 	dc.b nA2, $28
 
 .Loop1
@@ -23,7 +23,7 @@
 
 Transform_PSG3:
 	dc.b nRst, $07
-	sModAMPS	$00, $02, $05, $FF
+	sModAMPS	$01, $02, $05, $FF
 	sNoisePSG	$E7
 	dc.b nBb4, $1D
 

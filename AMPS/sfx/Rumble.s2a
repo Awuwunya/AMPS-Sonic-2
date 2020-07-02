@@ -5,7 +5,7 @@
 
 .FM5
 	sVoice		pRumble
-	sModAMPS	$00, $01, $20, $08
+	sModAMPS	$01, $01, $20, $08
 
 .Loop1
 	dc.b nBb0, $0A

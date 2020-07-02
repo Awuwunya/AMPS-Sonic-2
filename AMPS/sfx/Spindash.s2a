@@ -6,7 +6,7 @@
 .FM5
 	sSpinRev
 	sVoice		pSpindash
-	sModAMPS	$00, $01, $20, $F6
+	sModAMPS	$01, $01, $20, $F6
 	dc.b nG5, $16, sHold
 	sModOff
 	dc.b nG6, $18, sHold

@@ -5,6 +5,6 @@
 
 .FM5:
 	sVoice		pSpikeHit
-	sModAMPS	$00, $01, $10, $FF
+	sModAMPS	$01, $01, $10, $FF
 	dc.b nFs6, $05, nD7, $25
 	sStop

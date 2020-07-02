@@ -5,6 +5,6 @@
 
 .FM5
 	sVoice		pEnterSS
-	sModAMPS	$00, $01, $5B, $02
+	sModAMPS	$01, $01, $5B, $02
 	dc.b nEb6, $65
 	sStop
