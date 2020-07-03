@@ -3008,17 +3008,17 @@ Pal_FadeFromWhite:
 
 	move.w	(a0),d3					; MJ: load current colour in buffer
 	cmp.b	d5,d4					; MJ: is it time for blue to fade?
-	blo.s	FC4_NoBlue				; MJ: if not, branch
+	bls.s	FC4_NoBlue				; MJ: if not, branch
 	sub.w	#$0200,d3				; MJ: increase blue
 
 FC4_NoBlue:
 	cmp.b	d1,d4					; MJ: is it time for green to fade?
-	blo.s	FC4_NoGreen				; MJ: if not, branch
+	bls.s	FC4_NoGreen				; MJ: if not, branch
 	sub.b	#$20,d3					; MJ: increase green
 
 FC4_NoGreen:
 	cmp.b	d2,d4					; MJ: is it time for red to fade?
-	blo.s	FC4_NoRed				; MJ: if not, branch
+	bls.s	FC4_NoRed				; MJ: if not, branch
 	subq.b	#$02,d3					; MJ: increase red
 
 FC4_NoRed:
