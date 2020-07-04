@@ -247,7 +247,7 @@ ChemicalPlant_Call7:
 	sRet
 
 ChemicalPlant_FM1:
-	sModAMPS	$05, $01, $FA, $04
+	sModAMPS	$06, $01, $FA, $04
 	sCall		ChemicalPlant_Call1
 	dc.b nRst, $30, nRst
 	sCall		ChemicalPlant_Call1
@@ -305,7 +305,7 @@ ChemicalPlant_Loop1:
 	dc.b nCs4, $06, nE4, nFs4, nA4, $04, nRst, $08
 	dc.b nB4, $04, nRst, $08, nCs5, $18, nE5, nFs5
 	dc.b sHold, nFs5, $0C
-	sModAMPS	$17, $01, $05, $04
+	sModAMPS	$18, $01, $05, $04
 	sCall		ChemicalPlant_Call7
 	dc.b sHold, nFs5, $30, sHold, $0C, nRst, $18, nCs5
 	dc.b $06, nCs5, nA4, $04, nRst, $08, nFs4, $06
@@ -313,11 +313,11 @@ ChemicalPlant_Loop1:
 	sCall		ChemicalPlant_Call7
 	dc.b sHold, $30, sHold, $30, sHold, $18, nRst, $0C
 	dc.b nFs4, $06, nA4
-	sModAMPS	$05, $01, $FA, $04
+	sModAMPS	$06, $01, $FA, $04
 	sJump		ChemicalPlant_Jump1
 
 ChemicalPlant_FM4:
-	sModAMPS	$0B, $01, $FB, $04
+	sModAMPS	$0C, $01, $FB, $04
 	sVoice		$02
 
 ChemicalPlant_Loop8:
@@ -333,7 +333,7 @@ ChemicalPlant_Loop10:
 	dc.b nAb5, $12, nRst, $06, nAb5, $12, nRst, $06
 	dc.b nA5, $0C, nRst, $24, nRst, $30, nRst
 	sLoop		$00, $04, ChemicalPlant_Loop10
-	sModAMPS	$0B, $01, $05, $04
+	sModAMPS	$0C, $01, $05, $04
 	dc.b nRst, $30, nRst
 	sVoice		$05
 	saVol		$F8
@@ -353,7 +353,7 @@ ChemicalPlant_Loop11:
 	sJump		ChemicalPlant_Loop9
 
 ChemicalPlant_FM5:
-	sModAMPS	$0B, $01, $05, $04
+	sModAMPS	$0C, $01, $05, $04
 	sPan		spLeft
 	sVoice		$02
 
@@ -370,7 +370,7 @@ ChemicalPlant_Loop14:
 	dc.b nB5, $12, nRst, $06, nB5, $12, nRst, $06
 	dc.b nCs6, $0C, nRst, $24, nRst, $30, nRst
 	sLoop		$00, $04, ChemicalPlant_Loop14
-	sModAMPS	$0B, $01, $05, $04
+	sModAMPS	$0C, $01, $05, $04
 
 ChemicalPlant_Loop15:
 	dc.b nRst, $30, nRst
@@ -389,7 +389,7 @@ ChemicalPlant_Loop15:
 	sJump		ChemicalPlant_Loop13
 
 ChemicalPlant_FM3:
-	sModAMPS	$05, $01, $05, $04
+	sModAMPS	$06, $01, $05, $04
 	sPan		spRight
 	sVoice		$05
 

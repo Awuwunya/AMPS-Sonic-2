@@ -224,7 +224,7 @@ CasinoNight_Call4:
 CasinoNight_FM2:
 	dc.b nRst, $18
 	sVoice		$01
-	sModAMPS	$1C, $01, $06, $04
+	sModAMPS	$1D, $01, $06, $04
 
 CasinoNight_Jump2:
 	sVoice		$01
@@ -268,7 +268,7 @@ CasinoNight_Jump2:
 
 CasinoNight_FM5:
 	dc.b nRst, $18
-	sModAMPS	$1C, $01, $06, $04
+	sModAMPS	$1D, $01, $06, $04
 
 CasinoNight_Jump5:
 	sVoice		$01

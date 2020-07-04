@@ -130,7 +130,7 @@ Results2P_Header:
 Results2P_FM1:
 	dc.b nRst, $02
 	sVoice		$04
-	sModAMPS	$02, $01, $01, $01
+	sModAMPS	$03, $01, $01, $01
 	sPan		spRight
 	saVol		$03
 	sCall		Results2P_Call1
@@ -263,7 +263,7 @@ Results2P_Call7:
 
 Results2P_FM5:
 	sVoice		$03
-	sModAMPS	$02, $01, $01, $01
+	sModAMPS	$03, $01, $01, $01
 
 Results2P_Jump1:
 	sPan		spLeft

@@ -91,14 +91,14 @@ HiddenPalace_Header:
 
 HiddenPalace_FM5:
 	sPan		spRight
-	sModAMPS	$18, $01, $FE, $04
+	sModAMPS	$19, $01, $FE, $04
 	sVoice		$03
 	ssDetune	$02
 	sJump		HiddenPalace_Loop3
 
 HiddenPalace_FM4:
 	dc.b nRst, $06
-	sModAMPS	$0C, $01, $FD, $05
+	sModAMPS	$0D, $01, $FD, $05
 	sVoice		$00
 	ssDetune	$02
 	sJump		HiddenPalace_Jump3
@@ -108,11 +108,11 @@ HiddenPalace_PSG2:
 	dc.b nRst, $06
 
 HiddenPalace_PSG1:
-	sModAMPS	$0C, $01, $FF, $04
+	sModAMPS	$0D, $01, $FF, $04
 	sJump		HiddenPalace_Jump3
 
 HiddenPalace_FM1:
-	sModAMPS	$0C, $01, $03, $05
+	sModAMPS	$0D, $01, $03, $05
 
 HiddenPalace_Jump3:
 	dc.b nRst, $18
@@ -159,7 +159,7 @@ HiddenPalace_Jump1:
 HiddenPalace_FM3:
 	sPan		spLeft
 	saTranspose	$F4
-	sModAMPS	$18, $01, $02, $04
+	sModAMPS	$19, $01, $02, $04
 	sVoice		$02
 
 HiddenPalace_Loop3:

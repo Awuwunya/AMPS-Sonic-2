@@ -181,7 +181,7 @@ FinalBoss_Call6:
 	sRet
 
 FinalBoss_FM3:
-	sModAMPS	$13, $01, $03, $05
+	sModAMPS	$14, $01, $03, $05
 
 FinalBoss_Jump1:
 	dc.b nRst, $60, nRst
@@ -218,7 +218,7 @@ FinalBoss_Call10:
 	sRet
 
 FinalBoss_FM4:
-	sModAMPS	$12, $01, $05, $05
+	sModAMPS	$13, $01, $05, $05
 
 FinalBoss_Jump2:
 	dc.b nRst, $60
@@ -255,7 +255,7 @@ FinalBoss_FM5:
 	sVoice		$01
 	ssDetune	$01
 	sPan		spRight
-	sModAMPS	$13, $01, $03, $05
+	sModAMPS	$14, $01, $03, $05
 
 FinalBoss_Loop10:
 	sCall		FinalBoss_Call9
@@ -292,7 +292,7 @@ FinalBoss_Loop13:
 	sJump		FinalBoss_Jump3
 
 FinalBoss_PSG2:
-	sModAMPS	$0B, $02, $02, $01
+	sModAMPS	$0C, $02, $02, $01
 
 FinalBoss_Jump4:
 	dc.b nRst, $60

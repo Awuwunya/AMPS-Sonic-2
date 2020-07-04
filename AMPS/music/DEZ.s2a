@@ -173,7 +173,7 @@ DeathEgg_Jump1:
 DeathEgg_FM3:
 	dc.b nRst, $30
 	sVoice		$02
-	sModAMPS	$08, $01, $05, $04
+	sModAMPS	$09, $01, $05, $04
 	sJump		DeathEgg_Loop1
 
 DeathEgg_Loop2:
@@ -213,7 +213,7 @@ DeathEgg_Call1:
 DeathEgg_FM4:
 	dc.b nRst, $30
 	sVoice		$02
-	sModAMPS	$08, $01, $05, $04
+	sModAMPS	$09, $01, $05, $04
 	sJump		DeathEgg_Loop5+2
 
 DeathEgg_Loop5:
@@ -246,15 +246,15 @@ DeathEgg_FM5:
 	sGate		$00
 	saVol		$0C
 	dc.b nA2, $30
-	sModAMPS	$10, $01, $FF, $FF
+	sModAMPS	$11, $01, $FF, $FF
 	sModReset
 	dc.b sHold, $30, sHold
-	sModAMPS	$00, $01, $10, $FF
+	sModAMPS	$01, $01, $10, $FF
 	sModReset
 	dc.b nG2, $08
 	sModOff
 	dc.b nC3, $40
-	sModAMPS	$10, $01, $FE, $FF
+	sModAMPS	$11, $01, $FE, $FF
 	sModReset
 	dc.b sHold, $18
 	saVol		$F4
@@ -296,37 +296,37 @@ DeathEgg_PSG1:
 	sLoop		$00, $18, DeathEgg_PSG1
 
 DeathEgg_Loop9:
-	sModAMPS	$06, $02, $FE, $FF
+	sModAMPS	$07, $02, $FE, $FF
 	dc.b nG2, $18
 	sModOff
 	dc.b nA2, $30
-	sModAMPS	$06, $01, $01, $FF
+	sModAMPS	$07, $01, $01, $FF
 	sModReset
 	dc.b sHold, $18
-	sModAMPS	$00, $01, $FA, $FF
+	sModAMPS	$01, $01, $FA, $FF
 	dc.b nG2, $08
 	sModOff
 	dc.b nC3, $40
-	sModAMPS	$00, $01, $01, $FF
+	sModAMPS	$01, $01, $01, $FF
 	sModReset
 	dc.b sHold, $18
-	sLoop		$00, $02, DeathEgg_Loop9
+	sLoop		$01, $02, DeathEgg_Loop9
 
 DeathEgg_Loop10:
-	sModAMPS	$00, $01, $FD, $FF
+	sModAMPS	$01, $01, $FD, $FF
 	dc.b nG2, $08
 	sModOff
 	dc.b nA2, $10
-	sModAMPS	$00, $01, $FC, $FF
+	sModAMPS	$01, $01, $FC, $FF
 	dc.b $08
 	sModOff
 	dc.b nC3, $10
 	sLoop		$00, $02, DeathEgg_Loop10
-	sModAMPS	$00, $01, $FD, $FF
+	sModAMPS	$01, $01, $FD, $FF
 	dc.b nG2, $08
 	sModOff
 	dc.b nA2, $40
-	sModAMPS	$06, $01, $01, $FF
+	sModAMPS	$07, $01, $01, $FF
 	sModReset
 	dc.b sHold, $18
 	sJump		DeathEgg_PSG1

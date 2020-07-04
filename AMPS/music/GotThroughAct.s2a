@@ -116,7 +116,7 @@ GotThroughAct_PSG1:
 	dc.b nRst, $06, nG4, nA4, nB4, nC5, nD5, nE5
 	dc.b nF5, nG5, $0C, nB6, $02, sHold, nC7, $01
 	dc.b nB6, $03, nG6
-	sModAMPS	$0C, $01, $08, $04
+	sModAMPS	$0D, $01, $08, $04
 	dc.b nA6, $33
 	sStop
 
@@ -154,7 +154,7 @@ GotThroughAct_FM4:
 
 GotThroughAct_FM5:
 	sVoice		$03
-	sModAMPS	$0D, $01, $02, $05
+	sModAMPS	$0E, $01, $02, $05
 
 GotThroughAct_PSG2:
 	dc.b nG5, $06, nC6, nB5, nG5, nC6, nB5, nG5

@@ -173,7 +173,7 @@ SpecialStage_FM2:
 	saVol		$0A
 	saTranspose	$F4
 	sPan		spLeft
-	sModAMPS	$06, $01, $02, $04
+	sModAMPS	$07, $01, $02, $04
 	sCall		SpecialStage_Call1
 	dc.b nAb5, $06, nRst, $30, nRst, $2A
 	saTranspose	$0C
@@ -189,16 +189,16 @@ SpecialStage_FM2:
 SpecialStage_Loop2:
 	sVoice		$00
 	sPan		spCenter
-	sModAMPS	$01, $01, $08, $04
+	sModAMPS	$02, $01, $08, $04
 	dc.b nE5, $18, nAb5, $0C, nB5, $18, nA5, nAb5
 	dc.b $0C, sHold, nAb5, nFs5, $18, nE5, nAb5, $0C
-	sModAMPS	$18, $01, $10, $04
+	sModAMPS	$19, $01, $10, $04
 	dc.b nFs5, nE5, nD5, $30, sHold, $30
-	sModAMPS	$01, $01, $08, $04
+	sModAMPS	$02, $01, $08, $04
 	dc.b nRst, $30, nRst, nE5, $18, nAb5, $0C, nB5
 	dc.b $18, nA5, nAb5, $0C, sHold, nAb5, nFs5, $18
 	dc.b nE5, nAb5, $0C
-	sModAMPS	$18, $01, $10, $04
+	sModAMPS	$19, $01, $10, $04
 	dc.b nFs5, nE5, nD6, $30, sHold, $30, nRst, $30
 	dc.b nRst
 	sLoop		$00, $02, SpecialStage_Loop2
@@ -335,7 +335,7 @@ SpecialStage_FM5:
 	sCall		SpecialStage_Call1
 	saTranspose	$0C
 	sVoice		$01
-	sModAMPS	$06, $01, $02, $03
+	sModAMPS	$07, $01, $02, $03
 
 SpecialStage_Loop10:
 	sPan		spCenter

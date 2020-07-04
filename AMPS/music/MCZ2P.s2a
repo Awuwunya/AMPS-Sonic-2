@@ -150,7 +150,7 @@ MysticCave2P_FM1:
 
 MysticCave2P_Jump1:
 	sCall		MysticCave2P_Call2
-	sModAMPS	$24, $01, $03, $04
+	sModAMPS	$25, $01, $03, $04
 	dc.b nRst, $0C
 	saVol		$E6
 	sVoice		$03

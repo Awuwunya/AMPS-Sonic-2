@@ -463,7 +463,7 @@ EmeraldHill2P_PSG3:
 	dc.b nRst, $30
 	sVolEnv		v04
 	sNoisePSG	snWhitePSG3
-	sModAMPS	$00, $01, $01, $01
+	sModAMPS	$01, $01, $01, $01
 
 EmeraldHill2P_Jump4:
 	dc.b nHiHat, $03, $03, $06

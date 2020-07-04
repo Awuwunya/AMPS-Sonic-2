@@ -89,13 +89,13 @@ GameOver_Header:
 GameOver_FM1:
 	dc.b nRst, $0C
 	sVoice		$00
-	sModAMPS	$20, $01, $04, $05
+	sModAMPS	$21, $01, $04, $05
 	dc.b nCs6, $12, nRst, $06, nCs6, nRst
 	dc.b nD6, $12, nB5, $1E, nCs6, $06, nRst, nCs6
 	dc.b nRst, nCs6, nRst, nA5, nRst, nG5, $12, nB5
 	dc.b $0C, nRst, $12, nC6, $04, nRst, nC6, nB5
 	dc.b $06, nRst, nBb5, nRst, nA5, nRst
-	sModAMPS	$28, $01, $18, $05
+	sModAMPS	$29, $01, $18, $05
 	dc.b nAb5, $60
 	sStop
 

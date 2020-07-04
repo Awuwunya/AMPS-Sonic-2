@@ -91,7 +91,7 @@ Ending_Header:
 
 Ending_FM1:
 	sVoice		$03
-	sModAMPS	$01, $02, $04, $02
+	sModAMPS	$02, $02, $04, $02
 	sCall		Ending_Call1
 	saVol		$FC
 	sCall		Ending_Call2
@@ -170,7 +170,7 @@ Ending_Call4:
 Ending_FM2:
 	dc.b nRst, $06
 	sVoice		$01
-	sModAMPS	$00, $02, $02, $02
+	sModAMPS	$01, $02, $02, $02
 	dc.b nE5, $03, nF5, nE5, $24
 	sCall		Ending_Call5
 	saVol		$02

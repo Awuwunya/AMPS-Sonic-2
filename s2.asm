@@ -397,10 +397,6 @@ GameClrRAM:
 	bsr.w	JoypadInit
 	move.b	#GameModeID_SegaScreen,(Game_Mode).w; set Game Mode to Sega Screen
 	move.w	#MusOff,Sound_test_sound.w	; init sound test ID
-	if customAMPS
-		clr.w	Two_player_mode.w	; disable 2-p mode (SEGA screen clears this, but we dont because we go there later)
-		jsr	OptionsMenu(pc)
-	endif
 
 ; loc_394:
 MainGameLoop:
@@ -961,16 +957,6 @@ Vint_Menu:
 	bsr.w	ReadJoypads
 
 	dma68kToVDP Normal_palette,$0000,palette_line_size*4,CRAM
-
-	if customAMPS
-		tst.b	Game_Mode.w	; check if in info screen
-		bne.s	+		; if not, skip
-		dma68kToVDP Horiz_Scroll_Buf,$B800,VRAM_Horiz_Scroll_Table_Size,VRAM
-		dma68kToVDP Sprite_Table,$B000,VRAM_Sprite_Attribute_Table_Size,VRAM
-		bra.s	++
-
-+
-	endif
 	dma68kToVDP Horiz_Scroll_Buf,VRAM_Horiz_Scroll_Table,VRAM_Horiz_Scroll_Table_Size,VRAM
 	dma68kToVDP Sprite_Table,VRAM_Sprite_Attribute_Table,VRAM_Sprite_Attribute_Table_Size,VRAM
 
@@ -3529,7 +3515,7 @@ Sega_WaitPalette:
 	bsr.w	WaitForVint
 
 	if customAMPS
-		move.w	#30,(Demo_Time_left).w	; 3 seconds
+		move.w	#30,(Demo_Time_left).w	; 1 second
 	else
 		move.w	#3*60,(Demo_Time_left).w	; 3 seconds
 	endif
@@ -10818,11 +10804,6 @@ MenuScreen:
 	moveq	#$1B,d2
 	jsrto	(PlaneMapToVRAM_H40).l, JmpTo_PlaneMapToVRAM_H40	; fullscreen background
 
-	if customAMPS
-		tst.b	(Game_Mode).w		; info screen?
-		beq.w	MenuScreen_Info
-	endif
-
 	cmpi.b	#GameModeID_OptionsMenu,(Game_Mode).w	; options menu?
 	beq.w	MenuScreen_Options	; if yes, branch
 
@@ -11424,153 +11405,6 @@ off_92EA:
 off_92F2:
 	dc.l TextOptScr_0
 ; ===========================================================================
-
-	if customAMPS
-MenuScreen_Info:
-	move	#$2700,sr
-	lea	(Chunk_Table).l,a1
-	move.l	#vdpComm(VRAM_Plane_B_Name_Table,VRAM,WRITE),d0
-	moveq	#$27,d1
-	moveq	#$1B,d2
-	jsrto	PlaneMapToVRAM_H80_SpecialStage	; fullscreen background
-
-	; Load foreground
-	lea	(Chunk_Table).l,a1
-	lea	(MapEng_InfoScreen).l,a0	; 2 bytes per 8x8 tile, compressed
-	move.w	#make_art_tile(ArtTile_VRAM_Start,0,0),d0
-	bsr.w	EniDec
-
-	lea	(Chunk_Table).l,a1
-	move.l	#vdpComm(VRAM_Plane_A_Name_Table,VRAM,WRITE),d0
-	moveq	#$27,d1
-	moveq	#$1B,d2	; 40x28 = whole screen
-	jsr	PlaneMapToVRAM_H80_SpecialStage	; display patterns
-
-	move.l	#vdpComm(tiles_to_bytes($140),VRAM,WRITE),(VDP_control_port).l
-	lea	(ArtNem_LogoAMPS).l,a0
-	bsr.w	NemDec
-
-	; Animate background (loaded back in MenuScreen)
-	lea	(Anim_SonicMilesBG).l,a2
-	jsrto	(Dynamic_Normal).l, JmpTo2_Dynamic_Normal	; background
-	moveq	#PalID_Menu,d0
-	bsr.w	PalLoad_ForFade
-
-	move.l	#$0AAA0888,Target_palette_line4+$0E.w		; load some extra palette entries
-	move.l	#$04440666,Target_palette_line4+$12.w		; used for AMPS logo
-
-	lea	(Normal_palette_line3).w,a1
-	lea	(Target_palette_line3).w,a2
-
-	moveq	#bytesToLcnt(palette_line_size),d1
--	move.l	(a1),(a2)+
-	clr.l	(a1)+
-	dbf	d1,-
-
-	clr.l	(Camera_X_pos).w
-	clr.l	(Camera_Y_pos).w
-	move.l	#Obj_LogoAMPS,Menu_AMPS.w	; load AMPS logo
-	jsr	RunObjects
-
-	move.b	#VintID_Menu,(Vint_routine).w
-	bsr.w	WaitForVint
-	music	mus_Options
-	command	Mus_Reset
-
-	move.w	(VDP_Reg1_val).w,d0
-	ori.b	#$40,d0
-	move.w	d0,(VDP_control_port).l
-	move.l	#$90038D00|($B800/$400),(VDP_control_port).l
-	move.w	#$8500|($B000/$200),(VDP_control_port).l
-
-	move.w	#$3F,(Palette_fade_range).w
-	moveq	#0,d0
-	lea	(Normal_palette).w,a0
-	move.b	(Palette_fade_start).w,d0
-	adda.w	d0,a0
-	moveq	#0,d1
-	move.b	(Palette_fade_length).w,d0
-
-.palettewrite
-	move.w	d1,(a0)+
-	dbf	d0,.palettewrite	; fill palette with $000 (black)
-
-	moveq	#$0E,d4
-.nextframe
-	move.w	d4,-(sp)
-.nextframe2
-	move.b	#VintID_Menu,(Vint_routine).w
-	bsr.w	WaitForVint
-
-	jsr	RunObjects
-	jsr	BuildSprites
-	lea	(Anim_SonicMilesBG).l,a2
-	jsrto	(Dynamic_Normal).l, JmpTo2_Dynamic_Normal
-
-	btst	#0,Vint_runcount+3.w
-	beq.s	.nextframe2
-
-	move.w	(sp)+,d4
-	jsr	Pal_FadeFromBlack.UpdateAllColours
-	subq.b	#2,d4					; MJ: decrease colour check
-	bne.s	.nextframe				; MJ: if it has not reached null, branch
-
-.loop
-	move.b	#VintID_Menu,(Vint_routine).w
-	bsr.w	WaitForVint
-	jsr	RunObjects
-	jsr	BuildSprites
-	lea	(Anim_SonicMilesBG).l,a2
-	jsrto	(Dynamic_Normal).l, JmpTo2_Dynamic_Normal
-
-	move.b	(Ctrl_1_Press).w,d0
-	or.b	(Ctrl_2_Press).w,d0
-	andi.b	#button_start_mask,d0	; start pressed?
-	beq.s	.loop			; no
-
-	move.w	#$8D00|(VRAM_Horiz_Scroll_Table/$400),(VDP_control_port).l
-	move.w	#$8500|(VRAM_Sprite_Attribute_Table/$200),(VDP_control_port).l
-	bra.w	LevelSelect_Return	; yes
-; ===========================================================================
-
-Obj_LogoAMPS:
-	move.l	#.main,(a0)
-	move.l	#.map,mappings(a0)
-	move.w	#$3C,y_pos(a0)
-	move.w	#$E140,art_tile(a0)
-	move.b	#$40,width_pixels(a0)
-	move.w	#prio(1),priority(a0)
-	move.b	#4,render_flags(a0)
-
-	move.w	#-$C4,x_pos(a0)
-	move.w	#$540,x_vel(a0)
-
-.main
-	jsr	ObjectMove
-	sub.w	#$A,x_vel(a0)
-	bpl.s	.move
-	clr.w	x_vel(a0)
-	bra.s	.disp
-
-.move
-	lea	Horiz_Scroll_Buf.w,a1
-	move.w	#(Horiz_Scroll_Buf_End-Horiz_Scroll_Buf)/4-1,d1
-
-	moveq	#0,d0
-	move.w	x_pos(a0),d0
-	sub.w	#$A0,d0
-	swap	d0
-
-.copy
-	move.l	d0,(a1)+
-	dbf	d1,.copy
-
-.disp
-	jmp	DisplaySprite
-
-.map	include "art/logo.asm"
-	endif
-; ===========================================================================
 ; loc_92F6:
 MenuScreen_LevelSelect:
 	; Load foreground (sans zone icon)
@@ -11792,17 +11626,18 @@ LevSelControls_CheckLR:
 	bne.s	LevSelControls_SwitchSide	; no
 	move.w	(Sound_test_sound).w,d0
 	move.b	(Ctrl_1_Press).w,d1
+
 	btst	#button_left,d1
 	beq.s	+
 	subq.b	#1,d0
 	bcc.s	+
-	moveq	#$7F,d0
+	moveq	#SFXlast-1,d0
 
 +
 	btst	#button_right,d1
 	beq.s	+
 	addq.b	#1,d0
-	cmpi.w	#$80,d0
+	cmpi.b	#SFXlast,d0
 	blo.s	+
 	moveq	#0,d0
 
@@ -11810,14 +11645,15 @@ LevSelControls_CheckLR:
 	btst	#button_A,d1
 	beq.s	+
 	addi.b	#$10,d0
-	andi.b	#$7F,d0
+	cmpi.b	#SFXlast,d0
+	blo.s	+
+	sub.b	#SFXlast,d0
 
 +
 	move.w	d0,(Sound_test_sound).w
 	andi.w	#button_B_mask|button_C_mask,d1
 	beq.s	+	; rts
-	move.w	(Sound_test_sound).w,d0
-	move.b	d0,mQueue+1.w
+	move.b	Sound_test_sound+1.w,mQueue+1.w
 	lea	(debug_cheat).l,a0
 	lea	(super_sonic_cheat).l,a2
 	lea	(Debug_options_flag).w,a1	; Also S1_hidden_credits_flag
@@ -12121,11 +11957,6 @@ MapEng_LevSel:	BINCLUDE "mappings/misc/Level Select.bin"
 	even
 MapEng_LevSelIcon:	BINCLUDE "mappings/misc/Level Select Icons.bin"
 	even
-
-	if customAMPS
-MapEng_InfoScreen:	BINCLUDE "mappings/misc/info screen.bin"
-		even
-	endif
 
     if ~~removeJmpTos
 ; loc_9C70: JmpTo_PlaneMapToVRAM
@@ -86935,9 +86766,6 @@ ArtNem_FontStuff:	BINCLUDE	"art/nemesis/Standard font.bin"
 ;---------------------------------------------------------------------------------------
 	if customAMPS
 ArtNem_AMPS:		BINCLUDE	"art/AMPS.nem"
-	even
-;---------------------------------------------------------------------------------------
-ArtNem_LogoAMPS:	BINCLUDE	"art/logo.nem"
 	even
 	endif
 ;---------------------------------------------------------------------------------------

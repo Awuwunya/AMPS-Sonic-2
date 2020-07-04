@@ -129,7 +129,7 @@ OilOcean_Header:
 
 OilOcean_FM1:
 	sVoice		$04
-	sModAMPS	$02, $03, $01, $03
+	sModAMPS	$03, $03, $01, $03
 	sCall		OilOcean_Call1
 
 OilOcean_Jump1:

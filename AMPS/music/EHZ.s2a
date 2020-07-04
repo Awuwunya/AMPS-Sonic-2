@@ -197,7 +197,7 @@ EmeraldHill_FM5:
 EmeraldHill_Jump4:
 	saVol		$F8
 	sPan		spCenter
-	sModAMPS	$30, $01, $04, $04
+	sModAMPS	$31, $01, $04, $04
 	sVoice		$01
 
 EmeraldHill_Loop3:
@@ -240,7 +240,7 @@ EmeraldHill_Jump1:
 	dc.b $20, sHold, $10, nRst, $10
 	sVoice		$04
 	saVol		$FD
-	sModAMPS	$12, $01, $0C, $04
+	sModAMPS	$13, $01, $0C, $04
 	dc.b nRst, $08, nG4, $04, nRst, nG4, $08, nA4
 	dc.b $04, nRst, nC5, nRst, nC5, $08, nD5, nC5
 	dc.b nE5, nD5, $10, nA4, $20, sHold, $08, nRst
@@ -370,7 +370,7 @@ EmeraldHill_FM4:
 EmeraldHill_Jump3:
 	sPan		spCenter
 	sVoice		$08
-	sModAMPS	$02, $01, $FE, $04
+	sModAMPS	$03, $01, $FE, $04
 	saTranspose	$0C
 
 EmeraldHill_Loop2:

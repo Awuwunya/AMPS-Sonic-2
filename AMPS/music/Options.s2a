@@ -141,7 +141,7 @@ Options_FM5:
 	dc.b nRst, $02
 	sVoice		$01
 	sPan		spRight
-	sModAMPS	$02, $01, $02, $04
+	sModAMPS	$03, $01, $02, $04
 	sJump		Options_Jump1
 
 Options_PSG2:
@@ -156,7 +156,7 @@ Options_PSG3:
 Options_FM2:
 	sVoice		$01
 	sPan		spLeft
-	sModAMPS	$12, $01, $02, $04
+	sModAMPS	$13, $01, $02, $04
 
 Options_Jump1:
 	dc.b nRst, $0C, nC5, $03, nRst, nC5, nRst, nC5

@@ -159,7 +159,7 @@ AquaticRuin_Call4:
 
 AquaticRuin_FM1:
 	sVoice		$00
-	sModAMPS	$06, $02, $02, $02
+	sModAMPS	$07, $02, $02, $02
 	dc.b nC2, $06, nD2
 
 AquaticRuin_Jump1:
@@ -202,7 +202,7 @@ AquaticRuin_FM2:
 
 AquaticRuin_Jump2:
 	sVoice		$01
-	sModAMPS	$04, $02, $03, $02
+	sModAMPS	$05, $02, $03, $02
 	dc.b nD5, $12, nE5, nF5, $0C, nA5, $30, sHold
 	dc.b $30, sHold, $0C, nRst, $06, nCs5, nCs5, nRst
 	dc.b $12, nD5, nE5, nF5, $06, nD5, nA5, $30
@@ -232,7 +232,7 @@ AquaticRuin_Jump2:
 
 AquaticRuin_FM3:
 	sVoice		$01
-	sModAMPS	$04, $02, $03, $02
+	sModAMPS	$05, $02, $03, $02
 	dc.b nRst, $0C
 	sPan		spLeft
 
@@ -295,7 +295,7 @@ AquaticRuin_Loop2:
 	sLoop		$00, $02, AquaticRuin_Loop2
 	sVoice		$01
 	saVol		$04
-	sModAMPS	$02, $02, $01, $02
+	sModAMPS	$03, $02, $01, $02
 	sCall		AquaticRuin_Call3
 	dc.b nA5, $06, nRst, nA5, nRst, nBb5, nBb5, nRst
 	dc.b nC6, nRst, nRst, $02, nFs5, $08, nG5, nA5
@@ -310,7 +310,7 @@ AquaticRuin_FM5:
 	dc.b nRst, $0C
 
 AquaticRuin_Jump4:
-	sModAMPS	$06, $01, $06, $05
+	sModAMPS	$07, $01, $06, $05
 	saTranspose	$F4
 	sPan		spCenter
 
@@ -332,7 +332,7 @@ AquaticRuin_Loop3:
 	saVol		$04
 	saTranspose	$0C
 	sVoice		$01
-	sModAMPS	$02, $02, $01, $02
+	sModAMPS	$03, $02, $01, $02
 	sPan		spLeft
 	sCall		AquaticRuin_Call4
 	dc.b nFs5, $06, nRst, nFs5, nRst, nG5, nG5, nRst
@@ -440,7 +440,7 @@ AquaticRuin_Loop5:
 
 AquaticRuin_PSG2:
 	dc.b nRst, $0C
-	sModAMPS	$03, $02, $01, $05
+	sModAMPS	$04, $02, $01, $05
 
 AquaticRuin_Loop6:
 	dc.b nRst, $30, nRst

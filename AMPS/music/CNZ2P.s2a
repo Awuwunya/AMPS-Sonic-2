@@ -255,7 +255,7 @@ CasionNight2P_Loop8:
 	ssDetune	$00
 	saTranspose	$0C
 	saVol		$04
-	sModAMPS	$01, $01, $03, $03
+	sModAMPS	$02, $01, $03, $03
 
 CasionNight2P_Loop9:
 	sCall		CasionNight2P_Call4
@@ -325,7 +325,7 @@ CasionNight2P_Loop11:
 	sVoice		$03
 	saVol		$02
 	sPan		spLeft
-	sModAMPS	$01, $01, $03, $03
+	sModAMPS	$02, $01, $03, $03
 	sCall		CasionNight2P_Call11
 	sVoice		$04
 	saVol		$FC

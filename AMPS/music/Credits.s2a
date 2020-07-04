@@ -778,7 +778,7 @@ Credits_Loop3:
 	dc.b nRst, $12, nE2, nCs2, $08, nRst, $16, nA1
 	dc.b $12, nE2, $08, nRst, $04
 	sVoice		$12
-	sModAMPS	$18, $01, $0A, $04
+	sModAMPS	$19, $01, $0A, $04
 	dc.b nRst, $30, nRst
 	sCall		Credits_Call5
 	dc.b sHold, $24, sHold, nAb5, $01, sHold, nG5, sHold
@@ -1039,7 +1039,7 @@ Credits_Loop12:
 	dc.b $24, nRst, $60
 	sVoice		$0F
 	saVol		$F3
-	sModAMPS	$04, $02, $03, $02
+	sModAMPS	$05, $02, $03, $02
 	sCall		Credits_Call13
 	dc.b nG5, $18, nFs5, $30, sHold, $18, nRst, $0C
 	sCall		Credits_Call13
@@ -1096,7 +1096,7 @@ Credits_Loop15:
 	sVoice		$22
 	saTranspose	$E8
 	saVol		$03
-	sModAMPS	$1C, $01, $06, $04
+	sModAMPS	$1D, $01, $06, $04
 	dc.b nRst, $50, nG3, $04, nA3, $08, nC4, $04
 	dc.b nE4, $30, nRst, $0C, nE4, $08, nRst, $04
 	dc.b nF4, $08, nE4, $10, nAb4, $08, $04, nRst
@@ -1223,7 +1223,7 @@ Credits_Loop17:
 	saTranspose	$0C
 	saVol		$FD
 	sPan		spRight
-	sModAMPS	$06, $01, $05, $04
+	sModAMPS	$07, $01, $05, $04
 	ssDetune	$00
 
 Credits_Loop18:
@@ -1253,7 +1253,7 @@ Credits_Loop19:
 	dc.b nG5, $18, nFs5, $48, nRst, $0C
 	sCall		Credits_Call13
 	dc.b nCs5, $0C
-	sModAMPS	$18, $01, $03, $04
+	sModAMPS	$19, $01, $03, $04
 	saVol		$F3
 	sPan		spCenter
 	sVoice		$14
@@ -1398,7 +1398,7 @@ Credits_FM4:
 	dc.b nG4, $3C
 	saVol		$06
 	sVoice		$05
-	sModAMPS	$02, $01, $FE, $04
+	sModAMPS	$03, $01, $FE, $04
 
 Credits_Loop23:
 	dc.b nE5, $30, sHold, $30, nFs5, sHold, $30, nD5
@@ -1407,7 +1407,7 @@ Credits_Loop23:
 	sVoice		$0A
 	saTranspose	$F4
 	saVol		$F7
-	sModAMPS	$0C, $01, $FB, $04
+	sModAMPS	$0D, $01, $FB, $04
 
 Credits_Loop24:
 	sCall		Credits_Call27
@@ -1452,7 +1452,7 @@ Credits_Loop25:
 	saTranspose	$F4
 	saVol		$02
 	sPan		spCenter
-	sModAMPS	$01, $01, $03, $03
+	sModAMPS	$02, $01, $03, $03
 
 Credits_Loop26:
 	sCall		Credits_Call15
@@ -1527,7 +1527,7 @@ Credits_Loop27:
 	sCall		Credits_Call32
 	saVol		$F0
 	sVoice		$01
-	sModAMPS	$00, $01, $06, $04
+	sModAMPS	$01, $01, $06, $04
 	dc.b nA2, $6C
 	sStop
 
@@ -1589,14 +1589,14 @@ Credits_FM5:
 	saVol		$08
 	ssDetune	$00
 	sVoice		$02
-	sModAMPS	$0C, $01, $FC, $04
+	sModAMPS	$0D, $01, $FC, $04
 	sCall		Credits_Call33
 	dc.b nC4, $3C
 	sCall		Credits_Call33
 	dc.b nE4, $3C
 	saTranspose	$F4
 	saVol		$07
-	sModAMPS	$30, $01, $04, $04
+	sModAMPS	$31, $01, $04, $04
 	sVoice		$06
 
 Credits_Loop28:
@@ -1605,7 +1605,7 @@ Credits_Loop28:
 	sLoop		$00, $02, Credits_Loop28
 	sVoice		$0A
 	saVol		$F6
-	sModAMPS	$0C, $01, $05, $04
+	sModAMPS	$0D, $01, $05, $04
 	sPan		spLeft
 
 Credits_Loop29:
@@ -1630,7 +1630,7 @@ Credits_Loop29:
 	saVol		$F4
 	ssDetune	$00
 	sPan		spCenter
-	sModAMPS	$06, $01, $06, $05
+	sModAMPS	$07, $01, $06, $05
 	dc.b nRst, $60, nRst, $30, nF5, $06, nF5, nC6
 	dc.b nA5, $1E, nRst, $60, nRst, $06, nD6, nRst
 	dc.b nD6, nC6, nRst, nC6, nRst, nBb5, nRst, nBb5
@@ -1676,7 +1676,7 @@ Credits_Loop30:
 	sVoice		$22
 	saTranspose	$F4
 	saVol		$05
-	sModAMPS	$1C, $01, $06, $04
+	sModAMPS	$1D, $01, $06, $04
 	dc.b nRst, $50, nD3, $04, nE3, $08, nG3, $04
 	dc.b nC4, $30, nRst, $0C, nC4, $08, nRst, $04
 	dc.b nD4, $08, nC4, $10, nE4, $08, nE4, $04
@@ -1703,7 +1703,7 @@ Credits_Loop30:
 	dc.b nRst, $60
 	sCall		Credits_Call8
 	saVol		$09
-	sModAMPS	$00, $01, $06, $04
+	sModAMPS	$01, $01, $06, $04
 	sCall		Credits_Call32
 	sStop
 
@@ -1846,7 +1846,7 @@ Credits_Loop41:
 	sCall		Credits_Call22
 	sLoop		$00, $02, Credits_Loop41
 	dc.b nRst, $60
-	sModAMPS	$03, $02, $01, $05
+	sModAMPS	$04, $02, $01, $05
 	sVolEnv		v0A
 	saTranspose	$E8
 	saVol		$10

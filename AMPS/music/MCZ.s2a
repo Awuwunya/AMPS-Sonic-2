@@ -259,7 +259,7 @@ MysticCave_Call2:
 MysticCave_FM1:
 	dc.b nRst, $30, nRst
 	sVoice		$02
-	sModAMPS	$18, $01, $0A, $04
+	sModAMPS	$19, $01, $0A, $04
 
 MysticCave_Jump1:
 	sCall		MysticCave_Call1
@@ -373,7 +373,7 @@ MysticCave_Loop9:
 	sJump		MysticCave_Loop8
 
 MysticCave_FM3:
-	sModAMPS	$18, $01, $03, $04
+	sModAMPS	$19, $01, $03, $04
 	sVoice		$06
 	dc.b nA2, $14, nB2, $04, nC3, $04, nRst, $08
 	dc.b nE3, $04, nRst, $08, nEb3, $04, nRst, $08

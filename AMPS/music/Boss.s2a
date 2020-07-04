@@ -186,12 +186,12 @@ Boss_Loop7:
 Boss_FM4:
 	sPan		spLeft
 	ssDetune	$02
-	sModAMPS	$0C, $01, $04, $04
+	sModAMPS	$0D, $01, $04, $04
 	sJump		Boss_Jump2
 
 Boss_FM5:
 	sPan		spRight
-	sModAMPS	$0C, $01, $FC, $04
+	sModAMPS	$0D, $01, $FC, $04
 
 Boss_Jump2:
 	sModOff

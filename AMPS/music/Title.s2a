@@ -145,7 +145,7 @@ TitleScreen_FM4:
 	dc.b nRst, $06, nC6, $12, nCs6, $0C
 	saVol		$FD
 	sVoice		$01
-	sModAMPS	$00, $01, $06, $04
+	sModAMPS	$01, $01, $06, $04
 	dc.b nA2, $6C
 	sStop
 
