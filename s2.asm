@@ -32,7 +32,7 @@ padToPowerOfTwo =	0
 allOptimizations =	1
 ;	| If 1, enables all optimizations
 ;
-skipChecksumCheck =	1
+skipChecksumCheck =	0
 ;	| If 1, disables the unnecessary (and slow) bootup checksum calculation
 ;
 zeroOffsetOptimization = 1
@@ -347,30 +347,14 @@ GameProgram:
 CheckSumCheck:
 	move.w	(VDP_control_port).l,d1
 	btst	#1,d1
-	bne.s	CheckSumCheck	; wait until DMA is completed
+	bne.s	.skip		; wait until DMA is completed
 
 	btst	#6,(HW_Expansion_Control).l
-	beq.s	ChecksumTest
+	beq.s	.skip
 	cmpi.l	#'init',(Checksum_fourcc).w ; has checksum routine already run?
 	beq.w	GameInit
 
-; loc_328:
-ChecksumTest:
-    if skipChecksumCheck=0	; checksum code
-	movea.l	#EndOfHeader,a0	; start checking bytes after the header ($200)
-	movea.l	#ROMEndLoc,a1	; stop at end of ROM
-	move.l	(a1),d0
-	moveq	#0,d1
-; loc_338:
-ChecksumLoop:
-	add.w	(a0)+,d1
-	cmp.l	a0,d0
-	bhs.s	ChecksumLoop
-	movea.l	#Checksum,a1	; read the checksum
-	cmp.w	(a1),d1	; compare correct checksum to the one in ROM
-	bne.w	ChecksumError	; if they don't match, branch
-    endif
-;checksum_good:
+.skip
 	lea	(System_Stack).w,a6
 	moveq	#0,d7
 
@@ -378,6 +362,8 @@ ChecksumLoop:
 -	move.l	d7,(a6)+
 	dbf	d6,-
 
+	move.l	#EndOfHeader,ChecksumAddr.w	; load end of header to checksum check
+	clr.w	ChecksumValue.w			; initial value of 0
 	move.b	(HW_Version).l,d0
 	andi.b	#$C0,d0
 	move.b	d0,(Graphics_Flags).w
@@ -3481,6 +3467,8 @@ SegaScreen:
 SegaScreen_Contin:
 	moveq	#PalID_SEGA,d0
 	bsr.w	PalLoad_ForFade
+	clr.b	ChecksumStart.w			; clear start button check
+
 	move.w	#-$A,(PalCycle_Frame).w
 	move.w	#0,(PalCycle_Timer).w
 	move.w	#0,(SegaScr_VInt_Subrout).w
@@ -3488,7 +3476,7 @@ SegaScreen_Contin:
 	lea	(SegaScreenObject).w,a1
 	move.l	#Obj_SonicOnSegaScreen,id(a1) ; load Obj_SonicOnSegaScreen (sega screen?) at $FFFFB040
 	move.b	#$4C,subtype(a1) ; <== Obj_SonicOnSegaScreen_SubObjData
-	move.w	#4*60,(Demo_Time_left).w	; 4 seconds
+	st	(Demo_Time_left).w		; a lot
 	move.w	(VDP_Reg1_val).w,d0
 	ori.b	#$40,d0
 	move.w	d0,(VDP_control_port).l
@@ -3497,13 +3485,14 @@ SegaScreen_Contin:
 Sega_WaitPalette:
 	move.b	#VintID_SEGA,(Vint_routine).w
 	bsr.w	WaitForVint
+	bsr.w	DoChecksum
 	jsrto	(RunObjects).l, JmpTo_RunObjects
 	jsr	(BuildSprites).l
 
 	move.b	(Ctrl_1_Press).w,d0	; is Start button pressed?
 	or.b	(Ctrl_2_Press).w,d0	; (either player)
-	andi.b	#button_start_mask,d0
-	bne.s	Sega_GotoTitle		; if yes, branch
+	or.b	d0,ChecksumStart.w	; if so, save it in a variable
+
 	tst.b	(SegaScr_PalDone_Flag).w
 	beq.s	Sega_WaitPalette
 
@@ -3515,27 +3504,118 @@ Sega_WaitPalette:
 	bsr.w	WaitForVint
 
 	if customAMPS
-		move.w	#30,(Demo_Time_left).w	; 1 second
+		move.w	#30,(Demo_Time_left).w		; half a second
 	else
 		move.w	#3*60,(Demo_Time_left).w	; 3 seconds
 	endif
+
 ; loc_3940:
 Sega_WaitEnd:
 	move.b	#VintID_PCM,(Vint_routine).w
 	bsr.w	WaitForVint
-	tst.w	(Demo_Time_left).w
-	beq.s	Sega_GotoTitle
+	bsr.w	DoChecksum
 	move.b	(Ctrl_1_Press).w,d0	; is Start button pressed?
 	or.b	(Ctrl_2_Press).w,d0	; (either player)
-	andi.b	#button_start_mask,d0
-	beq.s	Sega_WaitEnd		; if not, branch
+	or.b	d0,ChecksumStart.w	; if so, save it in a variable
+	bra.s	Sega_WaitEnd		; we go to title screen when checksum check is done
+
+DoChecksum:
+    if skipChecksumCheck=0	; checksum code
+	move.l	ROMEndLoc.w,a6			; load ROM end address to a6
+	sub.w	#56-1,a6			; this will trip the detection before ROM ends (in case it would happen mid-transfer)
+	move.l	ChecksumAddr.w,a5		; load the check address to a5
+
+	cmp.l	a5,a6				; check if checksum is done
+	blo.w	ChecksumEndChk			; if yes, skip this
+	move.w	ChecksumValue.w,d0		; copy the last checksum value to d0
+	move.w	#(127840/268)-(55000/268)-1,d1	; load a fairly safe estimate for the maximum number of loops per frame. If you get lag, just increase the 55000 to a higher number (check will take longer!)
+
+.loop						; 268 cycles per loop
+	movem.l	(a5)+,d2-a4			; laod 44 ($2C) bytes from ROM
+	add.w	d2,d0				; add low words to d0
+	swap	d2				; swap to high word
+	add.w	d2,d0				; add high words to d0
+
+	add.w	d3,d0
+	swap	d3
+	add.w	d3,d0
+
+	add.w	d4,d0
+	swap	d4
+	add.w	d4,d0
+
+	add.w	d5,d0
+	swap	d5
+	add.w	d5,d0
+
+	add.w	d6,d0
+	swap	d6
+	add.w	d6,d0
+
+	add.w	d7,d0
+	swap	d7
+	add.w	d7,d0
+
+	move.l	a0,d2
+	add.w	d2,d0
+	swap	d2
+	add.w	d2,d0
+
+	move.l	a1,d2
+	add.w	d2,d0
+	swap	d2
+	add.w	d2,d0
+
+	move.l	a2,d2
+	add.w	d2,d0
+	swap	d2
+	add.w	d2,d0
+
+	move.l	a3,d2
+	add.w	d2,d0
+	swap	d2
+	add.w	d2,d0
+
+	move.l	a4,d2
+	add.w	d2,d0
+	swap	d2
+	add.w	d2,d0
+
+	cmp.l	a5,a6				; check if we have passed the address
+	dblo	d1,.loop			; if not, go back to loop, but only if we havent looped too many times
+
+	move.l	a5,ChecksumAddr.w		; save the check address from a5
+	move.w	d0,ChecksumValue.w		; save as the new checksum value
+
+	cmp.l	a5,a6				; check if we have passed the address (again)
+	bhi.s	Sega_GotoTitle.rts		; if not, exit
+	move.l	ROMEndLoc.w,a6			; load ROM end address to a6
+
+.end
+	add.w	(a5)+,d0			; add remaining words to d0
+	cmp.l	a5,a6				; check if we have passed the final address
+	bhi.s	.end				; if not, go back to loop
+
+	cmp.w	Checksum.w,d0			; check if the checksum matches
+	beq.s	ChecksumEndChk			; if yes, we are golden
+	jmp	ChecksumError(pc)		; we have a checksum error
+    endif
+
+ChecksumEndChk:
+	tst.w	(Demo_Time_left).w
+	beq.s	Sega_GotoTitle
+	tst.b	ChecksumStart.w			; check if start button was pressed
+	bpl.s	Sega_GotoTitle.rts		; if not, do not return
+
 ; loc_395E:
 Sega_GotoTitle:
 	clr.w	(SegaScr_PalDone_Flag).w
 	clr.w	(SegaScr_VInt_Subrout).w
 	move.b	#GameModeID_TitleScreen,(Game_Mode).w	; => TitleScreen
-	rts
+	addq.l	#4,sp				; do not return
 
+.rts
+	rts
 ; ---------------------------------------------------------------------------
 ; Subroutine that does the exact same thing as PlaneMapToVRAM_H80_SpecialStage
 ; (this one is used at the Sega screen)
@@ -29332,19 +29412,15 @@ loc_175EA:
 	move.w	x_vel(a0),d1
 	move.w	y_vel(a0),d2
 	jsr	(CalcAngle).l
-	move.b	d0,(unk_FFDC).w
 	sub.w	d3,d0
 	mvabs.w	d0,d1
 	neg.w	d0
 	add.w	d3,d0
-	move.b	d0,(unk_FFDD).w
-	move.b	d1,(unk_FFDF).w
 	cmpi.b	#$38,d1
 	blo.s	loc_17618
 	move.w	d3,d0
 
 loc_17618:
-	move.b	d0,(unk_FFDE).w
 	jsr	(CalcSine).l
 	muls.w	#-$A00,d1
 	asr.l	#8,d1
