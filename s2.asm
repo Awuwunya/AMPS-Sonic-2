@@ -323,8 +323,7 @@ zStartupCodeEndLoc:
 	restore
     padding off ; unfortunately our flags got reset so we have to set them again...
     else ; due to an address range limitation I could work around but don't think is worth doing so:
-	message "Warning: using pre-assembled Z80 startup code."
-	dc.w $F3C3,$0100
+		fatal "Unable to assemble z80 init code"
     endif
 Z80StartupCodeEnd:
 	even
